@@ -13,7 +13,9 @@ public class PlayerController : MonoBehaviour
     [Header("Camera")]
     [SerializeField] GameObject cameraObject;
     [SerializeField] GameObject cameraHolder;
-    [SerializeField] float camRotateAmount = 10f;
+    [SerializeField] float camRotateAmountLR = 10f;
+    [SerializeField] float camRotateAmountFB = 20f;
+    [SerializeField] float camRotateSpeed = 17f;
 
     [Header("Input")]
     Vector3 movementInputVector;
@@ -80,11 +82,11 @@ public class PlayerController : MonoBehaviour
 
         if (horizontalInput > 0.4)
         {
-            zCamRotate = -camRotateAmount;
+            zCamRotate = -camRotateAmountLR;
         }
         else if (horizontalInput < -0.4)
         {
-            zCamRotate = camRotateAmount;
+            zCamRotate = camRotateAmountLR;
         }
         else
         {
@@ -93,24 +95,51 @@ public class PlayerController : MonoBehaviour
         
         if (verticalInput > 0.4)
         {
-            xCamRotate = camRotateAmount;
+            xCamRotate = camRotateAmountFB;
         }
         else if (verticalInput < -0.4)
         {
-            xCamRotate = -camRotateAmount;
+            xCamRotate = -camRotateAmountFB;
         }
         else
         {
             xCamRotate = 0;
         }
 
-        cameraHolder.transform.localRotation = Quaternion.RotateTowards(cameraHolder.transform.localRotation, Quaternion.Euler(xCamRotate, 0, zCamRotate), 17 * Time.deltaTime);
+        //MAKE IT SO FORWARD AND LEFT RIGHT CAMROTATION SPEEDS ARE DIFFERENT
+        cameraHolder.transform.localRotation = Quaternion.RotateTowards(cameraHolder.transform.localRotation, Quaternion.Euler(xCamRotate, 0, zCamRotate), camRotateSpeed * Time.deltaTime);
         
     }
 
     private void HandleMovement()
     {
-        Debug.Log(movementInputVector * accelerationRate);
-        rb.AddForce(movementInputVector * accelerationRate);
+        Vector3 flatVelocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
+
+        if (movementInputVector.magnitude > 0.001)
+        {
+            if ((movementInputVector * accelerationRate).magnitude + rb.velocity.magnitude < maxSpeed)
+            {
+                rb.AddForce(movementInputVector * accelerationRate);
+            }
+            else
+            {
+                rb.velocity = new Vector3((movementInputVector * maxSpeed).x, rb.velocity.y, (movementInputVector * maxSpeed).z);
+            }
+        }
+        else
+        {
+            if (flatVelocity.magnitude > 0)
+            {
+                if (flatVelocity.magnitude - (flatVelocity * decelerationRate).magnitude > 0)
+                {
+                    rb.AddForce(-flatVelocity * decelerationRate);
+                }
+                else
+                {
+                    rb.velocity = new Vector3(0, rb.velocity.y, 0);
+                }
+
+            }
+        }
     }
 }
