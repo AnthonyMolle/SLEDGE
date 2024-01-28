@@ -117,9 +117,14 @@ public class PlayerController : MonoBehaviour
 
         if (movementInputVector.magnitude > 0.001)
         {
-            if ((movementInputVector * accelerationRate).magnitude + rb.velocity.magnitude < maxSpeed)
+            if (flatVelocity.magnitude < maxSpeed)
             {
                 rb.AddForce(movementInputVector * accelerationRate);
+
+                if (flatVelocity.magnitude > maxSpeed)
+                {
+                    rb.velocity = new Vector3((movementInputVector * maxSpeed).x, rb.velocity.y, (movementInputVector * maxSpeed).z);
+                }
             }
             else
             {

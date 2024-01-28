@@ -532,9 +532,9 @@ GameObject:
   - component: {fileID: 361637541}
   - component: {fileID: 361637540}
   - component: {fileID: 361637539}
+  - component: {fileID: 361637542}
   - component: {fileID: 361637538}
   - component: {fileID: 361637537}
-  - component: {fileID: 361637542}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -677,8 +677,8 @@ MonoBehaviour:
   camRotateAmountFB: 5
   camRotateSpeed: 25
   mouseSensitivity: 500
-  accelerationRate: 10
-  decelerationRate: 10
+  accelerationRate: 50
+  decelerationRate: 1
   maxSpeed: 10
 --- !u!1 &520500629
 GameObject:
