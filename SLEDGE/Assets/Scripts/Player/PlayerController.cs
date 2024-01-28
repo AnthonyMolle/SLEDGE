@@ -133,18 +133,16 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            if (flatVelocity.magnitude > 0)
+            if (flatVelocity.magnitude > 0.01)
             {
-                if (flatVelocity.magnitude - (flatVelocity * decelerationRate).magnitude > 0)
-                {
-                    rb.AddForce(-flatVelocity * decelerationRate);
-                }
-                else
-                {
-                    rb.velocity = new Vector3(0, rb.velocity.y, 0);
-                }
-
+                rb.AddForce(-flatVelocity * decelerationRate);
             }
+            else
+            {
+                rb.velocity = new Vector3(0, rb.velocity.y, 0);
+            }
+
+            
         }
     }
 }
