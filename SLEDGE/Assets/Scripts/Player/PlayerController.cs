@@ -7,29 +7,64 @@ using UnityEngine.PlayerLoop;
 
 public class PlayerController : MonoBehaviour
 {
+    #region Character Component References
     [Header("Character Component References")]
     Rigidbody rb;
+    #endregion
 
+    #region Camera
     [Header("Camera")]
     [SerializeField] GameObject cameraObject;
     [SerializeField] GameObject cameraHolder;
     [SerializeField] float camRotateAmountLR = 10f;
     [SerializeField] float camRotateAmountFB = 20f;
     [SerializeField] float camRotateSpeed = 17f;
+    #endregion
 
+    #region Input
     [Header("Input")]
     Vector3 movementInputVector;
     Vector2 mouseInputVector;
     float xRotation;
     float yRotation;
+    #endregion
 
+    #region Player Settings
     [Header("Player Settings")]
     [SerializeField] float mouseSensitivity = 1;
+    #endregion
 
+    #region Movement
     [Header("Movement")]
     [SerializeField] float accelerationRate = 10f;
     [SerializeField] float decelerationRate = 10f;
     [SerializeField] float maxSpeed = 100f;
+    [SerializeField] int maxSlopeAngle = 45;
+    #endregion
+
+    #region Air Movement
+    [Header("Air Movement")]
+    [SerializeField] float airAccelerationRate = 10f;
+    [SerializeField] float airDecelerationRate = 10f;
+    [SerializeField] float airMaxSpeed = 100f;
+    #endregion
+
+    #region Jump
+    [Header("Jump")]
+    bool jumpPressed = false;
+    [SerializeField] float jumpForce = 10f;
+    [SerializeField] float coyoteTime = 0.25f;
+    #endregion
+
+    #region Raycast Checks
+    [Header("Raycast Checks")]
+    bool isGrounded = false;
+    bool isOnSlope = false;
+    [SerializeField] float playerHeight = 1f;
+    [SerializeField] float groundCheckDist = 0.2f;
+    //[SerializeField] float slopeCheckDist = 0.3f;
+    [SerializeField] LayerMask groundLayers;
+    #endregion
 
     void Start()
     {
@@ -76,6 +111,16 @@ public class PlayerController : MonoBehaviour
 
         movementInputVector = ((horizontalInput * transform.right) + (verticalInput * transform.forward)).normalized;
 
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            jumpPressed = true;
+        }
+
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+            jumpPressed = false;
+        }
+
         //all upcoming code could be put somewhere way better or in a function but its cool ok lol
         float xCamRotate;
         float zCamRotate;
@@ -113,7 +158,28 @@ public class PlayerController : MonoBehaviour
 
     private void HandleMovement()
     {
-        Vector3 flatVelocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
+        #region Raycast Checks
+        //all this raycast slope stuff is getting kinda out of hand
+        RaycastHit hit;
+        if (Physics.Raycast(gameObject.transform.position, Vector3.down, out hit, playerHeight/2 + groundCheckDist, groundLayers))
+        {
+            isGrounded = true;
+
+            if (Vector3.Angle(hit.transform.up, hit.normal) > 1)
+            {
+                isOnSlope = true;
+            }
+        }
+
+        #endregion
+
+        #region Ground Movement
+        if (isOnSlope)
+        {
+            movementInputVector = Vector3.ProjectOnPlane(movementInputVector, hit.normal);
+        }
+
+        Vector3 flatVelocity = Vector3.ProjectOnPlane(rb.velocity, hit.normal);
 
         if (movementInputVector.magnitude > 0.001)
         {
@@ -123,12 +189,12 @@ public class PlayerController : MonoBehaviour
 
                 if (flatVelocity.magnitude > maxSpeed)
                 {
-                    rb.velocity = new Vector3((movementInputVector * maxSpeed).x, rb.velocity.y, (movementInputVector * maxSpeed).z);
+                    rb.velocity = Vector3.ProjectOnPlane(new Vector3((movementInputVector * maxSpeed).x, rb.velocity.y, (movementInputVector * maxSpeed).z), hit.normal);
                 }
             }
             else
             {
-                rb.velocity = new Vector3((movementInputVector * maxSpeed).x, rb.velocity.y, (movementInputVector * maxSpeed).z);
+                rb.velocity = Vector3.ProjectOnPlane(new Vector3((movementInputVector * maxSpeed).x, rb.velocity.y, (movementInputVector * maxSpeed).z), hit.normal);
             }
         }
         else
@@ -139,10 +205,21 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                rb.velocity = new Vector3(0, rb.velocity.y, 0);
+                rb.velocity = Vector3.ProjectOnPlane(new Vector3(0, rb.velocity.y, 0), hit.normal);
             }
-
-            
         }
+        #endregion
+
+        #region Jump
+        if (jumpPressed && isGrounded)
+        {
+            Debug.Log("jump!");
+        }
+        #endregion
+    }
+
+    private void Jump()
+    {
+
     }
 }
