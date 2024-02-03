@@ -161,25 +161,43 @@ public class PlayerController : MonoBehaviour
         #region Raycast Checks
         //all this raycast slope stuff is getting kinda out of hand
         RaycastHit hit;
+        Vector3 movementPlane;
         if (Physics.Raycast(gameObject.transform.position, Vector3.down, out hit, playerHeight/2 + groundCheckDist, groundLayers))
         {
             isGrounded = true;
+            movementPlane = hit.normal;
 
             if (Vector3.Angle(hit.transform.up, hit.normal) > 1)
             {
                 isOnSlope = true;
             }
+            else
+            {
+                isOnSlope = false;
+            }
+        }
+        else
+        {
+            movementPlane = transform.up;
+            isGrounded = false;
+            isOnSlope = false;
         }
 
         #endregion
 
         #region Ground Movement
+        
+        Vector3 flatVelocity;
+
         if (isOnSlope)
         {
-            movementInputVector = Vector3.ProjectOnPlane(movementInputVector, hit.normal);
+            movementInputVector = Vector3.ProjectOnPlane(movementInputVector, movementPlane);
         }
 
-        Vector3 flatVelocity = Vector3.ProjectOnPlane(rb.velocity, hit.normal);
+
+        flatVelocity = Vector3.ProjectOnPlane(rb.velocity, movementPlane);
+
+        Debug.Log(flatVelocity.magnitude);
 
         if (movementInputVector.magnitude > 0.001)
         {
@@ -189,12 +207,12 @@ public class PlayerController : MonoBehaviour
 
                 if (flatVelocity.magnitude > maxSpeed)
                 {
-                    rb.velocity = Vector3.ProjectOnPlane(new Vector3((movementInputVector * maxSpeed).x, rb.velocity.y, (movementInputVector * maxSpeed).z), hit.normal);
+                    rb.velocity = new Vector3((movementInputVector * maxSpeed).x, rb.velocity.y, (movementInputVector * maxSpeed).z); //Vector3.ProjectOnPlane(new Vector3((movementInputVector * maxSpeed).x, rb.velocity.y, (movementInputVector * maxSpeed).z), movementPlane);
                 }
             }
             else
             {
-                rb.velocity = Vector3.ProjectOnPlane(new Vector3((movementInputVector * maxSpeed).x, rb.velocity.y, (movementInputVector * maxSpeed).z), hit.normal);
+                rb.velocity = new Vector3((movementInputVector * maxSpeed).x, rb.velocity.y, (movementInputVector * maxSpeed).z); //Vector3.ProjectOnPlane(new Vector3((movementInputVector * maxSpeed).x, rb.velocity.y, (movementInputVector * maxSpeed).z), movementPlane);
             }
         }
         else
@@ -205,7 +223,7 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                rb.velocity = Vector3.ProjectOnPlane(new Vector3(0, rb.velocity.y, 0), hit.normal);
+                rb.velocity = new Vector3(0, rb.velocity.y, 0); //Vector3.ProjectOnPlane(new Vector3(0, rb.velocity.y, 0), movementPlane);
             }
         }
         #endregion
