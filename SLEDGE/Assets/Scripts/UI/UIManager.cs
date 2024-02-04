@@ -2,12 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.ProBuilder;
 using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
     public float fadeDuration = 1;
     public AnimationCurve animCurve;
+    public GameObject fade;
 
     public void TransitionTo(CanvasGroup a)
     {
@@ -30,12 +32,10 @@ public class UIManager : MonoBehaviour
 
     public void roomNext()
     {
-        int nextSceneIndex = SceneManager.GetActiveScene().buildIndex + 1;
-        if (SceneManager.sceneCount > nextSceneIndex)
-        {
-            SceneManager.LoadScene(nextSceneIndex);
-        }
+        Instantiate(fade);
     }
+
+ 
 
     IEnumerator Fade(CanvasGroup a, float startAlpha, float endAlpha)
     {
