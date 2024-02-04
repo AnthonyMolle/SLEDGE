@@ -1113,7 +1113,7 @@ PrefabInstance:
     - target: {fileID: 7122105190031803588, guid: d24bab2f8ed058b4faf061c91d023433,
         type: 3}
       propertyPath: onClick.m_PersistentCalls.m_Calls.Array.size
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7122105190031803588, guid: d24bab2f8ed058b4faf061c91d023433,
         type: 3}
@@ -1122,8 +1122,38 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7122105190031803588, guid: d24bab2f8ed058b4faf061c91d023433,
         type: 3}
+      propertyPath: onClick.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7122105190031803588, guid: d24bab2f8ed058b4faf061c91d023433,
+        type: 3}
+      propertyPath: onClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 254780866}
+    - target: {fileID: 7122105190031803588, guid: d24bab2f8ed058b4faf061c91d023433,
+        type: 3}
       propertyPath: onClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7122105190031803588, guid: d24bab2f8ed058b4faf061c91d023433,
+        type: 3}
+      propertyPath: onClick.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7122105190031803588, guid: d24bab2f8ed058b4faf061c91d023433,
+        type: 3}
+      propertyPath: onClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: roomNext
+      objectReference: {fileID: 0}
+    - target: {fileID: 7122105190031803588, guid: d24bab2f8ed058b4faf061c91d023433,
+        type: 3}
+      propertyPath: onClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: UIManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 7122105190031803588, guid: d24bab2f8ed058b4faf061c91d023433,
+        type: 3}
+      propertyPath: onClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

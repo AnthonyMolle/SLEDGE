@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
@@ -24,6 +25,15 @@ public class UIManager : MonoBehaviour
         if (currentCanvas != null)
         {
             StartCoroutine(Fade(currentCanvas, 1, 0));
+        }
+    }
+
+    public void roomNext()
+    {
+        int nextSceneIndex = SceneManager.GetActiveScene().buildIndex + 1;
+        if (SceneManager.sceneCount > nextSceneIndex)
+        {
+            SceneManager.LoadScene(nextSceneIndex);
         }
     }
 
