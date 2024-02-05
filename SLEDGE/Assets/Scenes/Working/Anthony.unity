@@ -686,8 +686,12 @@ MonoBehaviour:
   airMaxSpeed: 10
   jumpForce: 5
   coyoteTime: 0.25
+  savedCoyoteTime: 0.25
+  hasCoyoteTime: 1
+  decreasingCoyoteTime: 0
+  hasJumped: 0
   playerHeight: 1
-  groundCheckDist: 1
+  groundCheckDist: 0.75
   groundLayers:
     serializedVersion: 2
     m_Bits: 4294967295
