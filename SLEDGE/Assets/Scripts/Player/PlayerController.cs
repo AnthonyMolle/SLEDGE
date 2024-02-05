@@ -52,8 +52,12 @@ public class PlayerController : MonoBehaviour
     #region Jump
     [Header("Jump")]
     bool jumpPressed = false;
-    [SerializeField] float jumpForce = 10f;
+    [SerializeField] float jumpForce = 2f;
     [SerializeField] float coyoteTime = 0.25f;
+    [SerializeField] float savedCoyoteTime = 0.25f;// THIS IS THE DEFAULT VALUE OF COYOTETIME
+    [SerializeField] bool hasCoyoteTime = true;// THIS IS THE DEFAULT VALUE OF COYOTETIME
+    [SerializeField] bool decreasingCoyoteTime = false;
+    [SerializeField] bool hasJumped = false;
     #endregion
 
     #region Raycast Checks
@@ -162,10 +166,14 @@ public class PlayerController : MonoBehaviour
         //all this raycast slope stuff is getting kinda out of hand
         RaycastHit hit;
         Vector3 movementPlane;
-        if (Physics.Raycast(gameObject.transform.position, Vector3.down, out hit, playerHeight/2 + groundCheckDist, groundLayers))
+        if (Physics.Raycast(gameObject.transform.position, Vector3.down, out hit, playerHeight/2 + groundCheckDist, groundLayers)) //if on the ground
         {
             isGrounded = true;
             movementPlane = hit.normal;
+
+            StopCoroutine(DecreaseCoyoteTime()); // Stop the coroutine that lets us have jump leinency
+            hasCoyoteTime = true; // Reset our coyote time
+            hasJumped = false; // Reset our jump tracker. 
 
             if (Vector3.Angle(hit.transform.up, hit.normal) > 1)
             {
@@ -176,11 +184,15 @@ public class PlayerController : MonoBehaviour
                 isOnSlope = false;
             }
         }
-        else
+        else // if not on the ground
         {
             movementPlane = transform.up;
             isGrounded = false;
             isOnSlope = false;
+
+            // Let the player jump until this coroutine is finished.
+            StartCoroutine(DecreaseCoyoteTime());
+
         }
 
         #endregion
@@ -229,15 +241,28 @@ public class PlayerController : MonoBehaviour
         #endregion
 
         #region Jump
-        if (jumpPressed && isGrounded)
+        if (jumpPressed && isGrounded && !hasJumped ||jumpPressed && !isGrounded && hasCoyoteTime == true && !hasJumped)
         {
             Debug.Log("jump!");
+            Jump();
         }
         #endregion
     }
 
+    private IEnumerator DecreaseCoyoteTime(){
+        if(!decreasingCoyoteTime && hasCoyoteTime) // if we have coyote time and we aren't decreasing it yet
+        {
+            decreasingCoyoteTime = true; // let the coroutine know we are decreasing coyote time. this makes the coroutine only run when needed.
+            yield return new WaitForSeconds(coyoteTime); //wait for the desired amount of coyote time desired.
+            hasCoyoteTime = false; // after waiting for our window, let the engine know we missed our window
+            decreasingCoyoteTime = false; // let the engine know the coroutine is done.
+        }
+    }
+
     private void Jump()
     {
-
+        rb.velocity = new Vector3(rb.velocity.x,0,rb.velocity.z); //remove our falling velocity so our jump doesnt have to fight gravity.
+        rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse); // add a force upward
+        hasJumped = true; // let the engine know we have jumped.
     }
 }
