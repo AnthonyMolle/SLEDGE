@@ -15,7 +15,7 @@ public class SceneTransition : MonoBehaviour
 
         int nextSceneIndex = sceneIndex + 1;
 
-        if (SceneManager.sceneCount > nextSceneIndex)
+        if (SceneManager.sceneCount >= nextSceneIndex)
         {
             StartCoroutine(LoadLevel(nextSceneIndex));
         }
