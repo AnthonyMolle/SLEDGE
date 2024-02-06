@@ -40,6 +40,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float decelerationRate = 10f;
     [SerializeField] float maxSpeed = 100f;
     [SerializeField] int maxSlopeAngle = 45;
+    bool stuckToWall = false;
     #endregion
 
     #region Air Movement
@@ -47,11 +48,17 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float airAccelerationRate = 10f;
     [SerializeField] float airDecelerationRate = 10f;
     [SerializeField] float airMaxSpeed = 100f;
+    [SerializeField] float forcedFallingSpeed = 11f; //speed the player is forced to fall when they are sticking to a wall
+
+    [SerializeField] float naturalAdditionalFallingSpeed = 4f; //natural rate our player will fall after the apex of their falling height.
     #endregion
 
     #region Jump
     [Header("Jump")]
     bool jumpPressed = false;
+    bool jumpHoldChecking = false;
+    bool mustReleaseJump = false;
+    [SerializeField] float jumpHoldCheckWindow = 0.25f;
     [SerializeField] float jumpForce = 2f;
     [SerializeField] float coyoteTime = 0.25f;
     [SerializeField] float savedCoyoteTime = 0.25f;// THIS IS THE DEFAULT VALUE OF COYOTETIME
@@ -91,6 +98,23 @@ public class PlayerController : MonoBehaviour
         HandleMovement();
     }
 
+    private void OnCollisionEnter(Collision other) {
+        if (!isGrounded)//if were touching a collider while not grounded
+        {
+            rb.velocity = new Vector3(0,rb.velocity.y,0); //remove any current velocity because we hit a wall.
+        }
+    }
+
+    private void OnCollisionStay(Collision other) 
+    {
+        if (!isGrounded)//if were touching a collider while not grounded
+        {
+            // rb.AddForce(new Vector3(0,-forcedFallingSpeed * Time.deltaTime,0));   //this is probably more precise.
+            rb.position += new Vector3(0,-forcedFallingSpeed * Time.deltaTime,0); // force the player to slide down the wall.
+        }
+    }
+
+
     private void HandleLookRotation()
     {
         //rotating player body left and right
@@ -109,20 +133,33 @@ public class PlayerController : MonoBehaviour
         float mouseY = Input.GetAxisRaw("Mouse Y") * Time.deltaTime * mouseSensitivity;
 
         mouseInputVector = new Vector2(mouseX, mouseY);
-
-        float horizontalInput = Input.GetAxisRaw("Horizontal");
-        float verticalInput = Input.GetAxisRaw("Vertical");
+        
+        float horizontalInput = Input.GetAxisRaw("Horizontal");;
+        float verticalInput = Input.GetAxisRaw("Vertical");;
 
         movementInputVector = ((horizontalInput * transform.right) + (verticalInput * transform.forward)).normalized;
 
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space))//If the player has pressed the space key...
         {
-            jumpPressed = true;
+            if(!mustReleaseJump) //and they haven't been holding the button down...
+            {
+                jumpPressed = true; // let the engine know jump was pressed
+            }
+            
+        }
+        if (Input.GetKey(KeyCode.Space)) //If the player might be holding the jump button down...
+        {
+            StartCoroutine(JumpHoldTimer());//Start a coroutine to check if they have been holding the button.
         }
 
-        if (Input.GetKeyUp(KeyCode.Space))
+        if (Input.GetKeyUp(KeyCode.Space)) //if the player releases the jump button...
         {
+            StopCoroutine(JumpHoldTimer()); //stop checking to see if they are holding it.
+
+            // reset these variable to how they were before they pressed the jump button.
             jumpPressed = false;
+            mustReleaseJump = false;
+            jumpHoldChecking = false;
         }
 
         //all upcoming code could be put somewhere way better or in a function but its cool ok lol
@@ -240,6 +277,16 @@ public class PlayerController : MonoBehaviour
         }
         #endregion
 
+        #region Air movement
+        if(!isGrounded) // if we're in the air
+        {
+            if(rb.velocity.y <= 0)// if we are at the apex of our air height
+            {
+                rb.AddForce(new Vector3(0,-naturalAdditionalFallingSpeed,0));
+            }
+        }
+        #endregion
+
         #region Jump
         if (jumpPressed && isGrounded && !hasJumped ||jumpPressed && !isGrounded && hasCoyoteTime == true && !hasJumped)
         {
@@ -256,6 +303,18 @@ public class PlayerController : MonoBehaviour
             yield return new WaitForSeconds(coyoteTime); //wait for the desired amount of coyote time desired.
             hasCoyoteTime = false; // after waiting for our window, let the engine know we missed our window
             decreasingCoyoteTime = false; // let the engine know the coroutine is done.
+        }
+    }
+
+    private IEnumerator JumpHoldTimer(){ //this coroutine checks to see if the player has been holding the jump button.
+        if(!jumpHoldChecking && jumpPressed == true) //if the coroutine isnt already running, and the player is pressing the jump button.
+        {
+            jumpHoldChecking = true; //let the engine know we are running the coroutine
+            yield return new WaitForSeconds(jumpHoldCheckWindow); //check if the player is holding jump for this long.
+            //the following variable will be set given the player has not let go of the jump key.
+            mustReleaseJump = true; // let the engine know they are holding jump.
+            jumpPressed = false; // tell the engine they arent trying to jump.
+            jumpHoldChecking = false; // stop running current instance of the coruoutine.
         }
     }
 
