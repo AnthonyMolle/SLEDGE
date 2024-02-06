@@ -7,29 +7,75 @@ using UnityEngine.PlayerLoop;
 
 public class PlayerController : MonoBehaviour
 {
+    #region Character Component References
     [Header("Character Component References")]
     Rigidbody rb;
+    #endregion
 
+    #region Camera
     [Header("Camera")]
     [SerializeField] GameObject cameraObject;
     [SerializeField] GameObject cameraHolder;
     [SerializeField] float camRotateAmountLR = 10f;
     [SerializeField] float camRotateAmountFB = 20f;
     [SerializeField] float camRotateSpeed = 17f;
+    #endregion
 
+    #region Input
     [Header("Input")]
     Vector3 movementInputVector;
     Vector2 mouseInputVector;
     float xRotation;
     float yRotation;
+    #endregion
 
+    #region Player Settings
     [Header("Player Settings")]
     [SerializeField] float mouseSensitivity = 1;
+    #endregion
 
+    #region Movement
     [Header("Movement")]
     [SerializeField] float accelerationRate = 10f;
     [SerializeField] float decelerationRate = 10f;
     [SerializeField] float maxSpeed = 100f;
+    [SerializeField] int maxSlopeAngle = 45;
+    bool stuckToWall = false;
+    #endregion
+
+    #region Air Movement
+    [Header("Air Movement")]
+    [SerializeField] float airAccelerationRate = 10f;
+    [SerializeField] float airDecelerationRate = 10f;
+    [SerializeField] float airMaxSpeed = 100f;
+    [SerializeField] float forcedFallingSpeed = 11f; //speed the player is forced to fall when they are sticking to a wall
+
+    [SerializeField] float naturalAdditionalFallingSpeed = 4f; //natural rate our player will fall after the apex of their falling height.
+    #endregion
+
+    #region Jump
+    [Header("Jump")]
+    bool jumpPressed = false;
+    bool jumpHoldChecking = false;
+    bool mustReleaseJump = false;
+    [SerializeField] float jumpHoldCheckWindow = 0.25f;
+    [SerializeField] float jumpForce = 2f;
+    [SerializeField] float coyoteTime = 0.25f;
+    [SerializeField] float savedCoyoteTime = 0.25f;// THIS IS THE DEFAULT VALUE OF COYOTETIME
+    [SerializeField] bool hasCoyoteTime = true;// THIS IS THE DEFAULT VALUE OF COYOTETIME
+    [SerializeField] bool decreasingCoyoteTime = false;
+    [SerializeField] bool hasJumped = false;
+    #endregion
+
+    #region Raycast Checks
+    [Header("Raycast Checks")]
+    bool isGrounded = false;
+    bool isOnSlope = false;
+    [SerializeField] float playerHeight = 1f;
+    [SerializeField] float groundCheckDist = 0.2f;
+    //[SerializeField] float slopeCheckDist = 0.3f;
+    [SerializeField] LayerMask groundLayers;
+    #endregion
 
     void Start()
     {
@@ -52,6 +98,23 @@ public class PlayerController : MonoBehaviour
         HandleMovement();
     }
 
+    private void OnCollisionEnter(Collision other) {
+        if (!isGrounded)//if were touching a collider while not grounded
+        {
+            rb.velocity = new Vector3(0,rb.velocity.y,0); //remove any current velocity because we hit a wall.
+        }
+    }
+
+    // private void OnCollisionStay(Collision other) 
+    // {
+    //     if (!isGrounded && rb.velocity.y <= 0)//if were touching a collider while not grounded
+    //     {
+    //         // rb.AddForce(new Vector3(0,-forcedFallingSpeed * Time.deltaTime,0));   //this is probably more precise.
+    //         rb.position += new Vector3(0,-forcedFallingSpeed * Time.deltaTime,0); // force the player to slide down the wall.
+    //     }
+    // }
+
+
     private void HandleLookRotation()
     {
         //rotating player body left and right
@@ -70,11 +133,34 @@ public class PlayerController : MonoBehaviour
         float mouseY = Input.GetAxisRaw("Mouse Y") * Time.deltaTime * mouseSensitivity;
 
         mouseInputVector = new Vector2(mouseX, mouseY);
-
-        float horizontalInput = Input.GetAxisRaw("Horizontal");
-        float verticalInput = Input.GetAxisRaw("Vertical");
+        
+        float horizontalInput = Input.GetAxisRaw("Horizontal");;
+        float verticalInput = Input.GetAxisRaw("Vertical");;
 
         movementInputVector = ((horizontalInput * transform.right) + (verticalInput * transform.forward)).normalized;
+
+        if (Input.GetKeyDown(KeyCode.Space))//If the player has pressed the space key...
+        {
+            if(!mustReleaseJump) //and they haven't been holding the button down...
+            {
+                jumpPressed = true; // let the engine know jump was pressed
+            }
+            
+        }
+        if (Input.GetKey(KeyCode.Space)) //If the player might be holding the jump button down...
+        {
+            StartCoroutine(JumpHoldTimer());//Start a coroutine to check if they have been holding the button.
+        }
+
+        if (Input.GetKeyUp(KeyCode.Space)) //if the player releases the jump button...
+        {
+            StopCoroutine(JumpHoldTimer()); //stop checking to see if they are holding it.
+
+            // reset these variable to how they were before they pressed the jump button.
+            jumpPressed = false;
+            mustReleaseJump = false;
+            jumpHoldChecking = false;
+        }
 
         //all upcoming code could be put somewhere way better or in a function but its cool ok lol
         float xCamRotate;
@@ -113,33 +199,129 @@ public class PlayerController : MonoBehaviour
 
     private void HandleMovement()
     {
-        Vector3 flatVelocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
-
-        if (movementInputVector.magnitude > 0.001)
+        #region Raycast Checks
+        //all this raycast slope stuff is getting kinda out of hand
+        RaycastHit hit;
+        Vector3 movementPlane;
+        if (Physics.Raycast(gameObject.transform.position, Vector3.down, out hit, playerHeight/2 + groundCheckDist, groundLayers)) //if on the ground
         {
-            if ((movementInputVector * accelerationRate).magnitude + rb.velocity.magnitude < maxSpeed)
+            isGrounded = true;
+            movementPlane = hit.normal;
+
+            StopCoroutine(DecreaseCoyoteTime()); // Stop the coroutine that lets us have jump leinency
+            hasCoyoteTime = true; // Reset our coyote time
+            hasJumped = false; // Reset our jump tracker. 
+
+            if (Vector3.Angle(hit.transform.up, hit.normal) > 1)
             {
-                rb.AddForce(movementInputVector * accelerationRate);
+                isOnSlope = true;
             }
             else
             {
-                rb.velocity = new Vector3((movementInputVector * maxSpeed).x, rb.velocity.y, (movementInputVector * maxSpeed).z);
+                isOnSlope = false;
+            }
+        }
+        else // if not on the ground
+        {
+            movementPlane = transform.up;
+            isGrounded = false;
+            isOnSlope = false;
+
+            // Let the player jump until this coroutine is finished.
+            StartCoroutine(DecreaseCoyoteTime());
+
+        }
+
+        #endregion
+
+        #region Ground Movement
+        
+        Vector3 flatVelocity;
+
+        if (isOnSlope)
+        {
+            movementInputVector = Vector3.ProjectOnPlane(movementInputVector, movementPlane);
+        }
+
+
+        flatVelocity = Vector3.ProjectOnPlane(rb.velocity, movementPlane);
+
+        Debug.Log(flatVelocity.magnitude);
+
+        if (movementInputVector.magnitude > 0.001)
+        {
+            if (flatVelocity.magnitude < maxSpeed)
+            {
+                rb.AddForce(movementInputVector * accelerationRate);
+
+                if (flatVelocity.magnitude > maxSpeed)
+                {
+                    rb.velocity = new Vector3((movementInputVector * maxSpeed).x, rb.velocity.y, (movementInputVector * maxSpeed).z); //Vector3.ProjectOnPlane(new Vector3((movementInputVector * maxSpeed).x, rb.velocity.y, (movementInputVector * maxSpeed).z), movementPlane);
+                }
+            }
+            else
+            {
+                rb.velocity = new Vector3((movementInputVector * maxSpeed).x, rb.velocity.y, (movementInputVector * maxSpeed).z); //Vector3.ProjectOnPlane(new Vector3((movementInputVector * maxSpeed).x, rb.velocity.y, (movementInputVector * maxSpeed).z), movementPlane);
             }
         }
         else
         {
-            if (flatVelocity.magnitude > 0)
+            if (flatVelocity.magnitude > 0.01)
             {
-                if (flatVelocity.magnitude - (flatVelocity * decelerationRate).magnitude > 0)
-                {
-                    rb.AddForce(-flatVelocity * decelerationRate);
-                }
-                else
-                {
-                    rb.velocity = new Vector3(0, rb.velocity.y, 0);
-                }
-
+                rb.AddForce(-flatVelocity * decelerationRate);
+            }
+            else
+            {
+                rb.velocity = new Vector3(0, rb.velocity.y, 0); //Vector3.ProjectOnPlane(new Vector3(0, rb.velocity.y, 0), movementPlane);
             }
         }
+        #endregion
+
+        #region Air movement
+        if(!isGrounded) // if we're in the air
+        {
+            if(rb.velocity.y <= 0)// if we are at the apex of our air height
+            {
+                rb.AddForce(new Vector3(0,-naturalAdditionalFallingSpeed,0));
+            }
+        }
+        #endregion
+
+        #region Jump
+        if (jumpPressed && isGrounded && !hasJumped ||jumpPressed && !isGrounded && hasCoyoteTime == true && !hasJumped)
+        {
+            Debug.Log("jump!");
+            Jump();
+        }
+        #endregion
+    }
+
+    private IEnumerator DecreaseCoyoteTime(){
+        if(!decreasingCoyoteTime && hasCoyoteTime) // if we have coyote time and we aren't decreasing it yet
+        {
+            decreasingCoyoteTime = true; // let the coroutine know we are decreasing coyote time. this makes the coroutine only run when needed.
+            yield return new WaitForSeconds(coyoteTime); //wait for the desired amount of coyote time desired.
+            hasCoyoteTime = false; // after waiting for our window, let the engine know we missed our window
+            decreasingCoyoteTime = false; // let the engine know the coroutine is done.
+        }
+    }
+
+    private IEnumerator JumpHoldTimer(){ //this coroutine checks to see if the player has been holding the jump button.
+        if(!jumpHoldChecking && jumpPressed == true) //if the coroutine isnt already running, and the player is pressing the jump button.
+        {
+            jumpHoldChecking = true; //let the engine know we are running the coroutine
+            yield return new WaitForSeconds(jumpHoldCheckWindow); //check if the player is holding jump for this long.
+            //the following variable will be set given the player has not let go of the jump key.
+            mustReleaseJump = true; // let the engine know they are holding jump.
+            jumpPressed = false; // tell the engine they arent trying to jump.
+            jumpHoldChecking = false; // stop running current instance of the coruoutine.
+        }
+    }
+
+    private void Jump()
+    {
+        rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z); //remove our falling velocity so our jump doesnt have to fight gravity.
+        rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse); // add a force upward
+        hasJumped = true; // let the engine know we have jumped.
     }
 }
