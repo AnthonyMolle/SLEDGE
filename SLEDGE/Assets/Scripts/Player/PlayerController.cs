@@ -107,7 +107,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnCollisionStay(Collision other) 
     {
-        if (!isGrounded)//if were touching a collider while not grounded
+        if (!isGrounded && rb.velocity.y <= 0)//if were touching a collider while not grounded
         {
             // rb.AddForce(new Vector3(0,-forcedFallingSpeed * Time.deltaTime,0));   //this is probably more precise.
             rb.position += new Vector3(0,-forcedFallingSpeed * Time.deltaTime,0); // force the player to slide down the wall.
