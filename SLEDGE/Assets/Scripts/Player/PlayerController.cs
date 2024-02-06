@@ -41,6 +41,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float maxSpeed = 100f;
     [SerializeField] int maxSlopeAngle = 45;
     bool stuckToWall = false;
+    bool isChangingDirection = false;
     #endregion
 
     #region Air Movement
@@ -119,12 +120,12 @@ public class PlayerController : MonoBehaviour
     {
         //rotating player body left and right
         yRotation += mouseInputVector.x;
-        transform.rotation = Quaternion.Euler(0, yRotation, 0);
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(0, yRotation, 0), 20);
 
         //rotating camera up and down
         xRotation -= mouseInputVector.y;
         xRotation = Mathf.Clamp(xRotation, -90f, 90f);
-        cameraObject.transform.localRotation = Quaternion.Euler(xRotation, 0, 0);
+        cameraObject.transform.localRotation = Quaternion.RotateTowards(cameraObject.transform.localRotation, Quaternion.Euler(xRotation, 0, 0), 20);
     }
 
     private void HandleInput()
@@ -137,7 +138,14 @@ public class PlayerController : MonoBehaviour
         float horizontalInput = Input.GetAxisRaw("Horizontal");;
         float verticalInput = Input.GetAxisRaw("Vertical");;
 
+        Vector3 prevMovementVector = movementInputVector;
         movementInputVector = ((horizontalInput * transform.right) + (verticalInput * transform.forward)).normalized;
+
+        if (prevMovementVector != movementInputVector)
+        {
+            isChangingDirection = true;
+        }
+        
 
         if (Input.GetKeyDown(KeyCode.Space))//If the player has pressed the space key...
         {
@@ -243,46 +251,76 @@ public class PlayerController : MonoBehaviour
             movementInputVector = Vector3.ProjectOnPlane(movementInputVector, movementPlane);
         }
 
-
         flatVelocity = Vector3.ProjectOnPlane(rb.velocity, movementPlane);
 
-        Debug.Log(flatVelocity.magnitude);
-
-        if (movementInputVector.magnitude > 0.001)
+        if (isGrounded)
         {
-            if (flatVelocity.magnitude < maxSpeed)
+            if (movementInputVector.magnitude > 0.001)
             {
-                rb.AddForce(movementInputVector * accelerationRate);
+                if (flatVelocity.magnitude < maxSpeed || flatVelocity.magnitude >= maxSpeed && isChangingDirection)
+                {
+                    isChangingDirection = false;
+                    rb.AddForce(movementInputVector * accelerationRate);
 
-                if (flatVelocity.magnitude > maxSpeed)
+                    if (flatVelocity.magnitude > maxSpeed)
+                    {
+                        rb.velocity = new Vector3((movementInputVector * maxSpeed).x, rb.velocity.y, (movementInputVector * maxSpeed).z); //Vector3.ProjectOnPlane(new Vector3((movementInputVector * maxSpeed).x, rb.velocity.y, (movementInputVector * maxSpeed).z), movementPlane);
+                    }
+                }
+                else
                 {
                     rb.velocity = new Vector3((movementInputVector * maxSpeed).x, rb.velocity.y, (movementInputVector * maxSpeed).z); //Vector3.ProjectOnPlane(new Vector3((movementInputVector * maxSpeed).x, rb.velocity.y, (movementInputVector * maxSpeed).z), movementPlane);
                 }
             }
             else
             {
-                rb.velocity = new Vector3((movementInputVector * maxSpeed).x, rb.velocity.y, (movementInputVector * maxSpeed).z); //Vector3.ProjectOnPlane(new Vector3((movementInputVector * maxSpeed).x, rb.velocity.y, (movementInputVector * maxSpeed).z), movementPlane);
-            }
-        }
-        else
-        {
-            if (flatVelocity.magnitude > 0.01)
-            {
-                rb.AddForce(-flatVelocity * decelerationRate);
-            }
-            else
-            {
-                rb.velocity = new Vector3(0, rb.velocity.y, 0); //Vector3.ProjectOnPlane(new Vector3(0, rb.velocity.y, 0), movementPlane);
+                if (flatVelocity.magnitude > 0.01)
+                {
+                    rb.AddForce(-flatVelocity * decelerationRate);
+                }
+                else
+                {
+                    rb.velocity = new Vector3(0, rb.velocity.y, 0); //Vector3.ProjectOnPlane(new Vector3(0, rb.velocity.y, 0), movementPlane);
+                }
             }
         }
         #endregion
 
         #region Air movement
-        if(!isGrounded) // if we're in the air
+        else // if we're in the air
         {
             if(rb.velocity.y <= 0)// if we are at the apex of our air height
             {
-                rb.AddForce(new Vector3(0,-naturalAdditionalFallingSpeed,0));
+                rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
+            }
+
+            if (movementInputVector.magnitude > 0.001)
+            {
+                if (flatVelocity.magnitude < airMaxSpeed || flatVelocity.magnitude >= airMaxSpeed && isChangingDirection)
+                {
+                    isChangingDirection = false;
+                    rb.AddForce(movementInputVector * airAccelerationRate);
+
+                    if (flatVelocity.magnitude > airMaxSpeed)
+                    {
+                        rb.velocity = new Vector3((movementInputVector * airMaxSpeed).x, rb.velocity.y, (movementInputVector * airMaxSpeed).z); //Vector3.ProjectOnPlane(new Vector3((movementInputVector * maxSpeed).x, rb.velocity.y, (movementInputVector * maxSpeed).z), movementPlane);
+                    }
+                }
+                else
+                {
+                    rb.velocity = new Vector3((movementInputVector * airMaxSpeed).x, rb.velocity.y, (movementInputVector * airMaxSpeed).z); //Vector3.ProjectOnPlane(new Vector3((movementInputVector * maxSpeed).x, rb.velocity.y, (movementInputVector * maxSpeed).z), movementPlane);
+                }
+            }
+            else
+            {
+                if (flatVelocity.magnitude > 0.01)
+                {
+                    rb.AddForce(-flatVelocity * airDecelerationRate);
+                }
+                else
+                {
+                    rb.velocity = new Vector3(0, rb.velocity.y, 0); //Vector3.ProjectOnPlane(new Vector3(0, rb.velocity.y, 0), movementPlane);
+                }
             }
         }
         #endregion
