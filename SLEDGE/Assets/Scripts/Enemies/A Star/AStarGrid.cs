@@ -1,0 +1,93 @@
+using System;
+using Unity.Mathematics;
+using UnityEditor.Experimental.GraphView;
+using UnityEngine;
+
+// Script reference: https://www.youtube.com/watch?v=nhiFx28e7JY
+
+public class AStarGrid : MonoBehaviour
+{
+    public Transform player;
+    public LayerMask unwalkableMask;
+    public Vector3 gridWorldSize; // Center point of grid
+    public float nodeRadius; // How much space each node covers
+    AStarNode[,,] grid;
+
+    float nodeDiameter;
+    int gridSizeX, gridSizeY, gridSizeZ;
+
+    private void Start()
+    {
+        nodeDiameter = nodeRadius * 2;
+        gridSizeX = Mathf.RoundToInt(gridWorldSize.x / nodeDiameter);
+        gridSizeY = Mathf.RoundToInt(gridWorldSize.y / nodeDiameter);
+        gridSizeZ = Mathf.RoundToInt(gridWorldSize.z / nodeDiameter);
+        CreateGrid();
+    }
+
+    void CreateGrid()
+    {
+        grid = new AStarNode[gridSizeX, gridSizeY, gridSizeZ];
+        Vector3 worldBottomLeft = transform.position
+            - Vector3.right * gridWorldSize.x / 2
+            - Vector3.up * gridWorldSize.y / 2
+            - Vector3.forward * gridWorldSize.z / 2;
+
+        for (int x = 0; x < gridSizeX; x++)
+        {
+            for(int y = 0; y < gridSizeY; y++)
+            {
+                for(int z = 0; z < gridSizeZ; z++)
+                {
+                    Vector3 worldPoint = worldBottomLeft
+                        + Vector3.right * (x * nodeDiameter + nodeRadius)
+                        + Vector3.up * (y * nodeDiameter + nodeRadius)
+                        + Vector3.forward * (z * nodeDiameter + nodeRadius);
+                    bool walkable = !(Physics.CheckSphere(worldPoint, nodeRadius, unwalkableMask));
+
+                    grid[x, y, z] = new AStarNode(walkable, worldPoint);
+                }
+            }
+        }
+    }
+
+    public AStarNode NodeFromWorldPoint(Vector3 worldPos)
+    {
+        float precentX = (worldPos.x + gridWorldSize.x / 2) / gridWorldSize.x;
+        float precentY = (worldPos.y + gridWorldSize.y / 2) / gridWorldSize.y;
+        float precentZ = (worldPos.z + gridWorldSize.z / 2) / gridWorldSize.z;
+        precentX = Mathf.Clamp01(precentX);
+        precentY = Mathf.Clamp01(precentY);
+        precentZ = Mathf.Clamp01(precentZ);
+
+        int x = Mathf.RoundToInt((gridSizeX - 1) * precentX);
+        int y = Mathf.RoundToInt((gridSizeY - 1) * precentY);
+        int z = Mathf.RoundToInt((gridSizeZ - 1) * precentZ);
+
+        return grid[x, y, z];
+
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawWireCube(transform.position, gridWorldSize);
+
+        if(grid != null)
+        {
+            AStarNode playerNode = NodeFromWorldPoint(player.position - transform.position);
+
+            foreach(AStarNode n in grid)
+            {
+                Gizmos.color = Color.red;
+
+                if(playerNode == n)
+                {
+                    Gizmos.color = Color.cyan;
+                    Gizmos.DrawCube(n.worldPosition, Vector3.one * (nodeDiameter - 0.1f));
+                }
+                if (!n.walkable) Gizmos.DrawCube(n.worldPosition, Vector3.one * (nodeDiameter - 0.1f));
+            }
+        }
+    }
+
+}
