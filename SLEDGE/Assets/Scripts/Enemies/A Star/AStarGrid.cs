@@ -1,6 +1,7 @@
+using JetBrains.Annotations;
 using System;
+using System.Collections.Generic;
 using Unity.Mathematics;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 // Script reference: https://www.youtube.com/watch?v=nhiFx28e7JY
@@ -45,7 +46,7 @@ public class AStarGrid : MonoBehaviour
                         + Vector3.forward * (z * nodeDiameter + nodeRadius);
                     bool walkable = !(Physics.CheckSphere(worldPoint, nodeRadius, unwalkableMask));
 
-                    grid[x, y, z] = new AStarNode(walkable, worldPoint);
+                    grid[x, y, z] = new AStarNode(walkable, worldPoint, x,y,z);
                 }
             }
         }
@@ -66,6 +67,35 @@ public class AStarGrid : MonoBehaviour
 
         return grid[x, y, z];
 
+    }
+
+    public List<AStarNode> GetNeighbours(AStarNode node)
+    {
+        List<AStarNode> neighbours = new List<AStarNode>();
+
+        for(int x = -1; x <= 1; x++)
+        {
+            for (int y = -1; y <= 1; x++)
+            {
+                for (int z = -1; z <= 1; x++)
+                {
+                    if (x == 0 && y == 0 && z == 0) continue;
+
+                    int checkPos_x = node.gridPos_x + x;
+                    int checkPos_y = node.gridPos_y + y;
+                    int checkPos_z = node.gridPos_z + z;
+
+                    if(checkPos_x >= 0 && checkPos_x < gridSizeX
+                        && checkPos_y >= 0 && checkPos_y < gridSizeY
+                        && checkPos_z >= 0 && checkPos_z < gridSizeZ)
+                    {
+                        neighbours.Add(grid[checkPos_x,checkPos_y,checkPos_z]);
+                    }
+                }
+            }
+        }
+
+        return neighbours;
     }
 
     private void OnDrawGizmos()
