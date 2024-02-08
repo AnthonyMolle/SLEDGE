@@ -1,12 +1,13 @@
-using JetBrains.Annotations;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
-using UnityEditor.Rendering;
 using UnityEngine;
+using System.Diagnostics;
+using System;
+using NaughtyAttributes;
+using UnityEngine.UIElements;
 
 public class AStarPathfinding : MonoBehaviour
 {
+    public Transform seeker, target;
 
     AStarGrid grid;
 
@@ -15,56 +16,79 @@ public class AStarPathfinding : MonoBehaviour
         grid = GetComponent<AStarGrid>();
     }
 
+    [Button]
+    public void StartPathFinding()
+    {
+        FindPath(seeker.position, target.position);
+    }
+
     void FindPath(Vector3 startPos, Vector3 targetPos)
     {
+        Stopwatch sw = new Stopwatch();
+        sw.Start();
+
         AStarNode startNode = grid.NodeFromWorldPoint(startPos);
         AStarNode targetNode = grid.NodeFromWorldPoint(targetPos);
 
-        List<AStarNode> openSet = new List<AStarNode>();
+        AStarHeap<AStarNode> openSet = new AStarHeap<AStarNode>(grid.MaxSize);
         HashSet<AStarNode> closedSet = new HashSet<AStarNode>();
         openSet.Add(startNode);
 
         while (openSet.Count > 0)
         {
-            AStarNode currentNode = openSet[0];
-            for (int i = 1; i < openSet.Count; i++)
+            AStarNode currentNode = openSet.RemoveFirst();
+            closedSet.Add(currentNode);
+
+            if (currentNode == targetNode) // Path Found
             {
-                if (openSet[i].fCost < currentNode.fCost
-                    || openSet[i].fCost == currentNode.fCost
-                    && openSet[i].hCost < currentNode.hCost)
+                sw.Stop();
+                print("Path found: " + sw.ElapsedMilliseconds + "ms");
+                // Retrace our path found
+                RetracePath(startNode, targetNode);
+                return;
+            }
+
+            foreach (AStarNode neighbour in grid.GetNeighbours(currentNode))
+            {
+                if (!neighbour.walkable || closedSet.Contains(neighbour)) continue;
+
+                int newMovementCostToNeighbour = currentNode.gCost + GetDistance(currentNode, neighbour);
+
+                if(newMovementCostToNeighbour < neighbour.gCost || !openSet.Contains(neighbour))
                 {
-                    currentNode = openSet[i];
-                }
+                    neighbour.gCost = newMovementCostToNeighbour;
+                    neighbour.hCost = GetDistance(neighbour, targetNode);
+                    neighbour.parent = currentNode;
 
-                openSet.Remove(currentNode);
-                closedSet.Add(currentNode);
-
-                if (currentNode == targetNode) // Path Found
-                {
-                    return;
-                }
-
-                foreach (AStarNode neighbour in grid.GetNeighbours(currentNode))
-                {
-                    if (!neighbour.walkable || closedSet.Contains(neighbour)) continue;
-
-                    int newMovementCostToNeighbour = currentNode.gCost + GetDistance(currentNode,neighbour)
-
-                    if(newMovementCostToNeighbour < neighbour.gCost || !openSet.Contains(neighbour))
+                    if (!openSet.Contains(neighbour))
                     {
-                        neighbour.gCost = newMovementCostToNeighbour;
-                        neighbour.hCost = GetDistance(neighbour, targetNode);
-                        
+                        openSet.Add(neighbour);
                     }
-
                 }
             }
         }
     }
 
+    void RetracePath(AStarNode startNode, AStarNode endNode)
+    {
+        List<AStarNode> path = new List<AStarNode> ();
+
+        AStarNode currentNode = endNode;
+
+        while(currentNode != startNode)
+        {
+            path.Add(currentNode);
+            currentNode = currentNode.parent;
+        }
+
+        path.Reverse();
+
+        print(path.Count);
+        grid.path = path;
+    }
+
     int GetDistance(AStarNode a, AStarNode b)
     {
-        // Create huristic of my own
         return Mathf.RoundToInt(Vector3.Distance(a.worldPosition, b.worldPosition));
     }
 }

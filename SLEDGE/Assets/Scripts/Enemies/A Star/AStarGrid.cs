@@ -8,6 +8,7 @@ using UnityEngine;
 
 public class AStarGrid : MonoBehaviour
 {
+    public bool onlyDisplayPathGizmos = true;
     public Transform player;
     public LayerMask unwalkableMask;
     public Vector3 gridWorldSize; // Center point of grid
@@ -24,6 +25,14 @@ public class AStarGrid : MonoBehaviour
         gridSizeY = Mathf.RoundToInt(gridWorldSize.y / nodeDiameter);
         gridSizeZ = Mathf.RoundToInt(gridWorldSize.z / nodeDiameter);
         CreateGrid();
+    }
+
+    public int MaxSize
+    {
+        get
+        {
+            return gridSizeX * gridSizeY * gridSizeZ;
+        }
     }
 
     void CreateGrid()
@@ -54,6 +63,8 @@ public class AStarGrid : MonoBehaviour
 
     public AStarNode NodeFromWorldPoint(Vector3 worldPos)
     {
+        worldPos = worldPos - transform.position;
+
         float precentX = (worldPos.x + gridWorldSize.x / 2) / gridWorldSize.x;
         float precentY = (worldPos.y + gridWorldSize.y / 2) / gridWorldSize.y;
         float precentZ = (worldPos.z + gridWorldSize.z / 2) / gridWorldSize.z;
@@ -75,9 +86,9 @@ public class AStarGrid : MonoBehaviour
 
         for(int x = -1; x <= 1; x++)
         {
-            for (int y = -1; y <= 1; x++)
+            for (int y = -1; y <= 1; y++)
             {
-                for (int z = -1; z <= 1; x++)
+                for (int z = -1; z <= 1; z++)
                 {
                     if (x == 0 && y == 0 && z == 0) continue;
 
@@ -98,13 +109,28 @@ public class AStarGrid : MonoBehaviour
         return neighbours;
     }
 
+    public List<AStarNode> path;
     private void OnDrawGizmos()
     {
+
+        if (onlyDisplayPathGizmos)
+        {
+            if(path != null)
+            {
+                foreach (AStarNode n in path)
+                {
+                    Gizmos.color = Color.black;
+                    Gizmos.DrawCube(n.worldPosition, Vector3.one * (nodeDiameter - 0.1f));
+                }
+            }
+            return;
+        }
+
         Gizmos.DrawWireCube(transform.position, gridWorldSize);
 
         if(grid != null)
         {
-            AStarNode playerNode = NodeFromWorldPoint(player.position - transform.position);
+            AStarNode playerNode = NodeFromWorldPoint(player.position);
 
             foreach(AStarNode n in grid)
             {
@@ -114,6 +140,15 @@ public class AStarGrid : MonoBehaviour
                 {
                     Gizmos.color = Color.cyan;
                     Gizmos.DrawCube(n.worldPosition, Vector3.one * (nodeDiameter - 0.1f));
+                }
+
+                if(path != null)
+                {
+                    if (path.Contains(n))
+                    {
+                        Gizmos.color = Color.black;
+                        Gizmos.DrawCube(n.worldPosition, Vector3.one * (nodeDiameter - 0.1f));
+                    }
                 }
                 if (!n.walkable) Gizmos.DrawCube(n.worldPosition, Vector3.one * (nodeDiameter - 0.1f));
             }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
-public class AStarNode
+public class AStarNode : IHeapItem<AStarNode>
 {
     public bool walkable;
     public Vector3 worldPosition;
@@ -13,6 +13,8 @@ public class AStarNode
 
     public int gCost;
     public int hCost;
+    public AStarNode parent;
+    int heapIndex;
 
     public AStarNode(bool walkable, Vector3 worldPos, int gridPos_x, int gridPos_y, int gridPos_z)
     {
@@ -28,5 +30,28 @@ public class AStarNode
         {
             return gCost + hCost;
         }
+    }
+
+    public int HeapIndex
+    {
+        get
+        {
+            return heapIndex;
+        }
+        set
+        {
+            heapIndex = value;
+        }
+    }
+
+    public int CompareTo(AStarNode nodeToCompare)
+    {
+        int compare = fCost.CompareTo(nodeToCompare.fCost);
+        if(compare == 0)
+        {
+            compare = hCost.CompareTo(nodeToCompare.hCost);
+        }
+
+        return -compare;
     }
 }
