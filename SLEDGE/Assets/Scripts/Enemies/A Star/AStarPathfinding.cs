@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Diagnostics;
-using System;
 using NaughtyAttributes;
 using UnityEngine.UIElements;
 
@@ -83,7 +82,6 @@ public class AStarPathfinding : MonoBehaviour
 
         path.Reverse();
 
-        print(path.Count);
         grid.path = path;
     }
 

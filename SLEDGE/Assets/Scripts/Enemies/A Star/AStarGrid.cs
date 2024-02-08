@@ -1,7 +1,4 @@
-using JetBrains.Annotations;
-using System;
 using System.Collections.Generic;
-using Unity.Mathematics;
 using UnityEngine;
 
 // Script reference: https://www.youtube.com/watch?v=nhiFx28e7JY
