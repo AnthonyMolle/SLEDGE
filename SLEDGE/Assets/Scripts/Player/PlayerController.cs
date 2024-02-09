@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
 
@@ -27,6 +28,9 @@ public class PlayerController : MonoBehaviour
     Vector2 mouseInputVector;
     float xRotation;
     float yRotation;
+
+    bool mousePressed = false;
+    bool mouseReleased = true;
     #endregion
 
     #region Player Settings
@@ -78,6 +82,32 @@ public class PlayerController : MonoBehaviour
     [SerializeField] LayerMask groundLayers;
     #endregion
 
+    #region Hammer
+    [Header("Hammer")]
+    [SerializeField] float bounceForce = 10f;
+    [SerializeField] float hitLength = 5f;
+
+    [SerializeField] float chargeTime = 1f;
+    [SerializeField] float hitTime = 1f;
+    [SerializeField] float recoveryTime = 1f;
+
+    [SerializeField] LayerMask bouncableLayers;
+
+    RaycastHit distanceCheck;
+
+    bool isLaunched = false;
+
+    bool hittingHammer = false;
+    bool chargingHammer = false;
+    bool recovering = false;
+
+    bool hammerCharged = false;
+    bool hammerHit = false;
+
+    float hammerTimer = 0;
+
+    #endregion
+
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
@@ -91,12 +121,23 @@ public class PlayerController : MonoBehaviour
     {
         HandleInput();
 
+        HandleHammer();
+
         HandleLookRotation();
     }
 
     void FixedUpdate()
     {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Physics.Raycast(ray, out distanceCheck, 100000, bouncableLayers);
+
         HandleMovement();
+
+        if (hammerHit)
+        {
+            hammerHit = false;
+            HammerBounce();
+        }
     }
 
     private void OnCollisionEnter(Collision other) {
@@ -115,6 +156,50 @@ public class PlayerController : MonoBehaviour
     //     }
     // }
 
+    private void HandleHammer()
+    {
+        if (mousePressed && !chargingHammer && !recovering && !hittingHammer && !hammerCharged)
+        {
+            Debug.Log("hammer startin");
+            chargingHammer = true;
+            hammerTimer = chargeTime;
+        }
+
+        if (mouseReleased && hammerCharged)
+        {
+            hammerCharged = false;
+            hittingHammer = true;
+
+            hammerTimer = hitTime;
+        }
+
+        if (hammerTimer > 0)
+        {
+            hammerTimer -= Time.deltaTime;
+        }
+        else if (chargingHammer)
+        {
+            Debug.Log("charging hammer ended");
+            hammerCharged = true;
+            chargingHammer = false;
+        }
+        else if (hittingHammer)
+        {
+            Debug.Log("hammer hitting ended");
+            hammerHit = true;
+            hittingHammer = false;
+
+            recovering = true;
+            hammerTimer = recoveryTime;
+        }
+        else if (recovering)
+        {
+            Debug.Log("recovery ended");
+            recovering = false;
+        }
+
+        
+    }
 
     private void HandleLookRotation()
     {
@@ -168,6 +253,18 @@ public class PlayerController : MonoBehaviour
             jumpPressed = false;
             mustReleaseJump = false;
             jumpHoldChecking = false;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Mouse0))
+        {
+            mousePressed = true;
+            mouseReleased = false;
+        }
+        
+        if (Input.GetKeyUp(KeyCode.Mouse0))
+        {
+            mouseReleased = true;
+            mousePressed = false;
         }
 
         //all upcoming code could be put somewhere way better or in a function but its cool ok lol
@@ -361,5 +458,14 @@ public class PlayerController : MonoBehaviour
         rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z); //remove our falling velocity so our jump doesnt have to fight gravity.
         rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse); // add a force upward
         hasJumped = true; // let the engine know we have jumped.
+    }
+
+    private void HammerBounce()
+    {
+        if (Vector3.Distance(distanceCheck.transform.position, transform.position) <= hitLength)
+        {
+            Debug.Log("dsasdasdasdas");
+            rb.AddForce((transform.position - distanceCheck.transform.position).normalized * bounceForce, ForceMode.Impulse);
+        }
     }
 }
