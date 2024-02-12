@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEditor;
+using UnityEditor.ShaderGraph;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
 using UnityEngine.ProBuilder.Shapes;
@@ -82,6 +84,12 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float groundCheckDist = 0.2f;
     //[SerializeField] float slopeCheckDist = 0.3f;
     [SerializeField] LayerMask groundLayers;
+
+    [SerializeField] float distanceCheckBuffer = 2.0f;
+
+    [SerializeField] string hudDistance;
+
+    int distCheck;
     #endregion
 
     #region Hammer
@@ -110,6 +118,12 @@ public class PlayerController : MonoBehaviour
 
     #endregion
 
+    #region UI
+
+    public TextMeshProUGUI displayDistance;
+
+    #endregion
+
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
@@ -134,6 +148,7 @@ public class PlayerController : MonoBehaviour
         Physics.Raycast(ray, out distanceCheck, 100000, bouncableLayers);
 
         HandleMovement();
+        UpdateDistanceHud();
 
         if (hammerHit)
         {
@@ -490,5 +505,32 @@ public class PlayerController : MonoBehaviour
             rb.AddForce((transform.position - hit1.point).normalized * bounceForce, ForceMode.Impulse);
             isLaunched = true;
         }
+    }
+
+    void UpdateDistanceHud()
+    {
+        float currentDistance = distanceCheck.distance - (hitLength + distanceCheckBuffer);
+        Debug.Log(distanceCheck.distance);
+        
+
+        if(distanceCheck.distance == 0)
+        {
+            displayDistance.text = "infinity";
+        }
+        else
+        {
+            if(currentDistance <= 0)
+            {
+                displayDistance.text = "in range";
+                displayDistance.color = new Color32(15, 98, 230, 255);
+            }
+            else
+            {
+                displayDistance.text = (currentDistance).ToString();
+                displayDistance.color = new Color32(222, 41, 22, 255);
+                
+            }
+        }
+
     }
 }
