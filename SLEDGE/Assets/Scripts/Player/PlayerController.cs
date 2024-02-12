@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -8,6 +9,7 @@ using UnityEditor.ShaderGraph;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
 using UnityEngine.ProBuilder.Shapes;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
@@ -122,12 +124,16 @@ public class PlayerController : MonoBehaviour
 
     public TextMeshProUGUI displayDistance;
 
+    public Slider chargeSlider;
+
     #endregion
 
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        chargeSlider.minValue = chargeTime;
+        chargeSlider.value = chargeSlider.minValue;
         
         rb = GetComponent<Rigidbody>();
     }
@@ -175,12 +181,19 @@ public class PlayerController : MonoBehaviour
 
     private void HandleHammer()
     {
+        
         if (mousePressed && !chargingHammer && !recovering && !hittingHammer && !hammerCharged)
         {
             Debug.Log("hammer startin");
             chargingHammer = true;
             hammerTimer = chargeTime;
+            
         }
+
+        //if (mouseReleased){chargeSlider.value = chargeSlider.minValue;}
+        if (chargingHammer){chargeSlider.value = Math.Abs(hammerTimer - 1);}
+        if (!chargingHammer && hammerCharged){chargeSlider.value = chargeSlider.maxValue;}
+        if (!chargingHammer && !hammerCharged && chargeSlider.value != chargeSlider.minValue){chargeSlider.value = chargeSlider.minValue;}
 
         if (mouseReleased && hammerCharged)
         {
@@ -188,6 +201,7 @@ public class PlayerController : MonoBehaviour
             hittingHammer = true;
 
             hammerTimer = hitTime;
+            
         }
 
         if (hammerTimer > 0)
@@ -515,6 +529,7 @@ public class PlayerController : MonoBehaviour
 
         if(distanceCheck.distance == 0)
         {
+            displayDistance.color = new Color32(222, 41, 22, 255);
             displayDistance.text = "infinity";
         }
         else
