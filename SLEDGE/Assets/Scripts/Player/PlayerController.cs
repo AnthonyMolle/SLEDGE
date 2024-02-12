@@ -142,12 +142,12 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter(Collision other) {
-        if (!isGrounded)//if were touching a collider while not grounded
-        {
-            rb.velocity = new Vector3(0,rb.velocity.y,0); //remove any current velocity because we hit a wall.
-        }
-    }
+    // private void OnCollisionEnter(Collision other) {
+    //     if (!isGrounded)//if were touching a collider while not grounded
+    //     {
+    //         rb.velocity = new Vector3(0,rb.velocity.y,0); //remove any current velocity because we hit a wall.
+    //     }
+    // }
 
     // private void OnCollisionStay(Collision other) 
     // {
@@ -439,7 +439,7 @@ public class PlayerController : MonoBehaviour
             }
             #endregion
         }
-        else if (isGrounded || flatVelocity.magnitude <= airMaxSpeed) // can get grounded immediately after launching, should be a slight buffer to when "isgrounded" is activated again
+        else if (isGrounded && rb.velocity.y <= 0 || flatVelocity.magnitude <= airMaxSpeed) // can get grounded immediately after launching, should be a slight buffer to when "isgrounded" is activated again
         {
             isLaunched = false;
         }
