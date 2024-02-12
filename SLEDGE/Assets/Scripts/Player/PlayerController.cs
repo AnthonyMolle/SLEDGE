@@ -1,11 +1,15 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEditor;
+using UnityEditor.ShaderGraph;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
 using UnityEngine.ProBuilder.Shapes;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
@@ -82,6 +86,12 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float groundCheckDist = 0.2f;
     //[SerializeField] float slopeCheckDist = 0.3f;
     [SerializeField] LayerMask groundLayers;
+
+    [SerializeField] float distanceCheckBuffer = 2.0f;
+
+    [SerializeField] string hudDistance;
+
+    int distCheck;
     #endregion
 
     #region Hammer
@@ -110,10 +120,20 @@ public class PlayerController : MonoBehaviour
 
     #endregion
 
+    #region UI
+
+    public TextMeshProUGUI displayDistance;
+
+    public Slider chargeSlider;
+
+    #endregion
+
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        chargeSlider.minValue = chargeTime;
+        chargeSlider.value = chargeSlider.minValue;
         
         rb = GetComponent<Rigidbody>();
     }
@@ -134,6 +154,7 @@ public class PlayerController : MonoBehaviour
         Physics.Raycast(ray, out distanceCheck, 100000, bouncableLayers);
 
         HandleMovement();
+        UpdateDistanceHud();
 
         if (hammerHit)
         {
@@ -160,12 +181,19 @@ public class PlayerController : MonoBehaviour
 
     private void HandleHammer()
     {
+        
         if (mousePressed && !chargingHammer && !recovering && !hittingHammer && !hammerCharged)
         {
             Debug.Log("hammer startin");
             chargingHammer = true;
             hammerTimer = chargeTime;
+            
         }
+
+        //if (mouseReleased){chargeSlider.value = chargeSlider.minValue;}
+        if (chargingHammer){chargeSlider.value = Math.Abs(hammerTimer - 1);}
+        if (!chargingHammer && hammerCharged){chargeSlider.value = chargeSlider.maxValue;}
+        if (!chargingHammer && !hammerCharged && chargeSlider.value != chargeSlider.minValue){chargeSlider.value = chargeSlider.minValue;}
 
         if (mouseReleased && hammerCharged)
         {
@@ -173,6 +201,7 @@ public class PlayerController : MonoBehaviour
             hittingHammer = true;
 
             hammerTimer = hitTime;
+            
         }
 
         if (hammerTimer > 0)
@@ -490,5 +519,33 @@ public class PlayerController : MonoBehaviour
             rb.AddForce((transform.position - hit1.point).normalized * bounceForce, ForceMode.Impulse);
             isLaunched = true;
         }
+    }
+
+    void UpdateDistanceHud()
+    {
+        float currentDistance = distanceCheck.distance - (hitLength + distanceCheckBuffer);
+        Debug.Log(distanceCheck.distance);
+        
+
+        if(distanceCheck.distance == 0)
+        {
+            displayDistance.color = new Color32(222, 41, 22, 255);
+            displayDistance.text = "infinity";
+        }
+        else
+        {
+            if(currentDistance <= 0)
+            {
+                displayDistance.text = "in range";
+                displayDistance.color = new Color32(15, 98, 230, 255);
+            }
+            else
+            {
+                displayDistance.text = (currentDistance).ToString();
+                displayDistance.color = new Color32(222, 41, 22, 255);
+                
+            }
+        }
+
     }
 }
