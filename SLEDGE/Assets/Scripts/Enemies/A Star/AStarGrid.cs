@@ -8,7 +8,7 @@ using UnityEngine;
 
 public class AStarGrid : MonoBehaviour
 {
-    public bool onlyDisplayPathGizmos = true; // Debug setting to only draw our found path
+    public bool displayGridGizmos = true; // Debug setting to draw our grid
     public Transform player;
     public LayerMask unwalkableMask; // Matches this layer for when we are checking collision occurrences in nodes
     public Vector3 gridWorldSize; // Center point of grid
@@ -18,7 +18,7 @@ public class AStarGrid : MonoBehaviour
     float nodeDiameter;
     int gridSizeX, gridSizeY, gridSizeZ; // Number of nodes in each dimension
 
-    private void Start()
+    private void Awake()
     {
         // Each node will take up nodeDiameter of space
         nodeDiameter = nodeRadius * 2;
@@ -132,30 +132,13 @@ public class AStarGrid : MonoBehaviour
         return neighbours;
     }
 
-    public List<AStarNode> path;
-
     // Draw out our grid
     private void OnDrawGizmos()
     {
-        if (onlyDisplayPathGizmos)
-        {
-            if(path != null)
-            {
-                // Go through our nodes in found path...
-                foreach (AStarNode n in path)
-                {
-                    // Fill those found nodes with black cubes
-                    Gizmos.color = Color.black;
-                    Gizmos.DrawCube(n.worldPosition, Vector3.one * (nodeDiameter - 0.1f));
-                }
-            }
-            return;
-        }
-
         // Draws out our overall cube dimension
         Gizmos.DrawWireCube(transform.position, gridWorldSize);
 
-        if(grid != null)
+        if(grid != null && displayGridGizmos == true)
         {
             // Find player pos in relation to our grid
             AStarNode playerNode = NodeFromWorldPoint(player.position);
@@ -172,20 +155,9 @@ public class AStarGrid : MonoBehaviour
                     Gizmos.DrawCube(n.worldPosition, Vector3.one * (nodeDiameter - 0.1f));
                 }
 
-                // Draw our path as black nodes
-                if(path != null)
-                {
-                    if (path.Contains(n))
-                    {
-                        Gizmos.color = Color.black;
-                        Gizmos.DrawCube(n.worldPosition, Vector3.one * (nodeDiameter - 0.1f));
-                    }
-                }
-                
                 // Draw collide boxes as red nodes
                 if (!n.walkable) Gizmos.DrawCube(n.worldPosition, Vector3.one * (nodeDiameter - 0.1f));
             }
         }
     }
-
 }

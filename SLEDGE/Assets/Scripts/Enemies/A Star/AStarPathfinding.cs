@@ -3,27 +3,30 @@ using UnityEngine;
 using System.Diagnostics;
 using NaughtyAttributes;
 using UnityEngine.UIElements;
+using System.Collections;
+using System;
 
 // 3D A* Implementation 
 public class AStarPathfinding : MonoBehaviour
 {
-    public Transform seeker, target;
+
+    AStar_Path_Request_Manager request_Manager;
 
     // Define our grid
     AStarGrid grid;
 
     void Awake()
     {
+        request_Manager = GetComponent<AStar_Path_Request_Manager>();
         grid = GetComponent<AStarGrid>();
     }
 
-    // Trigger pathfinding from seeker -> target from inspector
-    // Uses NaughtyAttributes [Button] tag to call in inspector
-    [Button]
-    public void StartPathFinding()
+    // Used by our Path Request manager to request a path to be processed
+    public void StartFindPath(Vector3 startPos, Vector3 targetPos)
     {
-        FindPath(seeker.position, target.position);
+        StartCoroutine(FindPath(startPos, targetPos));
     }
+
 
     // Find path from startPos -> targetPos
     /*
@@ -35,16 +38,24 @@ public class AStarPathfinding : MonoBehaviour
      *   This does not account for geometry however it gauges which nodes to visit next well.
      * 
      */
-    void FindPath(Vector3 startPos, Vector3 targetPos)
+    IEnumerator FindPath(Vector3 startPos, Vector3 targetPos)
     {
         // Time ms path finding takes
         Stopwatch sw = new Stopwatch();
         sw.Start();
 
+        // Track our path
+        Vector3[] waypoints = new Vector3[0];
+        bool pathSuccess = false;
+
         // Find nodes our parameters are inside
         AStarNode startNode = grid.NodeFromWorldPoint(startPos);
         AStarNode targetNode = grid.NodeFromWorldPoint(targetPos);
 
+        if (!startNode.walkable || !targetNode.walkable) { 
+            yield return null;
+            request_Manager.FinishedProcessingPath(waypoints, pathSuccess);
+        }
         // Store nodes to be visited by A*
         AStarHeap<AStarNode> openSet = new AStarHeap<AStarNode>(grid.MaxSize);
 
@@ -71,8 +82,8 @@ public class AStarPathfinding : MonoBehaviour
                 print("Path found: " + sw.ElapsedMilliseconds + "ms");
 
                 // Retrace our path found
-                RetracePath(startNode, targetNode);
-                return;
+                pathSuccess = true;
+                break;
             }
 
             // For all nodes X: nodes 1 away of our current node...
@@ -105,11 +116,17 @@ public class AStarPathfinding : MonoBehaviour
                 }
             }
         }
+        yield return null;
+        if (pathSuccess)
+        {
+            waypoints = RetracePath(startNode, targetNode);
+        }
+        request_Manager.FinishedProcessingPath(waypoints,pathSuccess);
     }
 
     // Once FindPath is processed...
     // We can then trace a path from the parent data in each AStarNode
-    void RetracePath(AStarNode startNode, AStarNode endNode)
+    Vector3[] RetracePath(AStarNode startNode, AStarNode endNode)
     {
         List<AStarNode> path = new List<AStarNode> ();
 
@@ -126,11 +143,37 @@ public class AStarPathfinding : MonoBehaviour
             currentNode = currentNode.parent;
         }
 
-        // Flip path for usability
-        path.Reverse();
+        // Remove points that go the same direction
+        Vector3[] waypoints = SimplifyPath(path);
 
-        // Update path information
-        grid.path = path;
+        // Flip path for usability
+        Array.Reverse(waypoints);
+
+
+        return waypoints;
+    }
+
+    Vector3[] SimplifyPath(List<AStarNode> path)
+    {
+        List<Vector3> waypoints = new List<Vector3>();
+        Vector3 directionOld = Vector3.zero;
+
+        for(int i = 1; i < path.Count; i++)
+        {
+            Vector3 directionNew = new Vector3(
+                path[i - 1].gridPos_x - path[i].gridPos_x,
+                path[i - 1].gridPos_y - path[i].gridPos_y,
+                path[i - 1].gridPos_z - path[i].gridPos_z);
+
+            if(directionNew != directionOld)
+            {
+                waypoints.Add(path[i].worldPosition);
+            }
+
+            directionOld = directionNew;
+        }
+
+        return waypoints.ToArray();
     }
 
     // Heuristic calculation for hCost: estimated distance from goal
