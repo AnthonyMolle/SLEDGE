@@ -39,9 +39,15 @@ public class PlayerController : MonoBehaviour
     bool mouseReleased = true;
     #endregion
 
+    #region Health and Spawning
+    [Header("Health and Spawning")]
+    [SerializeField] Transform spawnPoint;
+    [SerializeField] int health = 1;
+    #endregion
+
     #region Player Settings
     [Header("Player Settings")]
-    [SerializeField] float mouseSensitivity = 1;
+    [SerializeField] public float mouseSensitivity = 1;
     #endregion
 
     #region Movement
@@ -103,6 +109,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float hitTime = 1f;
     [SerializeField] float recoveryTime = 1f;
 
+    [SerializeField] float launchedRotationSpeed = 0.02f;
+
     [SerializeField] LayerMask bouncableLayers;
 
     RaycastHit distanceCheck;
@@ -126,6 +134,8 @@ public class PlayerController : MonoBehaviour
 
     public Slider chargeSlider;
 
+    [SerializeField] GameObject pause;
+
     #endregion
 
     void Start()
@@ -136,6 +146,8 @@ public class PlayerController : MonoBehaviour
         chargeSlider.value = chargeSlider.minValue;
         
         rb = GetComponent<Rigidbody>();
+
+        mouseSensitivity = PlayerPrefs.GetFloat("Sensitivity", 400);
     }
 
     // Update is called once per frame
@@ -298,6 +310,25 @@ public class PlayerController : MonoBehaviour
             mousePressed = false;
         }
 
+        if (Input.GetKeyDown(KeyCode.Escape) && pause.activeSelf == false)
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+
+            pause.SetActive(true);
+
+            Time.timeScale = 0;
+        }
+        else if (Input.GetKeyDown(KeyCode.Escape) && pause.activeSelf == true)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+
+            pause.SetActive(false);
+
+            Time.timeScale = 1;
+        }
+
         //all upcoming code could be put somewhere way better or in a function but its cool ok lol
         float xCamRotate;
         float zCamRotate;
@@ -380,7 +411,7 @@ public class PlayerController : MonoBehaviour
         }
 
         flatVelocity = Vector3.ProjectOnPlane(rb.velocity, movementPlane);
-
+        #endregion
         if (!isLaunched)
         {
             if (isGrounded)
@@ -419,7 +450,6 @@ public class PlayerController : MonoBehaviour
                     }
                 }
             }
-            #endregion
 
             #region Air movement
             else // if we're in the air
@@ -448,14 +478,14 @@ public class PlayerController : MonoBehaviour
                 }
                 else
                 {
-                    if (flatVelocity.magnitude > 0.01)
-                    {
-                        rb.AddForce(-flatVelocity * airDecelerationRate);
-                    }
-                    else
-                    {
-                        rb.velocity = new Vector3(0, rb.velocity.y, 0); //Vector3.ProjectOnPlane(new Vector3(0, rb.velocity.y, 0), movementPlane);
-                    }
+                    // if (flatVelocity.magnitude > 0.01)
+                    // {
+                    //     rb.AddForce(-flatVelocity * airDecelerationRate);
+                    // }
+                    // else
+                    // {
+                    //     rb.velocity = new Vector3(0, rb.velocity.y, 0); //Vector3.ProjectOnPlane(new Vector3(0, rb.velocity.y, 0), movementPlane);
+                    // }
                 }
             }
             #endregion
@@ -468,6 +498,7 @@ public class PlayerController : MonoBehaviour
             }
             #endregion
         }
+
         else if (isGrounded && rb.velocity.y <= 0 || flatVelocity.magnitude <= airMaxSpeed) // can get grounded immediately after launching, should be a slight buffer to when "isgrounded" is activated again
         {
             isLaunched = false;
@@ -476,7 +507,7 @@ public class PlayerController : MonoBehaviour
         {
             if (movementInputVector.magnitude > 0.001)
             {
-                rb.velocity = Vector3.RotateTowards(rb.velocity, Quaternion.AngleAxis(Vector3.Angle(flatVelocity, movementInputVector), transform.up) * rb.velocity, 0.01f, 0.01f);
+                rb.velocity = Vector3.RotateTowards(rb.velocity, Quaternion.AngleAxis(Vector3.SignedAngle(flatVelocity, movementInputVector, transform.up), transform.up) * rb.velocity, launchedRotationSpeed/100, 0);
             }
         }
     }
@@ -547,5 +578,10 @@ public class PlayerController : MonoBehaviour
             }
         }
 
+    }
+
+    public void Die()
+    {
+        transform.position = spawnPoint.position;
     }
 }
