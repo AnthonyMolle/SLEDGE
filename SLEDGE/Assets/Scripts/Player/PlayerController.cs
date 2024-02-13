@@ -132,7 +132,7 @@ public class PlayerController : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-        chargeSlider.minValue = chargeTime;
+        chargeSlider.maxValue = chargeTime;
         chargeSlider.value = chargeSlider.minValue;
         
         rb = GetComponent<Rigidbody>();
@@ -191,7 +191,7 @@ public class PlayerController : MonoBehaviour
         }
 
         //if (mouseReleased){chargeSlider.value = chargeSlider.minValue;}
-        if (chargingHammer){chargeSlider.value = Math.Abs(hammerTimer - 1);}
+        if (chargingHammer){chargeSlider.value = chargeSlider.maxValue - hammerTimer;}
         if (!chargingHammer && hammerCharged){chargeSlider.value = chargeSlider.maxValue;}
         if (!chargingHammer && !hammerCharged && chargeSlider.value != chargeSlider.minValue){chargeSlider.value = chargeSlider.minValue;}
 
