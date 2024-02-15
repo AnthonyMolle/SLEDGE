@@ -5,7 +5,6 @@ using TMPro;
 using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEditor;
-using UnityEditor.ShaderGraph;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
 using UnityEngine.ProBuilder.Shapes;
@@ -41,7 +40,7 @@ public class PlayerController : MonoBehaviour
 
     #region Health and Spawning
     [Header("Health and Spawning")]
-    [SerializeField] Transform spawnPoint;
+    [SerializeField] Transform[] spawnPoints;
     [SerializeField] int health = 1;
     #endregion
 
@@ -461,20 +460,8 @@ public class PlayerController : MonoBehaviour
 
                 if (movementInputVector.magnitude > 0.001)
                 {
-                    if (flatVelocity.magnitude < airMaxSpeed || flatVelocity.magnitude >= airMaxSpeed && isChangingDirection)
-                    {
-                        isChangingDirection = false;
-                        rb.AddForce(movementInputVector * airAccelerationRate);
-
-                        if (flatVelocity.magnitude > airMaxSpeed)
-                        {
-                            rb.velocity = new Vector3((movementInputVector * airMaxSpeed).x, rb.velocity.y, (movementInputVector * airMaxSpeed).z); //Vector3.ProjectOnPlane(new Vector3((movementInputVector * maxSpeed).x, rb.velocity.y, (movementInputVector * maxSpeed).z), movementPlane);
-                        }
-                    }
-                    else
-                    {
-                        rb.velocity = new Vector3((movementInputVector * airMaxSpeed).x, rb.velocity.y, (movementInputVector * airMaxSpeed).z); //Vector3.ProjectOnPlane(new Vector3((movementInputVector * maxSpeed).x, rb.velocity.y, (movementInputVector * maxSpeed).z), movementPlane);
-                    }
+                    rb.AddForce(movementInputVector * airAccelerationRate);
+                    rb.velocity = new Vector3 (Vector3.ClampMagnitude(flatVelocity, airMaxSpeed).x, rb.velocity.y, Vector3.ClampMagnitude(flatVelocity, airMaxSpeed).z);
                 }
                 else
                 {
@@ -547,6 +534,7 @@ public class PlayerController : MonoBehaviour
         RaycastHit hit1;
         if (Physics.Raycast(ray, out hit1, hitLength, bouncableLayers))
         {
+            rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
             rb.AddForce((transform.position - hit1.point).normalized * bounceForce, ForceMode.Impulse);
             isLaunched = true;
         }
@@ -560,7 +548,7 @@ public class PlayerController : MonoBehaviour
 
         if(distanceCheck.distance == 0)
         {
-            displayDistance.color = new Color32(222, 41, 22, 255);
+            displayDistance.color = Color.red;
             displayDistance.text = "infinity";
         }
         else
@@ -568,13 +556,12 @@ public class PlayerController : MonoBehaviour
             if(currentDistance <= 0)
             {
                 displayDistance.text = "in range";
-                displayDistance.color = new Color32(15, 98, 230, 255);
+                displayDistance.color = Color.cyan;
             }
             else
             {
                 displayDistance.text = (currentDistance).ToString();
-                displayDistance.color = new Color32(222, 41, 22, 255);
-                
+                displayDistance.color = Color.red;
             }
         }
 
@@ -582,6 +569,22 @@ public class PlayerController : MonoBehaviour
 
     public void Die()
     {
-        transform.position = spawnPoint.position;
+        Transform closestSpawn = null;
+        foreach (Transform spawn in spawnPoints)
+        {
+            if (closestSpawn == null)
+            {
+                closestSpawn = spawn;
+            }
+            else
+            {
+                if (Vector3.Distance(transform.position, spawn.position) < Vector3.Distance(transform.position, closestSpawn.position))
+                {
+                    closestSpawn = spawn;
+                }
+            }
+        }
+
+        transform.position = closestSpawn.position;
     }
 }

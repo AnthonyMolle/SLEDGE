@@ -36,7 +36,6 @@ public class UIManager : MonoBehaviour
         Instantiate(fade);
     }
 
- 
 
     IEnumerator Fade(CanvasGroup a, float startAlpha, float endAlpha)
     {
@@ -91,6 +90,10 @@ public class UIManager : MonoBehaviour
 
     public void GoToScene(string scene)
     {
+        if (Time.timeScale != 1)
+        {
+            Time.timeScale = 1;
+        }
         SceneManager.LoadScene(scene);
     }
 }
