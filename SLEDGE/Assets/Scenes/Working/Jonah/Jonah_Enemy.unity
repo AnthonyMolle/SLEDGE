@@ -5123,11 +5123,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f0799377f803854b8daef3b4a7e5636, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameCamera: {fileID: 304275376}
   cameraObject: {fileID: 304275374}
   cameraHolder: {fileID: 265427734}
   camRotateAmountLR: 2
   camRotateAmountFB: 5
   camRotateSpeed: 25
+  spawnPoints: []
+  health: 1
   mouseSensitivity: 400
   accelerationRate: 60
   decelerationRate: 7
@@ -5150,6 +5153,20 @@ MonoBehaviour:
   groundLayers:
     serializedVersion: 2
     m_Bits: 4294967295
+  distanceCheckBuffer: 2
+  hudDistance: 
+  bounceForce: 10
+  hitLength: 5
+  chargeTime: 1
+  hitTime: 1
+  recoveryTime: 1
+  launchedRotationSpeed: 0.02
+  bouncableLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  displayDistance: {fileID: 0}
+  chargeSlider: {fileID: 0}
+  pause: {fileID: 0}
 --- !u!114 &361637543
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -36621,11 +36638,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Flying Enemy
-      objectReference: {fileID: 0}
-    - target: {fileID: 2178161172080928957, guid: ea0f10344b4186e418c8b61208ee9804,
-        type: 3}
-      propertyPath: m_Layer
-      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
