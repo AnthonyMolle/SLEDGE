@@ -153,9 +153,10 @@ GameObject:
   - component: {fileID: 4960367469188954479}
   - component: {fileID: 6158243655809749295}
   - component: {fileID: 6515774524999026187}
+  - component: {fileID: 983917843613077677}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -250,6 +251,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  - {fileID: 0}
   health: 1
   mouseSensitivity: 400
   accelerationRate: 60
@@ -337,6 +339,23 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 80
   m_CollisionDetection: 1
+--- !u!114 &983917843613077677
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4272141285249772724}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50a1624f3c070e847b749b499cdcd395, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  secBetweenPathUpdates: 0.25
+  totalPathMemory: 50
+  player: {fileID: 6469425393073572772}
+  DebugLines: 0
+  distanceBoundary: 10
 --- !u!1 &4523037191436104260
 GameObject:
   m_ObjectHideFlags: 0
