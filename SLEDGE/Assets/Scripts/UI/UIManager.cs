@@ -4,6 +4,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
@@ -35,7 +36,6 @@ public class UIManager : MonoBehaviour
         Instantiate(fade);
     }
 
- 
 
     IEnumerator Fade(CanvasGroup a, float startAlpha, float endAlpha)
     {
@@ -60,5 +60,40 @@ public class UIManager : MonoBehaviour
         a.alpha = endAlpha;
         if (endAlpha > 0.5) { a.interactable = true;}  
         if (endAlpha < 0.5) { a.gameObject.SetActive(false); }
+    }
+
+    //PAST THIS POINT YOU WILL FIND NOTHING BUT ANTHONYS STUPID BAD CODE THIS DUDES SUCH AN IDIOT - anthony
+
+    [SerializeField] Slider mouseSense;
+    PlayerController pc;
+
+    void Start()
+    {
+        mouseSense.value = PlayerPrefs.GetFloat("Sensitivity", 400);
+        pc = FindObjectOfType<PlayerController>();
+    }
+
+    public void Exit()
+    {
+        Application.Quit();
+    }
+
+    public void UpdateMouseSensitivity()
+    {
+        PlayerPrefs.SetFloat("Sensitivity", mouseSense.value);
+
+        if (pc != null)
+        {
+            pc.mouseSensitivity = PlayerPrefs.GetFloat("Sensitivity");
+        }
+    }
+
+    public void GoToScene(string scene)
+    {
+        if (Time.timeScale != 1)
+        {
+            Time.timeScale = 1;
+        }
+        SceneManager.LoadScene(scene);
     }
 }

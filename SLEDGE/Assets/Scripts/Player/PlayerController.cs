@@ -1,14 +1,20 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.Mathematics;
 using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
+using UnityEngine.ProBuilder.Shapes;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
     #region Character Component References
     [Header("Character Component References")]
+    [SerializeField] Camera gameCamera;
     Rigidbody rb;
     #endregion
 
@@ -27,11 +33,20 @@ public class PlayerController : MonoBehaviour
     Vector2 mouseInputVector;
     float xRotation;
     float yRotation;
+
+    bool mousePressed = false;
+    bool mouseReleased = true;
+    #endregion
+
+    #region Health and Spawning
+    [Header("Health and Spawning")]
+    [SerializeField] Transform[] spawnPoints;
+    [SerializeField] int health = 1;
     #endregion
 
     #region Player Settings
     [Header("Player Settings")]
-    [SerializeField] float mouseSensitivity = 1;
+    [SerializeField] public float mouseSensitivity = 1;
     #endregion
 
     #region Movement
@@ -76,14 +91,62 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float groundCheckDist = 0.2f;
     //[SerializeField] float slopeCheckDist = 0.3f;
     [SerializeField] LayerMask groundLayers;
+
+    [SerializeField] float distanceCheckBuffer = 2.0f;
+
+    [SerializeField] string hudDistance;
+
+    int distCheck;
+    #endregion
+
+    #region Hammer
+    [Header("Hammer")]
+    [SerializeField] float bounceForce = 10f;
+    [SerializeField] float hitLength = 5f;
+
+    [SerializeField] float chargeTime = 1f;
+    [SerializeField] float hitTime = 1f;
+    [SerializeField] float recoveryTime = 1f;
+
+    [SerializeField] float launchedRotationSpeed = 0.02f;
+
+    [SerializeField] LayerMask bouncableLayers;
+
+    RaycastHit distanceCheck;
+
+    bool isLaunched = false;
+
+    bool hittingHammer = false;
+    bool chargingHammer = false;
+    bool recovering = false;
+
+    bool hammerCharged = false;
+    bool hammerHit = false;
+
+    float hammerTimer = 0;
+
+    #endregion
+
+    #region UI
+
+    public TextMeshProUGUI displayDistance;
+
+    public Slider chargeSlider;
+
+    [SerializeField] GameObject pause;
+
     #endregion
 
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        chargeSlider.maxValue = chargeTime;
+        chargeSlider.value = chargeSlider.minValue;
         
         rb = GetComponent<Rigidbody>();
+
+        mouseSensitivity = PlayerPrefs.GetFloat("Sensitivity", 400);
     }
 
     // Update is called once per frame
@@ -91,20 +154,32 @@ public class PlayerController : MonoBehaviour
     {
         HandleInput();
 
+        HandleHammer();
+
         HandleLookRotation();
     }
 
     void FixedUpdate()
     {
-        HandleMovement();
-    }
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Physics.Raycast(ray, out distanceCheck, 100000, bouncableLayers);
 
-    private void OnCollisionEnter(Collision other) {
-        if (!isGrounded)//if were touching a collider while not grounded
+        HandleMovement();
+        UpdateDistanceHud();
+
+        if (hammerHit)
         {
-            rb.velocity = new Vector3(0,rb.velocity.y,0); //remove any current velocity because we hit a wall.
+            hammerHit = false;
+            HammerBounce();
         }
     }
+
+    // private void OnCollisionEnter(Collision other) {
+    //     if (!isGrounded)//if were touching a collider while not grounded
+    //     {
+    //         rb.velocity = new Vector3(0,rb.velocity.y,0); //remove any current velocity because we hit a wall.
+    //     }
+    // }
 
     // private void OnCollisionStay(Collision other) 
     // {
@@ -115,6 +190,58 @@ public class PlayerController : MonoBehaviour
     //     }
     // }
 
+    private void HandleHammer()
+    {
+        
+        if (mousePressed && !chargingHammer && !recovering && !hittingHammer && !hammerCharged)
+        {
+            Debug.Log("hammer startin");
+            chargingHammer = true;
+            hammerTimer = chargeTime;
+            
+        }
+
+        //if (mouseReleased){chargeSlider.value = chargeSlider.minValue;}
+        if (chargingHammer){chargeSlider.value = chargeSlider.maxValue - hammerTimer;}
+        if (!chargingHammer && hammerCharged){chargeSlider.value = chargeSlider.maxValue;}
+        if (!chargingHammer && !hammerCharged && chargeSlider.value != chargeSlider.minValue){chargeSlider.value = chargeSlider.minValue;}
+
+        if (mouseReleased && hammerCharged)
+        {
+            hammerCharged = false;
+            hittingHammer = true;
+
+            hammerTimer = hitTime;
+            
+        }
+
+        if (hammerTimer > 0)
+        {
+            hammerTimer -= Time.deltaTime;
+        }
+        else if (chargingHammer)
+        {
+            Debug.Log("charging hammer ended");
+            hammerCharged = true;
+            chargingHammer = false;
+        }
+        else if (hittingHammer)
+        {
+            Debug.Log("hammer hitting ended");
+            hammerHit = true;
+            hittingHammer = false;
+
+            recovering = true;
+            hammerTimer = recoveryTime;
+        }
+        else if (recovering)
+        {
+            Debug.Log("recovery ended");
+            recovering = false;
+        }
+
+        
+    }
 
     private void HandleLookRotation()
     {
@@ -168,6 +295,37 @@ public class PlayerController : MonoBehaviour
             jumpPressed = false;
             mustReleaseJump = false;
             jumpHoldChecking = false;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Mouse0))
+        {
+            mousePressed = true;
+            mouseReleased = false;
+        }
+        
+        if (Input.GetKeyUp(KeyCode.Mouse0))
+        {
+            mouseReleased = true;
+            mousePressed = false;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Escape) && pause.activeSelf == false)
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+
+            pause.SetActive(true);
+
+            Time.timeScale = 0;
+        }
+        else if (Input.GetKeyDown(KeyCode.Escape) && pause.activeSelf == true)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+
+            pause.SetActive(false);
+
+            Time.timeScale = 1;
         }
 
         //all upcoming code could be put somewhere way better or in a function but its cool ok lol
@@ -252,86 +410,93 @@ public class PlayerController : MonoBehaviour
         }
 
         flatVelocity = Vector3.ProjectOnPlane(rb.velocity, movementPlane);
-
-        if (isGrounded)
+        #endregion
+        if (!isLaunched)
         {
-            if (movementInputVector.magnitude > 0.001)
+            if (isGrounded)
             {
-                if (flatVelocity.magnitude < maxSpeed || flatVelocity.magnitude >= maxSpeed && isChangingDirection)
+                if (isLaunched)
                 {
-                    isChangingDirection = false;
-                    rb.AddForce(movementInputVector * accelerationRate);
+                    isLaunched = false;
+                }
 
-                    if (flatVelocity.magnitude > maxSpeed)
+                if (movementInputVector.magnitude > 0.001)
+                {
+                    if (flatVelocity.magnitude < maxSpeed || flatVelocity.magnitude >= maxSpeed && isChangingDirection)
+                    {
+                        isChangingDirection = false;
+                        rb.AddForce(movementInputVector * accelerationRate);
+
+                        if (flatVelocity.magnitude > maxSpeed)
+                        {
+                            rb.velocity = new Vector3((movementInputVector * maxSpeed).x, rb.velocity.y, (movementInputVector * maxSpeed).z); //Vector3.ProjectOnPlane(new Vector3((movementInputVector * maxSpeed).x, rb.velocity.y, (movementInputVector * maxSpeed).z), movementPlane);
+                        }
+                    }
+                    else
                     {
                         rb.velocity = new Vector3((movementInputVector * maxSpeed).x, rb.velocity.y, (movementInputVector * maxSpeed).z); //Vector3.ProjectOnPlane(new Vector3((movementInputVector * maxSpeed).x, rb.velocity.y, (movementInputVector * maxSpeed).z), movementPlane);
                     }
                 }
                 else
                 {
-                    rb.velocity = new Vector3((movementInputVector * maxSpeed).x, rb.velocity.y, (movementInputVector * maxSpeed).z); //Vector3.ProjectOnPlane(new Vector3((movementInputVector * maxSpeed).x, rb.velocity.y, (movementInputVector * maxSpeed).z), movementPlane);
-                }
-            }
-            else
-            {
-                if (flatVelocity.magnitude > 0.01)
-                {
-                    rb.AddForce(-flatVelocity * decelerationRate);
-                }
-                else
-                {
-                    rb.velocity = new Vector3(0, rb.velocity.y, 0); //Vector3.ProjectOnPlane(new Vector3(0, rb.velocity.y, 0), movementPlane);
-                }
-            }
-        }
-        #endregion
-
-        #region Air movement
-        else // if we're in the air
-        {
-            if(rb.velocity.y <= 0)// if we are at the apex of our air height
-            {
-                rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
-            }
-
-            if (movementInputVector.magnitude > 0.001)
-            {
-                if (flatVelocity.magnitude < airMaxSpeed || flatVelocity.magnitude >= airMaxSpeed && isChangingDirection)
-                {
-                    isChangingDirection = false;
-                    rb.AddForce(movementInputVector * airAccelerationRate);
-
-                    if (flatVelocity.magnitude > airMaxSpeed)
+                    if (flatVelocity.magnitude > 0.01)
                     {
-                        rb.velocity = new Vector3((movementInputVector * airMaxSpeed).x, rb.velocity.y, (movementInputVector * airMaxSpeed).z); //Vector3.ProjectOnPlane(new Vector3((movementInputVector * maxSpeed).x, rb.velocity.y, (movementInputVector * maxSpeed).z), movementPlane);
+                        rb.AddForce(-flatVelocity * decelerationRate);
+                    }
+                    else
+                    {
+                        rb.velocity = new Vector3(0, rb.velocity.y, 0); //Vector3.ProjectOnPlane(new Vector3(0, rb.velocity.y, 0), movementPlane);
                     }
                 }
-                else
-                {
-                    rb.velocity = new Vector3((movementInputVector * airMaxSpeed).x, rb.velocity.y, (movementInputVector * airMaxSpeed).z); //Vector3.ProjectOnPlane(new Vector3((movementInputVector * maxSpeed).x, rb.velocity.y, (movementInputVector * maxSpeed).z), movementPlane);
-                }
             }
-            else
-            {
-                if (flatVelocity.magnitude > 0.01)
-                {
-                    rb.AddForce(-flatVelocity * airDecelerationRate);
-                }
-                else
-                {
-                    rb.velocity = new Vector3(0, rb.velocity.y, 0); //Vector3.ProjectOnPlane(new Vector3(0, rb.velocity.y, 0), movementPlane);
-                }
-            }
-        }
-        #endregion
 
-        #region Jump
-        if (jumpPressed && isGrounded && !hasJumped ||jumpPressed && !isGrounded && hasCoyoteTime == true && !hasJumped)
-        {
-            Debug.Log("jump!");
-            Jump();
+            #region Air movement
+            else // if we're in the air
+            {
+                if(rb.velocity.y <= 0)// if we are at the apex of our air height
+                {
+                    rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
+                }
+
+                if (movementInputVector.magnitude > 0.001)
+                {
+                    rb.AddForce(movementInputVector * airAccelerationRate);
+                    rb.velocity = new Vector3 (Vector3.ClampMagnitude(flatVelocity, airMaxSpeed).x, rb.velocity.y, Vector3.ClampMagnitude(flatVelocity, airMaxSpeed).z);
+                }
+                else
+                {
+                    // if (flatVelocity.magnitude > 0.01)
+                    // {
+                    //     rb.AddForce(-flatVelocity * airDecelerationRate);
+                    // }
+                    // else
+                    // {
+                    //     rb.velocity = new Vector3(0, rb.velocity.y, 0); //Vector3.ProjectOnPlane(new Vector3(0, rb.velocity.y, 0), movementPlane);
+                    // }
+                }
+            }
+            #endregion
+
+            #region Jump
+            if (jumpPressed && isGrounded && !hasJumped ||jumpPressed && !isGrounded && hasCoyoteTime == true && !hasJumped)
+            {
+                Debug.Log("jump!");
+                Jump();
+            }
+            #endregion
         }
-        #endregion
+
+        else if (isGrounded && rb.velocity.y <= 0 || flatVelocity.magnitude <= airMaxSpeed) // can get grounded immediately after launching, should be a slight buffer to when "isgrounded" is activated again
+        {
+            isLaunched = false;
+        }
+        else
+        {
+            if (movementInputVector.magnitude > 0.001)
+            {
+                rb.velocity = Vector3.RotateTowards(rb.velocity, Quaternion.AngleAxis(Vector3.SignedAngle(flatVelocity, movementInputVector, transform.up), transform.up) * rb.velocity, launchedRotationSpeed/100, 0);
+            }
+        }
     }
 
     private IEnumerator DecreaseCoyoteTime(){
@@ -361,5 +526,65 @@ public class PlayerController : MonoBehaviour
         rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z); //remove our falling velocity so our jump doesnt have to fight gravity.
         rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse); // add a force upward
         hasJumped = true; // let the engine know we have jumped.
+    }
+
+    private void HammerBounce()
+    {
+        Ray ray = gameCamera.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit1;
+        if (Physics.Raycast(ray, out hit1, hitLength, bouncableLayers))
+        {
+            rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
+            rb.AddForce((transform.position - hit1.point).normalized * bounceForce, ForceMode.Impulse);
+            isLaunched = true;
+        }
+    }
+
+    void UpdateDistanceHud()
+    {
+        float currentDistance = distanceCheck.distance - (hitLength + distanceCheckBuffer);
+        Debug.Log(distanceCheck.distance);
+        
+
+        if(distanceCheck.distance == 0)
+        {
+            displayDistance.color = Color.red;
+            displayDistance.text = "infinity";
+        }
+        else
+        {
+            if(currentDistance <= 0)
+            {
+                displayDistance.text = "in range";
+                displayDistance.color = Color.cyan;
+            }
+            else
+            {
+                displayDistance.text = (currentDistance).ToString();
+                displayDistance.color = Color.red;
+            }
+        }
+
+    }
+
+    public void Die()
+    {
+        Transform closestSpawn = null;
+        foreach (Transform spawn in spawnPoints)
+        {
+            if (closestSpawn == null)
+            {
+                closestSpawn = spawn;
+            }
+            else
+            {
+                if (Vector3.Distance(transform.position, spawn.position) < Vector3.Distance(transform.position, closestSpawn.position))
+                {
+                    closestSpawn = spawn;
+                }
+            }
+        }
+
+        transform.position = closestSpawn.position;
     }
 }
