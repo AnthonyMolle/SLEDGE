@@ -345,21 +345,21 @@ public class PlayerController : MonoBehaviour
             zCamRotate = 0;
         }
         
-        if (verticalInput > 0.4)
-        {
-            xCamRotate = camRotateAmountFB;
-        }
-        else if (verticalInput < -0.4)
-        {
-            xCamRotate = -camRotateAmountFB;
-        }
-        else
-        {
-            xCamRotate = 0;
-        }
+        // if (verticalInput > 0.4)
+        // {
+        //     xCamRotate = camRotateAmountFB;
+        // }
+        // else if (verticalInput < -0.4)
+        // {
+        //     xCamRotate = -camRotateAmountFB;
+        // }
+        // else
+        // {
+        //     xCamRotate = 0;
+        // }
 
         //MAKE IT SO FORWARD AND LEFT RIGHT CAMROTATION SPEEDS ARE DIFFERENT
-        cameraHolder.transform.localRotation = Quaternion.RotateTowards(cameraHolder.transform.localRotation, Quaternion.Euler(xCamRotate, 0, zCamRotate), camRotateSpeed * Time.deltaTime);
+        cameraHolder.transform.localRotation = Quaternion.RotateTowards(cameraHolder.transform.localRotation, Quaternion.Euler(0, 0, zCamRotate), camRotateSpeed * Time.deltaTime);
         
     }
 
