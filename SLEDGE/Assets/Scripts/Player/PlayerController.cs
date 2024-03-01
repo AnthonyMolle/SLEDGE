@@ -6,6 +6,7 @@ using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.PlayerLoop;
 using UnityEngine.ProBuilder.Shapes;
 using UnityEngine.UI;
@@ -36,12 +37,16 @@ public class PlayerController : MonoBehaviour
 
     bool mousePressed = false;
     bool mouseReleased = true;
+
+    bool secondaryPressed = false;
+    bool secondaryReleased = false;
     #endregion
 
     #region Health and Spawning
     [Header("Health and Spawning")]
     [SerializeField] Transform[] spawnPoints;
-    [SerializeField] int health = 1;
+    [SerializeField] int maxHealth = 1;
+    private int currentHealth = 1;
     #endregion
 
     #region Player Settings
@@ -147,6 +152,8 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
 
         mouseSensitivity = PlayerPrefs.GetFloat("Sensitivity", 400);
+
+        currentHealth = maxHealth;
     }
 
     // Update is called once per frame
@@ -195,10 +202,16 @@ public class PlayerController : MonoBehaviour
         
         if (mousePressed && !chargingHammer && !recovering && !hittingHammer && !hammerCharged)
         {
-            Debug.Log("hammer startin");
+            //Debug.Log("hammer startin");
             chargingHammer = true;
             hammerTimer = chargeTime;
             
+        }
+
+        if (chargingHammer && hammerTimer > 0.1 && mouseReleased)
+        {
+            chargingHammer = false;
+            hammerTimer = 0;
         }
 
         //if (mouseReleased){chargeSlider.value = chargeSlider.minValue;}
@@ -221,13 +234,13 @@ public class PlayerController : MonoBehaviour
         }
         else if (chargingHammer)
         {
-            Debug.Log("charging hammer ended");
+            //Debug.Log("charging hammer ended");
             hammerCharged = true;
             chargingHammer = false;
         }
         else if (hittingHammer)
         {
-            Debug.Log("hammer hitting ended");
+            //Debug.Log("hammer hitting ended");
             hammerHit = true;
             hittingHammer = false;
 
@@ -236,7 +249,7 @@ public class PlayerController : MonoBehaviour
         }
         else if (recovering)
         {
-            Debug.Log("recovery ended");
+            //Debug.Log("recovery ended");
             recovering = false;
         }
 
@@ -309,6 +322,18 @@ public class PlayerController : MonoBehaviour
             mousePressed = false;
         }
 
+        if (Input.GetKeyDown(KeyCode.Mouse1))
+        {
+            secondaryPressed = true;
+            secondaryReleased = false;
+        }
+        
+        if (Input.GetKeyUp(KeyCode.Mouse1))
+        {
+            secondaryReleased = true;
+            secondaryPressed = false;
+        }
+
         if (Input.GetKeyDown(KeyCode.Escape) && pause.activeSelf == false)
         {
             Cursor.lockState = CursorLockMode.None;
@@ -329,7 +354,7 @@ public class PlayerController : MonoBehaviour
         }
 
         //all upcoming code could be put somewhere way better or in a function but its cool ok lol
-        float xCamRotate;
+        //float xCamRotate;
         float zCamRotate;
 
         if (horizontalInput > 0.4)
@@ -480,7 +505,7 @@ public class PlayerController : MonoBehaviour
             #region Jump
             if (jumpPressed && isGrounded && !hasJumped ||jumpPressed && !isGrounded && hasCoyoteTime == true && !hasJumped)
             {
-                Debug.Log("jump!");
+                //Debug.Log("jump!");
                 Jump();
             }
             #endregion
@@ -535,15 +560,33 @@ public class PlayerController : MonoBehaviour
         if (Physics.Raycast(ray, out hit1, hitLength, bouncableLayers))
         {
             rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
+
+            float angle = Vector3.Angle(hit1.point - cameraObject.transform.position, -transform.up);
+
+            if (angle < 110 && angle > 30)
+            {
+                rb.AddForce(transform.up * 10, ForceMode.Impulse);
+            }
+
             rb.AddForce((transform.position - hit1.point).normalized * bounceForce, ForceMode.Impulse);
             isLaunched = true;
+
+            if (hit1.transform.gameObject.tag == "Enemy Flyer")
+            {
+                hit1.transform.gameObject.GetComponent<FlyingEnemy>().TakeDamage(1);
+            }
         }
+    }
+
+    private void HammerHit()
+    {
+
     }
 
     void UpdateDistanceHud()
     {
         float currentDistance = distanceCheck.distance - (hitLength + distanceCheckBuffer);
-        Debug.Log(distanceCheck.distance);
+        //Debug.Log(distanceCheck.distance);
         
 
         if(distanceCheck.distance == 0)
@@ -567,6 +610,15 @@ public class PlayerController : MonoBehaviour
 
     }
 
+    public void TakeDamage(int damage)
+    {
+        currentHealth -= damage;
+        if (currentHealth <= 0)
+        {
+            Die();
+        }
+    }
+
     public void Die()
     {
         Transform closestSpawn = null;
@@ -586,5 +638,7 @@ public class PlayerController : MonoBehaviour
         }
 
         transform.position = closestSpawn.position;
+
+        currentHealth = maxHealth;
     }
 }

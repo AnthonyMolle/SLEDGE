@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class FlyingEnemy : MonoBehaviour
 {
+    [Header("Combat")]
+    [SerializeField] int maxHealth = 1;
+    int currentHealth = 1;
+
     [Header("Movement Properties")]
     public float movementSpeed = 5;
     
@@ -148,5 +152,28 @@ public class FlyingEnemy : MonoBehaviour
                 break;
 
         }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.tag == "Player")
+        {
+            other.gameObject.GetComponent<PlayerController>().TakeDamage(1);
+        }
+    }
+
+    public void TakeDamage(int damage)
+    {
+        currentHealth -= damage;
+        if (currentHealth <= 0)
+        {
+            Die();
+        }
+    }
+
+    private void Die()
+    {
+        // add sfx and vfx and such!
+        Destroy(gameObject);
     }
 }
