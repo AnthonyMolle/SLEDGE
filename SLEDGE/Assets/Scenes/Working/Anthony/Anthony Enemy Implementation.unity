@@ -46083,14 +46083,29 @@ PrefabInstance:
       objectReference: {fileID: 1589260831}
     - target: {fileID: 4960367469188954479, guid: 5d5c5a7d18451c54b8f0cbf52d32df5a,
         type: 3}
+      propertyPath: jumpForce
+      value: 7.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4960367469188954479, guid: 5d5c5a7d18451c54b8f0cbf52d32df5a,
+        type: 3}
       propertyPath: chargeSlider
       value: 
       objectReference: {fileID: 1551395661}
     - target: {fileID: 4960367469188954479, guid: 5d5c5a7d18451c54b8f0cbf52d32df5a,
         type: 3}
+      propertyPath: maxJumpPoint
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 4960367469188954479, guid: 5d5c5a7d18451c54b8f0cbf52d32df5a,
+        type: 3}
       propertyPath: displayDistance
       value: 
       objectReference: {fileID: 2106156742}
+    - target: {fileID: 4960367469188954479, guid: 5d5c5a7d18451c54b8f0cbf52d32df5a,
+        type: 3}
+      propertyPath: maxJumpVelocity
+      value: 7.5
+      objectReference: {fileID: 0}
     - target: {fileID: 4960367469188954479, guid: 5d5c5a7d18451c54b8f0cbf52d32df5a,
         type: 3}
       propertyPath: spawnPoints.Array.size

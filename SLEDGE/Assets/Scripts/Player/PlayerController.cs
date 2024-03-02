@@ -79,6 +79,8 @@ public class PlayerController : MonoBehaviour
     bool jumpPressed = false;
     bool jumpHoldChecking = false;
     bool mustReleaseJump = false;
+
+    [SerializeField] float srcJumpPoint = 0.0f;
     [SerializeField] float jumpHoldCheckWindow = 0.25f;
     [SerializeField] float jumpForce = 2f;
     [SerializeField] float coyoteTime = 0.25f;
@@ -86,6 +88,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] bool hasCoyoteTime = true;// THIS IS THE DEFAULT VALUE OF COYOTETIME
     [SerializeField] bool decreasingCoyoteTime = false;
     [SerializeField] bool hasJumped = false;
+
+    [SerializeField] float maxJumpPoint = 10f;
     #endregion
 
     #region Raycast Checks
@@ -100,6 +104,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float distanceCheckBuffer = 2.0f;
 
     [SerializeField] string hudDistance;
+
+    float currentDistance = 0; // current distance between the player and a surface.
+    bool isInRange = false; // represents if we are in range to sue the hammer.
 
     int distCheck;
     #endregion
@@ -129,6 +136,11 @@ public class PlayerController : MonoBehaviour
     bool hammerHit = false;
 
     float hammerTimer = 0;
+
+    [SerializeField] float hammerCoyoteTime = 0.25f; // coyote time of the hammer.
+    [SerializeField] bool hammerHasCoyoteTime = false; // represents whether we have coyote time or not.
+    [SerializeField] bool hammerDecreasingCoyoteTime = false; // represents whether we are decreasing coyote time or not.
+    Vector3 lastHammerPos = new Vector3(0,0,0); // last saved hammer position.
 
     #endregion
 
@@ -160,9 +172,7 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         HandleInput();
-
         HandleHammer();
-
         HandleLookRotation();
     }
 
@@ -253,7 +263,22 @@ public class PlayerController : MonoBehaviour
             recovering = false;
         }
 
-        
+        // if the hammer is currently charged AND we are in range, set the last hammer position to the current spot in range.
+        // if we arent in range, call the ienumerator to reduce our coyote time.
+        if(hammerCharged) // if the hammer is charged...
+        {
+            if(isInRange)// if we are in range...
+            {
+                // track the last in range pos & stop the coroutine to decrease coyote time. also give back the coyote time.
+                lastHammerPos = distanceCheck.point;
+                StopCoroutine(HammerDecreaseCoyoteTime());
+                hammerHasCoyoteTime = true;
+            }
+            else // if we arent in range of anything, start to coroutine to decrease coyote time.
+            {
+                StartCoroutine(HammerDecreaseCoyoteTime());
+            }
+        }
     }
 
     private void HandleLookRotation()
@@ -286,7 +311,6 @@ public class PlayerController : MonoBehaviour
             isChangingDirection = true;
         }
         
-
         if (Input.GetKeyDown(KeyCode.Space))//If the player has pressed the space key...
         {
             if(!mustReleaseJump) //and they haven't been holding the button down...
@@ -370,6 +394,7 @@ public class PlayerController : MonoBehaviour
             zCamRotate = 0;
         }
         
+        /*
         // if (verticalInput > 0.4)
         // {
         //     xCamRotate = camRotateAmountFB;
@@ -382,10 +407,10 @@ public class PlayerController : MonoBehaviour
         // {
         //     xCamRotate = 0;
         // }
+        */
 
         //MAKE IT SO FORWARD AND LEFT RIGHT CAMROTATION SPEEDS ARE DIFFERENT
         cameraHolder.transform.localRotation = Quaternion.RotateTowards(cameraHolder.transform.localRotation, Quaternion.Euler(0, 0, zCamRotate), camRotateSpeed * Time.deltaTime);
-        
     }
 
     private void HandleMovement()
@@ -503,10 +528,34 @@ public class PlayerController : MonoBehaviour
             #endregion
 
             #region Jump
-            if (jumpPressed && isGrounded && !hasJumped ||jumpPressed && !isGrounded && hasCoyoteTime == true && !hasJumped)
+            if (jumpPressed && isGrounded && !hasJumped || jumpPressed && !isGrounded && hasCoyoteTime == true && !hasJumped)
             {
                 //Debug.Log("jump!");
+                srcJumpPoint = rb.transform.position.y;
                 Jump();
+            }
+
+            // if the player has jumped, is currently in the air, and has not been launched.
+            if(!isGrounded && hasJumped && !isLaunched)
+            {
+                // if we are going upwards in our jump...
+                if(rb.transform.position.y > srcJumpPoint)
+                {
+                    // if the player goes over the max jump height, remove their velocity
+                    if(rb.transform.position.y > srcJumpPoint + maxJumpPoint)
+                    {
+                        rb.velocity = new Vector3(rb.velocity.x,-0.01f,rb.velocity.z);
+                        // Mathf.Clamp(rb.transform.position.y, srcJumpPoint, srcJumpPoint + maxJumpPoint);
+
+                    }
+                    /*
+                    else // if the player hasnt gone over the max jump point
+                    {
+                        rb.velocity = new Vector3(rb.velocity.x,Mathf.Clamp(rb.transform.position.y, srcJumpPoint, srcJumpPoint + maxJumpPoint),rb.velocity.z);
+                    }
+                    */
+                }
+
             }
             #endregion
         }
@@ -531,6 +580,17 @@ public class PlayerController : MonoBehaviour
             yield return new WaitForSeconds(coyoteTime); //wait for the desired amount of coyote time desired.
             hasCoyoteTime = false; // after waiting for our window, let the engine know we missed our window
             decreasingCoyoteTime = false; // let the engine know the coroutine is done.
+        }
+    }
+
+    private IEnumerator HammerDecreaseCoyoteTime()
+    {
+        if(!hammerDecreasingCoyoteTime && hammerHasCoyoteTime) // if we have coyote time and we aren't decreasing it yet
+        {
+            hammerDecreasingCoyoteTime = true; // let the coroutine know we are decreasing coyote time. this makes the coroutine only run when needed.
+            yield return new WaitForSeconds(hammerCoyoteTime); //wait for the desired amount of coyote time desired.
+            hammerHasCoyoteTime = false; // after waiting for our window, let the engine know we missed our window
+            hammerDecreasingCoyoteTime = false; // let the engine know the coroutine is done.
         }
     }
 
@@ -576,6 +636,10 @@ public class PlayerController : MonoBehaviour
                 hit1.transform.gameObject.GetComponent<FlyingEnemy>().TakeDamage(1);
             }
         }
+        else if(hammerHasCoyoteTime) // if the hammer has coyote time && we are out of range on hammer bounce...
+        {
+            //NOTE THAT COYOTE TIME DOESNT ACCOUNT FOR BOUNCABLE LAYERS...
+        }
     }
 
     private void HammerHit()
@@ -585,7 +649,7 @@ public class PlayerController : MonoBehaviour
 
     void UpdateDistanceHud()
     {
-        float currentDistance = distanceCheck.distance - (hitLength + distanceCheckBuffer);
+        currentDistance = distanceCheck.distance - (hitLength + distanceCheckBuffer);
         //Debug.Log(distanceCheck.distance);
         
 
@@ -600,11 +664,13 @@ public class PlayerController : MonoBehaviour
             {
                 displayDistance.text = "in range";
                 displayDistance.color = Color.cyan;
+                isInRange = true;
             }
             else
             {
                 displayDistance.text = (currentDistance).ToString();
                 displayDistance.color = Color.red;
+                isInRange = false;
             }
         }
 
