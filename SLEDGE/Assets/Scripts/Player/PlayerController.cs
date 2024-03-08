@@ -536,6 +536,7 @@ public class PlayerController : MonoBehaviour
             }
 
             // if the player has jumped, is currently in the air, and has not been launched.
+            /*
             if(!isGrounded && hasJumped && !isLaunched)
             {
                 // if we are going upwards in our jump...
@@ -548,15 +549,10 @@ public class PlayerController : MonoBehaviour
                         // Mathf.Clamp(rb.transform.position.y, srcJumpPoint, srcJumpPoint + maxJumpPoint);
 
                     }
-                    /*
-                    else // if the player hasnt gone over the max jump point
-                    {
-                        rb.velocity = new Vector3(rb.velocity.x,Mathf.Clamp(rb.transform.position.y, srcJumpPoint, srcJumpPoint + maxJumpPoint),rb.velocity.z);
-                    }
-                    */
                 }
 
             }
+            */
             #endregion
         }
 
