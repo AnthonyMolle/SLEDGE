@@ -1,9 +1,11 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 // Jonah Ryan
 
 public class FlyingEnemy : MonoBehaviour
 {
+
     [Header("Combat")]
     [SerializeField] int maxHealth = 1;
     int currentHealth = 1;
@@ -42,8 +44,14 @@ public class FlyingEnemy : MonoBehaviour
     {
         player = GameObject.FindGameObjectWithTag("Player").transform;
         rb = GetComponent<Rigidbody>();
+        startPosition = transform.position;
     }
     
+    private void Update()
+    {
+        transform.LookAt(player);
+    }
+
     // Check if a given transform at endPoint is visible from a startPoint
     // Visible means a raycast can be drawn between the two points without hitting a collider
     private bool transformInView(Vector3 startPoint, Vector3 endPoint, Transform targetTransform, float distanceOfVision)
@@ -90,7 +98,7 @@ public class FlyingEnemy : MonoBehaviour
              */
             case EnemyState.DIRECTHUNT:
 
-                GetComponent<Renderer>().material.color = huntingColor;
+                //GetComponent<Renderer>().material.color = huntingColor;
 
                 // Move towards player
                 targetPos = Vector3.MoveTowards(transform.position, player.position, movementSpeed * Time.deltaTime);
@@ -111,7 +119,7 @@ public class FlyingEnemy : MonoBehaviour
              */
             case EnemyState.ONPATH:
 
-                GetComponent<Renderer>().material.color = pathingColor;
+                //GetComponent<Renderer>().material.color = pathingColor;
 
                 // Initialize path following with closest node on path
                 if (currentIndexOnPath == -1)
@@ -152,6 +160,14 @@ public class FlyingEnemy : MonoBehaviour
                 break;
 
         }
+    }
+
+    Vector3 startPosition;
+
+    public void Reset()
+    {
+        transform.position = startPosition;
+        enemyState = EnemyState.IDLE;
     }
 
     private void OnTriggerEnter(Collider other)
