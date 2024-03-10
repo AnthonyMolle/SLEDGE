@@ -45,6 +45,10 @@ public class PlayerController : MonoBehaviour
     #region Health and Spawning
     [Header("Health and Spawning")]
     [SerializeField] Transform[] spawnPoints;
+    Transform currentSpawn;
+    int currentSpawnIndex = 0;
+    Checkpoint currentCheckpoint;
+    
     [SerializeField] int maxHealth = 1;
     private int currentHealth = 1;
     #endregion
@@ -160,6 +164,8 @@ public class PlayerController : MonoBehaviour
         Cursor.visible = false;
         chargeSlider.maxValue = chargeTime;
         chargeSlider.value = chargeSlider.minValue;
+
+        currentSpawn = spawnPoints[0];
         
         rb = GetComponent<Rigidbody>();
 
@@ -681,25 +687,28 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    public void UpdateSpawn(int index, Checkpoint check)
+    {
+        if (index > currentSpawnIndex)
+        {
+            currentSpawn = spawnPoints[index];
+            currentSpawnIndex = index;
+            currentCheckpoint = check;
+        }
+    }
+
     public void Die()
     {
-        Transform closestSpawn = null;
-        foreach (Transform spawn in spawnPoints)
+        Debug.Log("die!");
+        
+        if (currentCheckpoint != null)
         {
-            if (closestSpawn == null)
-            {
-                closestSpawn = spawn;
-            }
-            else
-            {
-                if (Vector3.Distance(transform.position, spawn.position) < Vector3.Distance(transform.position, closestSpawn.position))
-                {
-                    closestSpawn = spawn;
-                }
-            }
+            currentCheckpoint.Reset();
         }
 
-        transform.position = closestSpawn.position;
+        rb.velocity = Vector3.zero;
+
+        transform.position = currentSpawn.position;
 
         currentHealth = maxHealth;
     }
