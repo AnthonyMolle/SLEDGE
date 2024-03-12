@@ -9,8 +9,8 @@ public class ShooterEnemy : MonoBehaviour
     int currentHealth = 1;
     public GameObject projectileType;
     
-    float bulletLifetime = 5.0f;
-    float bulletSpeed = 0.2f;
+    [SerializeField] float bulletLifetime = 5.0f;
+    [SerializeField] float bulletSpeed = 0.2f;
 
     [Header("Movement Properties")]
     public float movementSpeed = 5;
@@ -45,6 +45,7 @@ public class ShooterEnemy : MonoBehaviour
 
         gun = transform.Find("Gun");
         position = transform.position;
+        currentHealth = maxHealth;
     }
 
     // Update is called once per frame
