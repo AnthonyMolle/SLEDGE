@@ -623,11 +623,22 @@ public class PlayerController : MonoBehaviour
         {
             rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
 
+            Vector3 normal = hit1.normal;
             float angle = Vector3.Angle(hit1.point - cameraObject.transform.position, -transform.up);
+            float wallAngle = Vector3.Angle(normal, -hit1.transform.up);
+            float wallVSFlatVelAngle = Vector3.Angle(normal, rb.velocity);
 
-            if (angle < 110 && angle > 30)
+            Debug.Log(angle);
+
+            //bouncing up one wall over and over again is still far too viable, but theres some improvement to the basic 90 degree angled hammer wall bounces
+            if (angle < 110 && angle > 30 && wallAngle > 80 && wallAngle < 100)
             {
                 rb.AddForce(transform.up * 10, ForceMode.Impulse);
+            }
+
+            if (wallVSFlatVelAngle > 140)
+            {
+                rb.velocity = new Vector3(0, rb.velocity.y, 0);
             }
 
             rb.AddForce((transform.position - hit1.point).normalized * bounceForce, ForceMode.Impulse);
