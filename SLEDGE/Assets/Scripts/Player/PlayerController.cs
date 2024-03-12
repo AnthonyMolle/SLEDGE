@@ -17,6 +17,7 @@ public class PlayerController : MonoBehaviour
     [Header("Character Component References")]
     [SerializeField] Camera gameCamera;
     Rigidbody rb;
+    Animator anim;
     #endregion
 
     #region Camera
@@ -168,6 +169,7 @@ public class PlayerController : MonoBehaviour
         currentSpawn = spawnPoints[0];
         
         rb = GetComponent<Rigidbody>();
+        anim = GetComponent<Animator>();
 
         mouseSensitivity = PlayerPrefs.GetFloat("Sensitivity", 400);
 
@@ -221,11 +223,12 @@ public class PlayerController : MonoBehaviour
             //Debug.Log("hammer startin");
             chargingHammer = true;
             hammerTimer = chargeTime;
-            
+            anim.Play("HammerCharge");
         }
 
         if (chargingHammer && hammerTimer > 0.1 && mouseReleased)
         {
+            anim.Play("HammerIdle");
             chargingHammer = false;
             hammerTimer = 0;
         }
@@ -253,12 +256,14 @@ public class PlayerController : MonoBehaviour
             //Debug.Log("charging hammer ended");
             hammerCharged = true;
             chargingHammer = false;
+            anim.Play("HammerHold");
         }
         else if (hittingHammer)
         {
             //Debug.Log("hammer hitting ended");
             hammerHit = true;
             hittingHammer = false;
+            anim.Play("HammerHit");
 
             recovering = true;
             hammerTimer = recoveryTime;
