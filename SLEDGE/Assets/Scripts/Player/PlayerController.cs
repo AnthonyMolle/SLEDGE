@@ -17,6 +17,7 @@ public class PlayerController : MonoBehaviour
     [Header("Character Component References")]
     [SerializeField] Camera gameCamera;
     Rigidbody rb;
+    Animator anim;
     #endregion
 
     #region Camera
@@ -168,6 +169,7 @@ public class PlayerController : MonoBehaviour
         currentSpawn = spawnPoints[0];
         
         rb = GetComponent<Rigidbody>();
+        anim = GetComponent<Animator>();
 
         mouseSensitivity = PlayerPrefs.GetFloat("Sensitivity", 400);
 
@@ -221,11 +223,12 @@ public class PlayerController : MonoBehaviour
             //Debug.Log("hammer startin");
             chargingHammer = true;
             hammerTimer = chargeTime;
-            
+            anim.Play("HammerCharge");
         }
 
         if (chargingHammer && hammerTimer > 0.1 && mouseReleased)
         {
+            anim.Play("HammerIdle");
             chargingHammer = false;
             hammerTimer = 0;
         }
@@ -253,12 +256,14 @@ public class PlayerController : MonoBehaviour
             //Debug.Log("charging hammer ended");
             hammerCharged = true;
             chargingHammer = false;
+            anim.Play("HammerHold");
         }
         else if (hittingHammer)
         {
             //Debug.Log("hammer hitting ended");
             hammerHit = true;
             hittingHammer = false;
+            anim.Play("HammerHit");
 
             recovering = true;
             hammerTimer = recoveryTime;
@@ -623,11 +628,22 @@ public class PlayerController : MonoBehaviour
         {
             rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
 
+            Vector3 normal = hit1.normal;
             float angle = Vector3.Angle(hit1.point - cameraObject.transform.position, -transform.up);
+            float wallAngle = Vector3.Angle(normal, -hit1.transform.up);
+            float wallVSFlatVelAngle = Vector3.Angle(normal, rb.velocity);
 
-            if (angle < 110 && angle > 30)
+            Debug.Log(angle);
+
+            //bouncing up one wall over and over again is still far too viable, but theres some improvement to the basic 90 degree angled hammer wall bounces
+            if (angle < 110 && angle > 30 && wallAngle > 80 && wallAngle < 100)
             {
                 rb.AddForce(transform.up * 10, ForceMode.Impulse);
+            }
+
+            if (wallVSFlatVelAngle > 140)
+            {
+                rb.velocity = new Vector3(0, rb.velocity.y, 0);
             }
 
             rb.AddForce((transform.position - hit1.point).normalized * bounceForce, ForceMode.Impulse);
@@ -670,7 +686,7 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                displayDistance.text = (currentDistance).ToString();
+                displayDistance.text = (currentDistance).ToString("0.00m");
                 displayDistance.color = Color.red;
                 isInRange = false;
             }
