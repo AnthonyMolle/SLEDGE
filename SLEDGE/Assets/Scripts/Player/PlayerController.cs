@@ -686,7 +686,7 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                displayDistance.text = (currentDistance).ToString();
+                displayDistance.text = (currentDistance).ToString("0.00m");
                 displayDistance.color = Color.red;
                 isInRange = false;
             }
