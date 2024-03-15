@@ -734,6 +734,7 @@ public class PlayerController : MonoBehaviour
 
     private void HammerHit()
     {
+        //Add parry and hit sounds in if statements
         Ray ray = gameCamera.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit1;
         if (Physics.Raycast(ray, out hit1, hitLength, swipeLayers))
@@ -741,10 +742,12 @@ public class PlayerController : MonoBehaviour
             if (hit1.transform.gameObject.tag == "Enemy Flyer")
             {
                 hit1.transform.gameObject.GetComponent<FlyingEnemy>().TakeDamage(1);
+                audioManager.PlaySFX(audioManager.hit);
             }
             else if (hit1.transform.gameObject.tag == "Enemy Shooter")
             {
                 hit1.transform.gameObject.GetComponent<ShooterEnemy>().TakeDamage(1);
+                audioManager.PlaySFX(audioManager.hit);
             }
             else if (hit1.transform.gameObject.layer == LayerMask.NameToLayer("Projectile"))
             {

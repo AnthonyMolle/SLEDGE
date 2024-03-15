@@ -8,6 +8,7 @@ public class AudioManager : MonoBehaviour
 
     [Header("-------------- Audio Clip --------------")]
     public AudioClip background;
+    public AudioClip mainMenu;
     public AudioClip hit;
     public AudioClip walk;
     public AudioClip walk2;
