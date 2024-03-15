@@ -31,6 +31,27 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    public void TransitionToFast(CanvasGroup a)
+    {
+        CanvasGroup currentCanvas = null;
+        CanvasGroup[] b = FindObjectsOfType<CanvasGroup>();
+        for (int i = 0; i < b.Length; i++)
+        {
+            if (b[i].alpha == 1)
+            {
+                currentCanvas = b[i];
+            }
+        }
+
+        a.gameObject.SetActive(true);
+        a.interactable = true;
+        if (currentCanvas != null)
+        {
+            currentCanvas.gameObject.SetActive(false);
+            currentCanvas.interactable = false;
+        }
+    }
+
     public void roomNext()
     {
         Instantiate(fade);

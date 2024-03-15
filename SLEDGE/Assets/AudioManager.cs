@@ -1,4 +1,6 @@
 using UnityEngine;
+using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class AudioManager : MonoBehaviour
 {
@@ -8,7 +10,9 @@ public class AudioManager : MonoBehaviour
 
     [Header("-------------- Audio Clip --------------")]
     public AudioClip background;
+    public AudioClip mainMenu;
     public AudioClip hit;
+    public AudioClip whiff;
     public AudioClip walk;
     public AudioClip walk2;
     public AudioClip walk3;
@@ -20,8 +24,18 @@ public class AudioManager : MonoBehaviour
 
     private void Start()
     {
-        musicSource.clip = background;
-        musicSource.Play();
+        Scene currentScene = SceneManager.GetActiveScene();
+        string sceneName = currentScene.name;
+        if(sceneName == "Jonah")
+        {
+            musicSource.clip = mainMenu;
+            musicSource.Play();
+        }
+        else if(sceneName == "Anthony" || sceneName == "Easy Level ART")
+        {
+            musicSource.clip = background;
+            musicSource.Play();
+        }
     }
 
     public void PlaySFX(AudioClip clip)
