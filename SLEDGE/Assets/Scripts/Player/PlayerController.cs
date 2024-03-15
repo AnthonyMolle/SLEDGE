@@ -125,9 +125,14 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float hitTime = 1f;
     [SerializeField] float recoveryTime = 1f;
 
+    [SerializeField] float swipeTime = 0.5f;
+    [SerializeField] float swipeRecoveryTime = 0.5f;
+
     [SerializeField] float launchedRotationSpeed = 0.02f;
 
     [SerializeField] LayerMask bouncableLayers;
+
+    [SerializeField] LayerMask swipeLayers;
 
     RaycastHit distanceCheck;
 
@@ -137,10 +142,17 @@ public class PlayerController : MonoBehaviour
     bool chargingHammer = false;
     bool recovering = false;
 
+    bool swipingHammer = false;
+    bool swipeRecovering = false;
+
     bool hammerCharged = false;
     bool hammerHit = false;
+    bool hammerSwipe = false;
 
     float hammerTimer = 0;
+
+    [SerializeField] float parriedProjectileSpeed = 1f;
+    [SerializeField] float parriedProjectileLifetime = 10f;
 
     [SerializeField] float hammerCoyoteTime = 0.25f; // coyote time of the hammer.
     [SerializeField] bool hammerHasCoyoteTime = false; // represents whether we have coyote time or not.
@@ -197,6 +209,12 @@ public class PlayerController : MonoBehaviour
             hammerHit = false;
             HammerBounce();
         }
+
+        if (hammerSwipe)
+        {
+            hammerSwipe = false;
+            HammerHit();
+        }
     }
 
     // private void OnCollisionEnter(Collision other) {
@@ -217,8 +235,16 @@ public class PlayerController : MonoBehaviour
 
     private void HandleHammer()
     {
+        if (secondaryPressed && !chargingHammer && !recovering && !hittingHammer && !hammerCharged && !swipeRecovering && !swipingHammer)
+        {
+            Debug.Log("starting hammer swipe");
+
+            swipingHammer = true;
+            hammerTimer = swipeTime;
+            anim.Play("HammerSwipe");
+        }
         
-        if (mousePressed && !chargingHammer && !recovering && !hittingHammer && !hammerCharged)
+        if (mousePressed && !chargingHammer && !recovering && !hittingHammer && !hammerCharged && !swipeRecovering && !swipingHammer)
         {
             //Debug.Log("hammer startin");
             chargingHammer = true;
@@ -234,9 +260,9 @@ public class PlayerController : MonoBehaviour
         }
 
         //if (mouseReleased){chargeSlider.value = chargeSlider.minValue;}
-        if (chargingHammer){chargeSlider.value = chargeSlider.maxValue - hammerTimer;}
-        if (!chargingHammer && hammerCharged){chargeSlider.value = chargeSlider.maxValue;}
-        if (!chargingHammer && !hammerCharged && chargeSlider.value != chargeSlider.minValue){chargeSlider.value = chargeSlider.minValue;}
+        // if (chargingHammer){chargeSlider.value = chargeSlider.maxValue - hammerTimer;}
+        // if (!chargingHammer && hammerCharged){chargeSlider.value = chargeSlider.maxValue;}
+        // if (!chargingHammer && !hammerCharged && chargeSlider.value != chargeSlider.minValue){chargeSlider.value = chargeSlider.minValue;}
 
         if (mouseReleased && hammerCharged)
         {
@@ -272,6 +298,18 @@ public class PlayerController : MonoBehaviour
         {
             //Debug.Log("recovery ended");
             recovering = false;
+        }
+        else if (swipingHammer)
+        {
+            hammerSwipe = true;
+            swipingHammer = false;
+
+            swipeRecovering = true;
+            hammerTimer = swipeRecoveryTime;
+        }
+        else if (swipeRecovering)
+        {
+            swipeRecovering = false;
         }
 
         // if the hammer is currently charged AND we are in range, set the last hammer position to the current spot in range.
@@ -653,6 +691,10 @@ public class PlayerController : MonoBehaviour
             {
                 hit1.transform.gameObject.GetComponent<FlyingEnemy>().TakeDamage(1);
             }
+            else if (hit1.transform.gameObject.tag == "Enemy Shooter")
+            {
+                hit1.transform.gameObject.GetComponent<ShooterEnemy>().TakeDamage(1);
+            }
         }
         else if(hammerHasCoyoteTime) // if the hammer has coyote time && we are out of range on hammer bounce...
         {
@@ -662,7 +704,23 @@ public class PlayerController : MonoBehaviour
 
     private void HammerHit()
     {
-
+        Ray ray = gameCamera.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit1;
+        if (Physics.Raycast(ray, out hit1, hitLength, swipeLayers))
+        {
+            if (hit1.transform.gameObject.tag == "Enemy Flyer")
+            {
+                hit1.transform.gameObject.GetComponent<FlyingEnemy>().TakeDamage(1);
+            }
+            else if (hit1.transform.gameObject.tag == "Enemy Shooter")
+            {
+                hit1.transform.gameObject.GetComponent<ShooterEnemy>().TakeDamage(1);
+            }
+            else if (hit1.transform.gameObject.layer == LayerMask.NameToLayer("Projectile"))
+            {
+                hit1.transform.gameObject.GetComponent<Projectile>().initializeProjectile(ray.GetPoint(100), parriedProjectileSpeed, parriedProjectileLifetime, true);
+            }
+        }
     }
 
     void UpdateDistanceHud()

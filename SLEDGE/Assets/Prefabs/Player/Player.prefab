@@ -74,7 +74,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 311
+    m_Bits: 1335
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -282,10 +282,15 @@ MonoBehaviour:
   chargeTime: 0.5
   hitTime: 0.1
   recoveryTime: 0.25
+  swipeTime: 0.0625
+  swipeRecoveryTime: 0.5
   launchedRotationSpeed: 2
   bouncableLayers:
     serializedVersion: 2
     m_Bits: 503
+  swipeLayers:
+    serializedVersion: 2
+    m_Bits: 1280
   hammerCoyoteTime: 0.25
   hammerHasCoyoteTime: 0
   hammerDecreasingCoyoteTime: 0
