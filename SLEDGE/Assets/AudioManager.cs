@@ -1,4 +1,6 @@
 using UnityEngine;
+using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class AudioManager : MonoBehaviour
 {
@@ -21,8 +23,20 @@ public class AudioManager : MonoBehaviour
 
     private void Start()
     {
-        musicSource.clip = background;
-        musicSource.Play();
+        Scene currentScene = SceneManager.GetActiveScene();
+        string sceneName = currentScene.name;
+        if(sceneName == "Jonah")
+        {
+            musicSource.clip = mainMenu;
+            musicSource.Play();
+        }
+        else if(sceneName == "Anthony")
+        {
+            musicSource.clip = background;
+            musicSource.Play();
+        }
+        //musicSource.clip = mainMenu;
+        //musicSource.Play();
     }
 
     public void PlaySFX(AudioClip clip)
