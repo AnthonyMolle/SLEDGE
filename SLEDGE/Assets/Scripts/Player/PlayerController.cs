@@ -141,11 +141,20 @@ public class PlayerController : MonoBehaviour
     bool hammerHit = false;
 
     float hammerTimer = 0;
+    float hangTime = 0;
+    float walkTime = 0;
 
     [SerializeField] float hammerCoyoteTime = 0.25f; // coyote time of the hammer.
     [SerializeField] bool hammerHasCoyoteTime = false; // represents whether we have coyote time or not.
     [SerializeField] bool hammerDecreasingCoyoteTime = false; // represents whether we are decreasing coyote time or not.
     Vector3 lastHammerPos = new Vector3(0,0,0); // last saved hammer position.
+
+    AudioManager audioManager;
+
+    private void Awake()
+    {
+        audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
+    }
 
     #endregion
 
@@ -182,6 +191,15 @@ public class PlayerController : MonoBehaviour
         HandleInput();
         HandleHammer();
         HandleLookRotation();
+        //hangTime += 1;
+        if(!isGrounded)
+        {
+            hangTime += Time.deltaTime;
+        }
+        else
+        {
+            hangTime = 0;
+        }
     }
 
     void FixedUpdate()
@@ -263,6 +281,7 @@ public class PlayerController : MonoBehaviour
             //Debug.Log("hammer hitting ended");
             hammerHit = true;
             hittingHammer = false;
+            //audioManager.PlaySFX(audioManager.hit);
             anim.Play("HammerHit");
 
             recovering = true;
@@ -432,6 +451,10 @@ public class PlayerController : MonoBehaviour
         Vector3 movementPlane;
         if (Physics.Raycast(gameObject.transform.position, Vector3.down, out hit, playerHeight/2 + groundCheckDist, groundLayers)) //if on the ground
         {
+            if (isGrounded == false && hangTime >= .25)
+            {
+                audioManager.PlaySFX(audioManager.land);
+            }
             isGrounded = true;
             movementPlane = hit.normal;
 
@@ -483,6 +506,12 @@ public class PlayerController : MonoBehaviour
 
                 if (movementInputVector.magnitude > 0.001)
                 {
+                    walkTime += 1;
+                    if (walkTime >= 15)
+                    {
+                        audioManager.PlayWalk();
+                        walkTime = 0;
+                    }
                     if (flatVelocity.magnitude < maxSpeed || flatVelocity.magnitude >= maxSpeed && isChangingDirection)
                     {
                         isChangingDirection = false;
@@ -648,6 +677,7 @@ public class PlayerController : MonoBehaviour
 
             rb.AddForce((transform.position - hit1.point).normalized * bounceForce, ForceMode.Impulse);
             isLaunched = true;
+            audioManager.PlaySFX(audioManager.hit);
 
             if (hit1.transform.gameObject.tag == "Enemy Flyer")
             {
