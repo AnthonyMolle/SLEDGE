@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1018688953186338210}
   - component: {fileID: 4516342104826440134}
   - component: {fileID: 3172099860506391667}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Gun
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -119,9 +119,9 @@ GameObject:
   - component: {fileID: 5128094816825782923}
   - component: {fileID: -1935113614177180344}
   - component: {fileID: -6718879911656862245}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Shooter Enemy
-  m_TagString: Untagged
+  m_TagString: Enemy Shooter
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -257,7 +257,7 @@ MonoBehaviour:
   maxHealth: 1
   projectileType: {fileID: 4543102887346889771, guid: ba9cb7ed3bc5e6046b77d646edda3e24,
     type: 3}
-  bulletSpeed: 1
   bulletLifetime: 10
+  bulletSpeed: 0.1
   movementSpeed: 5
-  detectionRadius: 20
+  detectionRadius: 50

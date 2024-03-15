@@ -102,7 +102,7 @@ public class ShooterEnemy : MonoBehaviour
         Debug.Log("Firing");
         Debug.Log(player.transform.position);
         projectile = Instantiate(projectileType, gun.position, Quaternion.identity);
-        projectile.GetComponent<Projectile>().initializeProjectile(player.transform.position, bulletSpeed, bulletLifetime);
+        projectile.GetComponent<Projectile>().initializeProjectile(player.transform.position, bulletSpeed, bulletLifetime, false);
         return;
     }
 
