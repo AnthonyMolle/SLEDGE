@@ -12,6 +12,7 @@ public class AudioManager : MonoBehaviour
     public AudioClip background;
     public AudioClip mainMenu;
     public AudioClip hit;
+    public AudioClip whiff;
     public AudioClip walk;
     public AudioClip walk2;
     public AudioClip walk3;
@@ -30,13 +31,11 @@ public class AudioManager : MonoBehaviour
             musicSource.clip = mainMenu;
             musicSource.Play();
         }
-        else if(sceneName == "Anthony")
+        else if(sceneName == "Anthony" || sceneName == "Easy Level ART")
         {
             musicSource.clip = background;
             musicSource.Play();
         }
-        //musicSource.clip = mainMenu;
-        //musicSource.Play();
     }
 
     public void PlaySFX(AudioClip clip)
