@@ -668,7 +668,7 @@ public class PlayerController : MonoBehaviour
 
             Vector3 normal = hit1.normal;
             float angle = Vector3.Angle(hit1.point - cameraObject.transform.position, -transform.up);
-            float wallAngle = Vector3.Angle(normal, -hit1.transform.up);
+            float wallAngle = Vector3.Angle(normal, Vector3.down);
             float wallVSFlatVelAngle = Vector3.Angle(normal, rb.velocity);
 
             Debug.Log(angle);
