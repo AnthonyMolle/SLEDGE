@@ -6,6 +6,8 @@ using UnityEngine.SceneManagement;
 public class EndPortal : MonoBehaviour
 {
     public string NextScene = "Kat";
+
+    public GameObject LevelCompleteScreen;
     
     // Start is called before the first frame update
     void Start()
@@ -24,7 +26,16 @@ public class EndPortal : MonoBehaviour
     {
         if (other.gameObject.tag == "Player")
         {
-            SceneManager.LoadScene(NextScene, LoadSceneMode.Single);
+            Time.timeScale = 0;
+            LevelCompleteScreen.SetActive(true);
         }
+    }
+
+    public void GoToScene()
+    {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        Time.timeScale = 1;
+        SceneManager.LoadScene(NextScene, LoadSceneMode.Single);
     }
 }

@@ -44,11 +44,9 @@ public class UIManager : MonoBehaviour
         }
 
         a.gameObject.SetActive(true);
-        a.interactable = true;
         if (currentCanvas != null)
         {
             currentCanvas.gameObject.SetActive(false);
-            currentCanvas.interactable = false;
         }
     }
 

@@ -52,6 +52,7 @@ public class PlayerController : MonoBehaviour
     
     [SerializeField] int maxHealth = 1;
     private int currentHealth = 1;
+    bool alive = true;
     #endregion
 
     #region Player Settings
@@ -177,6 +178,10 @@ public class PlayerController : MonoBehaviour
     public Slider chargeSlider;
 
     [SerializeField] GameObject pause;
+
+    [SerializeField] GameObject settings;
+
+    [SerializeField] GameObject deathScreen;
 
     #endregion
 
@@ -426,7 +431,7 @@ public class PlayerController : MonoBehaviour
             secondaryPressed = false;
         }
 
-        if (Input.GetKeyDown(KeyCode.Escape) && pause.activeSelf == false)
+        if (Input.GetKeyDown(KeyCode.Escape) && pause.activeSelf == false && settings.activeSelf == false && alive)
         {
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
@@ -435,12 +440,13 @@ public class PlayerController : MonoBehaviour
 
             Time.timeScale = 0;
         }
-        else if (Input.GetKeyDown(KeyCode.Escape) && pause.activeSelf == true)
+        else if (Input.GetKeyDown(KeyCode.Escape) && (pause.activeSelf == true || settings.activeSelf == true))
         {
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
 
             pause.SetActive(false);
+            settings.SetActive(false);
 
             Time.timeScale = 1;
         }
@@ -807,7 +813,16 @@ public class PlayerController : MonoBehaviour
     public void Die()
     {
         Debug.Log("die!");
-        
+
+        alive = false;
+        deathScreen.SetActive(true);
+        Time.timeScale = 0;
+    }
+
+    public void ResetPlayer()
+    {
+        alive = true;
+
         if (currentCheckpoint != null)
         {
             currentCheckpoint.Reset();
