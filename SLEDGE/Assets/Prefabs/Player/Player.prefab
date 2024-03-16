@@ -248,8 +248,7 @@ MonoBehaviour:
   camRotateAmountLR: 1.5
   camRotateAmountFB: 0
   camRotateSpeed: 7
-  spawnPoints:
-  - {fileID: 0}
+  firstCheckpoint: {fileID: 0}
   maxHealth: 1
   mouseSensitivity: 400
   accelerationRate: 60
@@ -287,11 +286,11 @@ MonoBehaviour:
   launchedRotationSpeed: 2
   bouncableLayers:
     serializedVersion: 2
-    m_Bits: 503
+    m_Bits: 439
   swipeLayers:
     serializedVersion: 2
     m_Bits: 1280
-  parriedProjectileSpeed: 3
+  parriedProjectileSpeed: 60
   parriedProjectileLifetime: 10
   hammerCoyoteTime: 0.25
   hammerHasCoyoteTime: 0
@@ -299,6 +298,8 @@ MonoBehaviour:
   displayDistance: {fileID: 0}
   chargeSlider: {fileID: 0}
   pause: {fileID: 0}
+  settings: {fileID: 0}
+  deathScreen: {fileID: 0}
 --- !u!136 &6158243655809749295
 CapsuleCollider:
   m_ObjectHideFlags: 0

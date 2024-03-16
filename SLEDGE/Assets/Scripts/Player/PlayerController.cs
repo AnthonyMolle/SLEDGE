@@ -45,7 +45,7 @@ public class PlayerController : MonoBehaviour
 
     #region Health and Spawning
     [Header("Health and Spawning")]
-    [SerializeField] Transform[] spawnPoints;
+    [SerializeField] Checkpoint firstCheckpoint;
     Transform currentSpawn;
     int currentSpawnIndex = 0;
     Checkpoint currentCheckpoint;
@@ -191,8 +191,6 @@ public class PlayerController : MonoBehaviour
         Cursor.visible = false;
         chargeSlider.maxValue = chargeTime;
         chargeSlider.value = chargeSlider.minValue;
-
-        currentSpawn = spawnPoints[0];
         
         rb = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
@@ -200,6 +198,8 @@ public class PlayerController : MonoBehaviour
         mouseSensitivity = PlayerPrefs.GetFloat("Sensitivity", 400);
 
         currentHealth = maxHealth;
+
+        currentCheckpoint = firstCheckpoint;
     }
 
     // Update is called once per frame
@@ -804,7 +804,6 @@ public class PlayerController : MonoBehaviour
     {
         if (index > currentSpawnIndex)
         {
-            currentSpawn = spawnPoints[index];
             currentSpawnIndex = index;
             currentCheckpoint = check;
         }
@@ -830,7 +829,7 @@ public class PlayerController : MonoBehaviour
 
         rb.velocity = Vector3.zero;
 
-        transform.position = currentSpawn.position;
+        transform.position = currentCheckpoint.transform.position;
 
         currentHealth = maxHealth;
     }

@@ -11,10 +11,9 @@ GameObject:
   - component: {fileID: 1437001867462179815}
   - component: {fileID: 1018688953186338210}
   - component: {fileID: 4516342104826440134}
-  - component: {fileID: 3172099860506391667}
   m_Layer: 8
   m_Name: Gun
-  m_TagString: Untagged
+  m_TagString: Enemy Shooter
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -84,27 +83,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &3172099860506391667
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5061608267748852569}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &8251860513100324605
 GameObject:
   m_ObjectHideFlags: 0
@@ -211,8 +189,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.5
-  m_Height: 2
+  m_Radius: 0.8
+  m_Height: 2.39
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &-1935113614177180344
@@ -258,6 +236,6 @@ MonoBehaviour:
   projectileType: {fileID: 4543102887346889771, guid: ba9cb7ed3bc5e6046b77d646edda3e24,
     type: 3}
   bulletLifetime: 10
-  bulletSpeed: 1
+  bulletSpeed: 10
   movementSpeed: 5
-  detectionRadius: 50
+  detectionRadius: 80

@@ -9,11 +9,13 @@ public class Projectile : MonoBehaviour
     float lifetime = 0.0f;
 
     bool isParried = false;
+
+    public Collider parriedCollider;
     
     // Start is called before the first frame update
     void Start()
     {
-    
+        
     }
 
     // Update is called once per frame
@@ -33,23 +35,42 @@ public class Projectile : MonoBehaviour
         bulletSpeed = speed;
         maxLifetime = life;
         isParried = parried;
+
+        if (isParried)
+        {
+            parriedCollider.enabled = true;
+        }
+
         return;
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("collided");
         if (other.gameObject.tag == "Player")
         {
-            other.gameObject.GetComponent<PlayerController>().TakeDamage(1);
+            if (!isParried)
+            {
+                Destroy(gameObject);
+                other.gameObject.GetComponent<PlayerController>().TakeDamage(1);
+            }
         }
         else if (other.gameObject.tag == "Enemy Flyer" && isParried)
         {
+            Destroy(gameObject);
             other.gameObject.GetComponent<FlyingEnemy>().TakeDamage(1);
         }
         else if (other.gameObject.tag == "Enemy Shooter" && isParried)
         {
+            Destroy(gameObject);
             other.gameObject.GetComponent<ShooterEnemy>().TakeDamage(1);
+        }
+        else if (other.gameObject.tag == "Enemy Shooter")
+        {
+
+        }
+        else
+        {
+            Destroy(gameObject);
         }
     }
 }

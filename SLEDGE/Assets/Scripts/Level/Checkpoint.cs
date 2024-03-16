@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Checkpoint : MonoBehaviour
 {
-    [SerializeField] FlyingEnemy[] flyingEnemies;
+    [SerializeField] Spawner[] enemies;
     [SerializeField] int spawnPointIndex;
 
     bool activated = false;
@@ -16,14 +16,15 @@ public class Checkpoint : MonoBehaviour
         {
             other.gameObject.GetComponent<PlayerController>().UpdateSpawn(spawnPointIndex, this);
             activated = true;
+            GetComponent<MeshRenderer>().enabled = false;
         }
     }
 
     public void Reset()
     {
-        foreach (FlyingEnemy enemy in flyingEnemies)
+        foreach (Spawner spawner in enemies)
         {
-            enemy.Reset();
+            spawner.Respawn();
         }
     }
 }
