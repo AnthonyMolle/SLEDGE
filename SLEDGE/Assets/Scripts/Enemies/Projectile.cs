@@ -19,7 +19,7 @@ public class Projectile : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.position += transform.forward * bulletSpeed;
+        transform.position += transform.forward * bulletSpeed * Time.deltaTime;
         lifetime += Time.deltaTime;
         if (lifetime >= maxLifetime)
         {
