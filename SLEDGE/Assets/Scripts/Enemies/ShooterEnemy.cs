@@ -28,6 +28,7 @@ public class ShooterEnemy : MonoBehaviour
 
     Transform gun;
     GameObject projectile;
+    List<GameObject> projectiles = new List<GameObject>();
 
     public enum EnemyState
     {
@@ -51,7 +52,9 @@ public class ShooterEnemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.LookAt(player.transform);
+        Vector3 lookPos = player.transform.position - transform.position;
+        lookPos.y = 0;
+        transform.rotation = Quaternion.LookRotation(lookPos);
         rb.velocity = Vector3.zero;
         transform.position = position;
         cooldown += Time.deltaTime;
@@ -88,7 +91,6 @@ public class ShooterEnemy : MonoBehaviour
     {
         if (Physics.Raycast(transform.position, transform.forward, out hit, detectionRadius))
         {
-            //Debug.Log(hit.collider.gameObject.name);
             if (hit.collider.gameObject.tag == "Player")
             {
                 return true;
@@ -102,6 +104,7 @@ public class ShooterEnemy : MonoBehaviour
         Debug.Log("Firing");
         Debug.Log(player.transform.position);
         projectile = Instantiate(projectileType, gun.position, Quaternion.identity);
+        projectiles.Add(projectile);
         projectile.GetComponent<Projectile>().initializeProjectile(player.transform.position, bulletSpeed, bulletLifetime, false);
         return;
     }
@@ -118,6 +121,15 @@ public class ShooterEnemy : MonoBehaviour
     private void Die()
     {
         // add sfx and vfx and such!
+        Destroy(gameObject);
+    }
+
+    public void Destroy()
+    {
+        foreach (GameObject p in projectiles)
+        {
+            Destroy(p);
+        }
         Destroy(gameObject);
     }
 

@@ -22,7 +22,14 @@ public class Spawner : MonoBehaviour
     {
         if (currentEnemy != null)
         {
-            Destroy(currentEnemy);
+            if (currentEnemy.gameObject.name.Contains("Shooter"))
+            {
+                currentEnemy.gameObject.GetComponent<ShooterEnemy>().Destroy();
+            }
+            else
+            {
+                Destroy(currentEnemy);
+            }
         }
 
         Spawn();
