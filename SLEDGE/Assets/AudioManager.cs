@@ -31,7 +31,7 @@ public class AudioManager : MonoBehaviour
             musicSource.clip = mainMenu;
             musicSource.Play();
         }
-        else if(sceneName == "Anthony Enemy Implementation" || sceneName == "Easy Level ART" || sceneName == "Mid Level")
+        else if(sceneName == "Anthony Enemy Implementation" || sceneName == "Easy Level ART" || sceneName == "Mid Level ART")
         {
             musicSource.clip = background;
             musicSource.Play();
