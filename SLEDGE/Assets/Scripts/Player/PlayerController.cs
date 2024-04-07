@@ -16,8 +16,8 @@ public class PlayerController : MonoBehaviour
     #region Character Component References
     [Header("Character Component References")]
     [SerializeField] Camera gameCamera;
-    Rigidbody rb;
-    Animator anim;
+    Rigidbody rb; // parent rigidbody
+    Animator anim; // parent animator
     #endregion
 
     #region Camera
@@ -66,16 +66,13 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float decelerationRate = 10f;
     [SerializeField] float maxSpeed = 100f;
     [SerializeField] int maxSlopeAngle = 45;
-    bool stuckToWall = false;
     bool isChangingDirection = false;
     #endregion
 
     #region Air Movement
     [Header("Air Movement")]
     [SerializeField] float airAccelerationRate = 10f;
-    [SerializeField] float airDecelerationRate = 10f;
     [SerializeField] float airMaxSpeed = 100f;
-    [SerializeField] float forcedFallingSpeed = 11f; //speed the player is forced to fall when they are sticking to a wall
 
     [SerializeField] float naturalAdditionalFallingSpeed = 4f; //natural rate our player will fall after the apex of their falling height.
     #endregion
@@ -90,12 +87,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float jumpHoldCheckWindow = 0.25f;
     [SerializeField] float jumpForce = 2f;
     [SerializeField] float coyoteTime = 0.25f;
-    [SerializeField] float savedCoyoteTime = 0.25f;// THIS IS THE DEFAULT VALUE OF COYOTETIME
     [SerializeField] bool hasCoyoteTime = true;// THIS IS THE DEFAULT VALUE OF COYOTETIME
     [SerializeField] bool decreasingCoyoteTime = false;
     [SerializeField] bool hasJumped = false;
-
-    [SerializeField] float maxJumpPoint = 10f;
     #endregion
 
     #region Raycast Checks
@@ -113,7 +107,6 @@ public class PlayerController : MonoBehaviour
 
     float currentDistance = 0; // current distance between the player and a surface.
     bool isInRange = false; // represents if we are in range to sue the hammer.
-
     int distCheck;
     #endregion
 
@@ -187,19 +180,19 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-        chargeSlider.maxValue = chargeTime;
-        chargeSlider.value = chargeSlider.minValue;
+        Cursor.lockState = CursorLockMode.Locked; // lock the cursor to the center of the screen
+        Cursor.visible = false; // make the cursor not visible
+        chargeSlider.maxValue = chargeTime; // set the max value of the charge slider to chargetime
+        chargeSlider.value = chargeSlider.minValue; //set the value of the charge slider to 0
         
-        rb = GetComponent<Rigidbody>();
-        anim = GetComponent<Animator>();
+        rb = GetComponent<Rigidbody>(); // get the rigidbody of the parent component
+        anim = GetComponent<Animator>();// get the animator of the parent component
 
-        mouseSensitivity = PlayerPrefs.GetFloat("Sensitivity", 400);
+        mouseSensitivity = PlayerPrefs.GetFloat("Sensitivity", 400); // set the mouse sensitivity
 
-        currentHealth = maxHealth;
+        currentHealth = maxHealth; // set health to max
 
-        currentCheckpoint = firstCheckpoint;
+        currentCheckpoint = firstCheckpoint; //set the currentcheckpoint to the start of the level.
     }
 
     // Update is called once per frame
@@ -208,7 +201,6 @@ public class PlayerController : MonoBehaviour
         HandleInput();
         HandleHammer();
         HandleLookRotation();
-        //hangTime += 1;
         if(!isGrounded)
         {
             hangTime += Time.deltaTime;
@@ -239,22 +231,6 @@ public class PlayerController : MonoBehaviour
             HammerHit();
         }
     }
-
-    // private void OnCollisionEnter(Collision other) {
-    //     if (!isGrounded)//if were touching a collider while not grounded
-    //     {
-    //         rb.velocity = new Vector3(0,rb.velocity.y,0); //remove any current velocity because we hit a wall.
-    //     }
-    // }
-
-    // private void OnCollisionStay(Collision other) 
-    // {
-    //     if (!isGrounded && rb.velocity.y <= 0)//if were touching a collider while not grounded
-    //     {
-    //         // rb.AddForce(new Vector3(0,-forcedFallingSpeed * Time.deltaTime,0));   //this is probably more precise.
-    //         rb.position += new Vector3(0,-forcedFallingSpeed * Time.deltaTime,0); // force the player to slide down the wall.
-    //     }
-    // }
 
     private void HandleHammer()
     {
@@ -384,22 +360,22 @@ public class PlayerController : MonoBehaviour
             isChangingDirection = true;
         }
         
-        if (Input.GetKeyDown(KeyCode.Space))//If the player has pressed the space key...
+        if (Input.GetKeyDown(KeyCode.Space))// If the player has pressed the space key...
         {
-            if(!mustReleaseJump) //and they haven't been holding the button down...
+            if(!mustReleaseJump) // and they haven't been holding the button down...
             {
                 jumpPressed = true; // let the engine know jump was pressed
             }
             
         }
-        if (Input.GetKey(KeyCode.Space)) //If the player might be holding the jump button down...
+        if (Input.GetKey(KeyCode.Space)) // If the player might be holding the jump button down...
         {
-            StartCoroutine(JumpHoldTimer());//Start a coroutine to check if they have been holding the button.
+            StartCoroutine(JumpHoldTimer());// Start a coroutine to check if they have been holding the button.
         }
 
-        if (Input.GetKeyUp(KeyCode.Space)) //if the player releases the jump button...
+        if (Input.GetKeyUp(KeyCode.Space)) // if the player releases the jump button...
         {
-            StopCoroutine(JumpHoldTimer()); //stop checking to see if they are holding it.
+            StopCoroutine(JumpHoldTimer()); // stop checking to see if they are holding it.
 
             // reset these variable to how they were before they pressed the jump button.
             jumpPressed = false;
@@ -491,6 +467,7 @@ public class PlayerController : MonoBehaviour
     {
         #region Raycast Checks
         //all this raycast slope stuff is getting kinda out of hand
+        // i agree -other programmer
         RaycastHit hit;
         Vector3 movementPlane;
         if (Physics.Raycast(gameObject.transform.position, Vector3.down, out hit, playerHeight/2 + groundCheckDist, groundLayers)) //if on the ground
@@ -618,25 +595,6 @@ public class PlayerController : MonoBehaviour
                 srcJumpPoint = rb.transform.position.y;
                 Jump();
             }
-
-            // if the player has jumped, is currently in the air, and has not been launched.
-            /*
-            if(!isGrounded && hasJumped && !isLaunched)
-            {
-                // if we are going upwards in our jump...
-                if(rb.transform.position.y > srcJumpPoint)
-                {
-                    // if the player goes over the max jump height, remove their velocity
-                    if(rb.transform.position.y > srcJumpPoint + maxJumpPoint)
-                    {
-                        rb.velocity = new Vector3(rb.velocity.x,-0.01f,rb.velocity.z);
-                        // Mathf.Clamp(rb.transform.position.y, srcJumpPoint, srcJumpPoint + maxJumpPoint);
-
-                    }
-                }
-
-            }
-            */
             #endregion
         }
 
@@ -653,11 +611,11 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private IEnumerator DecreaseCoyoteTime(){
+    private IEnumerator DecreaseCoyoteTime(){ // this coroutine decreases jump coyote time and doesnt let the player jump once its done running 
         if(!decreasingCoyoteTime && hasCoyoteTime) // if we have coyote time and we aren't decreasing it yet
         {
             decreasingCoyoteTime = true; // let the coroutine know we are decreasing coyote time. this makes the coroutine only run when needed.
-            yield return new WaitForSeconds(coyoteTime); //wait for the desired amount of coyote time desired.
+            yield return new WaitForSeconds(coyoteTime); // wait for the desired amount of coyote time desired.
             hasCoyoteTime = false; // after waiting for our window, let the engine know we missed our window
             decreasingCoyoteTime = false; // let the engine know the coroutine is done.
         }
@@ -674,19 +632,19 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private IEnumerator JumpHoldTimer(){ //this coroutine checks to see if the player has been holding the jump button.
-        if(!jumpHoldChecking && jumpPressed == true) //if the coroutine isnt already running, and the player is pressing the jump button.
+    private IEnumerator JumpHoldTimer(){ // this coroutine checks to see if the player has been holding the jump button.
+        if(!jumpHoldChecking && jumpPressed == true) // if the coroutine isnt already running, and the player is pressing the jump button.
         {
-            jumpHoldChecking = true; //let the engine know we are running the coroutine
-            yield return new WaitForSeconds(jumpHoldCheckWindow); //check if the player is holding jump for this long.
-            //the following variable will be set given the player has not let go of the jump key.
+            jumpHoldChecking = true; // let the engine know we are running the coroutine
+            yield return new WaitForSeconds(jumpHoldCheckWindow); // check if the player is holding jump for this long.
+            // the following variable will be set given the player has not let go of the jump key.
             mustReleaseJump = true; // let the engine know they are holding jump.
             jumpPressed = false; // tell the engine they arent trying to jump.
             jumpHoldChecking = false; // stop running current instance of the coruoutine.
         }
     }
 
-    private void Jump()
+    private void Jump() // is called when the player tried and is allowed to jump
     {
         rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z); //remove our falling velocity so our jump doesnt have to fight gravity.
         rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse); // add a force upward
@@ -791,7 +749,7 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(int damage) // called when the player needs to take damage
     {
         currentHealth -= damage;
         if (currentHealth <= 0)
@@ -809,27 +767,26 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void Die()
+    public void Die() // this function is called when the player dies
     {
         Debug.Log("die!");
-
         alive = false;
         deathScreen.SetActive(true);
         Time.timeScale = 0;
     }
 
-    public void ResetPlayer()
+    public void ResetPlayer() // this function resets the player fully
     {
         alive = true;
 
-        if (currentCheckpoint != null)
+        if (currentCheckpoint != null) //if the player has a checkpoint stored, remove it and get an updated one.
         {
             currentCheckpoint.Reset();
         }
 
         rb.velocity = Vector3.zero;
 
-        transform.position = currentCheckpoint.transform.position;
+        transform.position = currentCheckpoint.transform.position; // set the player to the current check point pos.
 
         currentHealth = maxHealth;
     }
