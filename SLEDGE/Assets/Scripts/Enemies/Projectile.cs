@@ -7,6 +7,7 @@ public class Projectile : MonoBehaviour
     float bulletSpeed = 5.0f;
     float maxLifetime = 10.0f;
     float lifetime = 0.0f;
+    public float hitStopDuration;
 
     bool isParried = false;
 
@@ -57,11 +58,13 @@ public class Projectile : MonoBehaviour
         else if (other.gameObject.tag == "Enemy Flyer" && isParried)
         {
             Destroy(gameObject);
+            FindObjectOfType<Hitstop>().Stop(hitStopDuration);
             other.gameObject.GetComponent<FlyingEnemy>().TakeDamage(1);
         }
         else if (other.gameObject.tag == "Enemy Shooter" && isParried)
         {
             Destroy(gameObject);
+            FindObjectOfType<Hitstop>().Stop(hitStopDuration);
             other.gameObject.GetComponent<ShooterEnemy>().TakeDamage(1);
         }
         else if (other.gameObject.tag == "Enemy Shooter")
