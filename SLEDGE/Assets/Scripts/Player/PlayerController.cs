@@ -657,7 +657,7 @@ public class PlayerController : MonoBehaviour
         RaycastHit hit1;
         if (Physics.Raycast(ray, out hit1, hitLength, bouncableLayers))
         {
-            FindObjectOfType<ScreenShaker>().Shake(100f, 100f);
+            //FindObjectOfType<ScreenShaker>().Shake(100f, 100f);
 
             rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
 
