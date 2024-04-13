@@ -4,10 +4,12 @@ using UnityEngine;
 
 public class Collectible : MonoBehaviour
 {
+    ScoreManager ScoreManager;
+    
     // Start is called before the first frame update
     void Start()
     {
-        
+        ScoreManager = GameObject.Find("ScoreManager").GetComponent<ScoreManager>();
     }
 
     // Update is called once per frame
@@ -21,7 +23,10 @@ public class Collectible : MonoBehaviour
         if (other.gameObject.CompareTag("Player"))
         {
             Debug.Log("Collectible found!");
-            // Add collectible to score manager
+            if (ScoreManager != null)
+            {
+                ScoreManager.PickUpCollectible(gameObject);
+            }
             Destroy(gameObject);
         }
     }
