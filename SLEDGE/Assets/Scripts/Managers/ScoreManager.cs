@@ -10,6 +10,9 @@ public class ScoreManager : MonoBehaviour
     int Collectibles = 0;
     #endregion
 
+    //public int MaxEnemies = 0;
+    int enemiesKilled = 0;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -25,6 +28,11 @@ public class ScoreManager : MonoBehaviour
     public int GetCollectibles()
     {
         return Collectibles;
+    }
+
+    public int GetMaxCollectibles()
+    {
+        return MaxCollectibles;
     }
 
     public void PickUpCollectible(GameObject collectible)
