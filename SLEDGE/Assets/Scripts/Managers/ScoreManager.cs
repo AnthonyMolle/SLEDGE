@@ -23,34 +23,41 @@ public class ScoreManager : MonoBehaviour
     }
 
     #region Collectibles
-    public int MaxCollectibles { get; set; }
-    public int CollectiblesFound { get; set; }
-    #endregion
+    public int MaxCollectibles;
+    int CollectiblesFound;
 
-    #region Speedrunning
-    public float CurrentTime {
-        // Avoids updating timer every frame in two places
-        get
-        {
-            return timer.GetTimeFloat();
-        }
-    }
-    #endregion
-
-    #region Combat
-    public int EnemiesKilled { get; set; }
-    public int StyleKills { get; set; }
-    public float DamageTaken { get; set; }
-    #endregion
-
-    #region Movement
-    public int TimesLanded { get; set; }
-    #endregion
-
-    public void PickUpCollectible(GameObject collectible)
+    public int GetCollectible() { return CollectiblesFound; }
+    public void AddCollectible(GameObject collectible)
     {
         // Possibly track specific collectibles later?
         CollectiblesFound++;
         Debug.Log("Collectibles found: " + CollectiblesFound);
     }
+
+    #endregion
+
+    #region Current Time
+    public float GetCurrentTime() { return timer.GetTimeFloat(); }
+    #endregion
+
+    #region Combat
+    int EnemiesKilled;
+    int StyleKills;
+    float DamageTaken;
+
+    public int GetEnemiesKilled() { return EnemiesKilled; }
+    public int GetStyleKills() { return StyleKills; }
+    public float GetDamageTaken() { return DamageTaken; }
+
+    public void AddEnemiesKilled(int _enemiesKilled) { EnemiesKilled += _enemiesKilled; }
+    public void AddStyleKills(int _styleKills) { StyleKills += _styleKills; }
+    public void AddDamageTaken(float _damageTaken) { DamageTaken += _damageTaken; }
+    #endregion
+
+    #region Movement
+    int TimesLanded;
+
+    public int GetTimesLanded() { return TimesLanded; }
+    public void AddTimesLanded(int _timesLanded) { TimesLanded += _timesLanded; }
+    #endregion
 }
