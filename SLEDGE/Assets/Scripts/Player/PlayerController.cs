@@ -150,10 +150,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float parriedProjectileSpeed = 1f;
     [SerializeField] float parriedProjectileLifetime = 10f;
 
-    [SerializeField] float hammerCoyoteTime = 0.25f; // coyote time of the hammer.
-    [SerializeField] bool hammerHasCoyoteTime = false; // represents whether we have coyote time or not.
-    [SerializeField] bool hammerDecreasingCoyoteTime = false; // represents whether we are decreasing coyote time or not.
-    Vector3 lastHammerPos = new Vector3(0,0,0); // last saved hammer position.
 
     AudioManager audioManager;
 
@@ -168,8 +164,6 @@ public class PlayerController : MonoBehaviour
 
     public TextMeshProUGUI displayDistance;
 
-    public Slider chargeSlider;
-
     [SerializeField] GameObject pause;
 
     [SerializeField] GameObject settings;
@@ -182,8 +176,6 @@ public class PlayerController : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.Locked; // lock the cursor to the center of the screen
         Cursor.visible = false; // make the cursor not visible
-        chargeSlider.maxValue = chargeTime; // set the max value of the charge slider to chargetime
-        chargeSlider.value = chargeSlider.minValue; //set the value of the charge slider to 0
         
         rb = GetComponent<Rigidbody>(); // get the rigidbody of the parent component
         anim = GetComponent<Animator>();// get the animator of the parent component
@@ -258,11 +250,6 @@ public class PlayerController : MonoBehaviour
             hammerTimer = 0;
         }
 
-        //if (mouseReleased){chargeSlider.value = chargeSlider.minValue;}
-        // if (chargingHammer){chargeSlider.value = chargeSlider.maxValue - hammerTimer;}
-        // if (!chargingHammer && hammerCharged){chargeSlider.value = chargeSlider.maxValue;}
-        // if (!chargingHammer && !hammerCharged && chargeSlider.value != chargeSlider.minValue){chargeSlider.value = chargeSlider.minValue;}
-
         if (mouseReleased && hammerCharged)
         {
             hammerCharged = false;
@@ -312,22 +299,6 @@ public class PlayerController : MonoBehaviour
             swipeRecovering = false;
         }
 
-        // if the hammer is currently charged AND we are in range, set the last hammer position to the current spot in range.
-        // if we arent in range, call the ienumerator to reduce our coyote time.
-        if(hammerCharged) // if the hammer is charged...
-        {
-            if(isInRange)// if we are in range...
-            {
-                // track the last in range pos & stop the coroutine to decrease coyote time. also give back the coyote time.
-                lastHammerPos = distanceCheck.point;
-                StopCoroutine(HammerDecreaseCoyoteTime());
-                hammerHasCoyoteTime = true;
-            }
-            else // if we arent in range of anything, start to coroutine to decrease coyote time.
-            {
-                StartCoroutine(HammerDecreaseCoyoteTime());
-            }
-        }
     }
 
     private void HandleLookRotation()
@@ -621,17 +592,6 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private IEnumerator HammerDecreaseCoyoteTime()
-    {
-        if(!hammerDecreasingCoyoteTime && hammerHasCoyoteTime) // if we have coyote time and we aren't decreasing it yet
-        {
-            hammerDecreasingCoyoteTime = true; // let the coroutine know we are decreasing coyote time. this makes the coroutine only run when needed.
-            yield return new WaitForSeconds(hammerCoyoteTime); //wait for the desired amount of coyote time desired.
-            hammerHasCoyoteTime = false; // after waiting for our window, let the engine know we missed our window
-            hammerDecreasingCoyoteTime = false; // let the engine know the coroutine is done.
-        }
-    }
-
     private IEnumerator JumpHoldTimer(){ // this coroutine checks to see if the player has been holding the jump button.
         if(!jumpHoldChecking && jumpPressed == true) // if the coroutine isnt already running, and the player is pressing the jump button.
         {
@@ -691,10 +651,6 @@ public class PlayerController : MonoBehaviour
             {
                 hit1.transform.gameObject.GetComponent<ShooterEnemy>().TakeDamage(1);
             }
-        }
-        else if(hammerHasCoyoteTime) // if the hammer has coyote time && we are out of range on hammer bounce...
-        {
-            //NOTE THAT COYOTE TIME DOESNT ACCOUNT FOR BOUNCABLE LAYERS...
         }
     }
 
