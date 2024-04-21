@@ -792,4 +792,9 @@ public class PlayerController : MonoBehaviour
 
         currentHealth = maxHealth;
     }
+
+    public bool CheckMoving()
+    {
+        return movementInputVector.magnitude != 0;
+    }
 }
