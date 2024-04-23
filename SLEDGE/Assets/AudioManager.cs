@@ -20,8 +20,15 @@ public class AudioManager : MonoBehaviour
     public AudioClip walk5;
     public AudioClip land;
 
-    int previousChoice = 1;
+    HammerSound hammerSound;
 
+    private void Awake()
+    {
+        hammerSound = GameObject.FindGameObjectWithTag("HammerSound").GetComponent<HammerSound>();
+    }
+
+    int previousChoice = 1;
+    /*
     private void Start()
     {
         Scene currentScene = SceneManager.GetActiveScene();
@@ -31,10 +38,34 @@ public class AudioManager : MonoBehaviour
             musicSource.clip = mainMenu;
             musicSource.Play();
         }
-        else if(sceneName == "Anthony Enemy Implementation" || sceneName == "Easy Level ART" || sceneName == "Mid Level ART")
+        else if(sceneName == "Anthony Enemy Implementation" || sceneName == "Easy Level ART" || sceneName == "Mid Level ART"|| sceneName == "Josh")
         {
             musicSource.clip = background;
             musicSource.Play();
+        }
+    }
+    */
+
+    // Code for probably keeping the music playing between scenes?
+    string prevScene = "";
+    private void Start()
+    {
+        Scene currentScene = SceneManager.GetActiveScene();
+        string sceneName = currentScene.name;
+        if(sceneName == "Jonah")
+        {
+            musicSource.clip = mainMenu;
+            musicSource.Play();
+            prevScene = sceneName;
+        }
+        else if(sceneName == "Anthony Enemy Implementation" || sceneName == "Easy Level ART" || sceneName == "Mid Level ART")
+        {
+            if(prevScene != "Anthony Enemy Implementation" || prevScene != "Easy Level ART" || prevScene != "Mid Level ART")
+            {
+                musicSource.clip = background;
+                musicSource.Play();
+            }
+            prevScene = sceneName;
         }
     }
 
@@ -73,5 +104,11 @@ public class AudioManager : MonoBehaviour
         }                      
         previousChoice = walkChoice;
     }
-    
+
+    public void playHitSound()
+    {
+        hammerSound.HitSoundPLEASE();
+        //SFXSource.PlayOneShot(hit);
+    }
+   
 }

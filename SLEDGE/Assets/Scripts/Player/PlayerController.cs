@@ -156,6 +156,7 @@ public class PlayerController : MonoBehaviour
     Vector3 lastHammerPos = new Vector3(0,0,0); // last saved hammer position.
 
     AudioManager audioManager;
+    [SerializeField] GameObject HammerSound;
 
     private void Awake()
     {
@@ -679,7 +680,10 @@ public class PlayerController : MonoBehaviour
 
             rb.AddForce((transform.position - hit1.point).normalized * bounceForce, ForceMode.Impulse);
             isLaunched = true;
-            audioManager.PlaySFX(audioManager.hit);
+            HammerSound.transform.position = gameObject.transform.position;
+            audioManager.playHitSound();
+            //audioManager.PlaySFX(audioManager.hit);
+
 
             if (hit1.transform.gameObject.tag == "Enemy Flyer")
             {
