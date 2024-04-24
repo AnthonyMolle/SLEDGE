@@ -5,11 +5,13 @@ using UnityEngine;
 public class LevelCompleteScreen : MonoBehaviour
 {
     public GameObject portal;
+
+    private EndScreenManager EndScreenManager;
     
     // Start is called before the first frame update
     void Start()
     {
-        
+        EndScreenManager = GetComponentInChildren<EndScreenManager>();
     }
 
     // Update is called once per frame
@@ -17,7 +19,13 @@ public class LevelCompleteScreen : MonoBehaviour
     {
         if (Input.anyKeyDown)
         {
-            portal.GetComponent<EndPortal>().GoToScene();
+            if(EndScreenManager.FinishedAnimation() == false) {
+                EndScreenManager.skipAnim();
+            }
+            else
+            {
+                portal.GetComponent<EndPortal>().GoToScene();
+            }
         }
     }
 }

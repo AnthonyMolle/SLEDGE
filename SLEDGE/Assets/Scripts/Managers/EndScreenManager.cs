@@ -12,8 +12,11 @@ public class EndScreenManager : MonoBehaviour
     public TextMeshProUGUI finalGradeText;
     public GameObject dividerTwo;
 
+
     public bool triggerDropIn;
     private bool triggerReveal;
+
+    public float dropSpeed = 4f;
 
     public float secBetweenReveals = 0.5f;
     public float secBetweenScoreAndGrade = 0.5f;
@@ -22,6 +25,8 @@ public class EndScreenManager : MonoBehaviour
     string stageTime, kills, styleKills;
     Grade timeGrade, killGrade, styleGrade, finalGrade;
     private RectTransform RectTransform;
+
+    private bool gradesDisplayed = false;
 
     public enum Grade
     {
@@ -46,7 +51,7 @@ public class EndScreenManager : MonoBehaviour
         {
             Vector2 sizeDelta = RectTransform.sizeDelta;
 
-            sizeDelta = new Vector2(640.3f, Mathf.Lerp(sizeDelta.y, 1500, 2 * UnityEngine.Time.deltaTime));
+            sizeDelta = new Vector2(640.3f, Mathf.Lerp(sizeDelta.y, 1500, dropSpeed * UnityEngine.Time.deltaTime));
 
             if(sizeDelta.y >= 1420)
             {
@@ -63,22 +68,27 @@ public class EndScreenManager : MonoBehaviour
 
             triggerReveal = false;
 
-            // Get Scores
-            stageTime = ScoreManager.Instance.GetCurrentTime().ToString();
-            kills = "kills: " + ScoreManager.Instance.GetEnemiesKilled().ToString();
-            styleKills = "styles: " + ScoreManager.Instance.GetStyleKills().ToString();
-
-            // Calculate Grades
-            timeGrade = Grade.F;
-            killGrade = Grade.F;
-            styleGrade = Grade.C;
-            finalGrade = Grade.F;
+            setupData();
 
             // Match expectations of time
             secBetweenReveals += secBetweenScoreAndGrade;
 
             StartCoroutine(reveal());
         }
+    }
+
+    private void setupData()
+    {
+        // Get Scores
+        stageTime = ScoreManager.Instance.GetCurrentTime().ToString();
+        kills = "kills: " + ScoreManager.Instance.GetEnemiesKilled().ToString();
+        styleKills = "styles: " + ScoreManager.Instance.GetStyleKills().ToString();
+
+        // Calculate Grades
+        timeGrade = Grade.F;
+        killGrade = Grade.F;
+        styleGrade = Grade.C;
+        finalGrade = Grade.F;
     }
 
     IEnumerator reveal()
@@ -102,6 +112,8 @@ public class EndScreenManager : MonoBehaviour
         // Show final grade
         dividerTwo.SetActive(true);
         finalGradeText.text = GradeToString(finalGrade);
+
+        gradesDisplayed = true;
     }
 
     private string GradeToString(Grade g)
@@ -121,6 +133,28 @@ public class EndScreenManager : MonoBehaviour
             default:
                 return "NAN";
         }
+    }
+
+    public bool FinishedAnimation()
+    {
+        return gradesDisplayed;
+    }
+
+    public void skipAnim()
+    {
+        StopCoroutine(reveal());
+        setupData();
+
+        RectTransform.sizeDelta = new Vector2(640.3f, 1500);
+        Time.triggerReveal(0, stageTime, GradeToString(timeGrade));
+        Kills.triggerReveal(0, kills, GradeToString(killGrade));
+        StyleKills.triggerReveal(0, styleKills, GradeToString(styleGrade));
+
+        dividerTwo.SetActive(true);
+        finalGradeText.text = GradeToString(finalGrade);
+
+        gradesDisplayed = true;
+
     }
 
 }
