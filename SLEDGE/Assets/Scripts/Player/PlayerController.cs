@@ -25,7 +25,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] GameObject cameraObject;
     [SerializeField] GameObject cameraHolder;
     [SerializeField] float camRotateAmountLR = 10f;
-    [SerializeField] float camRotateAmountFB = 20f;
     [SerializeField] float camRotateSpeed = 17f;
     #endregion
 
@@ -46,7 +45,6 @@ public class PlayerController : MonoBehaviour
     #region Health and Spawning
     [Header("Health and Spawning")]
     [SerializeField] Checkpoint firstCheckpoint;
-    Transform currentSpawn;
     int currentSpawnIndex = 0;
     Checkpoint currentCheckpoint;
     
@@ -107,7 +105,6 @@ public class PlayerController : MonoBehaviour
 
     float currentDistance = 0; // current distance between the player and a surface.
     bool isInRange = false; // represents if we are in range to sue the hammer.
-    int distCheck;
     #endregion
 
     #region Hammer
@@ -399,7 +396,6 @@ public class PlayerController : MonoBehaviour
         }
 
         //all upcoming code could be put somewhere way better or in a function but its cool ok lol
-        //float xCamRotate;
         float zCamRotate;
 
         if (horizontalInput > 0.4)
@@ -414,23 +410,7 @@ public class PlayerController : MonoBehaviour
         {
             zCamRotate = 0;
         }
-        
-        /*
-        // if (verticalInput > 0.4)
-        // {
-        //     xCamRotate = camRotateAmountFB;
-        // }
-        // else if (verticalInput < -0.4)
-        // {
-        //     xCamRotate = -camRotateAmountFB;
-        // }
-        // else
-        // {
-        //     xCamRotate = 0;
-        // }
-        */
 
-        //MAKE IT SO FORWARD AND LEFT RIGHT CAMROTATION SPEEDS ARE DIFFERENT
         cameraHolder.transform.localRotation = Quaternion.RotateTowards(cameraHolder.transform.localRotation, Quaternion.Euler(0, 0, zCamRotate), camRotateSpeed * Time.deltaTime);
     }
 
@@ -681,8 +661,6 @@ public class PlayerController : MonoBehaviour
     void UpdateDistanceHud()
     {
         currentDistance = distanceCheck.distance - (hitLength + distanceCheckBuffer);
-        //Debug.Log(distanceCheck.distance);
-        
 
         if(distanceCheck.distance == 0)
         {
