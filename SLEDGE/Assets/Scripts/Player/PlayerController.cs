@@ -289,7 +289,7 @@ public class PlayerController : MonoBehaviour
             hammerHit = true;
             hittingHammer = false;
             //audioManager.PlaySFX(audioManager.hit);
-            anim.Play("Slam 1");
+            anim.Play("Charge 1 TO Slam 1");
 
             recovering = true;
             hammerTimer = recoveryTime;
