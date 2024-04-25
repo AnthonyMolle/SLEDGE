@@ -642,9 +642,10 @@ public class PlayerController : MonoBehaviour
 
             rb.AddForce((transform.position - hit1.point).normalized * bounceForce, ForceMode.Impulse);
             isLaunched = true;
-            HammerSound.transform.position = gameObject.transform.position;
-            audioManager.playHitSound();
+            //HammerSound.transform.position = gameObject.transform.position;
+            //audioManager.playHitSound();
             //audioManager.PlaySFX(audioManager.hit);
+            Instantiate(HammerSound, gameObject.transform.position,Quaternion.identity);
 
 
             if (hit1.transform.gameObject.tag == "Enemy Flyer")

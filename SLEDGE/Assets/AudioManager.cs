@@ -20,13 +20,6 @@ public class AudioManager : MonoBehaviour
     public AudioClip walk5;
     public AudioClip land;
 
-    HammerSound hammerSound;
-
-    private void Awake()
-    {
-        hammerSound = GameObject.FindGameObjectWithTag("HammerSound").GetComponent<HammerSound>();
-    }
-
     int previousChoice = 1;
     /*
     private void Start()
@@ -46,28 +39,32 @@ public class AudioManager : MonoBehaviour
     }
     */
 
-    // Code for probably keeping the music playing between scenes?
-    string prevScene = "";
-    private void Start()
+    // Code for probably keeping the music playing between scenes?\
+    public static string sceneName;
+    public static string prevScene = "";
+
+    public void Update()
     {
         Scene currentScene = SceneManager.GetActiveScene();
         string sceneName = currentScene.name;
-        if(sceneName == "Jonah")
+        if(sceneName == "Jonah" && prevScene != "Jonah")
         {
             musicSource.clip = mainMenu;
             musicSource.Play();
-            prevScene = sceneName;
+            prevScene = "Jonah";
         }
         else if(sceneName == "Anthony Enemy Implementation" || sceneName == "Easy Level ART" || sceneName == "Mid Level ART")
         {
-            if(prevScene != "Anthony Enemy Implementation" || prevScene != "Easy Level ART" || prevScene != "Mid Level ART")
+            if(musicSource.clip != background)
             {
+                musicSource.Stop();
                 musicSource.clip = background;
                 musicSource.Play();
+                prevScene = "";
             }
-            prevScene = sceneName;
         }
     }
+
 
     public void PlaySFX(AudioClip clip)
     {
@@ -104,11 +101,4 @@ public class AudioManager : MonoBehaviour
         }                      
         previousChoice = walkChoice;
     }
-
-    public void playHitSound()
-    {
-        hammerSound.HitSoundPLEASE();
-        //SFXSource.PlayOneShot(hit);
-    }
-   
 }
