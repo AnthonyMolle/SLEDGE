@@ -276,7 +276,6 @@ public class PlayerController : MonoBehaviour
             //Debug.Log("hammer hitting ended");
             hammerHit = true;
             hittingHammer = false;
-            //audioManager.PlaySFX(audioManager.hit);
             anim.Play("HammerHit");
 
             recovering = true;
@@ -642,9 +641,6 @@ public class PlayerController : MonoBehaviour
 
             rb.AddForce((transform.position - hit1.point).normalized * bounceForce, ForceMode.Impulse);
             isLaunched = true;
-            //HammerSound.transform.position = gameObject.transform.position;
-            //audioManager.playHitSound();
-            //audioManager.PlaySFX(audioManager.hit);
             Instantiate(HammerSound, gameObject.transform.position,Quaternion.identity);
 
 
@@ -656,6 +652,10 @@ public class PlayerController : MonoBehaviour
             {
                 hit1.transform.gameObject.GetComponent<ShooterEnemy>().TakeDamage(1);
             }
+        }
+        else 
+        {
+            audioManager.PlaySFX(audioManager.whiff);
         }
     }
 
