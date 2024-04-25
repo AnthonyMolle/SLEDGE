@@ -76,18 +76,9 @@ public class PlayerSaveData : MonoBehaviour
         // Eventually we'll actually save this as data so that its kept when you close and re-open the game
     }
 
-    public float GetLevelTime(string level)
-    {
-        return LevelsData[level].time;
-    }
+    public float GetLevelTime(string level) { return LevelsData[level].time; }
 
-    public string GetLevelGrade(string level)
-    {
-        return LevelsData[level].grade.ToString();
-    }
+    public string GetLevelGrade(string level) { return LevelsData[level].grade.ToString(); }
 
-    public int GetLevelCollectibles(string level)
-    {
-        return LevelsData[level].collectibles;
-    }
+    public int GetLevelCollectibles(string level) { return LevelsData[level].collectibles; }
 }
