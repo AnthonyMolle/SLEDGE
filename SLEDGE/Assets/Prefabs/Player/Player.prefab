@@ -256,19 +256,15 @@ MonoBehaviour:
   maxSpeed: 10
   maxSlopeAngle: 45
   airAccelerationRate: 60
-  airDecelerationRate: 7
   airMaxSpeed: 12
-  forcedFallingSpeed: 2
   naturalAdditionalFallingSpeed: 15
   srcJumpPoint: 0
   jumpHoldCheckWindow: 0.1
   jumpForce: 7.5
   coyoteTime: 0.25
-  savedCoyoteTime: 0.25
   hasCoyoteTime: 1
   decreasingCoyoteTime: 0
   hasJumped: 0
-  maxJumpPoint: 15
   playerHeight: 1
   groundCheckDist: 0.75
   groundLayers:
@@ -292,11 +288,9 @@ MonoBehaviour:
     m_Bits: 1280
   parriedProjectileSpeed: 60
   parriedProjectileLifetime: 10
-  hammerCoyoteTime: 0.25
-  hammerHasCoyoteTime: 0
-  hammerDecreasingCoyoteTime: 0
+  HammerSound: {fileID: 3787150718103105937, guid: b5d8e58a0976b3546aaaef7e665df4c0,
+    type: 3}
   displayDistance: {fileID: 0}
-  chargeSlider: {fileID: 0}
   pause: {fileID: 0}
   settings: {fileID: 0}
   deathScreen: {fileID: 0}
