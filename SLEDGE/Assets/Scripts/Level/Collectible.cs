@@ -25,7 +25,7 @@ public class Collectible : MonoBehaviour
             Debug.Log("Collectible found!");
             if (ScoreManager != null)
             {
-                ScoreManager.PickUpCollectible(gameObject);
+                ScoreManager.AddCollectible(gameObject);
             }
             Destroy(gameObject);
         }
