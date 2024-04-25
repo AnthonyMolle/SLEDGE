@@ -178,6 +178,11 @@ public class FlyingEnemy : MonoBehaviour
         }
     }
 
+    public int GetHealth()
+    {
+        return currentHealth;
+    }
+
     public void TakeDamage(int damage)
     {
         currentHealth -= damage;

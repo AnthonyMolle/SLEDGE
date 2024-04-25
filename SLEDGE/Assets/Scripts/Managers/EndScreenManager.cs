@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using static UnityEditor.Experimental.GraphView.GraphView;
+using UnityEditor.SearchService;
+using UnityEngine.SceneManagement;
 
 public class EndScreenManager : MonoBehaviour
 {
@@ -83,6 +85,8 @@ public class EndScreenManager : MonoBehaviour
         killGrade = Grade.A;
         styleGrade = Grade.A;
         finalGrade = Grade.A;
+
+        PlayerSaveData.Instance.SaveLevelData(SceneManager.GetActiveScene().name, ScoreManager.Instance.GetCurrentTime(), PlayerSaveData.Grade.A, ScoreManager.Instance.GetCollectible());
     }
 
     IEnumerator reveal()

@@ -5,15 +5,16 @@ using UnityEngine;
 
 public class PlayerSaveData : MonoBehaviour
 {
-    public static PlayerSaveData Instance;
+    public static PlayerSaveData Instance { get; private set; }
 
     private void Awake()
     {
         if (Instance != this && Instance != null)
         {
-            Destroy(gameObject);
+            Destroy(this.gameObject);
         }
         Instance = this;
+        Debug.Log("blah");
         DontDestroyOnLoad(this.gameObject);
     }
 
@@ -75,6 +76,8 @@ public class PlayerSaveData : MonoBehaviour
 
         // Eventually we'll actually save this as data so that its kept when you close and re-open the game
     }
+
+    public bool ContainsLevelData(string level) {  return LevelsData.ContainsKey(level); }
 
     public float GetLevelTime(string level) { return LevelsData[level].time; }
 

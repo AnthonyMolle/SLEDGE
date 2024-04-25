@@ -109,6 +109,11 @@ public class ShooterEnemy : MonoBehaviour
         return;
     }
 
+    public int GetHealth()
+    {
+        return currentHealth;
+    }
+
     public void TakeDamage(int damage)
     {
         currentHealth -= damage;
