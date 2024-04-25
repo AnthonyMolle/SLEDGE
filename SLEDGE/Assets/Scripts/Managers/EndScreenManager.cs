@@ -2,12 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class EndScreenManager : MonoBehaviour
 {
     public EndScreenScore Time;
     public EndScreenScore Kills;
     public EndScreenScore StyleKills;
+    public EndScreenScore Collectables;
 
     public TextMeshProUGUI finalGradeText;
     public GameObject dividerTwo;
@@ -15,6 +17,7 @@ public class EndScreenManager : MonoBehaviour
 
     private bool triggerDropIn;
     private bool triggerReveal;
+    private bool waitingForAnim;
 
     public float dropSpeed = 4f;
 
@@ -22,61 +25,49 @@ public class EndScreenManager : MonoBehaviour
     public float secBetweenScoreAndGrade = 0.5f;
     public float secMultiplier = 0.65f;
 
-    string stageTime, kills, styleKills;
-    Grade timeGrade, killGrade, styleGrade, finalGrade;
+    string stageTime, kills, styleKills, collectables_found;
+    Grade timeGrade, killGrade, styleGrade, finalGrade, collectableGrade;
     private RectTransform RectTransform;
 
     private bool gradesDisplayed = false;
 
+
     public enum Grade
-    {
-        F, // 0
-        D, // 1
-        C, // 2
-        B, // 3
-        A  // 4
+    {     
+        D, // 0
+        C, // 1
+        B, // 2
+        A, // 3
+        S  // 4
     }
     private void Start()
     {
         finalGradeText.text = "";
         dividerTwo.SetActive(false);
         RectTransform = GetComponent<RectTransform>();
+        waitingForAnim = false;
         RectTransform.sizeDelta = new Vector2(640.3f, 0);
     }
 
     public void StartDropIn()
     {
-        triggerDropIn = true;
+        Debug.Log("Started Drop In");
+        GetComponent<Animator>().SetBool("DropIn",true);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (triggerDropIn)
+        if (RectTransform.sizeDelta.y >= 1420 && triggerReveal == false)
         {
-            Vector2 sizeDelta = RectTransform.sizeDelta;
-
-            sizeDelta = new Vector2(640.3f, Mathf.Lerp(sizeDelta.y, 1500, dropSpeed * UnityEngine.Time.deltaTime));
-
-            if(sizeDelta.y >= 1420)
-            {
-                triggerReveal = true;
-                triggerDropIn = false;
-            }
-
-            RectTransform.sizeDelta = sizeDelta;
-        }
-
-        if (triggerReveal)
-        {
-            
-
-            triggerReveal = false;
+            triggerReveal = true;
 
             setupData();
 
             // Match expectations of time
             secBetweenReveals += secBetweenScoreAndGrade;
+
+            Debug.Log("Show Reveal");
 
             StartCoroutine(reveal());
         }
@@ -85,15 +76,16 @@ public class EndScreenManager : MonoBehaviour
     private void setupData()
     {
         // Get Scores
-        stageTime = ScoreManager.Instance.GetCurrentTime().ToString();
+        stageTime = ScoreManager.Instance.GetPrintableTime();
         kills = "kills: " + ScoreManager.Instance.GetEnemiesKilled().ToString();
         styleKills = "styles: " + ScoreManager.Instance.GetStyleKills().ToString();
+        collectables_found = "Collectables: " + ScoreManager.Instance.GetCollectible().ToString();
 
         // Calculate Grades
-        timeGrade = Grade.F;
-        killGrade = Grade.F;
-        styleGrade = Grade.C;
-        finalGrade = Grade.F;
+        timeGrade = Grade.A;
+        killGrade = Grade.A;
+        styleGrade = Grade.A;
+        finalGrade = Grade.A;
     }
 
     IEnumerator reveal()
@@ -102,21 +94,23 @@ public class EndScreenManager : MonoBehaviour
         // Reveal Time
         Time.triggerReveal(secBetweenScoreAndGrade, stageTime, GradeToString(timeGrade));
 
-            yield return new WaitForSeconds(secBetweenReveals);
+            yield return new WaitForSecondsRealtime(secBetweenReveals);
 
         // Reveal Kills
         Kills.triggerReveal(secBetweenScoreAndGrade * secMultiplier, kills, GradeToString(killGrade));
 
-            yield return new WaitForSeconds(secBetweenReveals * secMultiplier);
+            yield return new WaitForSecondsRealtime(secBetweenReveals * secMultiplier);
 
         // Reveal Style Kills
         StyleKills.triggerReveal(secBetweenScoreAndGrade * secMultiplier * secMultiplier, styleKills, GradeToString(styleGrade));
 
-            yield return new WaitForSeconds(secBetweenReveals * secMultiplier * secMultiplier);
+            yield return new WaitForSecondsRealtime(secBetweenReveals * secMultiplier * secMultiplier);
 
         // Show final grade
         dividerTwo.SetActive(true);
         finalGradeText.text = GradeToString(finalGrade);
+
+        Collectables.triggerReveal(0, collectables_found,"");
 
         gradesDisplayed = true;
     }
@@ -133,8 +127,8 @@ public class EndScreenManager : MonoBehaviour
                 return "C";
             case Grade.D:
                 return "D";
-            case Grade.F:
-                return "F";
+            case Grade.S:
+                return "S";
             default:
                 return "NAN";
         }
@@ -154,6 +148,7 @@ public class EndScreenManager : MonoBehaviour
         Time.triggerReveal(0, stageTime, GradeToString(timeGrade));
         Kills.triggerReveal(0, kills, GradeToString(killGrade));
         StyleKills.triggerReveal(0, styleKills, GradeToString(styleGrade));
+        Collectables.triggerReveal(0, collectables_found, GradeToString(collectableGrade));
 
         dividerTwo.SetActive(true);
         finalGradeText.text = GradeToString(finalGrade);

@@ -38,6 +38,7 @@ public class ScoreManager : MonoBehaviour
 
     #region Current Time
     public float GetCurrentTime() { return timer.GetTimeFloat(); }
+    public string GetPrintableTime() { return timer.GetTimeString();  }
     #endregion
 
     #region Combat

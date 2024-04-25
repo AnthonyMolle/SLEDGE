@@ -37,7 +37,7 @@ public class EndScreenScore : MonoBehaviour
         setVisible(true);
 
         // Wait (Dramatic Pause)
-        yield return new WaitForSeconds(seconds);
+        yield return new WaitForSecondsRealtime(seconds);
 
         // Show grade
         rating.text = grade;

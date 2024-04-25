@@ -11,6 +11,7 @@ public class LevelCompleteScreen : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        GetComponent<CanvasGroup>().alpha = 0;
         EndScreenManager = GetComponentInChildren<EndScreenManager>();
     }
 
