@@ -60,12 +60,14 @@ public class Projectile : MonoBehaviour
             Destroy(gameObject);
             FindObjectOfType<Hitstop>().Stop(hitStopDuration);
             other.gameObject.GetComponent<FlyingEnemy>().TakeDamage(1);
+            GameObject.Find("ScoreManager").GetComponent<ScoreManager>().AddStyleKills(1);
         }
         else if (other.gameObject.tag == "Enemy Shooter" && isParried)
         {
             Destroy(gameObject);
             FindObjectOfType<Hitstop>().Stop(hitStopDuration);
             other.gameObject.GetComponent<ShooterEnemy>().TakeDamage(1);
+            GameObject.Find("ScoreManager").GetComponent<ScoreManager>().AddStyleKills(1);
         }
         else if (other.gameObject.tag == "Enemy Shooter")
         {
