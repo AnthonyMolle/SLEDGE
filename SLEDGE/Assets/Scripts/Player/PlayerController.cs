@@ -187,6 +187,7 @@ public class PlayerController : MonoBehaviour
         
         rb = GetComponent<Rigidbody>(); // get the rigidbody of the parent component
         anim = GetComponent<Animator>();// get the animator of the parent component
+        Debug.Log(anim);
 
         mouseSensitivity = PlayerPrefs.GetFloat("Sensitivity", 400); // set the mouse sensitivity
 
@@ -289,7 +290,7 @@ public class PlayerController : MonoBehaviour
             hammerHit = true;
             hittingHammer = false;
             //audioManager.PlaySFX(audioManager.hit);
-            anim.Play("Charge 1 TO Slam 1");
+            anim.Play("Slam 1");
 
             recovering = true;
             hammerTimer = recoveryTime;
