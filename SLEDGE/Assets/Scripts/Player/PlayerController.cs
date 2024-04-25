@@ -240,7 +240,7 @@ public class PlayerController : MonoBehaviour
 
             swipingHammer = true;
             hammerTimer = swipeTime;
-            anim.Play("HammerSwipe");
+            anim.Play("Hit 1");
         }
         
         if (mousePressed && !chargingHammer && !recovering && !hittingHammer && !hammerCharged && !swipeRecovering && !swipingHammer)
@@ -248,12 +248,12 @@ public class PlayerController : MonoBehaviour
             //Debug.Log("hammer startin");
             chargingHammer = true;
             hammerTimer = chargeTime;
-            anim.Play("HammerCharge");
+            anim.Play("Charge 1");
         }
 
         if (chargingHammer && hammerTimer > 0.1 && mouseReleased)
         {
-            anim.Play("HammerIdle");
+            anim.Play("Idle 1");
             chargingHammer = false;
             hammerTimer = 0;
         }
@@ -281,7 +281,7 @@ public class PlayerController : MonoBehaviour
             //Debug.Log("charging hammer ended");
             hammerCharged = true;
             chargingHammer = false;
-            anim.Play("HammerHold");
+            anim.Play("Charge 1 Hold");
         }
         else if (hittingHammer)
         {
@@ -289,7 +289,7 @@ public class PlayerController : MonoBehaviour
             hammerHit = true;
             hittingHammer = false;
             //audioManager.PlaySFX(audioManager.hit);
-            anim.Play("HammerHit");
+            anim.Play("Slam 1");
 
             recovering = true;
             hammerTimer = recoveryTime;
