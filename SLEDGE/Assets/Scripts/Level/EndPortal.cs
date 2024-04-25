@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -28,6 +29,11 @@ public class EndPortal : MonoBehaviour
         {
             Time.timeScale = 0;
             LevelCompleteScreen.SetActive(true);
+
+            if (LevelCompleteScreen != null && LevelCompleteScreen.GetComponent<LevelCompleteScreen>() != null)
+            {
+                LevelCompleteScreen.GetComponent<LevelCompleteScreen>().StartAnimation();
+            }
         }
     }
 

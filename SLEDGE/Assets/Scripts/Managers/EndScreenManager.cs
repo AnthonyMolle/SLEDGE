@@ -13,7 +13,7 @@ public class EndScreenManager : MonoBehaviour
     public GameObject dividerTwo;
 
 
-    public bool triggerDropIn;
+    private bool triggerDropIn;
     private bool triggerReveal;
 
     public float dropSpeed = 4f;
@@ -42,6 +42,11 @@ public class EndScreenManager : MonoBehaviour
         dividerTwo.SetActive(false);
         RectTransform = GetComponent<RectTransform>();
         RectTransform.sizeDelta = new Vector2(640.3f, 0);
+    }
+
+    public void StartDropIn()
+    {
+        triggerDropIn = true;
     }
 
     // Update is called once per frame
