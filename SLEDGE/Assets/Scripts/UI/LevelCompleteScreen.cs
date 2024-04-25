@@ -14,6 +14,11 @@ public class LevelCompleteScreen : MonoBehaviour
         EndScreenManager = GetComponentInChildren<EndScreenManager>();
     }
 
+    public void StartAnimation()
+    {
+        EndScreenManager.StartDropIn();
+    }
+
     // Update is called once per frame
     void Update()
     {
