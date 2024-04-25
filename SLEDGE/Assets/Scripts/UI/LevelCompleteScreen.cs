@@ -7,7 +7,9 @@ public class LevelCompleteScreen : MonoBehaviour
     public GameObject portal;
 
     private EndScreenManager EndScreenManager;
-    
+
+    private bool AllowInput = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -18,12 +20,13 @@ public class LevelCompleteScreen : MonoBehaviour
     public void StartAnimation()
     {
         EndScreenManager.StartDropIn();
+        AllowInput = true;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.anyKeyDown)
+        if (AllowInput && Input.anyKeyDown)
         {
             if(EndScreenManager.FinishedAnimation() == false) {
                 EndScreenManager.skipAnim();

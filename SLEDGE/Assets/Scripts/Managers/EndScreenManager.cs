@@ -51,7 +51,6 @@ public class EndScreenManager : MonoBehaviour
 
     public void StartDropIn()
     {
-        Debug.Log("Started Drop In");
         GetComponent<Animator>().SetBool("DropIn",true);
     }
 
@@ -66,8 +65,6 @@ public class EndScreenManager : MonoBehaviour
 
             // Match expectations of time
             secBetweenReveals += secBetweenScoreAndGrade;
-
-            Debug.Log("Show Reveal");
 
             StartCoroutine(reveal());
         }
