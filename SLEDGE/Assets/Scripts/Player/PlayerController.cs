@@ -17,7 +17,7 @@ public class PlayerController : MonoBehaviour
     [Header("Character Component References")]
     [SerializeField] Camera gameCamera;
     Rigidbody rb; // parent rigidbody
-    Animator anim; // parent animator
+    [SerializeField] Animator anim; // parent animator
     #endregion
 
     #region Camera
@@ -176,7 +176,6 @@ public class PlayerController : MonoBehaviour
         Cursor.visible = false; // make the cursor not visible
         
         rb = GetComponent<Rigidbody>(); // get the rigidbody of the parent component
-        anim = GetComponent<Animator>();// get the animator of the parent component
 
         mouseSensitivity = PlayerPrefs.GetFloat("Sensitivity", 400); // set the mouse sensitivity
 
@@ -230,7 +229,7 @@ public class PlayerController : MonoBehaviour
 
             swipingHammer = true;
             hammerTimer = swipeTime;
-            anim.Play("HammerSwipe");
+            anim.Play("Hit 1");
         }
         
         if (mousePressed && !chargingHammer && !recovering && !hittingHammer && !hammerCharged && !swipeRecovering && !swipingHammer)
@@ -238,12 +237,12 @@ public class PlayerController : MonoBehaviour
             //Debug.Log("hammer startin");
             chargingHammer = true;
             hammerTimer = chargeTime;
-            anim.Play("HammerCharge");
+            anim.Play("Charge 2");
         }
 
         if (chargingHammer && hammerTimer > 0.1 && mouseReleased)
         {
-            anim.Play("HammerIdle");
+            anim.Play("Idle 1");
             chargingHammer = false;
             hammerTimer = 0;
         }
@@ -266,14 +265,15 @@ public class PlayerController : MonoBehaviour
             //Debug.Log("charging hammer ended");
             hammerCharged = true;
             chargingHammer = false;
-            anim.Play("HammerHold");
+            anim.Play("Charge 2 Hold");
         }
         else if (hittingHammer)
         {
             //Debug.Log("hammer hitting ended");
             hammerHit = true;
             hittingHammer = false;
-            anim.Play("HammerHit");
+            //audioManager.PlaySFX(audioManager.hit);
+            anim.Play("Slam 2");
 
             recovering = true;
             hammerTimer = recoveryTime;
