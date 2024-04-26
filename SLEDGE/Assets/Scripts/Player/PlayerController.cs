@@ -322,6 +322,7 @@ public class PlayerController : MonoBehaviour
 
         Vector3 prevMovementVector = movementInputVector;
         movementInputVector = ((horizontalInput * transform.right) + (verticalInput * transform.forward)).normalized;
+        Debug.Log(movementInputVector);
 
         if (prevMovementVector != movementInputVector)
         {
@@ -557,7 +558,16 @@ public class PlayerController : MonoBehaviour
         {
             if (movementInputVector.magnitude > 0.001)
             {
-                rb.velocity = Vector3.RotateTowards(rb.velocity, Quaternion.AngleAxis(Vector3.SignedAngle(flatVelocity, movementInputVector, transform.up), transform.up) * rb.velocity, launchedRotationSpeed/100, 0);
+                if ((rb.velocity + movementInputVector).magnitude > rb.velocity.magnitude)
+                {
+                    Vector3 rotation = Vector3.RotateTowards(rb.velocity, Quaternion.AngleAxis(Vector3.SignedAngle(flatVelocity, movementInputVector, transform.up), transform.up) * rb.velocity, launchedRotationSpeed/100, 0);
+                    rb.velocity = new Vector3(rotation.x, rb.velocity.y, rotation.z);
+                }
+                else
+                {
+                    rb.AddForce(movementInputVector * airAccelerationRate);
+                    rb.velocity = new Vector3 (Vector3.ClampMagnitude(flatVelocity, airMaxSpeed).x, rb.velocity.y, Vector3.ClampMagnitude(flatVelocity, airMaxSpeed).z);
+                }
             }
         }
     }
@@ -601,7 +611,7 @@ public class PlayerController : MonoBehaviour
 
             rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
 
-            Vector3 normal = hit1.normal;
+            Vector3 normal = hit1.normal.normalized;
             float angle = Vector3.Angle(hit1.point - cameraObject.transform.position, -transform.up);
             float wallAngle = Vector3.Angle(normal, Vector3.down);
             float wallVSFlatVelAngle = Vector3.Angle(normal, rb.velocity);
@@ -609,17 +619,17 @@ public class PlayerController : MonoBehaviour
             Debug.Log(angle);
 
             //bouncing up one wall over and over again is still far too viable, but theres some improvement to the basic 90 degree angled hammer wall bounces
-            if (angle < 110 && angle > 30 && wallAngle > 80 && wallAngle < 100)
-            {
-                rb.AddForce(transform.up * 10, ForceMode.Impulse);
-            }
+            // if (true)//angle < 110 && angle > 30 && wallAngle > 80 && wallAngle < 100)
+            // {
+            //     rb.AddForce(transform.up * 10, ForceMode.Impulse);
+            // }
 
-            if (wallVSFlatVelAngle > 140)
-            {
-                rb.velocity = new Vector3(0, rb.velocity.y, 0);
-            }
+            // if (wallVSFlatVelAngle > 140)
+            // {
+            //     rb.velocity = new Vector3(0, rb.velocity.y, 0);
+            // }
 
-            rb.AddForce((transform.position - hit1.point).normalized * bounceForce, ForceMode.Impulse);
+            rb.AddForce((transform.position - hit1.point).normalized * bounceForce + normal * 10, ForceMode.Impulse);
             isLaunched = true;
             audioManager.PlaySFX(audioManager.hit);
 
