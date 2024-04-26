@@ -149,6 +149,7 @@ public class PlayerController : MonoBehaviour
 
 
     AudioManager audioManager;
+    [SerializeField] GameObject HammerSound;
 
     private void Awake()
     {
@@ -272,7 +273,6 @@ public class PlayerController : MonoBehaviour
             //Debug.Log("hammer hitting ended");
             hammerHit = true;
             hittingHammer = false;
-            //audioManager.PlaySFX(audioManager.hit);
             anim.Play("HammerHit");
 
             recovering = true;
@@ -631,7 +631,8 @@ public class PlayerController : MonoBehaviour
 
             rb.AddForce((transform.position - hit1.point).normalized * bounceForce + normal * 10, ForceMode.Impulse);
             isLaunched = true;
-            audioManager.PlaySFX(audioManager.hit);
+            Instantiate(HammerSound, gameObject.transform.position,Quaternion.identity);
+
 
             if (hit1.transform.gameObject.tag == "Enemy Flyer")
             {
@@ -641,6 +642,10 @@ public class PlayerController : MonoBehaviour
             {
                 hit1.transform.gameObject.GetComponent<ShooterEnemy>().TakeDamage(1);
             }
+        }
+        else 
+        {
+            audioManager.PlaySFX(audioManager.whiff);
         }
     }
 

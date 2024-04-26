@@ -21,7 +21,7 @@ public class AudioManager : MonoBehaviour
     public AudioClip land;
 
     int previousChoice = 1;
-
+    /*
     private void Start()
     {
         Scene currentScene = SceneManager.GetActiveScene();
@@ -31,12 +31,40 @@ public class AudioManager : MonoBehaviour
             musicSource.clip = mainMenu;
             musicSource.Play();
         }
-        else if(sceneName == "Anthony Enemy Implementation" || sceneName == "Easy Level ART" || sceneName == "Mid Level ART")
+        else if(sceneName == "Anthony Enemy Implementation" || sceneName == "Easy Level ART" || sceneName == "Mid Level ART"|| sceneName == "Josh")
         {
             musicSource.clip = background;
             musicSource.Play();
         }
     }
+    */
+
+    // Code for probably keeping the music playing between scenes?\
+    public static string sceneName;
+    public static string prevScene = "";
+
+    public void Update()
+    {
+        Scene currentScene = SceneManager.GetActiveScene();
+        string sceneName = currentScene.name;
+        if(sceneName == "Jonah" && prevScene != "Jonah")
+        {
+            musicSource.clip = mainMenu;
+            musicSource.Play();
+            prevScene = "Jonah";
+        }
+        else if(sceneName == "Anthony Enemy Implementation" || sceneName == "Easy Level ART" || sceneName == "Mid Level ART")
+        {
+            if(musicSource.clip != background)
+            {
+                musicSource.Stop();
+                musicSource.clip = background;
+                musicSource.Play();
+                prevScene = "";
+            }
+        }
+    }
+
 
     public void PlaySFX(AudioClip clip)
     {
@@ -73,5 +101,4 @@ public class AudioManager : MonoBehaviour
         }                      
         previousChoice = walkChoice;
     }
-    
 }
