@@ -17,7 +17,7 @@ public class PlayerController : MonoBehaviour
     [Header("Character Component References")]
     [SerializeField] Camera gameCamera;
     Rigidbody rb; // parent rigidbody
-    Animator anim; // parent animator
+    [SerializeField] Animator anim; // parent animator
     #endregion
 
     #region Camera
@@ -186,8 +186,6 @@ public class PlayerController : MonoBehaviour
         chargeSlider.value = chargeSlider.minValue; //set the value of the charge slider to 0
         
         rb = GetComponent<Rigidbody>(); // get the rigidbody of the parent component
-        anim = GetComponent<Animator>();// get the animator of the parent component
-        Debug.Log(anim);
 
         mouseSensitivity = PlayerPrefs.GetFloat("Sensitivity", 400); // set the mouse sensitivity
 
@@ -249,7 +247,7 @@ public class PlayerController : MonoBehaviour
             //Debug.Log("hammer startin");
             chargingHammer = true;
             hammerTimer = chargeTime;
-            anim.Play("Charge 1");
+            anim.Play("Charge 2");
         }
 
         if (chargingHammer && hammerTimer > 0.1 && mouseReleased)
@@ -282,7 +280,7 @@ public class PlayerController : MonoBehaviour
             //Debug.Log("charging hammer ended");
             hammerCharged = true;
             chargingHammer = false;
-            anim.Play("Charge 1 Hold");
+            anim.Play("Charge 2 Hold");
         }
         else if (hittingHammer)
         {
@@ -290,7 +288,7 @@ public class PlayerController : MonoBehaviour
             hammerHit = true;
             hittingHammer = false;
             //audioManager.PlaySFX(audioManager.hit);
-            anim.Play("Slam 1");
+            anim.Play("Slam 2");
 
             recovering = true;
             hammerTimer = recoveryTime;

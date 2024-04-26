@@ -256,15 +256,19 @@ MonoBehaviour:
   maxSpeed: 10
   maxSlopeAngle: 45
   airAccelerationRate: 60
+  airDecelerationRate: 7
   airMaxSpeed: 12
+  forcedFallingSpeed: 2
   naturalAdditionalFallingSpeed: 15
   srcJumpPoint: 0
   jumpHoldCheckWindow: 0.1
   jumpForce: 7.5
   coyoteTime: 0.25
+  savedCoyoteTime: 0.25
   hasCoyoteTime: 1
   decreasingCoyoteTime: 0
   hasJumped: 0
+  maxJumpPoint: 15
   playerHeight: 1
   groundCheckDist: 0.75
   groundLayers:
@@ -373,7 +377,7 @@ Animator:
   m_GameObject: {fileID: 4272141285249772724}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 8466c6af926806a4dad648ee204bbd36, type: 2}
+  m_Controller: {fileID: 9100000, guid: 04b0bb851f3f72243bcbf512f790e9db, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
