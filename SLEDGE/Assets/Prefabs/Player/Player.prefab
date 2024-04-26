@@ -155,6 +155,7 @@ GameObject:
   - component: {fileID: 6515774524999026187}
   - component: {fileID: 983917843613077677}
   - component: {fileID: 2185059174024637526}
+  - component: {fileID: -5652539002490786395}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -246,7 +247,6 @@ MonoBehaviour:
   cameraObject: {fileID: 2542612905091929352}
   cameraHolder: {fileID: 4523037191436104260}
   camRotateAmountLR: 1.5
-  camRotateAmountFB: 0
   camRotateSpeed: 7
   firstCheckpoint: {fileID: 0}
   maxHealth: 1
@@ -256,19 +256,15 @@ MonoBehaviour:
   maxSpeed: 10
   maxSlopeAngle: 45
   airAccelerationRate: 60
-  airDecelerationRate: 7
   airMaxSpeed: 12
-  forcedFallingSpeed: 2
   naturalAdditionalFallingSpeed: 15
   srcJumpPoint: 0
   jumpHoldCheckWindow: 0.1
   jumpForce: 7.5
   coyoteTime: 0.25
-  savedCoyoteTime: 0.25
   hasCoyoteTime: 1
   decreasingCoyoteTime: 0
   hasJumped: 0
-  maxJumpPoint: 15
   playerHeight: 1
   groundCheckDist: 0.75
   groundLayers:
@@ -292,11 +288,7 @@ MonoBehaviour:
     m_Bits: 1280
   parriedProjectileSpeed: 60
   parriedProjectileLifetime: 10
-  hammerCoyoteTime: 0.25
-  hammerHasCoyoteTime: 0
-  hammerDecreasingCoyoteTime: 0
   displayDistance: {fileID: 0}
-  chargeSlider: {fileID: 0}
   pause: {fileID: 0}
   settings: {fileID: 0}
   deathScreen: {fileID: 0}
@@ -388,6 +380,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &-5652539002490786395
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4272141285249772724}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4551ffe70e83a01468e54366cc71edee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4523037191436104260
 GameObject:
   m_ObjectHideFlags: 0
