@@ -545,6 +545,58 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 18461693}
   m_CullTransparentMesh: 1
+--- !u!1 &97417033
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 97417034}
+  - component: {fileID: 97417035}
+  m_Layer: 0
+  m_Name: Level 1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &97417034
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 97417033}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 625835880}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &97417035
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 97417033}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  data: 0
+  entries:
+  - Language: English
+    Text: Level 1
+    Object: {fileID: 0}
+  - Language: Japanese
+    Text: "\u30EC\u30D9\u30EB1"
+    Object: {fileID: 0}
 --- !u!1001 &105798702
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -884,6 +936,58 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!1 &170586271
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 170586272}
+  - component: {fileID: 170586273}
+  m_Layer: 0
+  m_Name: best time
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &170586272
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 170586271}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 625835880}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &170586273
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 170586271}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  data: 0
+  entries:
+  - Language: English
+    Text: 'Best Time: X'
+    Object: {fileID: 0}
+  - Language: Japanese
+    Text: "\u6700\u9AD8\u306E\u6642\u9593: \u25EF"
+    Object: {fileID: 0}
 --- !u!1 &172267234
 GameObject:
   m_ObjectHideFlags: 0
@@ -3736,6 +3840,58 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 556418902}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &605875731
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 605875732}
+  - component: {fileID: 605875733}
+  m_Layer: 0
+  m_Name: collectables
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &605875732
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 605875731}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 625835880}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &605875733
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 605875731}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  data: 0
+  entries:
+  - Language: English
+    Text: 'Collectables: X'
+    Object: {fileID: 0}
+  - Language: Japanese
+    Text: "\u53CE\u96C6\u30A2\u30A4\u30C6\u30E0: \u3007"
+    Object: {fileID: 0}
 --- !u!1 &606506710
 GameObject:
   m_ObjectHideFlags: 0
@@ -3815,6 +3971,7 @@ GameObject:
   - component: {fileID: 608264949}
   - component: {fileID: 608264951}
   - component: {fileID: 608264950}
+  - component: {fileID: 608264952}
   m_Layer: 5
   m_Name: BestTime
   m_TagString: Untagged
@@ -3863,7 +4020,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'Best Time: X'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: d674bb172cad1244fb65d18b8c59fbd5, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -3927,7 +4084,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!222 &608264951
@@ -3938,6 +4095,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 608264948}
   m_CullTransparentMesh: 1
+--- !u!114 &608264952
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 608264948}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ee4021ce59f313499a5cab041f02aba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  translationName: best time
+  FallbackText: 
 --- !u!1001 &608731861
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4103,9 +4274,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 806f0696300aeac44a0e17efee222854, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentLanguage: English
+  currentLanguage: Japanese
   detectLanguage: 1
-  defaultLanguage: 
+  defaultLanguage: English
   saveLoad: 1
   prefabs: []
 --- !u!224 &625835880
@@ -4134,6 +4305,11 @@ RectTransform:
   - {fileID: 2096861868}
   - {fileID: 1680560876}
   - {fileID: 1039775128}
+  - {fileID: 97417034}
+  - {fileID: 1863060690}
+  - {fileID: 170586272}
+  - {fileID: 1958860953}
+  - {fileID: 605875732}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -6790,7 +6966,7 @@ GameObject:
   - component: {fileID: 1181367377}
   - component: {fileID: 1181367376}
   m_Layer: 5
-  m_Name: Collectibles
+  m_Name: Collectables
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6835,7 +7011,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Collectibles: X'
+  m_text: 'Collectables: X'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -7038,6 +7214,7 @@ GameObject:
   - component: {fileID: 1265322829}
   - component: {fileID: 1265322831}
   - component: {fileID: 1265322830}
+  - component: {fileID: 1265322832}
   m_Layer: 5
   m_Name: BestScore
   m_TagString: Untagged
@@ -7161,6 +7338,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1265322828}
   m_CullTransparentMesh: 1
+--- !u!114 &1265322832
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1265322828}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ee4021ce59f313499a5cab041f02aba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  translationName: best score
+  FallbackText: 
 --- !u!1 &1269126605
 GameObject:
   m_ObjectHideFlags: 0
@@ -7172,6 +7363,7 @@ GameObject:
   - component: {fileID: 1269126606}
   - component: {fileID: 1269126608}
   - component: {fileID: 1269126607}
+  - component: {fileID: 1269126609}
   m_Layer: 5
   m_Name: BestScore
   m_TagString: Untagged
@@ -7295,6 +7487,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1269126605}
   m_CullTransparentMesh: 1
+--- !u!114 &1269126609
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1269126605}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ee4021ce59f313499a5cab041f02aba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  translationName: best score
+  FallbackText: 
 --- !u!1001 &1284035960
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8197,8 +8403,9 @@ GameObject:
   - component: {fileID: 1375416793}
   - component: {fileID: 1375416795}
   - component: {fileID: 1375416794}
+  - component: {fileID: 1375416796}
   m_Layer: 5
-  m_Name: Collectibles
+  m_Name: Collectables
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8243,7 +8450,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Collectibles: X'
+  m_text: 'Collectables: X'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -8320,6 +8527,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1375416792}
   m_CullTransparentMesh: 1
+--- !u!114 &1375416796
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1375416792}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ee4021ce59f313499a5cab041f02aba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  translationName: collectables
+  FallbackText: 
 --- !u!114 &1394214348 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 226996827820290511, guid: d24bab2f8ed058b4faf061c91d023433,
@@ -8549,8 +8770,9 @@ GameObject:
   - component: {fileID: 1497324946}
   - component: {fileID: 1497324948}
   - component: {fileID: 1497324947}
+  - component: {fileID: 1497324949}
   m_Layer: 5
-  m_Name: Collectibles
+  m_Name: Collectables
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8595,7 +8817,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Collectibles: X'
+  m_text: 'Collectables: X'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -8672,6 +8894,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1497324945}
   m_CullTransparentMesh: 1
+--- !u!114 &1497324949
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1497324945}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ee4021ce59f313499a5cab041f02aba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  translationName: collectables
+  FallbackText: 
 --- !u!1 &1508408233
 GameObject:
   m_ObjectHideFlags: 0
@@ -8759,6 +8995,7 @@ GameObject:
   - component: {fileID: 1571777308}
   - component: {fileID: 1571777310}
   - component: {fileID: 1571777309}
+  - component: {fileID: 1571777311}
   m_Layer: 5
   m_Name: Name
   m_TagString: Untagged
@@ -8807,7 +9044,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: Level 1
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: d674bb172cad1244fb65d18b8c59fbd5, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -8871,7 +9108,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!222 &1571777310
@@ -8882,6 +9119,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1571777307}
   m_CullTransparentMesh: 1
+--- !u!114 &1571777311
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1571777307}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ee4021ce59f313499a5cab041f02aba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  translationName: Level 1
+  FallbackText: 
 --- !u!1 &1574330564
 GameObject:
   m_ObjectHideFlags: 0
@@ -9653,6 +9904,58 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!1 &1863060689
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1863060690}
+  - component: {fileID: 1863060691}
+  m_Layer: 0
+  m_Name: description
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1863060690
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1863060689}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 625835880}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1863060691
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1863060689}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  data: 0
+  entries:
+  - Language: English
+    Text: This is a description. It describes things.
+    Object: {fileID: 0}
+  - Language: Japanese
+    Text: "\u3059\u3079\u3066\u306E\u4EBA\u9593\u306F\u3001\u751F\u307E\u308C\u306A\u304C\u3089\u306B\u3057\u3066\u81EA\u7531\u3067\u3042\u308A\u3001\u304B\u3064\u3001\u5C0A\u53B3\u3068\u6A29\u5229\u3068\u306B\u3064\u3044\u3066\u5E73\u7B49\u3067\u3042\u308B\u3002\u4EBA\u9593\u306F\u3001\u7406\u6027\u3068\u826F\u5FC3\u3068\u3092\u6388\u3051\u3089\u308C\u3066\u304A\u308A\u3001\u4E92\u3044\u306B\u540C\u80DE\u306E\u7CBE\u795E\u3092\u3082\u3063\u3066\u884C\u52D5\u3057\u306A\u3051\u308C\u3070\u306A\u3089\u306A\u3044\u3002\r\n"
+    Object: {fileID: 0}
 --- !u!1001 &1883033550
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9880,6 +10183,7 @@ GameObject:
   - component: {fileID: 1911867223}
   - component: {fileID: 1911867225}
   - component: {fileID: 1911867224}
+  - component: {fileID: 1911867226}
   m_Layer: 5
   m_Name: BestTime
   m_TagString: Untagged
@@ -9928,7 +10232,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'Best Time: X'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: d674bb172cad1244fb65d18b8c59fbd5, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -9992,7 +10296,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!222 &1911867225
@@ -10003,6 +10307,72 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1911867222}
   m_CullTransparentMesh: 1
+--- !u!114 &1911867226
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1911867222}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ee4021ce59f313499a5cab041f02aba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  translationName: best time
+  FallbackText: 
+--- !u!1 &1958860952
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1958860953}
+  - component: {fileID: 1958860954}
+  m_Layer: 0
+  m_Name: best score
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1958860953
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1958860952}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 625835880}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1958860954
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1958860952}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  data: 0
+  entries:
+  - Language: English
+    Text: 'Best Score: X'
+    Object: {fileID: 0}
+  - Language: Japanese
+    Text: "\u6700\u9AD8\u5F97\u70B9: \u3007"
+    Object: {fileID: 0}
 --- !u!1 &1965300297 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6165449087730776586, guid: d24bab2f8ed058b4faf061c91d023433,
@@ -10035,6 +10405,7 @@ GameObject:
   - component: {fileID: 1977641721}
   - component: {fileID: 1977641723}
   - component: {fileID: 1977641722}
+  - component: {fileID: 1977641724}
   m_Layer: 5
   m_Name: Description
   m_TagString: Untagged
@@ -10158,6 +10529,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1977641720}
   m_CullTransparentMesh: 1
+--- !u!114 &1977641724
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1977641720}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ee4021ce59f313499a5cab041f02aba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  translationName: description
+  FallbackText: 
 --- !u!1 &2021235571
 GameObject:
   m_ObjectHideFlags: 0
