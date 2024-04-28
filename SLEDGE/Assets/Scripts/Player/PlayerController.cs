@@ -225,11 +225,12 @@ public class PlayerController : MonoBehaviour
     {
         if (secondaryPressed && !chargingHammer && !recovering && !hittingHammer && !hammerCharged && !swipeRecovering && !swipingHammer)
         {
-            Debug.Log("starting hammer swipe");
+
 
             swipingHammer = true;
             hammerTimer = swipeTime;
-            anim.Play("Hit 1");
+            anim.Play("HammerSwipe"); //anim.Play("Hit 1");
+            
         }
         
         if (mousePressed && !chargingHammer && !recovering && !hittingHammer && !hammerCharged && !swipeRecovering && !swipingHammer)
@@ -237,12 +238,12 @@ public class PlayerController : MonoBehaviour
             //Debug.Log("hammer startin");
             chargingHammer = true;
             hammerTimer = chargeTime;
-            anim.Play("Charge 2");
+            anim.Play("HammerCharge"); //anim.Play("Charge 2");
         }
 
         if (chargingHammer && hammerTimer > 0.1 && mouseReleased)
         {
-            anim.Play("Idle 1");
+            anim.Play("HammerIdle"); //anim.Play("Idle 1");
             chargingHammer = false;
             hammerTimer = 0;
         }
@@ -265,7 +266,7 @@ public class PlayerController : MonoBehaviour
             //Debug.Log("charging hammer ended");
             hammerCharged = true;
             chargingHammer = false;
-            anim.Play("Charge 2 Hold");
+            anim.Play("HammerHold"); //anim.Play("Charge 2 Hold");
         }
         else if (hittingHammer)
         {
@@ -273,7 +274,7 @@ public class PlayerController : MonoBehaviour
             hammerHit = true;
             hittingHammer = false;
             //audioManager.PlaySFX(audioManager.hit);
-            anim.Play("Slam 2");
+            anim.Play("HammerHit"); //anim.Play("Slam 2");
 
             recovering = true;
             hammerTimer = recoveryTime;
@@ -322,7 +323,6 @@ public class PlayerController : MonoBehaviour
 
         Vector3 prevMovementVector = movementInputVector;
         movementInputVector = ((horizontalInput * transform.right) + (verticalInput * transform.forward)).normalized;
-        Debug.Log(movementInputVector);
 
         if (prevMovementVector != movementInputVector)
         {
@@ -556,9 +556,18 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
+            if(rb.velocity.y <= 0)// if we are at the apex of our air height
+            {
+                rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
+            }
+
+        
+
             if (movementInputVector.magnitude > 0.001)
             {
-                if ((rb.velocity + movementInputVector).magnitude > rb.velocity.magnitude)
+                Debug.Log((rb.velocity + movementInputVector).magnitude + ", " + rb.velocity.magnitude);
+
+                if ((rb.velocity + movementInputVector).magnitude > rb.velocity.magnitude - 0.5)
                 {
                     Vector3 rotation = Vector3.RotateTowards(rb.velocity, Quaternion.AngleAxis(Vector3.SignedAngle(flatVelocity, movementInputVector, transform.up), transform.up) * rb.velocity, launchedRotationSpeed/100, 0);
                     rb.velocity = new Vector3(rotation.x, rb.velocity.y, rotation.z);
@@ -566,7 +575,7 @@ public class PlayerController : MonoBehaviour
                 else
                 {
                     rb.AddForce(movementInputVector * airAccelerationRate);
-                    rb.velocity = new Vector3 (Vector3.ClampMagnitude(flatVelocity, airMaxSpeed).x, rb.velocity.y, Vector3.ClampMagnitude(flatVelocity, airMaxSpeed).z);
+                    //rb.velocity = new Vector3 (Vector3.ClampMagnitude(flatVelocity, airMaxSpeed).x, rb.velocity.y, Vector3.ClampMagnitude(flatVelocity, airMaxSpeed).z);
                 }
             }
         }
@@ -615,8 +624,6 @@ public class PlayerController : MonoBehaviour
             float angle = Vector3.Angle(hit1.point - cameraObject.transform.position, -transform.up);
             float wallAngle = Vector3.Angle(normal, Vector3.down);
             float wallVSFlatVelAngle = Vector3.Angle(normal, rb.velocity);
-
-            Debug.Log(angle);
 
             //bouncing up one wall over and over again is still far too viable, but theres some improvement to the basic 90 degree angled hammer wall bounces
             // if (true)//angle < 110 && angle > 30 && wallAngle > 80 && wallAngle < 100)
@@ -720,7 +727,6 @@ public class PlayerController : MonoBehaviour
 
     public void Die() // this function is called when the player dies
     {
-        Debug.Log("die!");
         alive = false;
         deathScreen.SetActive(true);
         Time.timeScale = 0;
