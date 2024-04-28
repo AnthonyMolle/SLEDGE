@@ -13049,6 +13049,12 @@ MonoBehaviour:
   m_SelectedFaces: 
   m_SelectedEdges: []
   m_SelectedVertices: 
+--- !u!95 &640073965 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 2185059174024637526, guid: 5d5c5a7d18451c54b8f0cbf52d32df5a,
+    type: 3}
+  m_PrefabInstance: {fileID: 2898366290333548571}
+  m_PrefabAsset: {fileID: 0}
 --- !u!43 &688611865
 Mesh:
   m_ObjectHideFlags: 0
@@ -34266,6 +34272,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4960367469188954479, guid: 5d5c5a7d18451c54b8f0cbf52d32df5a,
         type: 3}
+      propertyPath: anim
+      value: 
+      objectReference: {fileID: 640073965}
+    - target: {fileID: 4960367469188954479, guid: 5d5c5a7d18451c54b8f0cbf52d32df5a,
+        type: 3}
       propertyPath: pause
       value: 
       objectReference: {fileID: 1589260831}
@@ -34279,6 +34290,11 @@ PrefabInstance:
       propertyPath: displayDistance
       value: 
       objectReference: {fileID: 2106156742}
+    - target: {fileID: 4960367469188954479, guid: 5d5c5a7d18451c54b8f0cbf52d32df5a,
+        type: 3}
+      propertyPath: airAccelerationRate
+      value: 30
+      objectReference: {fileID: 0}
     - target: {fileID: 4960367469188954479, guid: 5d5c5a7d18451c54b8f0cbf52d32df5a,
         type: 3}
       propertyPath: spawnPoints.Array.data[0]
