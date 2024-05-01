@@ -135,6 +135,7 @@ public class PlayerController : MonoBehaviour
 
     bool swipingHammer = false;
     bool swipeRecovering = false;
+    bool swipeComboReady = false;
 
     bool hammerCharged = false;
     bool hammerHit = false;
@@ -143,6 +144,15 @@ public class PlayerController : MonoBehaviour
     float hammerTimer = 0;
     float hangTime = 0;
     float walkTime = 0;
+
+    enum Combo 
+    {
+        notSwiping,
+        Swipe1,
+        Swipe2,
+        Swipe3
+    }
+    Combo currentCombo = Combo.notSwiping;
 
     [SerializeField] float parriedProjectileSpeed = 1f;
     [SerializeField] float parriedProjectileLifetime = 10f;
@@ -178,6 +188,7 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody>(); // get the rigidbody of the parent component
 
         mouseSensitivity = PlayerPrefs.GetFloat("Sensitivity", 400); // set the mouse sensitivity
+        Debug.Log(currentCombo);
 
         currentHealth = maxHealth; // set health to max
 
@@ -223,14 +234,35 @@ public class PlayerController : MonoBehaviour
 
     private void HandleHammer()
     {
-        if (secondaryPressed && !chargingHammer && !recovering && !hittingHammer && !hammerCharged && !swipeRecovering && !swipingHammer)
+        if (secondaryPressed && !chargingHammer && !recovering && !hittingHammer && !hammerCharged && !swipeRecovering && !swipingHammer && currentCombo == Combo.notSwiping)
         {
 
 
             swipingHammer = true;
+            swipeComboReady = false;
             hammerTimer = swipeTime;
-            anim.Play("HammerSwipe"); //anim.Play("Hit 1");
-            
+            anim.Play("Hit 1");
+            currentCombo = Combo.Swipe1;
+
+        }
+        // combo swipes
+        if (secondaryPressed && !chargingHammer && !recovering && !hittingHammer && !hammerCharged && !swipeRecovering && !swipingHammer && swipeComboReady && currentCombo == Combo.Swipe1) // for a lil combo, might want to include input when swiping
+        {
+            Debug.Log("hammer swipe continue");
+            swipingHammer = true;
+            swipeComboReady = false;
+            hammerTimer = swipeTime;
+            anim.Play("Hit 2");
+            currentCombo = Combo.Swipe2;
+        }
+        if (secondaryPressed && !chargingHammer && !recovering && !hittingHammer && !hammerCharged && !swipeRecovering && !swipingHammer && swipeComboReady && currentCombo == Combo.Swipe2)
+        {
+            Debug.Log("hammer swipe final");
+            swipingHammer = true;
+            swipeComboReady = false;
+            hammerTimer = swipeTime;
+            anim.Play("Hit 3");
+            currentCombo = Combo.Swipe3;
         }
         
         if (mousePressed && !chargingHammer && !recovering && !hittingHammer && !hammerCharged && !swipeRecovering && !swipingHammer)
@@ -243,7 +275,8 @@ public class PlayerController : MonoBehaviour
 
         if (chargingHammer && hammerTimer > 0.1 && mouseReleased)
         {
-            anim.Play("HammerIdle"); //anim.Play("Idle 1");
+            anim.Play("Idle 2");
+            currentCombo = Combo.notSwiping;
             chargingHammer = false;
             hammerTimer = 0;
         }
@@ -288,13 +321,21 @@ public class PlayerController : MonoBehaviour
         {
             hammerSwipe = true;
             swipingHammer = false;
+            swipeComboReady = false;
 
             swipeRecovering = true;
+            swipeComboReady = true;
             hammerTimer = swipeRecoveryTime;
         }
         else if (swipeRecovering)
         {
             swipeRecovering = false;
+            hammerTimer = swipeRecoveryTime * 2;
+        }
+        else if (swipeComboReady)
+        {
+            swipeComboReady = false;
+            currentCombo = Combo.notSwiping;
         }
 
     }
