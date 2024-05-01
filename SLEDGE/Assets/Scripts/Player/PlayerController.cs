@@ -13,6 +13,10 @@ using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
+    //EXPERIMENTAL SHIT
+    [SerializeField] GameObject speedlines;
+    [SerializeField] ParticleSystem speed;
+
     #region Character Component References
     [Header("Character Component References")]
     [SerializeField] Camera gameCamera;
@@ -207,6 +211,7 @@ public class PlayerController : MonoBehaviour
 
         HandleMovement();
         UpdateDistanceHud();
+        HandleSpeedFX();
 
         if (hammerHit)
         {
@@ -218,6 +223,35 @@ public class PlayerController : MonoBehaviour
         {
             hammerSwipe = false;
             HammerHit();
+        }
+    }
+
+    [SerializeField] float speedlineThreshold = 10f;
+    [SerializeField] float speedlineMax = 100f;
+    [SerializeField] Camera[] cameras;
+    [SerializeField] float initialFOV = 75;
+    [SerializeField] float maxAdditionalFOV = 25;
+
+    private void HandleSpeedFX()
+    {
+        speedlines.transform.LookAt(rb.velocity * 10);
+
+        ParticleSystem.MainModule main = speed.main;
+        if (rb.velocity.magnitude > speedlineThreshold)
+        {
+            main.startColor = new Color(1, 1, 1, rb.velocity.magnitude/speedlineMax);
+            foreach (Camera cam in cameras)
+            {
+                cam.fieldOfView = (rb.velocity.magnitude/speedlineMax * maxAdditionalFOV) + initialFOV;
+            }
+        }
+        else
+        {
+            main.startColor = new Color(1, 1, 1, 0);
+            foreach (Camera cam in cameras)
+            {
+                cam.fieldOfView = initialFOV;
+            }
         }
     }
 
@@ -417,6 +451,7 @@ public class PlayerController : MonoBehaviour
 
     private void HandleMovement()
     {
+
         #region Raycast Checks
         //all this raycast slope stuff is getting kinda out of hand
         // i agree -other programmer
