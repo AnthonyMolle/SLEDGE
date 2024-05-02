@@ -290,6 +290,7 @@ MonoBehaviour:
   parriedProjectileSpeed: 60
   parriedProjectileLifetime: 10
   HammerSound: {fileID: 0}
+  canvas: {fileID: 0}
   displayDistance: {fileID: 0}
   pause: {fileID: 0}
   settings: {fileID: 0}
@@ -1208,6 +1209,11 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 7
       objectReference: {fileID: 0}
+    - target: {fileID: 2008749056216839257, guid: 862fb450b0473be46be41de78344f18d,
+        type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2039032517380422643, guid: 862fb450b0473be46be41de78344f18d,
         type: 3}
       propertyPath: m_Layer
@@ -1302,6 +1308,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Layer
       value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 5579297725159565923, guid: 862fb450b0473be46be41de78344f18d,
+        type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5798300043326750739, guid: 862fb450b0473be46be41de78344f18d,
         type: 3}
