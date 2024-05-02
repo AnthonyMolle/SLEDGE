@@ -53245,7 +53245,7 @@ ParticleSystem:
     startSpeed:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 15
+      scalar: 20
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -53299,7 +53299,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 1, g: 1, b: 1, a: 0}
+      maxColor: {r: 1, g: 1, b: 1, a: 1}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -53946,7 +53946,7 @@ ParticleSystem:
     rateOverTime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 88.08
+      scalar: 200
       minScalar: 10
       maxCurve:
         serializedVersion: 2
@@ -54420,9 +54420,9 @@ ParticleSystem:
       maxColor: {r: 1, g: 1, b: 1, a: 1}
       maxGradient:
         serializedVersion: 2
-        key0: {r: 1, g: 1, b: 1, a: 1}
-        key1: {r: 1, g: 1, b: 1, a: 1}
-        key2: {r: 0, g: 0, b: 0, a: 1}
+        key0: {r: 1, g: 1, b: 1, a: 0}
+        key1: {r: 1, g: 1, b: 1, a: 0.9823529}
+        key2: {r: 1, g: 1, b: 1, a: 1}
         key3: {r: 0, g: 0, b: 0, a: 0}
         key4: {r: 0, g: 0, b: 0, a: 0}
         key5: {r: 0, g: 0, b: 0, a: 0}
@@ -54430,14 +54430,14 @@ ParticleSystem:
         key7: {r: 0, g: 0, b: 0, a: 0}
         ctime0: 0
         ctime1: 65535
-        ctime2: 0
+        ctime2: 65535
         ctime3: 0
         ctime4: 0
         ctime5: 0
         ctime6: 0
         ctime7: 0
-        atime0: 964
-        atime1: 65535
+        atime0: 0
+        atime1: 27371
         atime2: 65535
         atime3: 0
         atime4: 0
@@ -54447,7 +54447,7 @@ ParticleSystem:
         m_Mode: 0
         m_ColorSpace: 0
         m_NumColorKeys: 2
-        m_NumAlphaKeys: 2
+        m_NumAlphaKeys: 3
       minGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -58283,7 +58283,7 @@ Transform:
   m_GameObject: {fileID: 4306416019977798541}
   serializedVersion: 2
   m_LocalRotation: {x: 1, y: -0, z: -0, w: 0.00000058114523}
-  m_LocalPosition: {x: 0, y: 0.5, z: 3.2700005}
+  m_LocalPosition: {x: 0, y: 0.5, z: 3.07}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -58470,13 +58470,19 @@ MonoBehaviour:
   pause: {fileID: 103997414}
   settings: {fileID: 1697454374}
   deathScreen: {fileID: 386158738}
-  speedlineThreshold: 10
-  speedlineMax: 100
+  speedlineThreshold: 12
+  speedlineMax: 45
   cameras:
   - {fileID: 450459232906028552}
   - {fileID: 4171166046272368359}
   initialFOV: 75
   maxAdditionalFOV: 25
+  initialParticleZ: 2
+  maxParticleZ: 4
+  initialParticleSpeed: 5
+  maxParticleSpeed: 20
+  initialParticleEmission: 50
+  maxParticleEmission: 200
 --- !u!4 &8210366508170644415
 Transform:
   m_ObjectHideFlags: 0

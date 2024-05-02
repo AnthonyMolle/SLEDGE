@@ -194,6 +194,8 @@ public class PlayerController : MonoBehaviour
         HandleInput();
         HandleHammer();
         HandleLookRotation();
+        HandleSpeedFX();
+
         if(!isGrounded)
         {
             hangTime += Time.deltaTime;
@@ -211,7 +213,6 @@ public class PlayerController : MonoBehaviour
 
         HandleMovement();
         UpdateDistanceHud();
-        HandleSpeedFX();
 
         if (hammerHit)
         {
@@ -228,30 +229,56 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] float speedlineThreshold = 10f;
     [SerializeField] float speedlineMax = 100f;
+    float targetAlpha;
     [SerializeField] Camera[] cameras;
     [SerializeField] float initialFOV = 75;
     [SerializeField] float maxAdditionalFOV = 25;
+    float targetFOV;
+    [SerializeField] float initialParticleZ = 1;
+    [SerializeField] float maxParticleZ = 4;
+    float targetZ;
+    [SerializeField] float initialParticleSpeed = 4;
+    [SerializeField] float maxParticleSpeed = 20;
+    float targetSpeed;
+    [SerializeField] float initialParticleEmission = 25;
+    [SerializeField] float maxParticleEmission = 200;
+    float targetEmission;
 
     private void HandleSpeedFX()
     {
-        speedlines.transform.LookAt(rb.velocity * 10);
+        if (rb.velocity.magnitude > 10)
+        {
+            speedlines.transform.LookAt(rb.velocity * 10);
+        }
 
         ParticleSystem.MainModule main = speed.main;
+        ParticleSystem.EmissionModule emission = speed.emission;
+
         if (rb.velocity.magnitude > speedlineThreshold)
         {
-            main.startColor = new Color(1, 1, 1, rb.velocity.magnitude/speedlineMax);
-            foreach (Camera cam in cameras)
-            {
-                cam.fieldOfView = (rb.velocity.magnitude/speedlineMax * maxAdditionalFOV) + initialFOV;
-            }
+            targetAlpha = (rb.velocity.magnitude - speedlineThreshold)/(speedlineMax - speedlineThreshold);
+            targetSpeed = (rb.velocity.magnitude - speedlineThreshold)/(speedlineMax - speedlineThreshold) * maxParticleSpeed;
+            targetEmission = (rb.velocity.magnitude - speedlineThreshold)/(speedlineMax - speedlineThreshold) * maxParticleEmission;
+            targetZ = (rb.velocity.magnitude - speedlineThreshold)/(speedlineMax - speedlineThreshold) * maxParticleZ;
+            targetFOV = ((rb.velocity.magnitude - speedlineThreshold)/(speedlineMax - speedlineThreshold) * maxAdditionalFOV) + initialFOV;
         }
         else
         {
-            main.startColor = new Color(1, 1, 1, 0);
-            foreach (Camera cam in cameras)
-            {
-                cam.fieldOfView = initialFOV;
-            }
+            targetAlpha = 0;
+            targetSpeed = initialParticleSpeed;
+            targetEmission = initialParticleEmission;
+            targetZ = initialParticleZ;
+            targetFOV = initialFOV;
+        }
+
+        main.startColor = new Color(1, 1, 1, Mathf.MoveTowards(main.startColor.color.a, targetAlpha, 100f * Time.deltaTime));
+        main.startSpeed = Mathf.MoveTowards(main.startSpeed.constant, targetSpeed, 100f * Time.deltaTime);
+        emission.rateOverTime = Mathf.MoveTowards(emission.rateOverTime.constant, targetEmission, 100f * Time.deltaTime);
+        speed.gameObject.transform.localPosition = new Vector3(0, 0.5f, Mathf.MoveTowards(speed.gameObject.transform.localPosition.z, targetZ, 100f * Time.deltaTime));
+
+        foreach (Camera cam in cameras)
+        {
+            cam.fieldOfView = Mathf.MoveTowards(cam.fieldOfView, targetFOV, 100f * Time.deltaTime);
         }
     }
 
