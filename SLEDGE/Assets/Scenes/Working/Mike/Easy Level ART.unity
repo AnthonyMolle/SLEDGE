@@ -26,19 +26,19 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 3
   m_SubtractiveShadowColor: {r: 0.3991634, g: 0.49385622, b: 0.735849, a: 1}
-  m_SkyboxMaterial: {fileID: 2100000, guid: d38974a5e25a4b743a94a36e728fd006, type: 2}
+  m_SkyboxMaterial: {fileID: 2100000, guid: a7875ae500f9a6644b7f0ae5d0887dd3, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
   m_HaloTexture: {fileID: 0}
   m_SpotCookie: {fileID: 10001, guid: 0000000000000000e000000000000000, type: 0}
   m_DefaultReflectionMode: 0
-  m_DefaultReflectionResolution: 16
+  m_DefaultReflectionResolution: 128
   m_ReflectionBounces: 1
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
-  m_Sun: {fileID: 520500630}
-  m_IndirectSpecularColor: {r: 0.350013, g: 0.7816025, b: 0.9833995, a: 1}
+  m_Sun: {fileID: 0}
+  m_IndirectSpecularColor: {r: 0.42251894, g: 0.7772178, b: 0.9833995, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -29387,7 +29387,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 844fa6630c01d644d8f119511757935c, type: 2}
+      objectReference: {fileID: 2100000, guid: 366fe8808acda0740b5f48473d89165c, type: 2}
     - target: {fileID: -1481321800369413981, guid: 65ea0a261d4d590408d843b74699821a,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -29507,7 +29507,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 844fa6630c01d644d8f119511757935c, type: 2}
+      objectReference: {fileID: 2100000, guid: 366fe8808acda0740b5f48473d89165c, type: 2}
     - target: {fileID: 1129496810705857465, guid: 65ea0a261d4d590408d843b74699821a,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
