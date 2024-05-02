@@ -168,6 +168,10 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] GameObject deathScreen;
 
+    [SerializeField] GameObject rangeIndicator;
+
+    RangeIndicator ri;
+
     #endregion
 
     void Start()
@@ -176,6 +180,8 @@ public class PlayerController : MonoBehaviour
         Cursor.visible = false; // make the cursor not visible
         
         rb = GetComponent<Rigidbody>(); // get the rigidbody of the parent component
+        
+        ri = rangeIndicator.GetComponent<RangeIndicator>(); // get range indicator script component
 
         mouseSensitivity = PlayerPrefs.GetFloat("Sensitivity", 400); // set the mouse sensitivity
 
@@ -684,24 +690,32 @@ public class PlayerController : MonoBehaviour
     {
         currentDistance = distanceCheck.distance - (hitLength + distanceCheckBuffer);
 
+        //rangeIndicator.SetPos(distanceCheck.point);
         if(distanceCheck.distance == 0)
         {
             displayDistance.color = Color.red;
             displayDistance.text = "infinity";
+            rangeIndicator.SetActive(false);
         }
         else
         {
+            var o = distanceCheck.collider.gameObject;
+            rangeIndicator.transform.up = distanceCheck.normal;
+            rangeIndicator.SetActive(true);
+            ri.SetPos(distanceCheck.point);
             if(currentDistance <= 0)
             {
                 displayDistance.text = "in range";
                 displayDistance.color = Color.cyan;
                 isInRange = true;
+                ri.SetColor(Color.cyan);
             }
             else
             {
                 displayDistance.text = (currentDistance).ToString("0.00m");
                 displayDistance.color = Color.red;
                 isInRange = false;
+                ri.SetColor(Color.red);
             }
         }
 
