@@ -188,9 +188,10 @@ public class PlayerController : MonoBehaviour
         Cursor.visible = false; // make the cursor not visible
         
         rb = GetComponent<Rigidbody>(); // get the rigidbody of the parent component
-        // deathScreen = canvas.transform.Find("Death Screen").gameObject;
-        // settings = canvas.transform.Find("Pause Setting Screen").gameObject;
-        // pause = canvas.transform.Find("PauseMenu").gameObject;
+        deathScreen = canvas.transform.Find("Death Screen").gameObject;
+        settings = canvas.transform.Find("Pause Setting Screen").gameObject;
+        pause = canvas.transform.Find("PauseMenu").gameObject;
+        displayDistance = canvas.transform.Find("Distance").gameObject.GetComponent<TextMeshProUGUI>();
 
         mouseSensitivity = PlayerPrefs.GetFloat("Sensitivity", 400); // set the mouse sensitivity
         Debug.Log(currentCombo);
