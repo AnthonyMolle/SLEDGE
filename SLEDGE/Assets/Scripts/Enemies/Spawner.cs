@@ -34,4 +34,17 @@ public class Spawner : MonoBehaviour
 
         Spawn();
     }
+
+    private void OnDrawGizmos()
+    {
+        if(enemyPrefab.name == "Flying Enemy") {
+            Gizmos.color = Color.green;
+        }
+        else
+        {
+            Gizmos.color = Color.magenta;
+        }
+
+        Gizmos.DrawWireCube(transform.position, Vector3.one * 2);
+    }
 }
