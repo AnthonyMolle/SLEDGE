@@ -169,6 +169,8 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     #region UI
+    [Header("UI")]
+    public GameObject canvas;
 
     public TextMeshProUGUI displayDistance;
 
@@ -186,6 +188,9 @@ public class PlayerController : MonoBehaviour
         Cursor.visible = false; // make the cursor not visible
         
         rb = GetComponent<Rigidbody>(); // get the rigidbody of the parent component
+        // deathScreen = canvas.transform.Find("Death Screen").gameObject;
+        // settings = canvas.transform.Find("Pause Setting Screen").gameObject;
+        // pause = canvas.transform.Find("PauseMenu").gameObject;
 
         mouseSensitivity = PlayerPrefs.GetFloat("Sensitivity", 400); // set the mouse sensitivity
         Debug.Log(currentCombo);
@@ -270,7 +275,8 @@ public class PlayerController : MonoBehaviour
             //Debug.Log("hammer startin");
             chargingHammer = true;
             hammerTimer = chargeTime;
-            anim.Play("HammerCharge"); //anim.Play("Charge 2");
+            //anim.Play("HammerCharge"); 
+            anim.Play("Charge 2");
         }
 
         if (chargingHammer && hammerTimer > 0.1 && mouseReleased)
@@ -299,7 +305,8 @@ public class PlayerController : MonoBehaviour
             //Debug.Log("charging hammer ended");
             hammerCharged = true;
             chargingHammer = false;
-            anim.Play("HammerHold"); //anim.Play("Charge 2 Hold");
+            //anim.Play("HammerHold"); 
+            anim.Play("Charge 2 Hold");
         }
         else if (hittingHammer)
         {
@@ -307,7 +314,8 @@ public class PlayerController : MonoBehaviour
             hammerHit = true;
             hittingHammer = false;
             //audioManager.PlaySFX(audioManager.hit);
-            anim.Play("HammerHit"); //anim.Play("Slam 2");
+            //anim.Play("HammerHit"); 
+            anim.Play("Slam 2");
 
             recovering = true;
             hammerTimer = recoveryTime;
