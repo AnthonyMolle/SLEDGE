@@ -171,7 +171,8 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     #region Power Ups
-    enum Powerup {None, Airburst, Explosive};
+
+    string currentPowerup;
 
     #endregion
 
@@ -757,5 +758,11 @@ public class PlayerController : MonoBehaviour
     public bool CheckMoving()
     {
         return movementInputVector.magnitude != 0;
+    }
+
+    public void CollectPowerup(string newPowerup)
+    {
+        currentPowerup = newPowerup;
+        Debug.Log(currentPowerup);
     }
 }
