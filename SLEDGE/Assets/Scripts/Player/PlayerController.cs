@@ -170,6 +170,12 @@ public class PlayerController : MonoBehaviour
 
     #endregion
 
+    #region Power Ups
+    enum Powerup {None, Airburst, Explosive};
+
+    #endregion
+
+
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked; // lock the cursor to the center of the screen
