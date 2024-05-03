@@ -8,6 +8,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.PlayerLoop;
+using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.ProBuilder.Shapes;
 using UnityEngine.UI;
 
@@ -113,7 +114,11 @@ public class PlayerController : MonoBehaviour
 
     #region Hammer
     [Header("Hammer")]
+    [SerializeField] float initialBounceForce = 15f;
+    [SerializeField] float maxInitialBounceYForce = 15f;
     [SerializeField] float bounceForce = 10f;
+    [SerializeField] float bouncyUpForce = 10f;
+    [SerializeField] float bouncyForce = 25f;
     [SerializeField] float hitLength = 5f;
 
     [SerializeField] float chargeTime = 1f;
@@ -578,7 +583,7 @@ public class PlayerController : MonoBehaviour
             #region Air movement
             else // if we're in the air
             {
-                if(rb.velocity.y <= 0)// if we are at the apex of our air height
+                if(rb.velocity.y <= 5)// if we are at the apex of our air height
                 {
                     rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
                 }
@@ -678,8 +683,6 @@ public class PlayerController : MonoBehaviour
         RaycastHit hit1;
         if (Physics.Raycast(ray, out hit1, hitLength, bouncableLayers))
         {
-            //FindObjectOfType<ScreenShaker>().Shake(100f, 100f);
-
             rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
 
             Vector3 normal = hit1.normal.normalized;
@@ -687,20 +690,44 @@ public class PlayerController : MonoBehaviour
             float wallAngle = Vector3.Angle(normal, Vector3.down);
             float wallVSFlatVelAngle = Vector3.Angle(normal, rb.velocity);
 
-           // bouncing up one wall over and over again is still far too viable, but theres some improvement to the basic 90 degree angled hammer wall bounces
-            if (angle < 110 && angle > 30 && wallAngle > 80 && wallAngle < 100)
+            if (hit1.transform.gameObject.tag == "Bouncy")
             {
-                rb.AddForce(transform.up * 10, ForceMode.Impulse);
+                isLaunched = true;
+                rb.velocity = Vector3.zero;
+                rb.AddForce((transform.position - hit1.point).normalized * bouncyForce/* + normal * 10*/, ForceMode.Impulse);
+                rb.AddForce(transform.up * bouncyUpForce, ForceMode.Impulse);
             }
-
-            if (wallVSFlatVelAngle > 140)
+            else if (!isLaunched)
             {
-                rb.velocity = new Vector3(0, rb.velocity.y, 0);
+                isLaunched = true;
+                rb.velocity = Vector3.zero;
+                Vector3 force = (transform.position - hit1.point).normalized * initialBounceForce;
+                if (force.y > maxInitialBounceYForce)
+                {
+                    rb.AddForce(new Vector3(force.x, maxInitialBounceYForce, force.z), ForceMode.Impulse);
+                }
+                else
+                {
+                    rb.AddForce(force, ForceMode.Impulse);
+                }
             }
+            else
+            {
+                rb.AddForce((transform.position - hit1.point).normalized * bounceForce/* + normal * 10*/, ForceMode.Impulse);
+            }
+            
+            Instantiate(HammerSound, gameObject.transform.position, Quaternion.identity);
 
-            rb.AddForce((transform.position - hit1.point).normalized * bounceForce/* + normal * 10*/, ForceMode.Impulse);
-            isLaunched = true;
-            Instantiate(HammerSound, gameObject.transform.position,Quaternion.identity);
+            // bouncing up one wall over and over again is still far too viable, but theres some improvement to the basic 90 degree angled hammer wall bounces
+            // if (angle < 110 && angle > 30 && wallAngle > 80 && wallAngle < 100)
+            // {
+            //     rb.AddForce(transform.up * 10, ForceMode.Impulse);
+            // }
+
+            // if (wallVSFlatVelAngle > 140)
+            // {
+            //     rb.velocity = new Vector3(0, rb.velocity.y, 0);
+            // }
 
 
             if (hit1.transform.gameObject.tag == "Enemy Flyer")
