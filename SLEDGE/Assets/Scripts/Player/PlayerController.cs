@@ -701,7 +701,7 @@ public class PlayerController : MonoBehaviour
         {
             var o = distanceCheck.collider.gameObject;
             rangeIndicator.transform.up = distanceCheck.normal;
-            rangeIndicator.SetActive(true);
+            rangeIndicator.SetActive(true);w q
             ri.SetPos(distanceCheck.point);
             if(currentDistance <= 0)
             {
