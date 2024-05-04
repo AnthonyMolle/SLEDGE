@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 8954496553645960163}
   - component: {fileID: 7685459734728546445}
   - component: {fileID: 727326944254216018}
+  - component: {fileID: 8614848069391248058}
   m_Layer: 8
   m_Name: Flying Enemy
   m_TagString: Enemy Flyer
@@ -105,6 +106,24 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
+--- !u!114 &8614848069391248058
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2178161172080928957}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c7aa2beebd2c4441bc902105f15d212, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_target: {fileID: 11400000, guid: e3b979de048bba741b7367a3e0ef7598, type: 2}
+  m_agentDescription: 
+  m_maxStepsPerTick: 1000
+  m_restartWhenComplete: 1
+  m_resetBlackboardOnRestart: 0
+  m_treePauseTime: 0
 --- !u!1001 &350566112321083211
 PrefabInstance:
   m_ObjectHideFlags: 0
