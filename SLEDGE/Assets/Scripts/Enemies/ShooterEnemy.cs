@@ -106,6 +106,7 @@ public class ShooterEnemy : MonoBehaviour
         projectile = Instantiate(projectileType, gun.position, Quaternion.identity);
         projectiles.Add(projectile);
         projectile.GetComponent<Projectile>().initializeProjectile(player.transform.position, bulletSpeed, bulletLifetime, false);
+        projectile.GetComponent<Projectile>().sentEnemy = gameObject;
         return;
     }
 

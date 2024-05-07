@@ -233,6 +233,7 @@ public class PlayerController : MonoBehaviour
     }
 
     [SerializeField] float speedlineThreshold = 10f;
+    [SerializeField] float fovThreshold = 20f;
     [SerializeField] float speedlineMax = 100f;
     float targetAlpha;
     [SerializeField] Camera[] cameras;
@@ -253,7 +254,7 @@ public class PlayerController : MonoBehaviour
     {
         if (rb.velocity.magnitude > 10)
         {
-            speedlines.transform.LookAt(rb.velocity * 10);
+            speedlines.transform.LookAt(rb.velocity * 1000);
         }
 
         ParticleSystem.MainModule main = speed.main;
@@ -265,7 +266,11 @@ public class PlayerController : MonoBehaviour
             targetSpeed = (rb.velocity.magnitude - speedlineThreshold)/(speedlineMax - speedlineThreshold) * maxParticleSpeed;
             targetEmission = (rb.velocity.magnitude - speedlineThreshold)/(speedlineMax - speedlineThreshold) * maxParticleEmission;
             targetZ = (rb.velocity.magnitude - speedlineThreshold)/(speedlineMax - speedlineThreshold) * maxParticleZ;
-            targetFOV = ((rb.velocity.magnitude - speedlineThreshold)/(speedlineMax - speedlineThreshold) * maxAdditionalFOV) + initialFOV;
+
+            if (rb.velocity.magnitude > fovThreshold)
+            {
+                targetFOV = ((rb.velocity.magnitude - fovThreshold)/(speedlineMax - fovThreshold) * maxAdditionalFOV) + initialFOV;
+            }
         }
         else
         {
@@ -397,20 +402,20 @@ public class PlayerController : MonoBehaviour
         
         if (Input.GetKeyDown(KeyCode.Space))// If the player has pressed the space key...
         {
-            if(!mustReleaseJump) // and they haven't been holding the button down...
-            {
+            //if(!mustReleaseJump) // and they haven't been holding the button down...
+            //{
                 jumpPressed = true; // let the engine know jump was pressed
-            }
+            //}
             
         }
-        if (Input.GetKey(KeyCode.Space)) // If the player might be holding the jump button down...
-        {
-            StartCoroutine(JumpHoldTimer());// Start a coroutine to check if they have been holding the button.
-        }
+        // if (Input.GetKey(KeyCode.Space)) // If the player might be holding the jump button down...
+        // {
+        //     StartCoroutine(JumpHoldTimer());// Start a coroutine to check if they have been holding the button.
+        // }
 
         if (Input.GetKeyUp(KeyCode.Space)) // if the player releases the jump button...
         {
-            StopCoroutine(JumpHoldTimer()); // stop checking to see if they are holding it.
+            //StopCoroutine(JumpHoldTimer()); // stop checking to see if they are holding it.
 
             // reset these variable to how they were before they pressed the jump button.
             jumpPressed = false;
@@ -607,12 +612,17 @@ public class PlayerController : MonoBehaviour
             }
             #endregion
 
+            Debug.Log("is grounded: " + isGrounded);
             #region Jump
             if (jumpPressed && isGrounded && !hasJumped || jumpPressed && !isGrounded && hasCoyoteTime == true && !hasJumped)
             {
-                //Debug.Log("jump!");
+                Debug.Log("jump!");
                 srcJumpPoint = rb.transform.position.y;
                 Jump();
+            }
+            else if(jumpPressed)
+            {
+                //Debug.Log("NO JUMP");
             }
             #endregion
         }
@@ -665,7 +675,7 @@ public class PlayerController : MonoBehaviour
             yield return new WaitForSeconds(jumpHoldCheckWindow); // check if the player is holding jump for this long.
             // the following variable will be set given the player has not let go of the jump key.
             mustReleaseJump = true; // let the engine know they are holding jump.
-            jumpPressed = false; // tell the engine they arent trying to jump.
+            //jumpPressed = false; // tell the engine they arent trying to jump.
             jumpHoldChecking = false; // stop running current instance of the coruoutine.
         }
     }
@@ -700,7 +710,7 @@ public class PlayerController : MonoBehaviour
             else if (!isLaunched)
             {
                 isLaunched = true;
-                rb.velocity = Vector3.zero;
+                rb.velocity = rb.velocity / 8;
                 Vector3 force = (transform.position - hit1.point).normalized * initialBounceForce;
                 if (force.y > maxInitialBounceYForce)
                 {
@@ -765,6 +775,7 @@ public class PlayerController : MonoBehaviour
             else if (hit1.transform.gameObject.layer == LayerMask.NameToLayer("Projectile"))
             {
                 hit1.transform.gameObject.GetComponent<Projectile>().initializeProjectile(ray.GetPoint(100), parriedProjectileSpeed, parriedProjectileLifetime, true);
+                FindObjectOfType<Hitstop>().Stop(0.25f);
             }
         }
     }
