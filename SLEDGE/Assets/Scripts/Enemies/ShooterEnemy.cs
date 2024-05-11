@@ -101,12 +101,18 @@ public class ShooterEnemy : MonoBehaviour
 
     private void FireProjectile()
     {
-        Debug.Log("Firing");
-        Debug.Log(player.transform.position);
+        // Debug.Log("Firing");
+        // Debug.Log(player.transform.position);
         projectile = Instantiate(projectileType, gun.position, Quaternion.identity);
         projectiles.Add(projectile);
         projectile.GetComponent<Projectile>().initializeProjectile(player.transform.position, bulletSpeed, bulletLifetime, false);
+        projectile.GetComponent<Projectile>().sentEnemy = gameObject;
         return;
+    }
+
+    public int GetHealth()
+    {
+        return currentHealth;
     }
 
     public void TakeDamage(int damage)
@@ -121,6 +127,7 @@ public class ShooterEnemy : MonoBehaviour
     private void Die()
     {
         // add sfx and vfx and such!
+        GameObject.Find("ScoreManager").GetComponent<ScoreManager>().AddEnemiesKilled(1);
         Destroy(gameObject);
     }
 

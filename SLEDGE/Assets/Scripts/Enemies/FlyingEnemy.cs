@@ -178,6 +178,11 @@ public class FlyingEnemy : MonoBehaviour
         }
     }
 
+    public int GetHealth()
+    {
+        return currentHealth;
+    }
+
     public void TakeDamage(int damage)
     {
         currentHealth -= damage;
@@ -190,6 +195,7 @@ public class FlyingEnemy : MonoBehaviour
     private void Die()
     {
         // add sfx and vfx and such!
+        GameObject.Find("ScoreManager").GetComponent<ScoreManager>().AddEnemiesKilled(1);
         Destroy(gameObject);
     }
 }

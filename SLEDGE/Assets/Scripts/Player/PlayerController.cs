@@ -8,16 +8,21 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.PlayerLoop;
+using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.ProBuilder.Shapes;
 using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
+    //EXPERIMENTAL SHIT
+    [SerializeField] GameObject speedlines;
+    [SerializeField] ParticleSystem speed;
+
     #region Character Component References
     [Header("Character Component References")]
     [SerializeField] Camera gameCamera;
     Rigidbody rb; // parent rigidbody
-    Animator anim; // parent animator
+    [SerializeField] Animator anim; // parent animator
     #endregion
 
     #region Camera
@@ -109,7 +114,11 @@ public class PlayerController : MonoBehaviour
 
     #region Hammer
     [Header("Hammer")]
+    [SerializeField] float initialBounceForce = 15f;
+    [SerializeField] float maxInitialBounceYForce = 15f;
     [SerializeField] float bounceForce = 10f;
+    [SerializeField] float bouncyUpForce = 10f;
+    [SerializeField] float bouncyForce = 25f;
     [SerializeField] float hitLength = 5f;
 
     [SerializeField] float chargeTime = 1f;
@@ -176,7 +185,6 @@ public class PlayerController : MonoBehaviour
         Cursor.visible = false; // make the cursor not visible
         
         rb = GetComponent<Rigidbody>(); // get the rigidbody of the parent component
-        anim = GetComponent<Animator>();// get the animator of the parent component
 
         mouseSensitivity = PlayerPrefs.GetFloat("Sensitivity", 400); // set the mouse sensitivity
 
@@ -191,6 +199,8 @@ public class PlayerController : MonoBehaviour
         HandleInput();
         HandleHammer();
         HandleLookRotation();
+        HandleSpeedFX();
+
         if(!isGrounded)
         {
             hangTime += Time.deltaTime;
@@ -222,15 +232,76 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    [SerializeField] float speedlineThreshold = 10f;
+    [SerializeField] float fovThreshold = 20f;
+    [SerializeField] float speedlineMax = 100f;
+    float targetAlpha;
+    [SerializeField] Camera[] cameras;
+    [SerializeField] float initialFOV = 75;
+    [SerializeField] float maxAdditionalFOV = 25;
+    float targetFOV;
+    [SerializeField] float initialParticleZ = 1;
+    [SerializeField] float maxParticleZ = 4;
+    float targetZ;
+    [SerializeField] float initialParticleSpeed = 4;
+    [SerializeField] float maxParticleSpeed = 20;
+    float targetSpeed;
+    [SerializeField] float initialParticleEmission = 25;
+    [SerializeField] float maxParticleEmission = 200;
+    float targetEmission;
+
+    private void HandleSpeedFX()
+    {
+        if (rb.velocity.magnitude > 10)
+        {
+            speedlines.transform.LookAt(rb.velocity * 1000);
+        }
+
+        ParticleSystem.MainModule main = speed.main;
+        ParticleSystem.EmissionModule emission = speed.emission;
+
+        if (rb.velocity.magnitude > speedlineThreshold)
+        {
+            targetAlpha = (rb.velocity.magnitude - speedlineThreshold)/(speedlineMax - speedlineThreshold);
+            targetSpeed = (rb.velocity.magnitude - speedlineThreshold)/(speedlineMax - speedlineThreshold) * maxParticleSpeed;
+            targetEmission = (rb.velocity.magnitude - speedlineThreshold)/(speedlineMax - speedlineThreshold) * maxParticleEmission;
+            targetZ = (rb.velocity.magnitude - speedlineThreshold)/(speedlineMax - speedlineThreshold) * maxParticleZ;
+
+            if (rb.velocity.magnitude > fovThreshold)
+            {
+                targetFOV = ((rb.velocity.magnitude - fovThreshold)/(speedlineMax - fovThreshold) * maxAdditionalFOV) + initialFOV;
+            }
+        }
+        else
+        {
+            targetAlpha = 0;
+            targetSpeed = initialParticleSpeed;
+            targetEmission = initialParticleEmission;
+            targetZ = initialParticleZ;
+            targetFOV = initialFOV;
+        }
+
+        main.startColor = new Color(1, 1, 1, Mathf.MoveTowards(main.startColor.color.a, targetAlpha, 100f * Time.deltaTime));
+        main.startSpeed = Mathf.MoveTowards(main.startSpeed.constant, targetSpeed, 100f * Time.deltaTime);
+        emission.rateOverTime = Mathf.MoveTowards(emission.rateOverTime.constant, targetEmission, 100f * Time.deltaTime);
+        speed.gameObject.transform.localPosition = new Vector3(0, 0.5f, Mathf.MoveTowards(speed.gameObject.transform.localPosition.z, targetZ, 100f * Time.deltaTime));
+
+        foreach (Camera cam in cameras)
+        {
+            cam.fieldOfView = Mathf.MoveTowards(cam.fieldOfView, targetFOV, 100f * Time.deltaTime);
+        }
+    }
+
     private void HandleHammer()
     {
         if (secondaryPressed && !chargingHammer && !recovering && !hittingHammer && !hammerCharged && !swipeRecovering && !swipingHammer)
         {
-            Debug.Log("starting hammer swipe");
+
 
             swipingHammer = true;
             hammerTimer = swipeTime;
-            anim.Play("HammerSwipe");
+            anim.Play("HammerSwipe"); //anim.Play("Hit 1");
+            
         }
         
         if (mousePressed && !chargingHammer && !recovering && !hittingHammer && !hammerCharged && !swipeRecovering && !swipingHammer)
@@ -238,12 +309,12 @@ public class PlayerController : MonoBehaviour
             //Debug.Log("hammer startin");
             chargingHammer = true;
             hammerTimer = chargeTime;
-            anim.Play("HammerCharge");
+            anim.Play("HammerCharge"); //anim.Play("Charge 2");
         }
 
         if (chargingHammer && hammerTimer > 0.1 && mouseReleased)
         {
-            anim.Play("HammerIdle");
+            anim.Play("HammerIdle"); //anim.Play("Idle 1");
             chargingHammer = false;
             hammerTimer = 0;
         }
@@ -266,14 +337,15 @@ public class PlayerController : MonoBehaviour
             //Debug.Log("charging hammer ended");
             hammerCharged = true;
             chargingHammer = false;
-            anim.Play("HammerHold");
+            anim.Play("HammerHold"); //anim.Play("Charge 2 Hold");
         }
         else if (hittingHammer)
         {
             //Debug.Log("hammer hitting ended");
             hammerHit = true;
             hittingHammer = false;
-            anim.Play("HammerHit");
+            //audioManager.PlaySFX(audioManager.hit);
+            anim.Play("HammerHit"); //anim.Play("Slam 2");
 
             recovering = true;
             hammerTimer = recoveryTime;
@@ -330,20 +402,20 @@ public class PlayerController : MonoBehaviour
         
         if (Input.GetKeyDown(KeyCode.Space))// If the player has pressed the space key...
         {
-            if(!mustReleaseJump) // and they haven't been holding the button down...
-            {
+            //if(!mustReleaseJump) // and they haven't been holding the button down...
+            //{
                 jumpPressed = true; // let the engine know jump was pressed
-            }
+            //}
             
         }
-        if (Input.GetKey(KeyCode.Space)) // If the player might be holding the jump button down...
-        {
-            StartCoroutine(JumpHoldTimer());// Start a coroutine to check if they have been holding the button.
-        }
+        // if (Input.GetKey(KeyCode.Space)) // If the player might be holding the jump button down...
+        // {
+        //     StartCoroutine(JumpHoldTimer());// Start a coroutine to check if they have been holding the button.
+        // }
 
         if (Input.GetKeyUp(KeyCode.Space)) // if the player releases the jump button...
         {
-            StopCoroutine(JumpHoldTimer()); // stop checking to see if they are holding it.
+            //StopCoroutine(JumpHoldTimer()); // stop checking to see if they are holding it.
 
             // reset these variable to how they were before they pressed the jump button.
             jumpPressed = false;
@@ -416,6 +488,7 @@ public class PlayerController : MonoBehaviour
 
     private void HandleMovement()
     {
+
         #region Raycast Checks
         //all this raycast slope stuff is getting kinda out of hand
         // i agree -other programmer
@@ -515,7 +588,7 @@ public class PlayerController : MonoBehaviour
             #region Air movement
             else // if we're in the air
             {
-                if(rb.velocity.y <= 0)// if we are at the apex of our air height
+                if(rb.velocity.y <= 5)// if we are at the apex of our air height
                 {
                     rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
                 }
@@ -539,12 +612,17 @@ public class PlayerController : MonoBehaviour
             }
             #endregion
 
+            Debug.Log("is grounded: " + isGrounded);
             #region Jump
             if (jumpPressed && isGrounded && !hasJumped || jumpPressed && !isGrounded && hasCoyoteTime == true && !hasJumped)
             {
-                //Debug.Log("jump!");
+                Debug.Log("jump!");
                 srcJumpPoint = rb.transform.position.y;
                 Jump();
+            }
+            else if(jumpPressed)
+            {
+                //Debug.Log("NO JUMP");
             }
             #endregion
         }
@@ -555,9 +633,27 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
+            if(rb.velocity.y <= 0)// if we are at the apex of our air height
+            {
+                rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
+            }
+
+        
+
             if (movementInputVector.magnitude > 0.001)
             {
-                rb.velocity = Vector3.RotateTowards(rb.velocity, Quaternion.AngleAxis(Vector3.SignedAngle(flatVelocity, movementInputVector, transform.up), transform.up) * rb.velocity, launchedRotationSpeed/100, 0);
+                Debug.Log((rb.velocity + movementInputVector).magnitude + ", " + rb.velocity.magnitude);
+
+                if ((rb.velocity + movementInputVector).magnitude > rb.velocity.magnitude - 0.5)
+                {
+                    Vector3 rotation = Vector3.RotateTowards(rb.velocity, Quaternion.AngleAxis(Vector3.SignedAngle(flatVelocity, movementInputVector, transform.up), transform.up) * rb.velocity, launchedRotationSpeed/100, 0);
+                    rb.velocity = new Vector3(rotation.x, rb.velocity.y, rotation.z);
+                }
+                else
+                {
+                    rb.AddForce(movementInputVector * airAccelerationRate);
+                    //rb.velocity = new Vector3 (Vector3.ClampMagnitude(flatVelocity, airMaxSpeed).x, rb.velocity.y, Vector3.ClampMagnitude(flatVelocity, airMaxSpeed).z);
+                }
             }
         }
     }
@@ -579,7 +675,7 @@ public class PlayerController : MonoBehaviour
             yield return new WaitForSeconds(jumpHoldCheckWindow); // check if the player is holding jump for this long.
             // the following variable will be set given the player has not let go of the jump key.
             mustReleaseJump = true; // let the engine know they are holding jump.
-            jumpPressed = false; // tell the engine they arent trying to jump.
+            //jumpPressed = false; // tell the engine they arent trying to jump.
             jumpHoldChecking = false; // stop running current instance of the coruoutine.
         }
     }
@@ -597,31 +693,51 @@ public class PlayerController : MonoBehaviour
         RaycastHit hit1;
         if (Physics.Raycast(ray, out hit1, hitLength, bouncableLayers))
         {
-            //FindObjectOfType<ScreenShaker>().Shake(100f, 100f);
-
             rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
 
-            Vector3 normal = hit1.normal;
+            Vector3 normal = hit1.normal.normalized;
             float angle = Vector3.Angle(hit1.point - cameraObject.transform.position, -transform.up);
             float wallAngle = Vector3.Angle(normal, Vector3.down);
             float wallVSFlatVelAngle = Vector3.Angle(normal, rb.velocity);
 
-            Debug.Log(angle);
-
-            //bouncing up one wall over and over again is still far too viable, but theres some improvement to the basic 90 degree angled hammer wall bounces
-            if (angle < 110 && angle > 30 && wallAngle > 80 && wallAngle < 100)
+            if (hit1.transform.gameObject.tag == "Bouncy")
             {
-                rb.AddForce(transform.up * 10, ForceMode.Impulse);
+                isLaunched = true;
+                rb.velocity = Vector3.zero;
+                rb.AddForce((transform.position - hit1.point).normalized * bouncyForce/* + normal * 10*/, ForceMode.Impulse);
+                rb.AddForce(transform.up * bouncyUpForce, ForceMode.Impulse);
             }
-
-            if (wallVSFlatVelAngle > 140)
+            else if (!isLaunched)
             {
-                rb.velocity = new Vector3(0, rb.velocity.y, 0);
+                isLaunched = true;
+                rb.velocity = rb.velocity / 8;
+                Vector3 force = (transform.position - hit1.point).normalized * initialBounceForce;
+                if (force.y > maxInitialBounceYForce)
+                {
+                    rb.AddForce(new Vector3(force.x, maxInitialBounceYForce, force.z), ForceMode.Impulse);
+                }
+                else
+                {
+                    rb.AddForce(force, ForceMode.Impulse);
+                }
             }
+            else
+            {
+                rb.AddForce((transform.position - hit1.point).normalized * bounceForce/* + normal * 10*/, ForceMode.Impulse);
+            }
+            
+            Instantiate(HammerSound, gameObject.transform.position, Quaternion.identity);
 
-            rb.AddForce((transform.position - hit1.point).normalized * bounceForce, ForceMode.Impulse);
-            isLaunched = true;
-            Instantiate(HammerSound, gameObject.transform.position,Quaternion.identity);
+            // bouncing up one wall over and over again is still far too viable, but theres some improvement to the basic 90 degree angled hammer wall bounces
+            // if (angle < 110 && angle > 30 && wallAngle > 80 && wallAngle < 100)
+            // {
+            //     rb.AddForce(transform.up * 10, ForceMode.Impulse);
+            // }
+
+            // if (wallVSFlatVelAngle > 140)
+            // {
+            //     rb.velocity = new Vector3(0, rb.velocity.y, 0);
+            // }
 
 
             if (hit1.transform.gameObject.tag == "Enemy Flyer")
@@ -659,6 +775,7 @@ public class PlayerController : MonoBehaviour
             else if (hit1.transform.gameObject.layer == LayerMask.NameToLayer("Projectile"))
             {
                 hit1.transform.gameObject.GetComponent<Projectile>().initializeProjectile(ray.GetPoint(100), parriedProjectileSpeed, parriedProjectileLifetime, true);
+                FindObjectOfType<Hitstop>().Stop(0.25f);
             }
         }
     }
@@ -710,7 +827,6 @@ public class PlayerController : MonoBehaviour
 
     public void Die() // this function is called when the player dies
     {
-        Debug.Log("die!");
         alive = false;
         deathScreen.SetActive(true);
         Time.timeScale = 0;
