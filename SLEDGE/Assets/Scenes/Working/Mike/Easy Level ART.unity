@@ -31227,14 +31227,19 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4018356693634364459, guid: 472cdce8629221545b7b8e06983f6054,
         type: 3}
-      propertyPath: pause
-      value: 
-      objectReference: {fileID: 1867570148}
-    - target: {fileID: 4018356693634364459, guid: 472cdce8629221545b7b8e06983f6054,
-        type: 3}
       propertyPath: canvas
       value: 
       objectReference: {fileID: 301543894}
+    - target: {fileID: 6569979679882466707, guid: 472cdce8629221545b7b8e06983f6054,
+        type: 3}
+      propertyPath: m_Name
+      value: Player.v3 Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 4018356693634364459, guid: 472cdce8629221545b7b8e06983f6054,
+        type: 3}
+      propertyPath: pause
+      value: 
+      objectReference: {fileID: 1867570148}
     - target: {fileID: 4018356693634364459, guid: 472cdce8629221545b7b8e06983f6054,
         type: 3}
       propertyPath: settings
@@ -31315,21 +31320,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6569979679882466707, guid: 472cdce8629221545b7b8e06983f6054,
-        type: 3}
-      propertyPath: m_Name
-      value: Player.v3 Variant
-      objectReference: {fileID: 0}
-    - target: {fileID: 7697774242628160810, guid: 472cdce8629221545b7b8e06983f6054,
-        type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: c58a911b13b47ac42b78cae16db6cee2, type: 2}
-    - target: {fileID: 9028450688994604395, guid: 472cdce8629221545b7b8e06983f6054,
-        type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: c58a911b13b47ac42b78cae16db6cee2, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
