@@ -156,6 +156,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float parriedProjectileSpeed = 1f;
     [SerializeField] float parriedProjectileLifetime = 10f;
 
+    [SerializeField] HammerHitbox slamHitbox;
+    [SerializeField] Vector3 hammerSlamSize;
+    [SerializeField] float hammerSlamTime;
 
     AudioManager audioManager;
     [SerializeField] GameObject HammerSound;
@@ -185,6 +188,8 @@ public class PlayerController : MonoBehaviour
         Cursor.visible = false; // make the cursor not visible
         
         rb = GetComponent<Rigidbody>(); // get the rigidbody of the parent component
+
+        slamHitbox.InitializeCollider(hammerSlamSize.x, hammerSlamSize.y, hammerSlamSize.z);
 
         mouseSensitivity = PlayerPrefs.GetFloat("Sensitivity", 400); // set the mouse sensitivity
 
@@ -612,7 +617,7 @@ public class PlayerController : MonoBehaviour
             }
             #endregion
 
-            Debug.Log("is grounded: " + isGrounded);
+            //Debug.Log("is grounded: " + isGrounded);
             #region Jump
             if (jumpPressed && isGrounded && !hasJumped || jumpPressed && !isGrounded && hasCoyoteTime == true && !hasJumped)
             {
