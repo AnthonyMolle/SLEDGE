@@ -28,20 +28,11 @@ public class EndScreenManager : MonoBehaviour
     public float secMultiplier = 0.65f;
 
     string stageTime, kills, styleKills, collectables_found;
-    Grade timeGrade, killGrade, styleGrade, finalGrade, collectableGrade;
+    PlayerSaveData.Grade timeGrade, killGrade, styleGrade, finalGrade, collectableGrade;
     private RectTransform RectTransform;
 
     private bool gradesDisplayed = false;
 
-
-    public enum Grade
-    {     
-        D, // 0
-        C, // 1
-        B, // 2
-        A, // 3
-        S  // 4
-    }
     private void Start()
     {
         finalGradeText.text = "";
@@ -81,10 +72,115 @@ public class EndScreenManager : MonoBehaviour
         collectables_found = "Collectables: " + ScoreManager.Instance.GetCollectible().ToString();
 
         // Calculate Grades
-        timeGrade = Grade.A;
-        killGrade = Grade.A;
-        styleGrade = Grade.A;
-        finalGrade = Grade.A;
+        #region Time Grade
+        float endTime = ScoreManager.Instance.GetCurrentTime();
+        if (endTime < ScoreManager.Instance.GetTimeThreshold(PlayerSaveData.Grade.S))
+        {
+            timeGrade = PlayerSaveData.Grade.S;
+        }
+        else if (endTime < ScoreManager.Instance.GetTimeThreshold(PlayerSaveData.Grade.A))
+        {
+            timeGrade = PlayerSaveData.Grade.A;
+        }
+        else if (endTime < ScoreManager.Instance.GetTimeThreshold(PlayerSaveData.Grade.B))
+        {
+            timeGrade = PlayerSaveData.Grade.B;
+        }
+        else if (endTime < ScoreManager.Instance.GetTimeThreshold(PlayerSaveData.Grade.C))
+        {
+            timeGrade = PlayerSaveData.Grade.C;
+        }
+        else
+        {
+            timeGrade = PlayerSaveData.Grade.D;
+        }
+        #endregion
+
+        #region Kill Grade
+        if (ScoreManager.Instance.GetMaxEnemies() == 0)
+        {
+            killGrade = PlayerSaveData.Grade.S;
+        }
+        else
+        {
+            float killPercent = ScoreManager.Instance.GetEnemiesKilled() / ScoreManager.Instance.GetMaxEnemies();
+            if (killPercent >= 1)
+            {
+                killGrade = PlayerSaveData.Grade.S;
+            }
+            else if (killPercent >= 0.9)
+            {
+                killGrade = PlayerSaveData.Grade.A;
+            }
+            else if (killPercent >= 0.7)
+            {
+                killGrade = PlayerSaveData.Grade.B;
+            }
+            else if (killPercent >= 0.5)
+            {
+                killGrade = PlayerSaveData.Grade.C;
+            }
+            else
+            {
+                killGrade = PlayerSaveData.Grade.D;
+            }
+        }
+        #endregion
+
+        #region Style Grade
+        if (ScoreManager.Instance.GetMaxStyle() == 0)
+        {
+            styleGrade = PlayerSaveData.Grade.S;
+        }
+        else
+        {
+            float stylePercent = ScoreManager.Instance.GetStyleKills() / ScoreManager.Instance.GetMaxStyle();
+            if (stylePercent >= 1)
+            {
+                styleGrade = PlayerSaveData.Grade.S;
+            }
+            else if (stylePercent >= 0.9)
+            {
+                styleGrade = PlayerSaveData.Grade.A;
+            }
+            else if (stylePercent >= 0.7)
+            {
+                styleGrade = PlayerSaveData.Grade.B;
+            }
+            else if (stylePercent >= 0.5)
+            {
+                styleGrade = PlayerSaveData.Grade.C;
+            }
+            else
+            {
+                styleGrade = PlayerSaveData.Grade.D;
+            }
+        }
+        #endregion
+
+        #region Final Grade
+        int finalPoints = PlayerSaveData.Instance.GetPointsFromRank(timeGrade) + PlayerSaveData.Instance.GetPointsFromRank(killGrade) + PlayerSaveData.Instance.GetPointsFromRank(styleGrade);
+        if (finalPoints >= 15)
+        {
+            finalGrade = PlayerSaveData.Grade.S;
+        }
+        else if (finalPoints >= 11)
+        {
+            finalGrade = PlayerSaveData.Grade.A;
+        }
+        else if (finalPoints >= 8)
+        {
+            finalGrade = PlayerSaveData.Grade.B;
+        }
+        else if (finalPoints >= 5)
+        {
+            finalGrade = PlayerSaveData.Grade.C;
+        }
+        else
+        {
+            finalGrade = PlayerSaveData.Grade.D;
+        }
+        #endregion
 
         PlayerSaveData.Instance.SaveLevelData(SceneManager.GetActiveScene().name, ScoreManager.Instance.GetCurrentTime(), PlayerSaveData.Grade.A, ScoreManager.Instance.GetCollectible());
     }
@@ -116,19 +212,19 @@ public class EndScreenManager : MonoBehaviour
         gradesDisplayed = true;
     }
 
-    private string GradeToString(Grade g)
+    private string GradeToString(PlayerSaveData.Grade g)
     {
         switch (g)
         {
-            case Grade.A:
+            case PlayerSaveData.Grade.A:
                 return "A";
-            case Grade.B:
+            case PlayerSaveData.Grade.B:
                 return "B";
-            case Grade.C:
+            case PlayerSaveData.Grade.C:
                 return "C";
-            case Grade.D:
+            case PlayerSaveData.Grade.D:
                 return "D";
-            case Grade.S:
+            case PlayerSaveData.Grade.S:
                 return "S";
             default:
                 return "NAN";
