@@ -92,7 +92,7 @@ public class ShooterEnemy : MonoBehaviour
 
     private bool PlayerinLOS()
     {
-        if (Physics.Raycast(transform.position, transform.forward, out hit, detectionRadius))
+        if (Physics.Raycast(transform.position, player.transform.position - transform.position, out hit, detectionRadius))
         {
             if (hit.collider.gameObject.tag == "Player")
             {
