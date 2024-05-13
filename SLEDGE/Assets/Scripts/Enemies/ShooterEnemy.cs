@@ -30,6 +30,9 @@ public class ShooterEnemy : MonoBehaviour
     GameObject projectile;
     List<GameObject> projectiles = new List<GameObject>();
 
+    [Header("Death")]
+    public GameObject deathRagdoll;
+
     public enum EnemyState
     {
         IDLE,
@@ -128,6 +131,7 @@ public class ShooterEnemy : MonoBehaviour
     {
         // add sfx and vfx and such!
         GameObject.Find("ScoreManager").GetComponent<ScoreManager>().AddEnemiesKilled(1);
+        Instantiate(deathRagdoll, transform.position, Quaternion.identity);
         Destroy(gameObject);
     }
 
