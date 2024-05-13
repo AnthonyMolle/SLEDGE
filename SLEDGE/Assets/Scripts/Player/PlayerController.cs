@@ -78,6 +78,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float airMaxSpeed = 100f;
 
     [SerializeField] float naturalAdditionalFallingSpeed = 4f; //natural rate our player will fall after the apex of their falling height.
+    [SerializeField] float extraGravityYThreshold = 5f;
     #endregion
 
     #region Jump
@@ -391,7 +392,7 @@ public class PlayerController : MonoBehaviour
             hammerCharged = true;
             chargingHammer = false;
             //anim.Play("HammerHold"); 
-            anim.Play("Charge 2 Hold");
+            anim.Play("Charged 1 Hold");
         }
         else if (hittingHammer)
         {
@@ -653,9 +654,14 @@ public class PlayerController : MonoBehaviour
             #region Air movement
             else // if we're in the air
             {
-                if(rb.velocity.y <= 5)// if we are at the apex of our air height
+                if(rb.velocity.y <= extraGravityYThreshold)// if we are at the apex of our air height
                 {
                     rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
+                }
+                
+                if (hammerCharged && !isGrounded && hangTime > 1)
+                {
+                    rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed * 2, 0));
                 }
 
                 if (movementInputVector.magnitude > 0.001)
@@ -681,7 +687,6 @@ public class PlayerController : MonoBehaviour
             #region Jump
             if (jumpPressed && isGrounded && !hasJumped || jumpPressed && !isGrounded && hasCoyoteTime == true && !hasJumped)
             {
-                Debug.Log("jump!");
                 srcJumpPoint = rb.transform.position.y;
                 Jump();
             }
@@ -698,9 +703,14 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            if(rb.velocity.y <= 0)// if we are at the apex of our air height
+            if(rb.velocity.y <= extraGravityYThreshold)// if we are at the apex of our air height
             {
                 rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
+            }
+            
+            if (hammerCharged && !isGrounded && hangTime > 1)
+            {
+                rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed * 2, 0));
             }
 
         
@@ -756,6 +766,7 @@ public class PlayerController : MonoBehaviour
     {
         Ray ray = gameCamera.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit1;
+
         if (Physics.Raycast(ray, out hit1, hitLength, bouncableLayers))
         {
             rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
@@ -816,7 +827,7 @@ public class PlayerController : MonoBehaviour
         }
         else 
         {
-            audioManager.PlaySFX(audioManager.whiff);
+            //audioManager.PlaySFX(audioManager.whiff);
         }
     }
 
