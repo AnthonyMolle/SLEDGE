@@ -377,6 +377,7 @@ public class PlayerController : MonoBehaviour
         {
             hammerCharged = false;
             hittingHammer = true;
+            slamHitbox.ActivateCollider();
 
             hammerTimer = hitTime;
             
@@ -402,6 +403,7 @@ public class PlayerController : MonoBehaviour
             //audioManager.PlaySFX(audioManager.hit);
             //anim.Play("HammerHit"); 
             anim.Play("Slam 2");
+            slamHitbox.DeactivateCollider();
 
             recovering = true;
             hammerTimer = recoveryTime;
