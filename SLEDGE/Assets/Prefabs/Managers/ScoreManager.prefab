@@ -44,4 +44,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3dedd98f5b05564fa4eaab39675e708, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaxCollectibles: 1
+  timer: {fileID: 0}
+  TimeThresholds:
+  - 100000
+  - 510
+  - 300
+  - 150
+  - 105
+  MaxEnemies: 0

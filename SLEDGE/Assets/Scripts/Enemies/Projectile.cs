@@ -8,6 +8,7 @@ public class Projectile : MonoBehaviour
     float maxLifetime = 10.0f;
     float lifetime = 0.0f;
     public float hitStopDuration;
+    public GameObject sentEnemy;
 
     bool isParried = false;
 
@@ -24,6 +25,19 @@ public class Projectile : MonoBehaviour
     {
         transform.position += transform.forward * bulletSpeed * Time.deltaTime;
         lifetime += Time.deltaTime;
+
+        if (isParried)
+        {
+            if (sentEnemy != null)
+            {
+                
+                Vector3 rotation = Vector3.RotateTowards(transform.forward, sentEnemy.transform.position - transform.position, 5 * Time.deltaTime, 0 * Time.deltaTime);
+                transform.rotation = Quaternion.LookRotation(rotation);
+
+                Debug.Log(transform.forward + ", " + rotation);
+            }
+        }
+
         if (lifetime >= maxLifetime)
         {
             Destroy(gameObject);
@@ -58,16 +72,16 @@ public class Projectile : MonoBehaviour
         else if (other.gameObject.tag == "Enemy Flyer" && isParried && other.gameObject.GetComponent<FlyingEnemy>().GetHealth() > 0)
         {
             Destroy(gameObject);
-            FindObjectOfType<Hitstop>().Stop(hitStopDuration);
+            //FindObjectOfType<Hitstop>().Stop(hitStopDuration);
             other.gameObject.GetComponent<FlyingEnemy>().TakeDamage(1);
-            GameObject.Find("ScoreManager").GetComponent<ScoreManager>().AddStyleKills(1);
+            GameObject.Find("ScoreManager").GetComponent<ScoreManager>().AddStyleKills(200);
         }
         else if (other.gameObject.tag == "Enemy Shooter" && isParried && other.gameObject.GetComponent<ShooterEnemy>().GetHealth() > 0)
         {
             Destroy(gameObject);
-            FindObjectOfType<Hitstop>().Stop(hitStopDuration);
+            //FindObjectOfType<Hitstop>().Stop(hitStopDuration);
             other.gameObject.GetComponent<ShooterEnemy>().TakeDamage(1);
-            GameObject.Find("ScoreManager").GetComponent<ScoreManager>().AddStyleKills(1);
+            GameObject.Find("ScoreManager").GetComponent<ScoreManager>().AddStyleKills(200);
         }
         else if (other.gameObject.tag == "Enemy Shooter")
         {
