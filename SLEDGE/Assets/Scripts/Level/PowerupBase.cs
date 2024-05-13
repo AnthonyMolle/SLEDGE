@@ -1,6 +1,8 @@
+using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PowerupBase : MonoBehaviour
 {
@@ -8,15 +10,43 @@ public class PowerupBase : MonoBehaviour
     GameObject powerup;
 
     public float powerupReturnTime;
+
+    public Image timerFill;
+    
+    float timer;
+
+    bool timerRunning;
+
+    void Start()
+    {
+        ResetTimer();
+    }
     public void CollectPowerup()
     {
-        StartCoroutine(ReenablePowerup());
+        powerup.SetActive(false);
+        timerRunning = true;
+        timerFill.enabled = true;
     }
 
-    IEnumerator ReenablePowerup()
+    void Update()
     {
-        powerup.SetActive(false);
-        yield return new WaitForSeconds(powerupReturnTime);
-        powerup.SetActive(true);
+        if (timerRunning)
+        {
+            timer -= Time.deltaTime;
+            timerFill.fillAmount = timer / powerupReturnTime;
+
+            if (timer <= 0)
+            {
+                timerRunning = false;
+                ResetTimer();
+                powerup.SetActive(true);
+                timerFill.enabled = false;
+            }
+        }
+    }
+
+    void ResetTimer()
+    {
+        timer = powerupReturnTime;
     }
 }

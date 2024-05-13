@@ -172,7 +172,14 @@ public class PlayerController : MonoBehaviour
 
     #region Power Ups
 
-    string currentPowerup;
+    public enum Powerup {None, Airburst, Explosive}
+
+    public Powerup currentPowerup;
+
+    [Tooltip("How much we add to bounce force when the explosive powerup is enabled.")]
+    public float explosiveForce;
+
+    bool explosiveUsed = false;
 
     #endregion
 
@@ -189,6 +196,8 @@ public class PlayerController : MonoBehaviour
         currentHealth = maxHealth; // set health to max
 
         currentCheckpoint = firstCheckpoint; //set the currentcheckpoint to the start of the level.
+
+        currentPowerup = Powerup.None;
     }
 
     // Update is called once per frame
@@ -623,6 +632,7 @@ public class PlayerController : MonoBehaviour
         RaycastHit hit1;
         if (Physics.Raycast(ray, out hit1, hitLength, bouncableLayers))
         {
+            UsePowerup();
             //FindObjectOfType<ScreenShaker>().Shake(100f, 100f);
 
             rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
@@ -760,9 +770,48 @@ public class PlayerController : MonoBehaviour
         return movementInputVector.magnitude != 0;
     }
 
-    public void CollectPowerup(string newPowerup)
+    public void CollectPowerup(Powerup newPowerup)
     {
         currentPowerup = newPowerup;
-        Debug.Log(currentPowerup);
+    }
+
+    void UsePowerup()
+    {
+        switch (currentPowerup)
+        {
+            case Powerup.Airburst:
+                UseAirburst();
+                break;
+            case Powerup.Explosive:
+                if (!explosiveUsed)
+                {
+                    UseExplosive();
+                }
+                else
+                {
+                    LoseExplosive();
+                }
+                
+                break;
+            case Powerup.None:
+                break;
+        }
+    }
+
+    void UseAirburst()
+    {
+
+    }
+
+    void UseExplosive()
+    {
+        bounceForce += explosiveForce;
+        explosiveUsed = true;
+    }
+
+    void LoseExplosive()
+    {
+        bounceForce -= explosiveForce;
+        explosiveUsed = false;
     }
 }
