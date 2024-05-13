@@ -315,7 +315,7 @@ public class PlayerController : MonoBehaviour
             hammerCharged = true;
             chargingHammer = false;
             //anim.Play("HammerHold"); 
-            anim.Play("Charge 2 Hold");
+            anim.Play("Charged 1 Hold");
         }
         else if (hittingHammer)
         {
