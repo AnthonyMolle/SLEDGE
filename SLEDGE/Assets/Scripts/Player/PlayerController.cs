@@ -661,7 +661,7 @@ public class PlayerController : MonoBehaviour
                 
                 if (hammerCharged && !isGrounded && hangTime > 1)
                 {
-                    rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed * 2, 0));
+                    rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
                 }
 
                 if (movementInputVector.magnitude > 0.001)
@@ -710,7 +710,7 @@ public class PlayerController : MonoBehaviour
             
             if (hammerCharged && !isGrounded && hangTime > 1)
             {
-                rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed * 2, 0));
+                rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
             }
 
         
