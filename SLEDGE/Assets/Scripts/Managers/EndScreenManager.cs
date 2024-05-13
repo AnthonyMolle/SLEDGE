@@ -182,7 +182,7 @@ public class EndScreenManager : MonoBehaviour
         }
         #endregion
 
-        PlayerSaveData.Instance.SaveLevelData(SceneManager.GetActiveScene().name, ScoreManager.Instance.GetCurrentTime(), PlayerSaveData.Grade.A, ScoreManager.Instance.GetCollectible());
+        PlayerSaveData.Instance.SaveLevelData(SceneManager.GetActiveScene().name, ScoreManager.Instance.GetCurrentTime(), finalGrade, ScoreManager.Instance.GetCollectible());
     }
 
     IEnumerator reveal()

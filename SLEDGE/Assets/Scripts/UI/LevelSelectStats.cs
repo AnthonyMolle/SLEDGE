@@ -14,17 +14,10 @@ public class LevelSelectStats : MonoBehaviour
     public TextMeshProUGUI collectibleText;
 
     public string LevelName;
-    
-    // MAKE THIS LESS CRINGE LATER!
-    public GameObject playerSaveData;
 
     // Start is called before the first frame update
     void Start()
     {
-        if (PlayerSaveData.Instance == null)
-        {
-            Instantiate(playerSaveData);
-        }
 
         if (PlayerSaveData.Instance.ContainsLevelData(LevelName))
         {
