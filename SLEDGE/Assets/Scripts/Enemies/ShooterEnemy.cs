@@ -26,12 +26,15 @@ public class ShooterEnemy : MonoBehaviour
     float cooldown = 2.0f;
     RaycastHit hit;
 
-    Transform gun;
+    public Transform gun;
     GameObject projectile;
     List<GameObject> projectiles = new List<GameObject>();
 
-    [Header("Death")]
+    [Header("Animation")]
     public GameObject deathRagdoll;
+    public GameObject rig;
+    public Animator anim;
+    public GameObject lookAtTarget;
 
     public enum EnemyState
     {
@@ -47,7 +50,7 @@ public class ShooterEnemy : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player");
         rb = GetComponent<Rigidbody>();
 
-        gun = transform.Find("Gun");
+        // gun = transform.Find("Gun");
         position = transform.position;
         currentHealth = maxHealth;
     }
@@ -55,11 +58,10 @@ public class ShooterEnemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Vector3 lookPos = player.transform.position - transform.position;
-        lookPos.y = 0;
-        transform.rotation = Quaternion.LookRotation(lookPos);
+        lookAtTarget.transform.position = player.transform.position;
+        // transform.rotation = Quaternion.LookRotation(lookPos);
         rb.velocity = Vector3.zero;
-        transform.position = position;
+        // transform.position = position;
         cooldown += Time.deltaTime;
     }
 
