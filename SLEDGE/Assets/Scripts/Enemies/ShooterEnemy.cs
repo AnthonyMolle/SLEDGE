@@ -72,7 +72,7 @@ public class ShooterEnemy : MonoBehaviour
         Vector3 targetpos = new Vector3(lookAtTarget.transform.position.x, 0, lookAtTarget.transform.position.z);
         Vector3 pos = new Vector3(transform.position.x, 0, transform.position.z);
         angle = Vector3.Angle(lookAtTarget.transform.position - transform.position, transform.forward);
-        if (angle > 145) {
+        if (angle > 130) {
             transform.rotation = Quaternion.LookRotation(targetpos - pos);
         }
     }
