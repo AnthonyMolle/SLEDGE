@@ -58,7 +58,10 @@ public class ScoreManager : MonoBehaviour
     public int GetStyleKills() { return StyleKills; }
     public float GetDamageTaken() { return DamageTaken; }
 
-    public void AddEnemiesKilled(int _enemiesKilled) { EnemiesKilled += _enemiesKilled; }
+    public void AddEnemiesKilled(int _enemiesKilled) {
+        StyleKills += 100;
+        EnemiesKilled += _enemiesKilled; 
+    }
     public void AddStyleKills(int _styleKills) { StyleKills += _styleKills; }
     public void AddDamageTaken(float _damageTaken) { DamageTaken += _damageTaken; }
     #endregion
@@ -81,7 +84,7 @@ public class ScoreManager : MonoBehaviour
         //MaxEnemies = GameObject.FindGameObjectsWithTag("Enemy Shooter").Length + GameObject.FindGameObjectsWithTag("Enemy Flyer").Length;
         //Debug.Log("Enemies: " + MaxEnemies);
         
-        MaxStyle = Mathf.Ceil(MaxEnemies * 0.25f * 300);
+        MaxStyle = Mathf.Ceil(MathF.Ceiling(MaxEnemies * 0.5f) * 500);
         //Debug.Log("Style: " + MaxStyle);
     }
 

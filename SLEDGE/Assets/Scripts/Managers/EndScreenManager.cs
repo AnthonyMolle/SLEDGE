@@ -2,8 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-using static UnityEditor.Experimental.GraphView.GraphView;
-using UnityEditor.SearchService;
 using UnityEngine.SceneManagement;
 
 public class EndScreenManager : MonoBehaviour
@@ -67,9 +65,9 @@ public class EndScreenManager : MonoBehaviour
     {
         // Get Scores
         stageTime = ScoreManager.Instance.GetPrintableTime();
-        kills = "kills: " + ScoreManager.Instance.GetEnemiesKilled().ToString();
-        styleKills = "styles: " + ScoreManager.Instance.GetStyleKills().ToString();
-        collectables_found = "Collectables: " + ScoreManager.Instance.GetCollectible().ToString();
+        kills = "kills: " + ScoreManager.Instance.GetEnemiesKilled().ToString() + "/" + ScoreManager.Instance.GetMaxEnemies().ToString();
+        styleKills = "style: " + ScoreManager.Instance.GetStyleKills().ToString();
+        collectables_found = "Collectables: " + ScoreManager.Instance.GetCollectible().ToString() + "/" + ScoreManager.Instance.GetMaxCollectibles().ToString();
 
         // Calculate Grades
         #region Time Grade

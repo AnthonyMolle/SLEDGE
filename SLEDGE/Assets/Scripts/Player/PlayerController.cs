@@ -853,7 +853,7 @@ public class PlayerController : MonoBehaviour
             else if (hit1.transform.gameObject.layer == LayerMask.NameToLayer("Projectile"))
             {
                 hit1.transform.gameObject.GetComponent<Projectile>().initializeProjectile(ray.GetPoint(100), parriedProjectileSpeed, parriedProjectileLifetime, true);
-                FindObjectOfType<Hitstop>().Stop(0.25f);
+                FindObjectOfType<Hitstop>().Stop(0.15f);
             }
         }
     }
