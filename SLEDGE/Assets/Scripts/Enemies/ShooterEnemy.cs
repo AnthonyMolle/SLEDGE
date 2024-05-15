@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
 
 public class ShooterEnemy : MonoBehaviour
 {
@@ -35,6 +36,9 @@ public class ShooterEnemy : MonoBehaviour
     public GameObject rig;
     public Animator anim;
     public GameObject lookAtTarget;
+    public List<GameObject> trackConstraints;
+    public float angle;
+    private MultiAimConstraint chestConstraint;
 
     public enum EnemyState
     {
@@ -53,6 +57,7 @@ public class ShooterEnemy : MonoBehaviour
         // gun = transform.Find("Gun");
         position = transform.position;
         currentHealth = maxHealth;
+        chestConstraint = trackConstraints[0].GetComponent<MultiAimConstraint>();
     }
 
     // Update is called once per frame
@@ -63,6 +68,13 @@ public class ShooterEnemy : MonoBehaviour
         rb.velocity = Vector3.zero;
         // transform.position = position;
         cooldown += Time.deltaTime;
+        // rotate dude if you are behind him
+        Vector3 targetpos = new Vector3(lookAtTarget.transform.position.x, 0, lookAtTarget.transform.position.z);
+        Vector3 pos = new Vector3(transform.position.x, 0, transform.position.z);
+        angle = Vector3.Angle(lookAtTarget.transform.position - transform.position, transform.forward);
+        if (angle > 145) {
+            transform.rotation = Quaternion.LookRotation(targetpos - pos);
+        }
     }
 
     private void FixedUpdate()
