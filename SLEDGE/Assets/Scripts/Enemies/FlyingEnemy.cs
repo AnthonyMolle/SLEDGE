@@ -37,6 +37,9 @@ public class FlyingEnemy : MonoBehaviour
         ONPATH
     }
 
+    [Header("Death")]
+    public GameObject deathRagdoll;
+
     EnemyState enemyState = EnemyState.IDLE;
 
     // Setup our dependencies
@@ -196,6 +199,7 @@ public class FlyingEnemy : MonoBehaviour
     {
         // add sfx and vfx and such!
         GameObject.Find("ScoreManager").GetComponent<ScoreManager>().AddEnemiesKilled(1);
+        Instantiate(deathRagdoll, transform.position, Quaternion.identity);
         Destroy(gameObject);
     }
 }

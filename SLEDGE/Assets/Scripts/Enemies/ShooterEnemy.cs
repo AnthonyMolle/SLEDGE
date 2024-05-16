@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
 
 public class ShooterEnemy : MonoBehaviour
 {
@@ -26,9 +27,18 @@ public class ShooterEnemy : MonoBehaviour
     float cooldown = 2.0f;
     RaycastHit hit;
 
-    Transform gun;
+    public Transform gun;
     GameObject projectile;
     List<GameObject> projectiles = new List<GameObject>();
+
+    [Header("Animation")]
+    public GameObject deathRagdoll;
+    public GameObject rig;
+    public Animator anim;
+    public GameObject lookAtTarget;
+    public List<GameObject> trackConstraints;
+    public float angle;
+    private MultiAimConstraint chestConstraint;
 
     public enum EnemyState
     {
@@ -44,20 +54,27 @@ public class ShooterEnemy : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player");
         rb = GetComponent<Rigidbody>();
 
-        gun = transform.Find("Gun");
+        // gun = transform.Find("Gun");
         position = transform.position;
         currentHealth = maxHealth;
+        chestConstraint = trackConstraints[0].GetComponent<MultiAimConstraint>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        Vector3 lookPos = player.transform.position - transform.position;
-        lookPos.y = 0;
-        transform.rotation = Quaternion.LookRotation(lookPos);
+        lookAtTarget.transform.position = player.transform.position;
+        // transform.rotation = Quaternion.LookRotation(lookPos);
         rb.velocity = Vector3.zero;
-        transform.position = position;
+        // transform.position = position;
         cooldown += Time.deltaTime;
+        // rotate dude if you are behind him
+        Vector3 targetpos = new Vector3(lookAtTarget.transform.position.x, 0, lookAtTarget.transform.position.z);
+        Vector3 pos = new Vector3(transform.position.x, 0, transform.position.z);
+        angle = Vector3.Angle(lookAtTarget.transform.position - transform.position, transform.forward);
+        if (angle > 130) {
+            transform.rotation = Quaternion.LookRotation(targetpos - pos);
+        }
     }
 
     private void FixedUpdate()
@@ -89,7 +106,7 @@ public class ShooterEnemy : MonoBehaviour
 
     private bool PlayerinLOS()
     {
-        if (Physics.Raycast(transform.position, transform.forward, out hit, detectionRadius))
+        if (Physics.Raycast(transform.position, player.transform.position - transform.position, out hit, detectionRadius))
         {
             if (hit.collider.gameObject.tag == "Player")
             {
@@ -128,6 +145,7 @@ public class ShooterEnemy : MonoBehaviour
     {
         // add sfx and vfx and such!
         GameObject.Find("ScoreManager").GetComponent<ScoreManager>().AddEnemiesKilled(1);
+        Instantiate(deathRagdoll, transform.position, Quaternion.identity);
         Destroy(gameObject);
     }
 

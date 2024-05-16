@@ -78,6 +78,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float airMaxSpeed = 100f;
 
     [SerializeField] float naturalAdditionalFallingSpeed = 4f; //natural rate our player will fall after the apex of their falling height.
+    [SerializeField] float extraGravityYThreshold = 5f;
     #endregion
 
     #region Jump
@@ -120,12 +121,13 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float bouncyUpForce = 10f;
     [SerializeField] float bouncyForce = 25f;
     [SerializeField] float hitLength = 5f;
+    [SerializeField] float hitRadius = 1f;
 
     [SerializeField] float chargeTime = 1f;
     [SerializeField] float hitTime = 1f;
     [SerializeField] float recoveryTime = 1f;
 
-    [SerializeField] float swipeTime = 0.5f;
+    [SerializeField] float swipeTime = 1f;
     [SerializeField] float swipeRecoveryTime = 0.5f;
 
     [SerializeField] float launchedRotationSpeed = 0.02f;
@@ -144,6 +146,7 @@ public class PlayerController : MonoBehaviour
 
     bool swipingHammer = false;
     bool swipeRecovering = false;
+    bool swipeComboReady = false;
 
     bool hammerCharged = false;
     bool hammerHit = false;
@@ -153,9 +156,17 @@ public class PlayerController : MonoBehaviour
     float hangTime = 0;
     float walkTime = 0;
 
+    enum Combo 
+    {
+        notSwiping,
+        Swipe1,
+        Swipe2,
+        Swipe3
+    }
+    Combo currentCombo = Combo.notSwiping;
+
     [SerializeField] float parriedProjectileSpeed = 1f;
     [SerializeField] float parriedProjectileLifetime = 10f;
-
 
     AudioManager audioManager;
     [SerializeField] GameObject HammerSound;
@@ -168,6 +179,8 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     #region UI
+    [Header("UI")]
+    public GameObject canvas;
 
     public TextMeshProUGUI displayDistance;
 
@@ -185,6 +198,10 @@ public class PlayerController : MonoBehaviour
         Cursor.visible = false; // make the cursor not visible
         
         rb = GetComponent<Rigidbody>(); // get the rigidbody of the parent component
+        deathScreen = canvas.transform.Find("Death Screen").gameObject;
+        settings = canvas.transform.Find("Pause Setting Screen").gameObject;
+        pause = canvas.transform.Find("PauseMenu").gameObject;
+        displayDistance = canvas.transform.Find("Distance").gameObject.GetComponent<TextMeshProUGUI>();
 
         mouseSensitivity = PlayerPrefs.GetFloat("Sensitivity", 400); // set the mouse sensitivity
 
@@ -222,12 +239,21 @@ public class PlayerController : MonoBehaviour
         if (hammerHit)
         {
             hammerHit = false;
-            HammerBounce();
+            hammerBounced = false;
         }
 
         if (hammerSwipe)
         {
             hammerSwipe = false;
+        }
+
+        if (hittingHammer)
+        {
+            HammerBounce();
+        }
+
+        if (swipingHammer)
+        {
             HammerHit();
         }
     }
@@ -294,35 +320,67 @@ public class PlayerController : MonoBehaviour
 
     private void HandleHammer()
     {
-        if (secondaryPressed && !chargingHammer && !recovering && !hittingHammer && !hammerCharged && !swipeRecovering && !swipingHammer)
+
+        if (secondaryPressed && !chargingHammer && !recovering && !hittingHammer && !hammerCharged && !swipingHammer && currentCombo == Combo.notSwiping)
         {
-
-
             swipingHammer = true;
+            swipeComboReady = false;
             hammerTimer = swipeTime;
-            anim.Play("HammerSwipe"); //anim.Play("Hit 1");
-            
+            anim.Play("Hit 1");
+            currentCombo = Combo.Swipe1;
+
         }
+        // combo swipes
+        if (secondaryPressed && !chargingHammer && !recovering && !hittingHammer && !hammerCharged && !swipingHammer && swipeComboReady && currentCombo == Combo.Swipe1) // for a lil combo, might want to include input when swiping
+        {
+            swipingHammer = true;
+            swipeComboReady = false;
+            hammerTimer = swipeTime;
+            anim.Play("Hit 2");
+            currentCombo = Combo.Swipe2;
+        }
+        if (secondaryPressed && !chargingHammer && !recovering && !hittingHammer && !hammerCharged && !swipingHammer && swipeComboReady && currentCombo == Combo.Swipe2)
+        {
+            swipingHammer = true;
+            swipeComboReady = false;
+            hammerTimer = swipeTime;
+            anim.Play("Hit 1");
+            currentCombo = Combo.Swipe1;
+        }
+        // if (secondaryPressed && !chargingHammer && !recovering && !hittingHammer && !hammerCharged && !swipeRecovering && !swipingHammer && swipeComboReady && currentCombo == Combo.Swipe2)
+        // {
+        //     Debug.Log("hammer swipe final");
+        //     swipingHammer = true;
+        //     swipeComboReady = false;
+        //     hammerTimer = swipeTime;
+        //     anim.Play("Hit 3");
+        //     currentCombo = Combo.Swipe3;
+        // }
         
         if (mousePressed && !chargingHammer && !recovering && !hittingHammer && !hammerCharged && !swipeRecovering && !swipingHammer)
         {
             //Debug.Log("hammer startin");
             chargingHammer = true;
             hammerTimer = chargeTime;
-            anim.Play("HammerCharge"); //anim.Play("Charge 2");
+            //anim.Play("HammerCharge"); 
+            anim.Play("Charge 2");
+            hammerBounced = false;
         }
 
         if (chargingHammer && hammerTimer > 0.1 && mouseReleased)
         {
-            anim.Play("HammerIdle"); //anim.Play("Idle 1");
+            anim.Play("Idle 2");
+            currentCombo = Combo.notSwiping;
             chargingHammer = false;
             hammerTimer = 0;
+            hammerBounced = false;
         }
 
         if (mouseReleased && hammerCharged)
         {
             hammerCharged = false;
             hittingHammer = true;
+            //slamHitbox.ActivateCollider();
 
             hammerTimer = hitTime;
             
@@ -337,7 +395,9 @@ public class PlayerController : MonoBehaviour
             //Debug.Log("charging hammer ended");
             hammerCharged = true;
             chargingHammer = false;
-            anim.Play("HammerHold"); //anim.Play("Charge 2 Hold");
+            //anim.Play("HammerHold"); 
+            anim.Play("Charged 1 Hold");
+            hammerBounced = false;
         }
         else if (hittingHammer)
         {
@@ -345,18 +405,23 @@ public class PlayerController : MonoBehaviour
             hammerHit = true;
             hittingHammer = false;
             //audioManager.PlaySFX(audioManager.hit);
-            anim.Play("HammerHit"); //anim.Play("Slam 2");
+            //anim.Play("HammerHit"); 
+            anim.Play("Slam 2");
+            //slamHitbox.DeactivateCollider();
 
             recovering = true;
             hammerTimer = recoveryTime;
+            hammerBounced = false;
         }
         else if (recovering)
         {
             //Debug.Log("recovery ended");
             recovering = false;
+            hammerBounced = false;
         }
         else if (swipingHammer)
         {
+            // Debug.Log("SWIPE OVER");
             hammerSwipe = true;
             swipingHammer = false;
 
@@ -366,6 +431,13 @@ public class PlayerController : MonoBehaviour
         else if (swipeRecovering)
         {
             swipeRecovering = false;
+            swipeComboReady = true;
+            hammerTimer = swipeRecoveryTime;
+        }
+        else if (swipeComboReady)
+        {
+            swipeComboReady = false;
+            currentCombo = Combo.notSwiping;
         }
 
     }
@@ -588,7 +660,12 @@ public class PlayerController : MonoBehaviour
             #region Air movement
             else // if we're in the air
             {
-                if(rb.velocity.y <= 5)// if we are at the apex of our air height
+                if(rb.velocity.y <= extraGravityYThreshold)// if we are at the apex of our air height
+                {
+                    rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
+                }
+                
+                if (hammerCharged && !isGrounded && hangTime > 1)
                 {
                     rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
                 }
@@ -612,11 +689,10 @@ public class PlayerController : MonoBehaviour
             }
             #endregion
 
-            Debug.Log("is grounded: " + isGrounded);
+            //Debug.Log("is grounded: " + isGrounded);
             #region Jump
             if (jumpPressed && isGrounded && !hasJumped || jumpPressed && !isGrounded && hasCoyoteTime == true && !hasJumped)
             {
-                Debug.Log("jump!");
                 srcJumpPoint = rb.transform.position.y;
                 Jump();
             }
@@ -633,7 +709,12 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            if(rb.velocity.y <= 0)// if we are at the apex of our air height
+            if(rb.velocity.y <= extraGravityYThreshold)// if we are at the apex of our air height
+            {
+                rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
+            }
+            
+            if (hammerCharged && !isGrounded && hangTime > 1)
             {
                 rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
             }
@@ -642,7 +723,6 @@ public class PlayerController : MonoBehaviour
 
             if (movementInputVector.magnitude > 0.001)
             {
-                Debug.Log((rb.velocity + movementInputVector).magnitude + ", " + rb.velocity.magnitude);
 
                 if ((rb.velocity + movementInputVector).magnitude > rb.velocity.magnitude - 0.5)
                 {
@@ -687,31 +767,58 @@ public class PlayerController : MonoBehaviour
         hasJumped = true; // let the engine know we have jumped.
     }
 
+    bool hammerBounced = false;
+
     private void HammerBounce()
     {
-        Ray ray = gameCamera.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit1;
-        if (Physics.Raycast(ray, out hit1, hitLength, bouncableLayers))
+        
+        if (hammerBounced)
         {
+            return;
+        }
+
+        Ray ray = gameCamera.ScreenPointToRay(Input.mousePosition);
+        bool bouncy = false;
+
+        RaycastHit[] hits = Physics.SphereCastAll(ray, hitRadius, hitLength, bouncableLayers);
+
+        if (hits.Length > 0)
+        {
+            foreach (RaycastHit hit in hits)
+            {
+                if (hit.transform.gameObject.tag == "Bouncy")
+                {
+                    bouncy = true;
+                }
+                else if (hit.transform.gameObject.tag == "Enemy Flyer")
+                {
+                    hit.transform.gameObject.GetComponent<FlyingEnemy>().TakeDamage(1);
+                }
+                else if (hit.transform.gameObject.tag == "Enemy Shooter")
+                {
+                    hit.transform.gameObject.GetComponent<ShooterEnemy>().TakeDamage(1);
+                }
+            }
+
+            //Vector3 normal = hit1.normal.normalized;
+            //float angle = Vector3.Angle(hit1.point - cameraObject.transform.position, -transform.up);
+            //float wallAngle = Vector3.Angle(normal, Vector3.down);
+            //float wallVSFlatVelAngle = Vector3.Angle(normal, rb.velocity);
+
             rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
 
-            Vector3 normal = hit1.normal.normalized;
-            float angle = Vector3.Angle(hit1.point - cameraObject.transform.position, -transform.up);
-            float wallAngle = Vector3.Angle(normal, Vector3.down);
-            float wallVSFlatVelAngle = Vector3.Angle(normal, rb.velocity);
-
-            if (hit1.transform.gameObject.tag == "Bouncy")
+            if (bouncy)
             {
                 isLaunched = true;
                 rb.velocity = Vector3.zero;
-                rb.AddForce((transform.position - hit1.point).normalized * bouncyForce/* + normal * 10*/, ForceMode.Impulse);
+                rb.AddForce((-ray.direction).normalized * bouncyForce/* + normal * 10*/, ForceMode.Impulse);
                 rb.AddForce(transform.up * bouncyUpForce, ForceMode.Impulse);
             }
             else if (!isLaunched)
             {
                 isLaunched = true;
                 rb.velocity = rb.velocity / 8;
-                Vector3 force = (transform.position - hit1.point).normalized * initialBounceForce;
+                Vector3 force = (-ray.direction).normalized * initialBounceForce;
                 if (force.y > maxInitialBounceYForce)
                 {
                     rb.AddForce(new Vector3(force.x, maxInitialBounceYForce, force.z), ForceMode.Impulse);
@@ -723,10 +830,11 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                rb.AddForce((transform.position - hit1.point).normalized * bounceForce/* + normal * 10*/, ForceMode.Impulse);
+                rb.AddForce((-ray.direction).normalized * bounceForce/* + normal * 10*/, ForceMode.Impulse);
             }
             
             Instantiate(HammerSound, gameObject.transform.position, Quaternion.identity);
+            
 
             // bouncing up one wall over and over again is still far too viable, but theres some improvement to the basic 90 degree angled hammer wall bounces
             // if (angle < 110 && angle > 30 && wallAngle > 80 && wallAngle < 100)
@@ -739,19 +847,11 @@ public class PlayerController : MonoBehaviour
             //     rb.velocity = new Vector3(0, rb.velocity.y, 0);
             // }
 
-
-            if (hit1.transform.gameObject.tag == "Enemy Flyer")
-            {
-                hit1.transform.gameObject.GetComponent<FlyingEnemy>().TakeDamage(1);
-            }
-            else if (hit1.transform.gameObject.tag == "Enemy Shooter")
-            {
-                hit1.transform.gameObject.GetComponent<ShooterEnemy>().TakeDamage(1);
-            }
+            hammerBounced = true;
         }
         else 
         {
-            audioManager.PlaySFX(audioManager.whiff);
+            //audioManager.PlaySFX(audioManager.whiff);
         }
     }
 
@@ -759,23 +859,26 @@ public class PlayerController : MonoBehaviour
     {
         //Add parry and hit sounds in if statements
         Ray ray = gameCamera.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit1;
-        if (Physics.Raycast(ray, out hit1, hitLength, swipeLayers))
+
+        RaycastHit[] hits = Physics.SphereCastAll(ray, hitRadius, hitLength, swipeLayers);
+
+        if (hits.Length > 0)
         {
-            if (hit1.transform.gameObject.tag == "Enemy Flyer")
+            foreach (RaycastHit hit in hits)
             {
-                hit1.transform.gameObject.GetComponent<FlyingEnemy>().TakeDamage(1);
-                audioManager.PlaySFX(audioManager.hit);
-            }
-            else if (hit1.transform.gameObject.tag == "Enemy Shooter")
-            {
-                hit1.transform.gameObject.GetComponent<ShooterEnemy>().TakeDamage(1);
-                audioManager.PlaySFX(audioManager.hit);
-            }
-            else if (hit1.transform.gameObject.layer == LayerMask.NameToLayer("Projectile"))
-            {
-                hit1.transform.gameObject.GetComponent<Projectile>().initializeProjectile(ray.GetPoint(100), parriedProjectileSpeed, parriedProjectileLifetime, true);
-                FindObjectOfType<Hitstop>().Stop(0.25f);
+                if (hit.transform.gameObject.tag == "Enemy Flyer")
+                {
+                    hit.transform.gameObject.GetComponent<FlyingEnemy>().TakeDamage(1);
+                }
+                else if (hit.transform.gameObject.tag == "Enemy Shooter")
+                {
+                    hit.transform.gameObject.GetComponent<ShooterEnemy>().TakeDamage(1);
+                }
+                else if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Projectile"))
+                {
+                    hit.transform.gameObject.GetComponent<Projectile>().initializeProjectile(ray.GetPoint(100), parriedProjectileSpeed, parriedProjectileLifetime, true);
+                    FindObjectOfType<Hitstop>().Stop(0.15f);
+                }
             }
         }
     }
