@@ -31,10 +31,7 @@ public class HammerHitbox : MonoBehaviour
 
     void OnTriggerEnter(Collider collider)
     {
-        if (!hitObjects.Contains(collider))
-        {
-            hitObjects.Add(collider);
-        }
+        hitObjects.Add(collider);
     }
 
     void OnTriggerExit(Collider collider)

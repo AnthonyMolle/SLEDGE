@@ -121,6 +121,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float bouncyUpForce = 10f;
     [SerializeField] float bouncyForce = 25f;
     [SerializeField] float hitLength = 5f;
+    [SerializeField] float hitRadius = 1f;
 
     [SerializeField] float chargeTime = 1f;
     [SerializeField] float hitTime = 1f;
@@ -167,10 +168,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float parriedProjectileSpeed = 1f;
     [SerializeField] float parriedProjectileLifetime = 10f;
 
-    [SerializeField] HammerHitbox slamHitbox;
-    [SerializeField] Vector3 hammerSlamSize;
-    [SerializeField] float hammerSlamTime;
-
     AudioManager audioManager;
     [SerializeField] GameObject HammerSound;
 
@@ -205,8 +202,6 @@ public class PlayerController : MonoBehaviour
         settings = canvas.transform.Find("Pause Setting Screen").gameObject;
         pause = canvas.transform.Find("PauseMenu").gameObject;
         displayDistance = canvas.transform.Find("Distance").gameObject.GetComponent<TextMeshProUGUI>();
-
-        slamHitbox.InitializeCollider(hammerSlamSize.x, hammerSlamSize.y, hammerSlamSize.z);
 
         mouseSensitivity = PlayerPrefs.GetFloat("Sensitivity", 400); // set the mouse sensitivity
 
@@ -250,7 +245,6 @@ public class PlayerController : MonoBehaviour
         if (hammerSwipe)
         {
             hammerSwipe = false;
-            hammerSwiped = false;
         }
 
         if (hittingHammer)
@@ -774,7 +768,6 @@ public class PlayerController : MonoBehaviour
     }
 
     bool hammerBounced = false;
-    bool hammerSwiped = false;
 
     private void HammerBounce()
     {
@@ -785,39 +778,25 @@ public class PlayerController : MonoBehaviour
         }
 
         Ray ray = gameCamera.ScreenPointToRay(Input.mousePosition);
-        //RaycastHit hit1;
         bool bouncy = false;
-        bool containsRealColliders = false;
 
-        if (slamHitbox.hitObjects.Count > 0)
+        RaycastHit[] hits = Physics.SphereCastAll(ray, hitRadius, hitLength, bouncableLayers);
+
+        if (hits.Length > 0)
         {
-            Debug.Log("attempting hammerbounce");
-            //Physics.Raycast(ray, out hit1, hitLength, bouncableLayers);
-
-            foreach (Collider collider in slamHitbox.hitObjects)
+            foreach (RaycastHit hit in hits)
             {
-                if (collider == null)
-                {
-                    
-                }
-                else if (collider.gameObject.tag == "Bouncy")
+                if (hit.transform.gameObject.tag == "Bouncy")
                 {
                     bouncy = true;
-                    containsRealColliders = true;
                 }
-                else if (collider.gameObject.tag == "Enemy Flyer")
+                else if (hit.transform.gameObject.tag == "Enemy Flyer")
                 {
-                    collider.gameObject.GetComponent<FlyingEnemy>().TakeDamage(1);
-                    containsRealColliders = true;
+                    hit.transform.gameObject.GetComponent<FlyingEnemy>().TakeDamage(1);
                 }
-                else if (collider.gameObject.tag == "Enemy Shooter")
+                else if (hit.transform.gameObject.tag == "Enemy Shooter")
                 {
-                    collider.gameObject.GetComponent<ShooterEnemy>().TakeDamage(1);
-                    containsRealColliders = true;
-                }
-                else
-                {
-                    containsRealColliders = true;
+                    hit.transform.gameObject.GetComponent<ShooterEnemy>().TakeDamage(1);
                 }
             }
 
@@ -826,38 +805,36 @@ public class PlayerController : MonoBehaviour
             //float wallAngle = Vector3.Angle(normal, Vector3.down);
             //float wallVSFlatVelAngle = Vector3.Angle(normal, rb.velocity);
 
-            if (containsRealColliders)
-            {
-                rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
+            rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
 
-                if (bouncy)
+            if (bouncy)
+            {
+                isLaunched = true;
+                rb.velocity = Vector3.zero;
+                rb.AddForce((-ray.direction).normalized * bouncyForce/* + normal * 10*/, ForceMode.Impulse);
+                rb.AddForce(transform.up * bouncyUpForce, ForceMode.Impulse);
+            }
+            else if (!isLaunched)
+            {
+                isLaunched = true;
+                rb.velocity = rb.velocity / 8;
+                Vector3 force = (-ray.direction).normalized * initialBounceForce;
+                if (force.y > maxInitialBounceYForce)
                 {
-                    isLaunched = true;
-                    rb.velocity = Vector3.zero;
-                    rb.AddForce((-ray.direction).normalized * bouncyForce/* + normal * 10*/, ForceMode.Impulse);
-                    rb.AddForce(transform.up * bouncyUpForce, ForceMode.Impulse);
-                }
-                else if (!isLaunched)
-                {
-                    isLaunched = true;
-                    rb.velocity = rb.velocity / 8;
-                    Vector3 force = (-ray.direction).normalized * initialBounceForce;
-                    if (force.y > maxInitialBounceYForce)
-                    {
-                        rb.AddForce(new Vector3(force.x, maxInitialBounceYForce, force.z), ForceMode.Impulse);
-                    }
-                    else
-                    {
-                        rb.AddForce(force, ForceMode.Impulse);
-                    }
+                    rb.AddForce(new Vector3(force.x, maxInitialBounceYForce, force.z), ForceMode.Impulse);
                 }
                 else
                 {
-                    rb.AddForce((-ray.direction).normalized * bounceForce/* + normal * 10*/, ForceMode.Impulse);
+                    rb.AddForce(force, ForceMode.Impulse);
                 }
-                
-                Instantiate(HammerSound, gameObject.transform.position, Quaternion.identity);
             }
+            else
+            {
+                rb.AddForce((-ray.direction).normalized * bounceForce/* + normal * 10*/, ForceMode.Impulse);
+            }
+            
+            Instantiate(HammerSound, gameObject.transform.position, Quaternion.identity);
+            
 
             // bouncing up one wall over and over again is still far too viable, but theres some improvement to the basic 90 degree angled hammer wall bounces
             // if (angle < 110 && angle > 30 && wallAngle > 80 && wallAngle < 100)
@@ -882,23 +859,26 @@ public class PlayerController : MonoBehaviour
     {
         //Add parry and hit sounds in if statements
         Ray ray = gameCamera.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit1;
-        if (Physics.Raycast(ray, out hit1, hitLength, swipeLayers))
+
+        RaycastHit[] hits = Physics.SphereCastAll(ray, hitRadius, hitLength, swipeLayers);
+
+        if (hits.Length > 0)
         {
-            if (hit1.transform.gameObject.tag == "Enemy Flyer")
+            foreach (RaycastHit hit in hits)
             {
-                hit1.transform.gameObject.GetComponent<FlyingEnemy>().TakeDamage(1);
-                audioManager.PlaySFX(audioManager.hit);
-            }
-            else if (hit1.transform.gameObject.tag == "Enemy Shooter")
-            {
-                hit1.transform.gameObject.GetComponent<ShooterEnemy>().TakeDamage(1);
-                audioManager.PlaySFX(audioManager.hit);
-            }
-            else if (hit1.transform.gameObject.layer == LayerMask.NameToLayer("Projectile"))
-            {
-                hit1.transform.gameObject.GetComponent<Projectile>().initializeProjectile(ray.GetPoint(100), parriedProjectileSpeed, parriedProjectileLifetime, true);
-                FindObjectOfType<Hitstop>().Stop(0.15f);
+                if (hit.transform.gameObject.tag == "Enemy Flyer")
+                {
+                    hit.transform.gameObject.GetComponent<FlyingEnemy>().TakeDamage(1);
+                }
+                else if (hit.transform.gameObject.tag == "Enemy Shooter")
+                {
+                    hit.transform.gameObject.GetComponent<ShooterEnemy>().TakeDamage(1);
+                }
+                else if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Projectile"))
+                {
+                    hit.transform.gameObject.GetComponent<Projectile>().initializeProjectile(ray.GetPoint(100), parriedProjectileSpeed, parriedProjectileLifetime, true);
+                    FindObjectOfType<Hitstop>().Stop(0.15f);
+                }
             }
         }
     }
