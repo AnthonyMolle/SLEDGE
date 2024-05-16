@@ -5,15 +5,21 @@ using UnityEngine;
 public class SaveDataLoader : MonoBehaviour
 {
     public GameObject playerSaveData;
+    public GameObject dataCollection;
 
     // Start is called before the first frame update
     void Start()
     {
+        // Load data from file eventually
         if (PlayerSaveData.Instance == null)
         {
             Instantiate(playerSaveData);
         }
-        // Load data from file eventually
+
+        if (DataCollection.Instance == null)
+        {
+            Instantiate(dataCollection);
+        }
     }
 
     // Update is called once per frame

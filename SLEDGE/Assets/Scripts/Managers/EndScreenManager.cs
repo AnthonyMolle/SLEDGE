@@ -180,6 +180,13 @@ public class EndScreenManager : MonoBehaviour
         }
         #endregion
 
+        // Level Completion Analytics
+        if (DataCollection.Instance != null)
+        {
+            DataCollection.Instance.RecordLevelCompleteEvent(SceneManager.GetActiveScene().name, ScoreManager.Instance.GetCurrentTime(), GradeToString(finalGrade));
+        }
+
+        // Save high scores
         PlayerSaveData.Instance.SaveLevelData(SceneManager.GetActiveScene().name, ScoreManager.Instance.GetCurrentTime(), finalGrade, ScoreManager.Instance.GetCollectible());
     }
 
