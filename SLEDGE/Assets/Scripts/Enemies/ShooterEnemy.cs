@@ -39,6 +39,7 @@ public class ShooterEnemy : MonoBehaviour
     public List<GameObject> trackConstraints;
     public float angle;
     private MultiAimConstraint chestConstraint;
+    [SerializeField] GameObject ShootSound;
 
     public enum EnemyState
     {
@@ -124,6 +125,7 @@ public class ShooterEnemy : MonoBehaviour
         projectiles.Add(projectile);
         projectile.GetComponent<Projectile>().initializeProjectile(player.transform.position, bulletSpeed, bulletLifetime, false);
         projectile.GetComponent<Projectile>().sentEnemy = gameObject;
+        Instantiate(ShootSound, gameObject.transform.position, Quaternion.identity);
         return;
     }
 
