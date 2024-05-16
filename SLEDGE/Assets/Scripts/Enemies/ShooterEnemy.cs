@@ -30,6 +30,8 @@ public class ShooterEnemy : MonoBehaviour
     GameObject projectile;
     List<GameObject> projectiles = new List<GameObject>();
 
+    [SerializeField] GameObject ShootSound;
+
     public enum EnemyState
     {
         IDLE,
@@ -106,6 +108,8 @@ public class ShooterEnemy : MonoBehaviour
         projectile = Instantiate(projectileType, gun.position, Quaternion.identity);
         projectiles.Add(projectile);
         projectile.GetComponent<Projectile>().initializeProjectile(player.transform.position, bulletSpeed, bulletLifetime, false);
+        projectile.GetComponent<Projectile>().sentEnemy = gameObject;
+        Instantiate(ShootSound, gameObject.transform.position, Quaternion.identity);
         return;
     }
 
