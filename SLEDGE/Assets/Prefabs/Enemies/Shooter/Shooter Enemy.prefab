@@ -235,9 +235,9 @@ MonoBehaviour:
   anim: {fileID: 0}
   lookAtTarget: {fileID: 3277620228275904649}
   trackConstraints:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 6543315865239126502}
+  - {fileID: 5400621189729977864}
+  - {fileID: 2858679258938101053}
   angle: 0
   ShootSound: {fileID: 3787150718103105937, guid: 320a8b784ef7afc468236dbf19835245,
     type: 3}
@@ -379,15 +379,33 @@ PrefabInstance:
       addedObject: {fileID: 1437001867462179815}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 585b48276128c9845a5d061f90f48582, type: 3}
+--- !u!1 &2858679258938101053 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5118172871714154856, guid: 585b48276128c9845a5d061f90f48582,
+    type: 3}
+  m_PrefabInstance: {fileID: 6965791814965552213}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &2914695909086648526 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5249053956553620635, guid: 585b48276128c9845a5d061f90f48582,
     type: 3}
   m_PrefabInstance: {fileID: 6965791814965552213}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &5400621189729977864 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3051658120529306205, guid: 585b48276128c9845a5d061f90f48582,
+    type: 3}
+  m_PrefabInstance: {fileID: 6965791814965552213}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &5571499233023921237 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3313109697486710784, guid: 585b48276128c9845a5d061f90f48582,
+    type: 3}
+  m_PrefabInstance: {fileID: 6965791814965552213}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &6543315865239126502 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4208035110816703923, guid: 585b48276128c9845a5d061f90f48582,
     type: 3}
   m_PrefabInstance: {fileID: 6965791814965552213}
   m_PrefabAsset: {fileID: 0}
