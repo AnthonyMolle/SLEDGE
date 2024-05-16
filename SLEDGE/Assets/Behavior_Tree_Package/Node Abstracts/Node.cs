@@ -14,7 +14,8 @@ public abstract class Node : ScriptableObject
 
     public State state = State.Running;
     public bool started = false; // Tells us if node has ever executed
-
+    public string guid;
+    public Vector2 position;
     public State Update()
     {
         if (!started)
