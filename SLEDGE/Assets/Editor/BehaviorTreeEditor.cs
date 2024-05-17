@@ -30,7 +30,7 @@ public class BehaviorTreeEditor : EditorWindow
 
         treeView = root.Q<BehaviorTreeView>();
         inspectorView = root.Q<InspectorView>();
-
+        treeView.OnNodeSelected = OnNodeSelectionChanged;
         OnSelectionChange();
     }
 
@@ -38,9 +38,14 @@ public class BehaviorTreeEditor : EditorWindow
     {
         BehaviorTree tree = Selection.activeObject as BehaviorTree;
 
-        if (tree)
+        if (tree && AssetDatabase.CanOpenAssetInEditor(tree.GetInstanceID()))
         {
             treeView.PopulateView(tree);
         }
+    }
+
+    void OnNodeSelectionChanged(NodeView node)
+    {
+        inspectorView.UpdateSelection(node);
     }
 }

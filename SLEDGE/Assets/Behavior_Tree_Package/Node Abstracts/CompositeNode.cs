@@ -4,5 +4,12 @@ using UnityEngine;
 
 public abstract class CompositeNode : Node
 {
-    public List<Node> children = new List<Node>(); // Chooses one of the children to run!
+    [HideInInspector] public List<Node> children = new List<Node>(); // Chooses one of the children to run!
+
+    public override Node Clone()
+    {
+        CompositeNode node = Instantiate(this);
+        node.children = children.ConvertAll(c => c.Clone());
+        return node;
+    }
 }
