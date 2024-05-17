@@ -855,6 +855,11 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    [Header("Parrying")]
+    [SerializeField] float maxTargetAngle = 30f;
+    [SerializeField] float minTargetDistance = 5f;
+    [SerializeField] float maxTargetDistance = 50f;
+
     private void HammerHit()
     {
         //Add parry and hit sounds in if statements
@@ -876,11 +881,74 @@ public class PlayerController : MonoBehaviour
                 }
                 else if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Projectile"))
                 {
-                    hit.transform.gameObject.GetComponent<Projectile>().initializeProjectile(ray.GetPoint(100), parriedProjectileSpeed, parriedProjectileLifetime, true);
-                    FindObjectOfType<Hitstop>().Stop(0.15f);
+                    Projectile projectile = hit.transform.gameObject.GetComponent<Projectile>();
+
+                    if (!projectile.CheckParried())
+                    {
+                        projectile.initializeProjectile(ray.GetPoint(100), parriedProjectileSpeed, parriedProjectileLifetime, true, CalculateTargetEnemy(ray));
+                        FindObjectOfType<Hitstop>().Stop(0.15f);
+                    }
+                }
+                else if (hit.transform.gameObject.tag == "Collectible")
+                {
+                    Debug.Log("hit collectible");
+                    hit.transform.gameObject.GetComponent<Rigidbody>().AddForce(ray.direction * 50, ForceMode.Impulse);
                 }
             }
         }
+    }
+
+    [SerializeField] LayerMask enemyLayers;
+
+    private GameObject CalculateTargetEnemy(Ray mouseLookDirection)
+    {
+        GameObject targetCandidate = null;
+
+        Collider[] enemies = Physics.OverlapSphere(transform.position, maxTargetDistance, enemyLayers);
+
+        float targetCandidateAngle = 1000;
+
+        foreach (Collider enemy in enemies)
+        {
+            float distance = Vector3.Distance(transform.position, enemy.transform.position);
+            if (distance < minTargetDistance)
+            {
+                continue;
+            }
+
+            float angle = Vector3.Angle(mouseLookDirection.direction, enemy.transform.position - transform.position);
+            if (angle > maxTargetAngle)
+            {
+                continue;
+            }
+
+            Debug.Log(angle);
+
+            if (targetCandidate != null)
+            {
+                if (targetCandidateAngle > angle)
+                {
+                    Debug.Log("targetfound");
+                    targetCandidate = enemy.gameObject;
+                    targetCandidateAngle = angle;
+                }
+            }
+            else
+            {
+                Debug.Log("targetfound");
+                targetCandidate = enemy.gameObject;
+                targetCandidateAngle = angle;
+            }
+        }
+
+        return targetCandidate;
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, minTargetDistance);
+        Gizmos.DrawWireSphere(transform.position, maxTargetDistance);
     }
 
     void UpdateDistanceHud()

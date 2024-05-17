@@ -122,9 +122,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fbfb9297688694b4cbdea94ac66876f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hitStopDuration: 0.15
-  sentEnemy: {fileID: 0}
+  trackingRotationSpeed: 10
+  maximumRotation: 0.75
   parriedCollider: {fileID: 7992081581989362942}
+  normalCollider: {fileID: 6708903511560559542}
 --- !u!136 &7992081581989362942
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -144,7 +145,7 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 2
-  m_Radius: 0.8
+  m_Radius: 0.35
   m_Height: 2.0000005
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}

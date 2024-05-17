@@ -12,7 +12,7 @@ PrefabInstance:
         type: 3}
       propertyPath: hitbox
       value: 
-      objectReference: {fileID: 76926886164293123}
+      objectReference: {fileID: 0}
     - target: {fileID: 4272141285249772724, guid: 5dd5b681c132b964993064fc2d3cde0b,
         type: 3}
       propertyPath: m_Name
@@ -55,8 +55,23 @@ PrefabInstance:
       objectReference: {fileID: 5628860620752215860}
     - target: {fileID: 6314295682490010892, guid: 5dd5b681c132b964993064fc2d3cde0b,
         type: 3}
+      propertyPath: maxTargetAngle
+      value: 45
+      objectReference: {fileID: 0}
+    - target: {fileID: 6314295682490010892, guid: 5dd5b681c132b964993064fc2d3cde0b,
+        type: 3}
       propertyPath: hammerSlamSize.z
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6314295682490010892, guid: 5dd5b681c132b964993064fc2d3cde0b,
+        type: 3}
+      propertyPath: enemyLayers.m_Bits
+      value: 256
+      objectReference: {fileID: 0}
+    - target: {fileID: 6314295682490010892, guid: 5dd5b681c132b964993064fc2d3cde0b,
+        type: 3}
+      propertyPath: swipeLayers.m_Bits
+      value: 17664
       objectReference: {fileID: 0}
     - target: {fileID: 6469425393073572772, guid: 5dd5b681c132b964993064fc2d3cde0b,
         type: 3}
@@ -118,12 +133,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5dd5b681c132b964993064fc2d3cde0b, type: 3}
---- !u!65 &76926886164293123 stripped
-BoxCollider:
-  m_CorrespondingSourceObject: {fileID: 7022726937127018276, guid: 5dd5b681c132b964993064fc2d3cde0b,
-    type: 3}
-  m_PrefabInstance: {fileID: 6945940857220118823}
-  m_PrefabAsset: {fileID: 0}
 --- !u!20 &5628860620752215860 stripped
 Camera:
   m_CorrespondingSourceObject: {fileID: 3348789719317407251, guid: 5dd5b681c132b964993064fc2d3cde0b,
