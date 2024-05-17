@@ -14,7 +14,6 @@ public class PlayerSaveData : MonoBehaviour
             Destroy(this.gameObject);
         }
         Instance = this;
-        Debug.Log("blah");
         DontDestroyOnLoad(this.gameObject);
     }
 
@@ -69,7 +68,7 @@ public class PlayerSaveData : MonoBehaviour
 
     // To be called at the end of a level, saves that level's stats if there is no previous data or if those new stats are improvements
     public void SaveLevelData(string level, float time, Grade grade, int collectibles)
-    {
+    {   
         if (!LevelsData.ContainsKey(level))
         {
             // If this is our first time saving for this level, just save all the data
