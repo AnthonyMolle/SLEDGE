@@ -29,20 +29,24 @@ public class DataCollection : MonoBehaviour
 
     }
 
+    public bool playerPrompted = false;
+
     // Start is called before the first frame update
     async void Start()
     {
         await UnityServices.InitializeAsync();
-
-        AnalyticsService.Instance.StartDataCollection();
-
-        Debug.Log("Data Collection started");
     }
 
     // Update is called once per frame
     void Update()
     {
 
+    }
+
+    public void StartCollection()
+    {
+        AnalyticsService.Instance.StartDataCollection();
+        Debug.Log("Data Collection started");
     }
 
     public void RecordCollectibleEvent()

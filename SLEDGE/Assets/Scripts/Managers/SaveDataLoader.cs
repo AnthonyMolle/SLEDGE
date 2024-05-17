@@ -7,6 +7,9 @@ public class SaveDataLoader : MonoBehaviour
     public GameObject playerSaveData;
     public GameObject dataCollection;
 
+    public CanvasGroup ConsentPrompt;
+    UIManager UImanager;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -19,6 +22,14 @@ public class SaveDataLoader : MonoBehaviour
         if (DataCollection.Instance == null)
         {
             Instantiate(dataCollection);
+        }
+
+        // Ask for player consent for data collection
+        if (!DataCollection.Instance.playerPrompted)
+        {
+            UImanager = GameObject.Find("Main Canvas").GetComponent<UIManager>();
+            UImanager.TransitionTo(ConsentPrompt);
+            DataCollection.Instance.playerPrompted = true;
         }
     }
 
