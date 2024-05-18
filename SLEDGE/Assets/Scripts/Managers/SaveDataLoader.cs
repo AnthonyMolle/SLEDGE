@@ -24,12 +24,19 @@ public class SaveDataLoader : MonoBehaviour
             Instantiate(dataCollection);
         }
 
-        // Ask for player consent for data collection
-        if (!DataCollection.Instance.playerPrompted)
+
+        // Ask for player consent for data collection (only if they havent been asked before)
+        int enableDataCollection = PlayerPrefs.GetInt("EnableDataCollection", -1);
+        if (enableDataCollection == -1)
         {
+            PlayerPrefs.SetInt("EnableDataCollection", 0);
+            PlayerPrefs.Save();
             UImanager = GameObject.Find("Main Canvas").GetComponent<UIManager>();
             UImanager.TransitionTo(ConsentPrompt);
-            DataCollection.Instance.playerPrompted = true;
+        } 
+        else if (enableDataCollection == 1) 
+        {
+            DataCollection.Instance.StartCollection();
         }
     }
 
