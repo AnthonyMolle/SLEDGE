@@ -780,7 +780,7 @@ public class PlayerController : MonoBehaviour
         Ray ray = gameCamera.ScreenPointToRay(Input.mousePosition);
         bool bouncy = false;
 
-        RaycastHit[] hits = Physics.SphereCastAll(ray, hitRadius, hitLength, bouncableLayers);
+        RaycastHit[] hits = Physics.SphereCastAll(ray, hitRadius, hitLength, bouncableLayers, QueryTriggerInteraction.Collide);
 
         if (hits.Length > 0)
         {

@@ -10,7 +10,7 @@ public class CollectiblePowerup : MonoBehaviour
 
     PlayerController playerController;
 
-    public PlayerController.Powerup newPowerup;
+    //public PlayerController.Powerup newPowerup;
 
     void Awake()
     {
@@ -21,7 +21,7 @@ public class CollectiblePowerup : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            playerController.CollectPowerup(newPowerup);
+            //playerController.CollectPowerup(newPowerup);
             onPickup.Invoke();
         }
     }
