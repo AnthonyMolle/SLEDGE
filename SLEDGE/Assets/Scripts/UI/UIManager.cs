@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Services.Analytics;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.ProBuilder;
@@ -114,5 +115,11 @@ public class UIManager : MonoBehaviour
             Time.timeScale = 1;
         }
         SceneManager.LoadScene(scene);
+    }
+
+    public void DataCollectionOptIn(CanvasGroup a)
+    {
+        DataCollection.Instance.StartCollection();
+        TransitionTo(a);
     }
 }

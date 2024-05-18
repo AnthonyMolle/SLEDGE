@@ -14,17 +14,34 @@ public class PlayerSaveData : MonoBehaviour
             Destroy(this.gameObject);
         }
         Instance = this;
-        Debug.Log("blah");
         DontDestroyOnLoad(this.gameObject);
     }
 
     public enum Grade
     {
-        D, // 0
-        C, // 1
-        B, // 2
-        A, // 3
-        S  // 4
+        D = 0, // 0
+        C = 1, // 1
+        B = 2, // 2
+        A = 3, // 3
+        S = 4  // 4
+    }
+
+    public int GetPointsFromRank(Grade rank)
+    {
+        switch (rank) 
+        {
+            case Grade.S:
+                return 5;
+            case Grade.A:
+                return 4;
+            case Grade.B:
+                return 3;
+            case Grade.C:
+                return 2;
+            case Grade.D:
+                return 1;
+            default: return 1;
+        }
     }
 
     struct LevelStats
@@ -51,7 +68,7 @@ public class PlayerSaveData : MonoBehaviour
 
     // To be called at the end of a level, saves that level's stats if there is no previous data or if those new stats are improvements
     public void SaveLevelData(string level, float time, Grade grade, int collectibles)
-    {
+    {   
         if (!LevelsData.ContainsKey(level))
         {
             // If this is our first time saving for this level, just save all the data

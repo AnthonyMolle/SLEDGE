@@ -7,31 +7,48 @@ public class Projectile : MonoBehaviour
     float bulletSpeed = 5.0f;
     float maxLifetime = 10.0f;
     float lifetime = 0.0f;
-    public float hitStopDuration;
+    
 
     bool isParried = false;
+    GameObject target;
+    [SerializeField] float trackingRotationSpeed = 5f;
+    [SerializeField] float maximumRotation = 30f;
+    float currentRotation = 0f;
 
-    public Collider parriedCollider;
-    
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    [SerializeField] Collider parriedCollider;
+    [SerializeField] Collider normalCollider;
 
     // Update is called once per frame
     void Update()
     {
         transform.position += transform.forward * bulletSpeed * Time.deltaTime;
         lifetime += Time.deltaTime;
+
+        if (isParried)
+        {
+            if (target != null && currentRotation < maximumRotation)
+            {
+                Vector3 rotation = Vector3.RotateTowards(transform.forward, target.transform.position - transform.position, trackingRotationSpeed * Time.deltaTime, 0 * Time.deltaTime);
+                transform.rotation = Quaternion.LookRotation(rotation);
+
+                currentRotation += trackingRotationSpeed * Time.deltaTime;
+            }
+        }
+        else
+        {
+            currentRotation = 0f;
+        }
+
         if (lifetime >= maxLifetime)
         {
             Destroy(gameObject);
         }
     }
 
-    public void initializeProjectile(Vector3 direction, float speed, float life, bool parried)
+    public void initializeProjectile(Vector3 direction, float speed, float life, bool parried, GameObject sentTarget)
     {
+        currentRotation = 0f;
+
         transform.LookAt(direction);
         bulletSpeed = speed;
         maxLifetime = life;
@@ -40,7 +57,10 @@ public class Projectile : MonoBehaviour
         if (isParried)
         {
             parriedCollider.enabled = true;
+            normalCollider.enabled = false;
         }
+
+        target = sentTarget;
 
         return;
     }
@@ -58,16 +78,16 @@ public class Projectile : MonoBehaviour
         else if (other.gameObject.tag == "Enemy Flyer" && isParried && other.gameObject.GetComponent<FlyingEnemy>().GetHealth() > 0)
         {
             Destroy(gameObject);
-            FindObjectOfType<Hitstop>().Stop(hitStopDuration);
+            //FindObjectOfType<Hitstop>().Stop(hitStopDuration);
             other.gameObject.GetComponent<FlyingEnemy>().TakeDamage(1);
-            GameObject.Find("ScoreManager").GetComponent<ScoreManager>().AddStyleKills(1);
+            GameObject.Find("ScoreManager").GetComponent<ScoreManager>().AddStyleKills(400);
         }
         else if (other.gameObject.tag == "Enemy Shooter" && isParried && other.gameObject.GetComponent<ShooterEnemy>().GetHealth() > 0)
         {
             Destroy(gameObject);
-            FindObjectOfType<Hitstop>().Stop(hitStopDuration);
+            //FindObjectOfType<Hitstop>().Stop(hitStopDuration);
             other.gameObject.GetComponent<ShooterEnemy>().TakeDamage(1);
-            GameObject.Find("ScoreManager").GetComponent<ScoreManager>().AddStyleKills(1);
+            GameObject.Find("ScoreManager").GetComponent<ScoreManager>().AddStyleKills(400);
         }
         else if (other.gameObject.tag == "Enemy Shooter")
         {
@@ -77,5 +97,10 @@ public class Projectile : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+    public bool CheckParried()
+    {
+        return isParried;
     }
 }
