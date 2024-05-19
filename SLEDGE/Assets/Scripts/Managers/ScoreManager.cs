@@ -32,7 +32,6 @@ public class ScoreManager : MonoBehaviour
     {
         // Possibly track specific collectibles later?
         CollectiblesFound++;
-        Debug.Log("Collectibles found: " + CollectiblesFound);
     }
 
     #endregion

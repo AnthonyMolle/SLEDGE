@@ -18,7 +18,17 @@ public class LevelSelectStats : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        TryUpdateLevelData();
+    }
 
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
+
+    public void TryUpdateLevelData()
+    {
         if (PlayerSaveData.Instance.ContainsLevelData(LevelName))
         {
             TimeSpan time = TimeSpan.FromSeconds(PlayerSaveData.Instance.GetLevelTime(LevelName));
@@ -32,11 +42,5 @@ public class LevelSelectStats : MonoBehaviour
             rankText.text = "Best Rank: N/A";
             collectibleText.text = "Collectibles: N/A";
         }
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }
