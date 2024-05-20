@@ -192,6 +192,17 @@ public class PlayerController : MonoBehaviour
 
     #endregion
 
+    #region Power Ups
+
+    public enum Powerup { None, Airburst, Explosive }
+
+    Powerup currentPowerup;
+
+    [Tooltip("How much we add to bounce force when the explosive powerup is enabled.")]
+    public float explosiveForce;
+
+    #endregion
+
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked; // lock the cursor to the center of the screen
@@ -208,6 +219,8 @@ public class PlayerController : MonoBehaviour
         currentHealth = maxHealth; // set health to max
 
         currentCheckpoint = firstCheckpoint; //set the currentcheckpoint to the start of the level.
+
+        ResetPowerup();
     }
 
     // Update is called once per frame
@@ -782,7 +795,7 @@ public class PlayerController : MonoBehaviour
 
         RaycastHit[] hits = Physics.SphereCastAll(ray, hitRadius, hitLength, bouncableLayers, QueryTriggerInteraction.Collide);
 
-        if (hits.Length > 0)
+        if (hits.Length > 0 || currentPowerup == Powerup.Airburst)
         {
             foreach (RaycastHit hit in hits)
             {
@@ -798,6 +811,11 @@ public class PlayerController : MonoBehaviour
                 {
                     hit.transform.gameObject.GetComponent<ShooterEnemy>().TakeDamage(1);
                 }
+            }
+
+            if (currentPowerup == Powerup.Explosive)
+            {
+                LoseExplosive();
             }
 
             //Vector3 normal = hit1.normal.normalized;
@@ -1022,5 +1040,30 @@ public class PlayerController : MonoBehaviour
     public bool CheckMoving()
     {
         return movementInputVector.magnitude != 0;
+    }
+
+    public void CollectPowerup(Powerup newPowerup)
+    {
+        currentPowerup = newPowerup;
+        if (currentPowerup == Powerup.Explosive)
+        {
+            UseExplosive();
+        }
+    }
+
+    void UseExplosive()
+    {
+        bounceForce += explosiveForce;
+    }
+
+    void LoseExplosive()
+    {
+        bounceForce -= explosiveForce;
+        ResetPowerup();
+    }
+
+    void ResetPowerup()
+    {
+        currentPowerup = Powerup.None;
     }
 }
