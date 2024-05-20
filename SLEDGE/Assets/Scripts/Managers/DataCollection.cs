@@ -29,8 +29,6 @@ public class DataCollection : MonoBehaviour
 
     }
 
-    public bool playerPrompted = false;
-
     // Start is called before the first frame update
     async void Start()
     {

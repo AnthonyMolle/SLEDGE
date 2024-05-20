@@ -119,6 +119,8 @@ public class UIManager : MonoBehaviour
 
     public void DataCollectionOptIn(CanvasGroup a)
     {
+        PlayerPrefs.SetInt("EnableDataCollection", 1);
+        PlayerPrefs.Save();
         DataCollection.Instance.StartCollection();
         TransitionTo(a);
     }

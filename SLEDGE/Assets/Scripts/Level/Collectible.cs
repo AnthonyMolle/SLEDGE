@@ -22,7 +22,6 @@ public class Collectible : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            Debug.Log("Collectible found!");
             if (ScoreManager.Instance != null)
             {
                 ScoreManager.Instance.AddCollectible(gameObject);
