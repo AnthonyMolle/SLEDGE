@@ -10,6 +10,7 @@ using UnityEngine.AI;
 using UnityEngine.PlayerLoop;
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.ProBuilder.Shapes;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
@@ -173,7 +174,7 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
-        audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
+
     }
 
     #endregion
@@ -194,6 +195,8 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
+        audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
+
         Cursor.lockState = CursorLockMode.Locked; // lock the cursor to the center of the screen
         Cursor.visible = false; // make the cursor not visible
         
@@ -207,7 +210,6 @@ public class PlayerController : MonoBehaviour
 
         currentHealth = maxHealth; // set health to max
 
-        currentCheckpoint = firstCheckpoint; //set the currentcheckpoint to the start of the level.
     }
 
     // Update is called once per frame
@@ -1007,10 +1009,14 @@ public class PlayerController : MonoBehaviour
     {
         alive = true;
 
-        if (currentCheckpoint != null) //if the player has a checkpoint stored, remove it and get an updated one.
+        if (currentCheckpoint == null)
         {
-            currentCheckpoint.Reset();
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            return;
         }
+
+        //if the player has a checkpoint stored, remove it and get an updated one.
+        currentCheckpoint.Reset();
 
         rb.velocity = Vector3.zero;
 

@@ -3692,6 +3692,8 @@ MonoBehaviour:
   master_slider: {fileID: 1390310216}
   sfx_slider: {fileID: 808887167}
   music_slider: {fileID: 1210454472}
+  audio_manager: {fileID: 5322300855568584954, guid: 56fe43ec2be6b1a4b86d2104abb67f58,
+    type: 3}
 --- !u!114 &301543900
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20946,6 +20948,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Audio Manager
+      objectReference: {fileID: 0}
+    - target: {fileID: 5322300855568584954, guid: 56fe43ec2be6b1a4b86d2104abb67f58,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6928388517203845999, guid: 56fe43ec2be6b1a4b86d2104abb67f58,
         type: 3}

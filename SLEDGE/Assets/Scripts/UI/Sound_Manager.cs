@@ -11,6 +11,16 @@ public class Sound_Manager : MonoBehaviour
     public Shared_Slider_State sfx_slider;
     public Shared_Slider_State music_slider;
 
+    public GameObject audio_manager;
+
+    private void Awake()
+    {
+        if (GameObject.Find("Audio Manager") == null)
+        {
+            Instantiate(audio_manager);
+        }
+    }
+
     private void Start()
     {
         float master = PlayerPrefs.GetFloat("MasterVolume", 50);
