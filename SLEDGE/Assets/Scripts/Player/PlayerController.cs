@@ -813,17 +813,17 @@ public class PlayerController : MonoBehaviour
                 }
             }
 
-            if (currentPowerup == Powerup.Explosive)
-            {
-                LoseExplosive();
-            }
-
             //Vector3 normal = hit1.normal.normalized;
             //float angle = Vector3.Angle(hit1.point - cameraObject.transform.position, -transform.up);
             //float wallAngle = Vector3.Angle(normal, Vector3.down);
             //float wallVSFlatVelAngle = Vector3.Angle(normal, rb.velocity);
 
             rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
+
+            if (currentPowerup == Powerup.Explosive)
+            {
+                LoseExplosive();
+            }
 
             if (bouncy)
             {
@@ -837,6 +837,8 @@ public class PlayerController : MonoBehaviour
                 isLaunched = true;
                 rb.velocity = rb.velocity / 8;
                 Vector3 force = (-ray.direction).normalized * initialBounceForce;
+
+
                 if (force.y > maxInitialBounceYForce)
                 {
                     rb.AddForce(new Vector3(force.x, maxInitialBounceYForce, force.z), ForceMode.Impulse);
@@ -1053,12 +1055,12 @@ public class PlayerController : MonoBehaviour
 
     void UseExplosive()
     {
-        bounceForce += explosiveForce;
+        initialBounceForce += explosiveForce;
     }
 
     void LoseExplosive()
     {
-        bounceForce -= explosiveForce;
+        initialBounceForce -= explosiveForce;
         ResetPowerup();
     }
 
