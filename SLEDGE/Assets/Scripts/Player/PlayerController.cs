@@ -824,6 +824,10 @@ public class PlayerController : MonoBehaviour
             {
                 LoseExplosive();
             }
+            else if (currentPowerup == Powerup.Airburst)
+            {
+                ResetPowerup();
+            }
 
             if (bouncy)
             {
