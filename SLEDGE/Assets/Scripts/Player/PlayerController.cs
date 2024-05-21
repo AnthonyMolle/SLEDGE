@@ -193,11 +193,11 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     #region Power Ups
-
     public enum Powerup { None, Airburst, Explosive }
 
     Powerup currentPowerup;
 
+    [Header("Power Ups")]
     [Tooltip("How much we add to bounce force when the explosive powerup is enabled.")]
     public float explosiveForce;
 
