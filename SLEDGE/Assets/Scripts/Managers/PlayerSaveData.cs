@@ -96,7 +96,7 @@ public class PlayerSaveData : MonoBehaviour
         // Save level data to file
         string json = JsonConvert.SerializeObject(LevelsData);
 
-        using(StreamWriter writer = new StreamWriter(Application.dataPath + Path.AltDirectorySeparatorChar + "LevelData.json"))
+        using(StreamWriter writer = new StreamWriter(Application.dataPath + Path.AltDirectorySeparatorChar + "LevelData.json", false))
         {
             writer.Write(json);
         }
