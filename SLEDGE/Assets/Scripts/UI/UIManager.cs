@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.Services.Analytics;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -90,7 +91,13 @@ public class UIManager : MonoBehaviour
     void Start()
     {
         mouseSense.value = PlayerPrefs.GetFloat("Sensitivity", 400);
+        mouseSense.transform.Find("InputField (TMP)").GetComponent<TMP_InputField>().text = Mathf.Round(PlayerPrefs.GetFloat("Sensitivity", 400)).ToString();
+
         pc = FindObjectOfType<PlayerController>();
+        if (pc != null)
+        {
+            pc.mouseSensitivity = PlayerPrefs.GetFloat("Sensitivity", 400);
+        }
     }
 
     public void Exit()
@@ -101,6 +108,7 @@ public class UIManager : MonoBehaviour
     public void UpdateMouseSensitivity()
     {
         PlayerPrefs.SetFloat("Sensitivity", mouseSense.value);
+        PlayerPrefs.Save();
 
         if (pc != null)
         {

@@ -35,6 +35,7 @@ public class Sound_Manager : MonoBehaviour
         mixer.SetFloat("MasterVolume", Mathf.Log10(master) * 20);
 
         PlayerPrefs.SetFloat("MasterVolume", Mathf.Max(master_slider.value, 0.001f));
+        PlayerPrefs.Save();
     }
 
     public void UpdateMusic()
@@ -46,6 +47,7 @@ public class Sound_Manager : MonoBehaviour
         mixer.SetFloat("MusicVolume", Mathf.Log10(music) * 20);
  
         PlayerPrefs.SetFloat("MusicVolume", Mathf.Max(music_slider.value, 0.001f));
+        PlayerPrefs.Save();
     }
 
     public void UpdateSFX()
@@ -57,5 +59,6 @@ public class Sound_Manager : MonoBehaviour
         mixer.SetFloat("SFXVolume", Mathf.Log10(sfx) * 20);
 
         PlayerPrefs.SetFloat("SFXVolume", Mathf.Max(sfx_slider.value, 0.001f));
+        PlayerPrefs.Save();
     }
 }
