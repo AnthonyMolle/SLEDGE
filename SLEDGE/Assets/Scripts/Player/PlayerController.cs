@@ -820,11 +820,8 @@ public class PlayerController : MonoBehaviour
 
             rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
 
-            if (currentPowerup == Powerup.Explosive)
-            {
-                LoseExplosive();
-            }
-            else if (currentPowerup == Powerup.Airburst)
+            
+            if (currentPowerup == Powerup.Airburst)
             {
                 ResetPowerup();
             }
@@ -858,7 +855,7 @@ public class PlayerController : MonoBehaviour
             }
             
             Instantiate(HammerSound, gameObject.transform.position, Quaternion.identity);
-            
+
 
             // bouncing up one wall over and over again is still far too viable, but theres some improvement to the basic 90 degree angled hammer wall bounces
             // if (angle < 110 && angle > 30 && wallAngle > 80 && wallAngle < 100)
@@ -871,6 +868,10 @@ public class PlayerController : MonoBehaviour
             //     rb.velocity = new Vector3(0, rb.velocity.y, 0);
             // }
 
+            if (currentPowerup == Powerup.Explosive)
+            {
+                LoseExplosive();
+            }
             hammerBounced = true;
         }
         else 
