@@ -41,7 +41,7 @@ PrefabInstance:
     - target: {fileID: 6314295682490010892, guid: 5dd5b681c132b964993064fc2d3cde0b,
         type: 3}
       propertyPath: hitLength
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 6314295682490010892, guid: 5dd5b681c132b964993064fc2d3cde0b,
         type: 3}
@@ -58,6 +58,11 @@ PrefabInstance:
       propertyPath: gameCamera
       value: 
       objectReference: {fileID: 5628860620752215860}
+    - target: {fileID: 6314295682490010892, guid: 5dd5b681c132b964993064fc2d3cde0b,
+        type: 3}
+      propertyPath: explosiveForce
+      value: 40
+      objectReference: {fileID: 0}
     - target: {fileID: 6314295682490010892, guid: 5dd5b681c132b964993064fc2d3cde0b,
         type: 3}
       propertyPath: maxTargetAngle
@@ -91,17 +96,17 @@ PrefabInstance:
     - target: {fileID: 6469425393073572772, guid: 5dd5b681c132b964993064fc2d3cde0b,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 2.5032368
+      value: -151.6
       objectReference: {fileID: 0}
     - target: {fileID: 6469425393073572772, guid: 5dd5b681c132b964993064fc2d3cde0b,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 5
+      value: 0.95
       objectReference: {fileID: 0}
     - target: {fileID: 6469425393073572772, guid: 5dd5b681c132b964993064fc2d3cde0b,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -19.2607
+      value: -18.31
       objectReference: {fileID: 0}
     - target: {fileID: 6469425393073572772, guid: 5dd5b681c132b964993064fc2d3cde0b,
         type: 3}
