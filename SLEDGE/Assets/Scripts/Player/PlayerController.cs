@@ -187,6 +187,8 @@ public class PlayerController : MonoBehaviour
     public GameObject canvas;
 
     public TextMeshProUGUI displayDistance;
+    public TextMeshProUGUI speedometer;
+    public TextMeshProUGUI tempPowerupUI;
 
     [SerializeField] GameObject pause;
 
@@ -245,6 +247,8 @@ public class PlayerController : MonoBehaviour
         {
             hangTime = 0;
         }
+
+        speedometer.text = rb.velocity.magnitude.ToString("0.0") + "mph";
     }
 
     void FixedUpdate()
@@ -590,6 +594,7 @@ public class PlayerController : MonoBehaviour
             if (isGrounded == false && hangTime >= .25)
             {
                 audioManager.PlaySFX(audioManager.land);
+                StartCoroutine(FindObjectOfType<ScreenShaker>().Shake(0.1f, 0.01f, 0, 0, 0.1f));
             }
             isGrounded = true;
             movementPlane = hit.normal;
@@ -844,7 +849,11 @@ public class PlayerController : MonoBehaviour
                 ResetPowerup();
             }
 
-            if (bouncy)
+            if (currentPowerup == Powerup.Explosive)
+            {
+                rb.AddForce((-ray.direction).normalized * explosiveForce, ForceMode.Impulse);
+            }
+            else if (bouncy)
             {
                 isLaunched = true;
                 rb.velocity = Vector3.zero;
@@ -873,7 +882,7 @@ public class PlayerController : MonoBehaviour
             }
             
             Instantiate(HammerSound, gameObject.transform.position, Quaternion.identity);
-            //StartCoroutine(FindObjectOfType<ScreenShaker>().Shake(10, 0.5f, 0.25f));
+            StartCoroutine(FindObjectOfType<ScreenShaker>().Shake(0.25f, 0.01f, 0, 0, 0.25f));
             
 
             // bouncing up one wall over and over again is still far too viable, but theres some improvement to the basic 90 degree angled hammer wall bounces
@@ -938,6 +947,8 @@ public class PlayerController : MonoBehaviour
                     hit.transform.gameObject.GetComponent<Rigidbody>().AddForce(ray.direction * 50, ForceMode.Impulse);
                 }
             }
+
+            StartCoroutine(FindObjectOfType<ScreenShaker>().Shake(0.1f, 0.01f, 0, 0, 0.1f));
         }
     }
 
@@ -1076,23 +1087,22 @@ public class PlayerController : MonoBehaviour
         currentPowerup = newPowerup;
         if (currentPowerup == Powerup.Explosive)
         {
-            UseExplosive();
+            tempPowerupUI.text = "Active Powerup: Explosive";
         }
-    }
-
-    void UseExplosive()
-    {
-        initialBounceForce += explosiveForce;
+        else if (currentPowerup == Powerup.Airburst)
+        {
+            tempPowerupUI.text = "Active Powerup: Airburst";
+        }
     }
 
     void LoseExplosive()
     {
-        initialBounceForce -= explosiveForce;
         ResetPowerup();
     }
 
     void ResetPowerup()
     {
         currentPowerup = Powerup.None;
+        tempPowerupUI.text = "Active Powerup: None";
     }
 }

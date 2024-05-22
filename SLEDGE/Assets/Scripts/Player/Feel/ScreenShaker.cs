@@ -9,22 +9,56 @@ public class ScreenShaker : MonoBehaviour
     float shakeTimer;
 
     //this script needs easing
-    public IEnumerator Shake(float duration, float timeBetweenShake, float power)
+    public IEnumerator Shake(float duration, float timeBetweenShake, float buildTime, float fallTime, float power)
     {
         Vector3 orignalMainCamPos = cameraObj.transform.localPosition;
         Vector3 originalHammerCamPos = hammerCameraObject.transform.localPosition;
+
+        float currentPower = 0;
+
+        shakeTimer = 0;
+        while (shakeTimer < buildTime)
+        {
+            shakeTimer += timeBetweenShake;
+            float xPos = Random.Range(-currentPower, currentPower);
+            float yPos = Random.Range(-currentPower, currentPower);
+
+            cameraObj.transform.localPosition = new Vector3(xPos, yPos, orignalMainCamPos.z);
+            //hammerCameraObject.transform.localPosition = new Vector3(-xPos, -yPos, originalHammerCamPos.z);
+
+            currentPower = power * shakeTimer / buildTime;
+
+            yield return new WaitForSeconds(timeBetweenShake);
+        }
+
+        currentPower = power;
 
         shakeTimer = duration;
         while (shakeTimer > 0)
         {
             shakeTimer -= timeBetweenShake;
-            float xPos = Random.Range(-power, power);
-            float yPos = Random.Range(-power, power);
+            float xPos = Random.Range(-currentPower, currentPower);
+            float yPos = Random.Range(-currentPower, currentPower);
 
             cameraObj.transform.localPosition = new Vector3(xPos, yPos, orignalMainCamPos.z);
-            hammerCameraObject.transform.localPosition = new Vector3(-xPos, -yPos, originalHammerCamPos.z);
+            //hammerCameraObject.transform.localPosition = new Vector3(-xPos, -yPos, originalHammerCamPos.z);
 
-            yield return new WaitForSecondsRealtime(timeBetweenShake);
+            yield return new WaitForSeconds(timeBetweenShake);
+        }
+
+        shakeTimer = fallTime;
+        while (shakeTimer > 0)
+        {
+            shakeTimer -= timeBetweenShake;
+            float xPos = Random.Range(-currentPower, currentPower);
+            float yPos = Random.Range(-currentPower, currentPower);
+
+            cameraObj.transform.localPosition = new Vector3(xPos, yPos, orignalMainCamPos.z);
+            //hammerCameraObject.transform.localPosition = new Vector3(-xPos, -yPos, originalHammerCamPos.z);
+
+            currentPower = power * shakeTimer / fallTime;
+
+            yield return new WaitForSeconds(timeBetweenShake);
         }
 
         cameraObj.transform.localPosition = orignalMainCamPos;
