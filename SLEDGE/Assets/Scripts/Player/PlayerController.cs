@@ -78,6 +78,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float airAccelerationRate = 10f;
     [SerializeField] float airMaxSpeed = 100f;
 
+    [SerializeField] float maxLaunchedSpeed = 100f;
+    [SerializeField] float maxFallingSpeed = 100f;
+
     [SerializeField] float naturalAdditionalFallingSpeed = 4f; //natural rate our player will fall after the apex of their falling height.
     [SerializeField] float extraGravityYThreshold = 5f;
     #endregion
@@ -193,6 +196,17 @@ public class PlayerController : MonoBehaviour
 
     #endregion
 
+    #region Power Ups
+    public enum Powerup { None, Airburst, Explosive }
+
+    Powerup currentPowerup;
+
+    [Header("Power Ups")]
+    [Tooltip("How much we add to bounce force when the explosive powerup is enabled.")]
+    public float explosiveForce;
+
+    #endregion
+
     void Start()
     {
         audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
@@ -210,6 +224,9 @@ public class PlayerController : MonoBehaviour
 
         currentHealth = maxHealth; // set health to max
 
+        currentCheckpoint = firstCheckpoint; //set the currentcheckpoint to the start of the level.
+
+        ResetPowerup();
     }
 
     // Update is called once per frame
@@ -662,15 +679,22 @@ public class PlayerController : MonoBehaviour
             #region Air movement
             else // if we're in the air
             {
-                if(rb.velocity.y <= extraGravityYThreshold)// if we are at the apex of our air height
+                if (rb.velocity.y > -maxFallingSpeed)
                 {
-                    rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
+                    if(rb.velocity.y <= extraGravityYThreshold)// if we are at the apex of our air height
+                    {
+                        rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
+                    }
+                    
+                    if (hammerCharged && !isGrounded && hangTime > 1)
+                    {
+                        rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
+                    }
                 }
-                
-                if (hammerCharged && !isGrounded && hangTime > 1)
-                {
-                    rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
-                }
+            else
+            {
+                rb.velocity = new Vector3(rb.velocity.x, -maxFallingSpeed, rb.velocity.z);
+            }
 
                 if (movementInputVector.magnitude > 0.001)
                 {
@@ -711,17 +735,22 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            if(rb.velocity.y <= extraGravityYThreshold)// if we are at the apex of our air height
+            if (rb.velocity.y > -maxFallingSpeed)
             {
-                rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
+                if(rb.velocity.y <= extraGravityYThreshold)// if we are at the apex of our air height
+                {
+                    rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
+                }
+                
+                if (hammerCharged && !isGrounded && hangTime > 1)
+                {
+                    rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
+                }
             }
-            
-            if (hammerCharged && !isGrounded && hangTime > 1)
+            else
             {
-                rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
+                rb.velocity = new Vector3(rb.velocity.x, -maxFallingSpeed, rb.velocity.z);
             }
-
-        
 
             if (movementInputVector.magnitude > 0.001)
             {
@@ -782,9 +811,9 @@ public class PlayerController : MonoBehaviour
         Ray ray = gameCamera.ScreenPointToRay(Input.mousePosition);
         bool bouncy = false;
 
-        RaycastHit[] hits = Physics.SphereCastAll(ray, hitRadius, hitLength, bouncableLayers);
+        RaycastHit[] hits = Physics.SphereCastAll(ray, hitRadius, hitLength, bouncableLayers, QueryTriggerInteraction.Collide);
 
-        if (hits.Length > 0)
+        if (hits.Length > 0 || currentPowerup == Powerup.Airburst)
         {
             foreach (RaycastHit hit in hits)
             {
@@ -809,6 +838,12 @@ public class PlayerController : MonoBehaviour
 
             rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
 
+            
+            if (currentPowerup == Powerup.Airburst)
+            {
+                ResetPowerup();
+            }
+
             if (bouncy)
             {
                 isLaunched = true;
@@ -821,6 +856,8 @@ public class PlayerController : MonoBehaviour
                 isLaunched = true;
                 rb.velocity = rb.velocity / 8;
                 Vector3 force = (-ray.direction).normalized * initialBounceForce;
+
+
                 if (force.y > maxInitialBounceYForce)
                 {
                     rb.AddForce(new Vector3(force.x, maxInitialBounceYForce, force.z), ForceMode.Impulse);
@@ -850,6 +887,10 @@ public class PlayerController : MonoBehaviour
             //     rb.velocity = new Vector3(0, rb.velocity.y, 0);
             // }
 
+            if (currentPowerup == Powerup.Explosive)
+            {
+                LoseExplosive();
+            }
             hammerBounced = true;
         }
         else 
@@ -1028,5 +1069,30 @@ public class PlayerController : MonoBehaviour
     public bool CheckMoving()
     {
         return movementInputVector.magnitude != 0;
+    }
+
+    public void CollectPowerup(Powerup newPowerup)
+    {
+        currentPowerup = newPowerup;
+        if (currentPowerup == Powerup.Explosive)
+        {
+            UseExplosive();
+        }
+    }
+
+    void UseExplosive()
+    {
+        initialBounceForce += explosiveForce;
+    }
+
+    void LoseExplosive()
+    {
+        initialBounceForce -= explosiveForce;
+        ResetPowerup();
+    }
+
+    void ResetPowerup()
+    {
+        currentPowerup = Powerup.None;
     }
 }
