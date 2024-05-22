@@ -77,6 +77,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float airAccelerationRate = 10f;
     [SerializeField] float airMaxSpeed = 100f;
 
+    [SerializeField] float maxLaunchedSpeed = 100f;
+    [SerializeField] float maxFallingSpeed = 100f;
+
     [SerializeField] float naturalAdditionalFallingSpeed = 4f; //natural rate our player will fall after the apex of their falling height.
     [SerializeField] float extraGravityYThreshold = 5f;
     #endregion
@@ -673,15 +676,22 @@ public class PlayerController : MonoBehaviour
             #region Air movement
             else // if we're in the air
             {
-                if(rb.velocity.y <= extraGravityYThreshold)// if we are at the apex of our air height
+                if (rb.velocity.y > -maxFallingSpeed)
                 {
-                    rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
+                    if(rb.velocity.y <= extraGravityYThreshold)// if we are at the apex of our air height
+                    {
+                        rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
+                    }
+                    
+                    if (hammerCharged && !isGrounded && hangTime > 1)
+                    {
+                        rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
+                    }
                 }
-                
-                if (hammerCharged && !isGrounded && hangTime > 1)
-                {
-                    rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
-                }
+            else
+            {
+                rb.velocity = new Vector3(rb.velocity.x, -maxFallingSpeed, rb.velocity.z);
+            }
 
                 if (movementInputVector.magnitude > 0.001)
                 {
@@ -722,17 +732,22 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            if(rb.velocity.y <= extraGravityYThreshold)// if we are at the apex of our air height
+            if (rb.velocity.y > -maxFallingSpeed)
             {
-                rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
+                if(rb.velocity.y <= extraGravityYThreshold)// if we are at the apex of our air height
+                {
+                    rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
+                }
+                
+                if (hammerCharged && !isGrounded && hangTime > 1)
+                {
+                    rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
+                }
             }
-            
-            if (hammerCharged && !isGrounded && hangTime > 1)
+            else
             {
-                rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
+                rb.velocity = new Vector3(rb.velocity.x, -maxFallingSpeed, rb.velocity.z);
             }
-
-        
 
             if (movementInputVector.magnitude > 0.001)
             {
