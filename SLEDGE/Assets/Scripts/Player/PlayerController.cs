@@ -836,6 +836,7 @@ public class PlayerController : MonoBehaviour
             }
             
             Instantiate(HammerSound, gameObject.transform.position, Quaternion.identity);
+            //StartCoroutine(FindObjectOfType<ScreenShaker>().Shake(10, 0.5f, 0.25f));
             
 
             // bouncing up one wall over and over again is still far too viable, but theres some improvement to the basic 90 degree angled hammer wall bounces
@@ -893,7 +894,6 @@ public class PlayerController : MonoBehaviour
                 }
                 else if (hit.transform.gameObject.tag == "Collectible")
                 {
-                    Debug.Log("hit collectible");
                     hit.transform.gameObject.GetComponent<Rigidbody>().AddForce(ray.direction * 50, ForceMode.Impulse);
                 }
             }
