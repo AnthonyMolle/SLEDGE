@@ -24,6 +24,27 @@ public class NodeView : UnityEditor.Experimental.GraphView.Node
 
         CreateInputPorts();
         CreateOutputPorts();
+        SetupClasses();
+    }
+
+    private void SetupClasses()
+    {
+        if (node is ActionNode)
+        {
+            AddToClassList("action");
+        }
+        else if (node is CompositeNode)
+        {
+            AddToClassList("composite");
+        }
+        else if (node is DecoratorNode)
+        {
+            AddToClassList("decorator");
+        }
+        else if (node is RootNode)
+        {
+            AddToClassList("root");
+        }
     }
 
     private void CreateInputPorts()

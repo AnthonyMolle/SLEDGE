@@ -70,3 +70,40 @@
     margin-bottom: 0;
     margin-left: 0;
 }
+
+#title {
+    -unity-font-style: bold;
+    font-size: 16px;
+}
+
+#description {
+    font-size: 10px;
+    color: rgb(255, 255, 255);
+}
+
+#divider {
+    min-height: 1px;
+    background-color: rgb(87, 87, 87);
+    color: rgb(255, 255, 255);
+}
+
+.action #input {
+    background-color: rgb(188, 255, 0);
+}
+
+.composite #input {
+    background-color: rgb(242, 165, 65);
+}
+
+.decorator #input {
+    background-color: rgb(147, 95, 167);
+}
+
+.root #input {
+    background-color: rgb(230, 95, 92);
+    min-height: 20px;
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+}
