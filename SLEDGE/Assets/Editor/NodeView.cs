@@ -3,8 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor.Experimental.GraphView;
+using UnityEditor.UIElements;
 using UnityEngine.UIElements;
 using NUnit.Framework.Constraints;
+using Codice.Client.Common.GameUI;
 
 public class NodeView : UnityEditor.Experimental.GraphView.Node
 {
@@ -17,7 +19,8 @@ public class NodeView : UnityEditor.Experimental.GraphView.Node
     public NodeView(Node node) : base("Assets/Editor/NodeView.uxml")
     {
         this.node = node;
-        this.title = node.name;
+        this.title = FormatNodeName(node.name);
+
         this.viewDataKey = node.guid;
 
         style.left = node.position.x;
@@ -26,6 +29,10 @@ public class NodeView : UnityEditor.Experimental.GraphView.Node
         CreateInputPorts();
         CreateOutputPorts();
         SetupClasses();
+
+        Label descriptionLabel = this.Q<Label>("description");
+        descriptionLabel.bindingPath = "description";
+        descriptionLabel.Bind(new UnityEditor.SerializedObject(node));
     }
 
     private void SetupClasses()
@@ -46,6 +53,26 @@ public class NodeView : UnityEditor.Experimental.GraphView.Node
         {
             AddToClassList("root");
         }
+    }
+
+    private string FormatNodeName(string nodeName)
+    {
+        nodeName = nodeName.Split('_')[0];
+
+        var newString = "";
+        var prevCharUpper = false;
+
+        foreach (char c in nodeName)
+        {
+            if (char.IsUpper(c) && !prevCharUpper)
+            {
+                newString += " ";
+            }
+            newString += c;
+            prevCharUpper = char.IsUpper(c);
+        }
+
+        return newString.Trim();
     }
 
     private void CreateInputPorts()

@@ -15,30 +15,13 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: d631b63622a192a4eb1e16c9e7fc6217
-  position: {x: 313.8, y: 33.600006}
+  position: {x: 296.71216, y: -30.567059}
+  blackboard:
+    moveToPosition: {x: 0, y: 0, z: 0}
+    moveToObject: {fileID: 0}
+  description: 
   children:
   - {fileID: -1129952355523177059}
-  - {fileID: -2111774557299940595}
-  - {fileID: -7743766928070565754}
-  - {fileID: 4070274759276204154}
-  - {fileID: -3351975054984199197}
---- !u!114 &-7743766928070565754
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 091f3a82cc8db814daac999008d343d1, type: 3}
-  m_Name: DebugLog_Action
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: 0298c234dcfbe834cae025eb2d511018
-  position: {x: 526.39996, y: 173.6}
-  message: B
 --- !u!114 &-6109299475738239597
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -54,42 +37,12 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: e5f8813987c9c144c9e98b8534ce9e13
-  position: {x: 332.80002, y: -207.59999}
-  child: {fileID: 6219609966475169837}
---- !u!114 &-3351975054984199197
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 091f3a82cc8db814daac999008d343d1, type: 3}
-  m_Name: DebugLog_Action
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: f75c786ef9336af4aa2101facf25c7b1
-  position: {x: 223.19998, y: 173.6}
-  message: C
---- !u!114 &-2111774557299940595
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f1535a42213d6324aa2718c1b8a571a4, type: 3}
-  m_Name: Wait_Action
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: e36e96969e0644949a9a2d23f3051879
-  position: {x: 676, y: 173.6}
-  duration: 1
+  position: {x: 296.79996, y: -142.26959}
+  blackboard:
+    moveToPosition: {x: 0, y: 0, z: 0}
+    moveToObject: {fileID: 0}
+  description: 
+  child: {fileID: -8985223373851852657}
 --- !u!114 &-1129952355523177059
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -105,7 +58,11 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: 6e9f8fb638361e448bf2596948088c95
-  position: {x: 52.799988, y: 173.6}
+  position: {x: 296.79996, y: 98.09019}
+  blackboard:
+    moveToPosition: {x: 0, y: 0, z: 0}
+    moveToObject: {fileID: 0}
+  description: This Is a action!
   message: A
 --- !u!114 &11400000
 MonoBehaviour:
@@ -125,43 +82,6 @@ MonoBehaviour:
   - {fileID: -6109299475738239597}
   - {fileID: -8985223373851852657}
   - {fileID: -1129952355523177059}
-  - {fileID: -2111774557299940595}
-  - {fileID: -7743766928070565754}
-  - {fileID: 4070274759276204154}
-  - {fileID: -3351975054984199197}
-  - {fileID: 6219609966475169837}
---- !u!114 &4070274759276204154
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f1535a42213d6324aa2718c1b8a571a4, type: 3}
-  m_Name: Wait_Action
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: dfb24b0c4a5261549832e66b63fda1a3
-  position: {x: 376.00003, y: 173.6}
-  duration: 1
---- !u!114 &6219609966475169837
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f5671c8f1355fcc40bf249a5233dc689, type: 3}
-  m_Name: Repeat_Decorator
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: 989f6c7a6b7d6ed40a99167175801eac
-  position: {x: 332.8, y: -111.512}
-  child: {fileID: -8985223373851852657}
-  repeatNumber: 100
+  blackboard:
+    moveToPosition: {x: 0, y: 0, z: 0}
+    moveToObject: {fileID: 0}

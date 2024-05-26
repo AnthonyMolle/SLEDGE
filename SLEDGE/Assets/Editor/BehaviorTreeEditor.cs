@@ -1,4 +1,5 @@
 using System;
+using Unity.VisualScripting.Antlr3.Runtime.Tree;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -7,9 +8,10 @@ public class BehaviorTreeEditor : EditorWindow
 {
     BehaviorTreeView treeView;
     InspectorView inspectorView;
+    IMGUIContainer blackboardView;
 
-    [SerializeField]
-    private VisualTreeAsset m_VisualTreeAsset = default;
+    SerializedObject treeObject;
+    SerializedProperty blackboardProperty;
 
     [MenuItem("BehaviorTreeEditor/Editor ...")]
     public static void OpenWindow()
@@ -31,6 +33,18 @@ public class BehaviorTreeEditor : EditorWindow
 
         treeView = root.Q<BehaviorTreeView>();
         inspectorView = root.Q<InspectorView>();
+        blackboardView = root.Q<IMGUIContainer>();
+
+        blackboardView.onGUIHandler = () =>
+        {
+            if (treeObject.targetObject != null)
+            {
+                treeObject.Update();
+                EditorGUILayout.PropertyField(blackboardProperty);
+                treeObject.ApplyModifiedProperties();
+            }
+        };
+
         treeView.OnNodeSelected = OnNodeSelectionChanged;
         OnSelectionChange();
     }
@@ -53,17 +67,23 @@ public class BehaviorTreeEditor : EditorWindow
 
         if (Application.isPlaying)
         {
-            if (tree)
+            if (tree && treeView != null)
             {
                 treeView.PopulateView(tree);
             }
         }
         else
         {
-            if (tree && AssetDatabase.CanOpenAssetInEditor(tree.GetInstanceID()))
+            if (tree && treeView != null && AssetDatabase.CanOpenAssetInEditor(tree.GetInstanceID()))
             {
                 treeView.PopulateView(tree);
             }
+        }
+
+        if(tree != null)
+        {
+            treeObject = new SerializedObject(tree);
+            blackboardProperty = treeObject.FindProperty("blackboard");
         }
     }
 

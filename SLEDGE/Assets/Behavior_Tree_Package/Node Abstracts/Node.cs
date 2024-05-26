@@ -16,6 +16,10 @@ public abstract class Node : ScriptableObject
     [HideInInspector] public bool started = false; // Tells us if node has ever executed
     [HideInInspector] public string guid;
     [HideInInspector] public Vector2 position;
+    [HideInInspector] public Blackboard blackboard;
+    [TextArea] public string description;
+    // Can add more dependencies here too
+
     public State Update()
     {
         if (!started)
