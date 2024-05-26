@@ -29,7 +29,11 @@ public class BehaviorTree : ScriptableObject
         node.guid = GUID.Generate().ToString();
         nodes.Add(node);
 
-        AssetDatabase.AddObjectToAsset(node, this);
+
+        if (!Application.isPlaying) { 
+            AssetDatabase.AddObjectToAsset(node, this);
+        }
+
         AssetDatabase.SaveAssets();
         return node;
     }
@@ -108,11 +112,26 @@ public class BehaviorTree : ScriptableObject
         return children;
     }
 
+    public void Traverse(Node node, System.Action<Node> visiter)
+    {
+        if (node)
+        {
+            visiter.Invoke(node);
+            var children = GetChildren(node);
+            children.ForEach((n) => Traverse(n, visiter));
+        }
+    }
+
     public BehaviorTree Clone()
     {
         BehaviorTree tree = Instantiate(this);
 
         tree.rootNode = tree.rootNode.Clone();
+        tree.nodes = new List<Node>();
+        Traverse(tree.rootNode, (n) =>
+        {
+            tree.nodes.Add(n);
+        });
         return tree;
     }
 }

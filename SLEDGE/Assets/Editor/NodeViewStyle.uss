@@ -83,7 +83,7 @@
 
 #divider {
     min-height: 1px;
-    background-color: rgb(87, 87, 87);
+    background-color: rgba(87, 87, 87, 0);
     color: rgb(255, 255, 255);
 }
 
@@ -106,4 +106,28 @@
     margin-right: 0;
     margin-bottom: 0;
     margin-left: 0;
+}
+
+#node-state {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+.running #node-state {
+    background-color: rgb(255, 245, 0);
+}
+
+.success #node-state {
+    background-color: rgba(72, 255, 0, 0.7);
+}
+
+.failure #node-state {
+    background-color: rgba(255, 0, 21, 0.7);
 }

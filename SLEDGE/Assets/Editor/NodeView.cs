@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine.UIElements;
+using NUnit.Framework.Constraints;
 
 public class NodeView : UnityEditor.Experimental.GraphView.Node
 {
@@ -63,7 +64,7 @@ public class NodeView : UnityEditor.Experimental.GraphView.Node
         }
         else if (node is RootNode)
         {
-            
+
         }
 
         if (input != null)
@@ -112,9 +113,35 @@ public class NodeView : UnityEditor.Experimental.GraphView.Node
     public override void OnSelected()
     {
         base.OnSelected();
-        if(OnNodeSelected != null)
+        if (OnNodeSelected != null)
         {
             OnNodeSelected.Invoke(this);
+        }
+    }
+
+    public void UpdateState()
+    {
+        RemoveFromClassList("failure");
+        RemoveFromClassList("success");
+        RemoveFromClassList("running");
+
+        if (Application.isPlaying)
+        {
+            switch (node.state)
+            {
+                case Node.State.Running:
+                    if (node.started)
+                    {
+                        AddToClassList("running");
+                    }
+                    break;
+                case Node.State.Failure:
+                    AddToClassList("failure");
+                    break;
+                case Node.State.Success:
+                    AddToClassList("success");
+                    break;
+            }
         }
     }
 }

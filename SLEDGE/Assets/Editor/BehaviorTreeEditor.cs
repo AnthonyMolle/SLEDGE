@@ -1,3 +1,4 @@
+using System;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -38,14 +39,69 @@ public class BehaviorTreeEditor : EditorWindow
     {
         BehaviorTree tree = Selection.activeObject as BehaviorTree;
 
-        if (tree && AssetDatabase.CanOpenAssetInEditor(tree.GetInstanceID()))
+        if (!tree)
         {
-            treeView.PopulateView(tree);
+            if (Selection.activeGameObject)
+            {
+                BehaviorTreeRunner runner = Selection.activeGameObject.GetComponent<BehaviorTreeRunner>();
+                if (runner)
+                {
+                    tree = runner.tree;
+                }
+            }
+        }
+
+        if (Application.isPlaying)
+        {
+            if (tree)
+            {
+                treeView.PopulateView(tree);
+            }
+        }
+        else
+        {
+            if (tree && AssetDatabase.CanOpenAssetInEditor(tree.GetInstanceID()))
+            {
+                treeView.PopulateView(tree);
+            }
+        }
+    }
+
+    private void OnEnable()
+    {
+        EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
+        EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
+    }
+
+    private void OnDisable()
+    {
+        EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
+    }
+
+    private void OnPlayModeStateChanged(PlayModeStateChange obj)
+    {
+        switch (obj)
+        {
+            case PlayModeStateChange.EnteredEditMode:
+                OnSelectionChange();
+                break;
+            case PlayModeStateChange.ExitingEditMode:
+                break;
+            case PlayModeStateChange.EnteredPlayMode:
+                OnSelectionChange();
+                break;
+            case PlayModeStateChange.ExitingPlayMode:
+                break;
         }
     }
 
     void OnNodeSelectionChanged(NodeView node)
     {
         inspectorView.UpdateSelection(node);
+    }
+
+    private void OnInspectorUpdate()
+    {
+        treeView?.UpdateNodeState();
     }
 }

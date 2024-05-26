@@ -1,5 +1,6 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
     <Style src="project://database/Assets/Editor/NodeViewStyle.uss?fileID=7433441132597879392&amp;guid=ef2113aebc46ec047ac3ceaf5beb1339&amp;type=3#NodeViewStyle" />
+    <ui:VisualElement name="node-state" style="flex-grow: 1;" />
     <ui:VisualElement name="node-border" style="color: rgb(27, 27, 27);">
         <ui:VisualElement name="contents">
             <ui:VisualElement name="top">
