@@ -31,6 +31,13 @@ public class BehaviorTreeView : GraphView
         return GetNodeByGuid(node.guid) as NodeView;
     }
 
+    internal void clearView()
+    {
+        graphViewChanged -= OnGraphViewChanged;
+        DeleteElements(graphElements);
+        graphViewChanged += OnGraphViewChanged;
+    }
+
     internal void PopulateView(BehaviorTree tree)
     {
         this.tree = tree;

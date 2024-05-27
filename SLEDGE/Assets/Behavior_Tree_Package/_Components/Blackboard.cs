@@ -5,6 +5,13 @@ using UnityEngine;
 [System.Serializable]
 public class Blackboard
 {
-    public Vector3 moveToPosition;
-    public GameObject moveToObject;
+    public enum EnemyStates
+    {
+        IDLE, HOSTILE
+    }
+
+    public EnemyStates currentState;
+    public GameObject player;
+    public float attackRange;
+    public float alertRange;
 }

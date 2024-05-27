@@ -1,5 +1,26 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-8989181420347393648
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1535a42213d6324aa2718c1b8a571a4, type: 3}
+  m_Name: Wait_Action
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 76db76fac6b92e4479de92323d82b6f2
+  position: {x: 0, y: 0}
+  blackboard:
+    moveToPosition: {x: 0, y: 0, z: 0}
+    moveToObject: {fileID: 0}
+  description: 
+  duration: 1
 --- !u!114 &-5388967158983818834
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16,6 +37,10 @@ MonoBehaviour:
   started: 0
   guid: 81f6bfb53a3b2844291489dde8dbcc7b
   position: {x: 328.63297, y: 88.799995}
+  blackboard:
+    moveToPosition: {x: 0, y: 0, z: 0}
+    moveToObject: {fileID: 0}
+  description: 
   duration: 1
 --- !u!114 &-3855280068938689076
 MonoBehaviour:
@@ -33,6 +58,10 @@ MonoBehaviour:
   started: 0
   guid: 37657d04452b147498eee827ab9bcd8a
   position: {x: -81.1501, y: -1.6000159}
+  blackboard:
+    moveToPosition: {x: 0, y: 0, z: 0}
+    moveToObject: {fileID: 0}
+  description: 
   child: {fileID: 7964495718688424574}
   repeatNumber: 10
 --- !u!114 &-3440596930377001751
@@ -51,6 +80,10 @@ MonoBehaviour:
   started: 0
   guid: db548de90a4f18d41b72bdadf1d41a4b
   position: {x: 328.63297, y: -188.80003}
+  blackboard:
+    moveToPosition: {x: 0, y: 0, z: 0}
+    moveToObject: {fileID: 0}
+  description: 
   message: X
 --- !u!114 &-2283243040861677736
 MonoBehaviour:
@@ -68,6 +101,10 @@ MonoBehaviour:
   started: 0
   guid: f90209230881c7b4ba6c2d815ecfb520
   position: {x: 328.63297, y: -1.6000109}
+  blackboard:
+    moveToPosition: {x: 0, y: 0, z: 0}
+    moveToObject: {fileID: 0}
+  description: 
   message: Y
 --- !u!114 &11400000
 MonoBehaviour:
@@ -92,6 +129,10 @@ MonoBehaviour:
   - {fileID: -2283243040861677736}
   - {fileID: 2592635519543493343}
   - {fileID: -3855280068938689076}
+  - {fileID: -8989181420347393648}
+  blackboard:
+    moveToPosition: {x: 0, y: 0, z: 0}
+    moveToObject: {fileID: 0}
 --- !u!114 &39549401258358545
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -108,6 +149,10 @@ MonoBehaviour:
   started: 0
   guid: 093ee235b10d54c4c8b2bdf48ebe1634
   position: {x: -241.12, y: -1.800003}
+  blackboard:
+    moveToPosition: {x: 0, y: 0, z: 0}
+    moveToObject: {fileID: 0}
+  description: 
   child: {fileID: -3855280068938689076}
 --- !u!114 &2592635519543493343
 MonoBehaviour:
@@ -125,6 +170,10 @@ MonoBehaviour:
   started: 0
   guid: 349613bbe97c26f4b9b789c6f4fa114b
   position: {x: 328.63297, y: 180.79997}
+  blackboard:
+    moveToPosition: {x: 0, y: 0, z: 0}
+    moveToObject: {fileID: 0}
+  description: 
   message: Z
 --- !u!114 &7062748707658734662
 MonoBehaviour:
@@ -142,6 +191,10 @@ MonoBehaviour:
   started: 0
   guid: 2eeef2db4a23d164e914a5abc27d6d29
   position: {x: 328.63297, y: -94.400024}
+  blackboard:
+    moveToPosition: {x: 0, y: 0, z: 0}
+    moveToObject: {fileID: 0}
+  description: 
   duration: 1
 --- !u!114 &7964495718688424574
 MonoBehaviour:
@@ -159,6 +212,10 @@ MonoBehaviour:
   started: 0
   guid: e3f9ef088f2b28b41b6c5df073f69304
   position: {x: 132.9881, y: 15.999997}
+  blackboard:
+    moveToPosition: {x: 0, y: 0, z: 0}
+    moveToObject: {fileID: 0}
+  description: 
   children:
   - {fileID: -3440596930377001751}
   - {fileID: 7062748707658734662}

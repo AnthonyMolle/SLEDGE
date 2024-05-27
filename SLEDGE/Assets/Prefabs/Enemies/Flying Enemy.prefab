@@ -9,10 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 420231148312675728}
-  - component: {fileID: 8954496553645960163}
+  - component: {fileID: 8290705259609383767}
   - component: {fileID: 7685459734728546445}
   - component: {fileID: 727326944254216018}
-  - component: {fileID: 8614848069391248058}
   m_Layer: 8
   m_Name: Flying Enemy
   m_TagString: Enemy Flyer
@@ -38,7 +37,7 @@ Transform:
   - {fileID: 613131884000624082}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8954496553645960163
+--- !u!114 &8290705259609383767
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -47,17 +46,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 2178161172080928957}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d600854a7df272446812fbf54dfadb0b, type: 3}
+  m_Script: {fileID: 11500000, guid: bad69fb78f9f60b4b8f9b43bac7949e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 1
-  movementSpeed: 6
-  detectionRadius: 30
-  visionBlocking:
-    serializedVersion: 2
-    m_Bits: 115
-  huntingColor: {r: 1, g: 0.14528298, b: 0.14528298, a: 0}
-  pathingColor: {r: 0, g: 0.8428993, b: 1, a: 0}
+  tree: {fileID: 11400000, guid: 8ce23b72267ff9a48a02424d915f804c, type: 2}
 --- !u!135 &7685459734728546445
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -106,24 +98,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
---- !u!114 &8614848069391248058
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2178161172080928957}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5c7aa2beebd2c4441bc902105f15d212, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_target: {fileID: 11400000, guid: e3b979de048bba741b7367a3e0ef7598, type: 2}
-  m_agentDescription: 
-  m_maxStepsPerTick: 1000
-  m_restartWhenComplete: 1
-  m_resetBlackboardOnRestart: 0
-  m_treePauseTime: 0
 --- !u!1001 &350566112321083211
 PrefabInstance:
   m_ObjectHideFlags: 0

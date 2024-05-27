@@ -63,6 +63,15 @@ public class BehaviorTreeEditor : EditorWindow
                     tree = runner.tree;
                 }
             }
+            else
+            {
+                // Handle case where object that we were inspecting its behavior tree is now gone
+                // Cant update to non clone as instance is gone to check
+                if (treeView != null)
+                {
+                    treeView.clearView();
+                }
+            }
         }
 
         if (Application.isPlaying)
