@@ -226,8 +226,6 @@ public class PlayerController : MonoBehaviour
 
         currentHealth = maxHealth; // set health to max
 
-        currentCheckpoint = firstCheckpoint; //set the currentcheckpoint to the start of the level.
-
         ResetPowerup();
     }
 
@@ -1104,6 +1102,9 @@ public class PlayerController : MonoBehaviour
     void ResetPowerup()
     {
         currentPowerup = Powerup.None;
-        tempPowerupUI.text = "Active Powerup: None";
+        if (tempPowerupUI != null)
+        {
+            tempPowerupUI.text = "Active Powerup: None";
+        }
     }
 }
