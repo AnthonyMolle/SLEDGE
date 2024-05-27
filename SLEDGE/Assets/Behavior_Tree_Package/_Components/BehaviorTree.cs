@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEditor;
 using UnityEngine.AI;
 
+
 [CreateAssetMenu()]
 public class BehaviorTree : ScriptableObject
 {
