@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class ScreenShaker : MonoBehaviour
@@ -8,12 +9,18 @@ public class ScreenShaker : MonoBehaviour
     [SerializeField] GameObject hammerCameraObject;
     float shakeTimer;
 
+    Vector3 orignalMainCamPos;
+    Vector3 originalHammerCamPos;
+
+    private void Start()
+    {
+        orignalMainCamPos = cameraObj.transform.localPosition;
+        originalHammerCamPos = hammerCameraObject.transform.localPosition;
+    }
+
     //this script needs easing
     public IEnumerator Shake(float duration, float timeBetweenShake, float buildTime, float fallTime, float power)
     {
-        Vector3 orignalMainCamPos = cameraObj.transform.localPosition;
-        Vector3 originalHammerCamPos = hammerCameraObject.transform.localPosition;
-
         float currentPower = 0;
 
         shakeTimer = 0;

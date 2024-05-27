@@ -851,6 +851,7 @@ public class PlayerController : MonoBehaviour
 
             if (currentPowerup == Powerup.Explosive)
             {
+                isLaunched = true;
                 rb.AddForce((-ray.direction).normalized * explosiveForce, ForceMode.Impulse);
             }
             else if (bouncy)
