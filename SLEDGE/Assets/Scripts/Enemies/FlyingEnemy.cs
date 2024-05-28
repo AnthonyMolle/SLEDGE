@@ -1,6 +1,7 @@
 using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
+using System;
 
 // Jonah Ryan
 
@@ -25,6 +26,7 @@ public class FlyingEnemy : MonoBehaviour
 
 
     Rigidbody rb;
+    SphereCollider sc;
     Vector3 targetPos;
     Vector3 currentWaypoint;
     Transform player;
@@ -41,7 +43,7 @@ public class FlyingEnemy : MonoBehaviour
 
     [Header("Death")]
     public GameObject deathRagdoll;
-
+    public float deathTimerTime = 1f;
     EnemyState enemyState = EnemyState.IDLE;
 
     // Setup our dependencies
@@ -49,6 +51,7 @@ public class FlyingEnemy : MonoBehaviour
     {
         player = GameObject.FindGameObjectWithTag("Player").transform;
         rb = GetComponent<Rigidbody>();
+        sc = GetComponent<SphereCollider>();
         startPosition = transform.position;
     }
     
@@ -212,13 +215,38 @@ public class FlyingEnemy : MonoBehaviour
     //     Debug.Log(rb.velocity);
     // }
 
+    IEnumerator Timer(float time, UnityEngine.Events.UnityAction func)
+    {
+        Debug.Log("timing");
+        yield return new WaitForSeconds(time);
+        Debug.Log("death time");
+        func();
+    }
+
 
     public void Die()
     {
+        Debug.Log("dying");
         // add sfx and vfx and such!
         GameObject.Find("ScoreManager").GetComponent<ScoreManager>().AddEnemiesKilled(1);
         GameObject cheesus = Instantiate(deathRagdoll, transform.position, Quaternion.identity);
         cheesus.GetComponent<Rigidbody>().AddForce(rb.velocity, ForceMode.VelocityChange);
+        StartCoroutine(Timer(deathTimerTime + 2f, End));
+        Disable();
+        // Destroy(gameObject);
+    }
+
+    public void Disable()
+    {
+        sc.enabled = false;
+        rb.isKinematic = false;
+        gameObject.GetComponent<BoxCollider>().enabled = false;
+        gameObject.transform.GetChild(0).gameObject.SetActive(false);
+    }
+
+    public void End()
+    {
+        Debug.Log("ded");
         Destroy(gameObject);
     }
 }
