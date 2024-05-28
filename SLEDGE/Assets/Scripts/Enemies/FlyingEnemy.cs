@@ -218,7 +218,7 @@ public class FlyingEnemy : MonoBehaviour
         // add sfx and vfx and such!
         GameObject.Find("ScoreManager").GetComponent<ScoreManager>().AddEnemiesKilled(1);
         GameObject cheesus = Instantiate(deathRagdoll, transform.position, Quaternion.identity);
-        cheesus.GetComponent<Rigidbody>().AddForce(rb.velocity, ForceMode.Impulse);
+        cheesus.GetComponent<Rigidbody>().AddForce(rb.velocity, ForceMode.VelocityChange);
         Destroy(gameObject);
     }
 }
