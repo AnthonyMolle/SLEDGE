@@ -1,3 +1,4 @@
+using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -34,7 +35,8 @@ public class FlyingEnemy : MonoBehaviour
     {
         IDLE,
         DIRECTHUNT,
-        ONPATH
+        ONPATH,
+        STUNNED
     }
 
     [Header("Death")]
@@ -161,6 +163,9 @@ public class FlyingEnemy : MonoBehaviour
                 rb.MovePosition(targetPos);
 
                 break;
+            
+            case EnemyState.STUNNED:
+                break;
 
         }
     }
@@ -186,8 +191,11 @@ public class FlyingEnemy : MonoBehaviour
         return currentHealth;
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(int damage, Vector3 direction, float force)
     {
+        enemyState = EnemyState.STUNNED;
+        rb.AddForce(transform.rotation * direction * force, ForceMode.Impulse);
+        Debug.Log("afterlocity: "+ rb.velocity);
         currentHealth -= damage;
         if (currentHealth <= 0)
         {
@@ -195,11 +203,22 @@ public class FlyingEnemy : MonoBehaviour
         }
     }
 
-    private void Die()
+    // public void Knockback(Vector3 direction, float force)
+    // {
+    //     Debug.Log("hello");
+    //     Vector3 dir = new Vector3(-0.5f, 0.5f, 0.5f);
+    //     float frace = 15f;
+    //     rb.AddForce(dir * frace, ForceMode.Impulse);
+    //     Debug.Log(rb.velocity);
+    // }
+
+
+    public void Die()
     {
         // add sfx and vfx and such!
         GameObject.Find("ScoreManager").GetComponent<ScoreManager>().AddEnemiesKilled(1);
-        Instantiate(deathRagdoll, transform.position, Quaternion.identity);
+        GameObject cheesus = Instantiate(deathRagdoll, transform.position, Quaternion.identity);
+        cheesus.GetComponent<Rigidbody>().AddForce(rb.velocity, ForceMode.VelocityChange);
         Destroy(gameObject);
     }
 }

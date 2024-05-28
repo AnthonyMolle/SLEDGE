@@ -44,7 +44,8 @@ public class ShooterEnemy : MonoBehaviour
     public enum EnemyState
     {
         IDLE,
-        HOSTILE
+        HOSTILE,
+        STUNNED
     }
 
     EnemyState enemyState = EnemyState.IDLE;
@@ -100,6 +101,9 @@ public class ShooterEnemy : MonoBehaviour
                 }
                 break;
 
+            case EnemyState.STUNNED:
+                break;
+
             default:
                 break;
         }
@@ -133,8 +137,11 @@ public class ShooterEnemy : MonoBehaviour
         return currentHealth;
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(int damage, Vector3 direction, float force)
     {
+        Debug.Log("danage");
+        enemyState = EnemyState.STUNNED;
+        rb.AddForce(direction * force, ForceMode.Impulse);
         currentHealth -= damage;
         if (currentHealth <= 0)
         {
@@ -142,11 +149,22 @@ public class ShooterEnemy : MonoBehaviour
         }
     }
 
+    // public void Knockback(Vector3 direction, float force)
+    // {
+    //     Debug.Log("hello");
+    //     Vector3 dir = new Vector3(-0.5f, 0.5f, 0.5f);
+    //     float frace = 15f;
+    //     rb.AddForce(dir * frace, ForceMode.Impulse);
+    //     Debug.Log("you just been forced");
+    //     Debug.Log(rb.velocity);
+    // }
+
     private void Die()
     {
         // add sfx and vfx and such!
         GameObject.Find("ScoreManager").GetComponent<ScoreManager>().AddEnemiesKilled(1);
-        Instantiate(deathRagdoll, transform.position, Quaternion.identity);
+        GameObject yeesus = Instantiate(deathRagdoll, transform.position, Quaternion.identity);
+        yeesus.GetComponent<Rigidbody>().AddForce(rb.velocity, ForceMode.Impulse);
         Destroy(gameObject);
     }
 
