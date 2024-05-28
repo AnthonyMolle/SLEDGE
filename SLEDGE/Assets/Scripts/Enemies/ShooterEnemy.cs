@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
 
 public class ShooterEnemy : MonoBehaviour
 {
@@ -26,14 +27,25 @@ public class ShooterEnemy : MonoBehaviour
     float cooldown = 2.0f;
     RaycastHit hit;
 
-    Transform gun;
+    public Transform gun;
     GameObject projectile;
     List<GameObject> projectiles = new List<GameObject>();
+
+    [Header("Animation")]
+    public GameObject deathRagdoll;
+    public GameObject rig;
+    public Animator anim;
+    public GameObject lookAtTarget;
+    public List<GameObject> trackConstraints;
+    public float angle;
+    private MultiAimConstraint chestConstraint;
+    [SerializeField] GameObject ShootSound;
 
     public enum EnemyState
     {
         IDLE,
-        HOSTILE
+        HOSTILE,
+        STUNNED
     }
 
     EnemyState enemyState = EnemyState.IDLE;
@@ -44,20 +56,27 @@ public class ShooterEnemy : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player");
         rb = GetComponent<Rigidbody>();
 
-        gun = transform.Find("Gun");
+        // gun = transform.Find("Gun");
         position = transform.position;
         currentHealth = maxHealth;
+        chestConstraint = trackConstraints[0].GetComponent<MultiAimConstraint>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        Vector3 lookPos = player.transform.position - transform.position;
-        lookPos.y = 0;
-        transform.rotation = Quaternion.LookRotation(lookPos);
+        lookAtTarget.transform.position = player.transform.position;
+        // transform.rotation = Quaternion.LookRotation(lookPos);
         rb.velocity = Vector3.zero;
-        transform.position = position;
+        // transform.position = position;
         cooldown += Time.deltaTime;
+        // rotate dude if you are behind him
+        Vector3 targetpos = new Vector3(lookAtTarget.transform.position.x, 0, lookAtTarget.transform.position.z);
+        Vector3 pos = new Vector3(transform.position.x, 0, transform.position.z);
+        angle = Vector3.Angle(lookAtTarget.transform.position - transform.position, transform.forward);
+        if (angle > 130) {
+            transform.rotation = Quaternion.LookRotation(targetpos - pos);
+        }
     }
 
     private void FixedUpdate()
@@ -82,6 +101,9 @@ public class ShooterEnemy : MonoBehaviour
                 }
                 break;
 
+            case EnemyState.STUNNED:
+                break;
+
             default:
                 break;
         }
@@ -89,7 +111,7 @@ public class ShooterEnemy : MonoBehaviour
 
     private bool PlayerinLOS()
     {
-        if (Physics.Raycast(transform.position, transform.forward, out hit, detectionRadius))
+        if (Physics.Raycast(transform.position, player.transform.position - transform.position, out hit, detectionRadius))
         {
             if (hit.collider.gameObject.tag == "Player")
             {
@@ -105,7 +127,8 @@ public class ShooterEnemy : MonoBehaviour
         // Debug.Log(player.transform.position);
         projectile = Instantiate(projectileType, gun.position, Quaternion.identity);
         projectiles.Add(projectile);
-        projectile.GetComponent<Projectile>().initializeProjectile(player.transform.position, bulletSpeed, bulletLifetime, false);
+        projectile.GetComponent<Projectile>().initializeProjectile(player.transform.position, bulletSpeed, bulletLifetime, false, null);
+        Instantiate(ShootSound, gameObject.transform.position, Quaternion.identity);
         return;
     }
 
@@ -114,8 +137,11 @@ public class ShooterEnemy : MonoBehaviour
         return currentHealth;
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(int damage, Vector3 direction, float force)
     {
+        Debug.Log("danage");
+        enemyState = EnemyState.STUNNED;
+        rb.AddForce(direction * force, ForceMode.Impulse);
         currentHealth -= damage;
         if (currentHealth <= 0)
         {
@@ -123,10 +149,22 @@ public class ShooterEnemy : MonoBehaviour
         }
     }
 
+    // public void Knockback(Vector3 direction, float force)
+    // {
+    //     Debug.Log("hello");
+    //     Vector3 dir = new Vector3(-0.5f, 0.5f, 0.5f);
+    //     float frace = 15f;
+    //     rb.AddForce(dir * frace, ForceMode.Impulse);
+    //     Debug.Log("you just been forced");
+    //     Debug.Log(rb.velocity);
+    // }
+
     private void Die()
     {
         // add sfx and vfx and such!
         GameObject.Find("ScoreManager").GetComponent<ScoreManager>().AddEnemiesKilled(1);
+        GameObject yeesus = Instantiate(deathRagdoll, transform.position, Quaternion.identity);
+        yeesus.GetComponent<Rigidbody>().AddForce(rb.velocity, ForceMode.Impulse);
         Destroy(gameObject);
     }
 

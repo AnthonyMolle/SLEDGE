@@ -36,9 +36,9 @@ public class Shared_Slider_State : MonoBehaviour
 
     public void UpdateValue(float value)
     {
-        onValueChange.Invoke();
         this.value = Mathf.Clamp(value, min, max);
         textBox.text = Mathf.Round(value).ToString();
         slider.value = value;
+        onValueChange.Invoke();
     }
 }

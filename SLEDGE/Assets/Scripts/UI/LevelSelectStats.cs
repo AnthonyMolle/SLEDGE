@@ -14,18 +14,21 @@ public class LevelSelectStats : MonoBehaviour
     public TextMeshProUGUI collectibleText;
 
     public string LevelName;
-    
-    // MAKE THIS LESS CRINGE LATER!
-    public GameObject playerSaveData;
 
     // Start is called before the first frame update
     void Start()
     {
-        if (PlayerSaveData.Instance == null)
-        {
-            Instantiate(playerSaveData);
-        }
+        TryUpdateLevelData();
+    }
 
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
+
+    public void TryUpdateLevelData()
+    {
         if (PlayerSaveData.Instance.ContainsLevelData(LevelName))
         {
             TimeSpan time = TimeSpan.FromSeconds(PlayerSaveData.Instance.GetLevelTime(LevelName));
@@ -39,11 +42,5 @@ public class LevelSelectStats : MonoBehaviour
             rankText.text = "Best Rank: N/A";
             collectibleText.text = "Collectibles: N/A";
         }
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

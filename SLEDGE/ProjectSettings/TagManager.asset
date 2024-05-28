@@ -8,6 +8,9 @@ TagManager:
   - Audio
   - Enemy Shooter
   - HammerSound
+  - HammerCamera
+  - Bouncy
+  - Collectible
   layers:
   - Default
   - TransparentFX
@@ -20,6 +23,12 @@ TagManager:
   - Enemy
   - Death Plane
   - Projectile
+  - Gibs
+  - Player
+  - HammerHitbox
+  - Collectible
+  - 
+  - Non-Colliding Visible
   - 
   - 
   - 
@@ -34,13 +43,7 @@ TagManager:
   - 
   - 
   - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - post process
   m_SortingLayers:
   - name: Default
     uniqueID: 0
