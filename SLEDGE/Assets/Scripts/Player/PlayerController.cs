@@ -141,6 +141,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] LayerMask swipeLayers;
 
     RaycastHit distanceCheck;
+    
 
     bool isLaunched = false;
 
@@ -156,6 +157,11 @@ public class PlayerController : MonoBehaviour
     bool hammerHit = false;
     bool hammerSwipe = false;
 
+    Vector3 hitDirection;
+    float swingForce;
+    float swipeForceBase = 20f;
+    float smashForceBase = 30f;
+
     float hammerTimer = 0;
     float hangTime = 0;
     float walkTime = 0;
@@ -168,6 +174,7 @@ public class PlayerController : MonoBehaviour
         Swipe3
     }
     Combo currentCombo = Combo.notSwiping;
+
 
     [SerializeField] float parriedProjectileSpeed = 1f;
     [SerializeField] float parriedProjectileLifetime = 10f;
@@ -349,7 +356,8 @@ public class PlayerController : MonoBehaviour
             hammerTimer = swipeTime;
             anim.Play("Hit 1");
             currentCombo = Combo.Swipe1;
-
+            hitDirection = new Vector3(1f, -0.8f, 0);
+            swingForce = swipeForceBase;
         }
         // combo swipes
         if (secondaryPressed && !chargingHammer && !recovering && !hittingHammer && !hammerCharged && !swipingHammer && swipeComboReady && currentCombo == Combo.Swipe1) // for a lil combo, might want to include input when swiping
@@ -359,6 +367,8 @@ public class PlayerController : MonoBehaviour
             hammerTimer = swipeTime;
             anim.Play("Hit 2");
             currentCombo = Combo.Swipe2;
+            hitDirection = new Vector3(-1f, -0.8f, 0);
+            swingForce = swipeForceBase;
         }
         if (secondaryPressed && !chargingHammer && !recovering && !hittingHammer && !hammerCharged && !swipingHammer && swipeComboReady && currentCombo == Combo.Swipe2)
         {
@@ -367,6 +377,8 @@ public class PlayerController : MonoBehaviour
             hammerTimer = swipeTime;
             anim.Play("Hit 1");
             currentCombo = Combo.Swipe1;
+            hitDirection = new Vector3(1f, -0.8f, 0);
+            swingForce = swipeForceBase;
         }
         // if (secondaryPressed && !chargingHammer && !recovering && !hittingHammer && !hammerCharged && !swipeRecovering && !swipingHammer && swipeComboReady && currentCombo == Combo.Swipe2)
         // {
@@ -433,6 +445,8 @@ public class PlayerController : MonoBehaviour
             recovering = true;
             hammerTimer = recoveryTime;
             hammerBounced = false;
+            hitDirection = new Vector3(-0.1f, -0.2f, -1f);
+            swingForce = smashForceBase;
         }
         else if (recovering)
         {
@@ -826,11 +840,13 @@ public class PlayerController : MonoBehaviour
                 }
                 else if (hit.transform.gameObject.tag == "Enemy Flyer")
                 {
-                    hit.transform.gameObject.GetComponent<FlyingEnemy>().TakeDamage(1);
+                    var e = hit.transform.gameObject.GetComponent<FlyingEnemy>();
+                    e.TakeDamage(1, hitDirection, swingForce * 1.5f);
                 }
                 else if (hit.transform.gameObject.tag == "Enemy Shooter")
                 {
-                    hit.transform.gameObject.GetComponent<ShooterEnemy>().TakeDamage(1);
+                    var e = hit.transform.gameObject.GetComponent<ShooterEnemy>();
+                    e.TakeDamage(1, hitDirection, swingForce * 1.5f);
                 }
             }
 
@@ -925,11 +941,11 @@ public class PlayerController : MonoBehaviour
             {
                 if (hit.transform.gameObject.tag == "Enemy Flyer")
                 {
-                    hit.transform.gameObject.GetComponent<FlyingEnemy>().TakeDamage(1);
+                    hit.transform.gameObject.GetComponent<FlyingEnemy>().TakeDamage(1, hitDirection, swingForce);
                 }
                 else if (hit.transform.gameObject.tag == "Enemy Shooter")
                 {
-                    hit.transform.gameObject.GetComponent<ShooterEnemy>().TakeDamage(1);
+                    hit.transform.gameObject.GetComponent<ShooterEnemy>().TakeDamage(1, hitDirection, swingForce);
                 }
                 else if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Projectile"))
                 {
@@ -1039,7 +1055,6 @@ public class PlayerController : MonoBehaviour
             Die();
         }
     }
-
     public void UpdateSpawn(int index, Checkpoint check)
     {
         if (index > currentSpawnIndex)
