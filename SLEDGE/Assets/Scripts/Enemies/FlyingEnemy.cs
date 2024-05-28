@@ -78,7 +78,7 @@ public class FlyingEnemy : MonoBehaviour
     private void FixedUpdate()
     {
 
-        // rb.velocity = Vector3.zero;
+        rb.velocity = Vector3.zero;
 
         switch (enemyState)
         {
@@ -107,7 +107,7 @@ public class FlyingEnemy : MonoBehaviour
 
                 // Move towards player
                 targetPos = Vector3.MoveTowards(transform.position, player.position, movementSpeed * Time.deltaTime);
-                // rb.MovePosition(targetPos);
+                rb.MovePosition(targetPos);
 
                 // If player not in line of sight, pathfind to player
                 if (!transformInView(transform.position, player.position, player, Mathf.Infinity))
