@@ -32,7 +32,6 @@ public class ScoreManager : MonoBehaviour
     {
         // Possibly track specific collectibles later?
         CollectiblesFound++;
-        Debug.Log("Collectibles found: " + CollectiblesFound);
     }
 
     #endregion
@@ -75,7 +74,10 @@ public class ScoreManager : MonoBehaviour
 
     void Start()
     {
-
+        if (DataCollection.Instance != null)
+        {
+            DataCollection.Instance.RecordLevelStartEvent();
+        }
 
         MaxCollectibles = GameObject.FindGameObjectsWithTag("Collectible").Length;
         //Debug.Log("Collectibles: " + MaxCollectibles);

@@ -10,6 +10,7 @@ using UnityEngine.AI;
 using UnityEngine.PlayerLoop;
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.ProBuilder.Shapes;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
@@ -77,6 +78,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float airAccelerationRate = 10f;
     [SerializeField] float airMaxSpeed = 100f;
 
+    [SerializeField] float maxLaunchedSpeed = 100f;
+    [SerializeField] float maxFallingSpeed = 100f;
+
     [SerializeField] float naturalAdditionalFallingSpeed = 4f; //natural rate our player will fall after the apex of their falling height.
     [SerializeField] float extraGravityYThreshold = 5f;
     #endregion
@@ -121,6 +125,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float bouncyUpForce = 10f;
     [SerializeField] float bouncyForce = 25f;
     [SerializeField] float hitLength = 5f;
+    [SerializeField] float hitRadius = 1f;
 
     [SerializeField] float chargeTime = 1f;
     [SerializeField] float hitTime = 1f;
@@ -167,16 +172,12 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float parriedProjectileSpeed = 1f;
     [SerializeField] float parriedProjectileLifetime = 10f;
 
-    [SerializeField] HammerHitbox slamHitbox;
-    [SerializeField] Vector3 hammerSlamSize;
-    [SerializeField] float hammerSlamTime;
-
     AudioManager audioManager;
     [SerializeField] GameObject HammerSound;
 
     private void Awake()
     {
-        audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
+
     }
 
     #endregion
@@ -186,6 +187,8 @@ public class PlayerController : MonoBehaviour
     public GameObject canvas;
 
     public TextMeshProUGUI displayDistance;
+    public TextMeshProUGUI speedometer;
+    public TextMeshProUGUI tempPowerupUI;
 
     [SerializeField] GameObject pause;
 
@@ -195,8 +198,21 @@ public class PlayerController : MonoBehaviour
 
     #endregion
 
+    #region Power Ups
+    public enum Powerup { None, Airburst, Explosive }
+
+    Powerup currentPowerup;
+
+    [Header("Power Ups")]
+    [Tooltip("How much we add to bounce force when the explosive powerup is enabled.")]
+    public float explosiveForce;
+
+    #endregion
+
     void Start()
     {
+        audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
+
         Cursor.lockState = CursorLockMode.Locked; // lock the cursor to the center of the screen
         Cursor.visible = false; // make the cursor not visible
         
@@ -206,14 +222,11 @@ public class PlayerController : MonoBehaviour
         pause = canvas.transform.Find("PauseMenu").gameObject;
         displayDistance = canvas.transform.Find("Distance").gameObject.GetComponent<TextMeshProUGUI>();
 
-        slamHitbox.InitializeCollider(hammerSlamSize.x, hammerSlamSize.y, hammerSlamSize.z);
-
         mouseSensitivity = PlayerPrefs.GetFloat("Sensitivity", 400); // set the mouse sensitivity
-        Debug.Log(currentCombo);
 
         currentHealth = maxHealth; // set health to max
 
-        currentCheckpoint = firstCheckpoint; //set the currentcheckpoint to the start of the level.
+        ResetPowerup();
     }
 
     // Update is called once per frame
@@ -232,6 +245,8 @@ public class PlayerController : MonoBehaviour
         {
             hangTime = 0;
         }
+
+        speedometer.text = rb.velocity.magnitude.ToString("0.0") + "mph";
     }
 
     void FixedUpdate()
@@ -245,12 +260,21 @@ public class PlayerController : MonoBehaviour
         if (hammerHit)
         {
             hammerHit = false;
-            HammerBounce();
+            hammerBounced = false;
         }
 
         if (hammerSwipe)
         {
             hammerSwipe = false;
+        }
+
+        if (hittingHammer)
+        {
+            HammerBounce();
+        }
+
+        if (swipingHammer)
+        {
             HammerHit();
         }
     }
@@ -317,9 +341,9 @@ public class PlayerController : MonoBehaviour
 
     private void HandleHammer()
     {
+
         if (secondaryPressed && !chargingHammer && !recovering && !hittingHammer && !hammerCharged && !swipingHammer && currentCombo == Combo.notSwiping)
         {
-            Debug.Log("swam");
             swipingHammer = true;
             swipeComboReady = false;
             hammerTimer = swipeTime;
@@ -330,7 +354,6 @@ public class PlayerController : MonoBehaviour
         // combo swipes
         if (secondaryPressed && !chargingHammer && !recovering && !hittingHammer && !hammerCharged && !swipingHammer && swipeComboReady && currentCombo == Combo.Swipe1) // for a lil combo, might want to include input when swiping
         {
-            Debug.Log("hammer swipe continue");
             swipingHammer = true;
             swipeComboReady = false;
             hammerTimer = swipeTime;
@@ -339,7 +362,6 @@ public class PlayerController : MonoBehaviour
         }
         if (secondaryPressed && !chargingHammer && !recovering && !hittingHammer && !hammerCharged && !swipingHammer && swipeComboReady && currentCombo == Combo.Swipe2)
         {
-            Debug.Log("chicky");
             swipingHammer = true;
             swipeComboReady = false;
             hammerTimer = swipeTime;
@@ -363,6 +385,7 @@ public class PlayerController : MonoBehaviour
             hammerTimer = chargeTime;
             //anim.Play("HammerCharge"); 
             anim.Play("Charge 2");
+            hammerBounced = false;
         }
 
         if (chargingHammer && hammerTimer > 0.1 && mouseReleased)
@@ -371,13 +394,14 @@ public class PlayerController : MonoBehaviour
             currentCombo = Combo.notSwiping;
             chargingHammer = false;
             hammerTimer = 0;
+            hammerBounced = false;
         }
 
         if (mouseReleased && hammerCharged)
         {
             hammerCharged = false;
             hittingHammer = true;
-            slamHitbox.ActivateCollider();
+            //slamHitbox.ActivateCollider();
 
             hammerTimer = hitTime;
             
@@ -394,6 +418,7 @@ public class PlayerController : MonoBehaviour
             chargingHammer = false;
             //anim.Play("HammerHold"); 
             anim.Play("Charged 1 Hold");
+            hammerBounced = false;
         }
         else if (hittingHammer)
         {
@@ -403,15 +428,17 @@ public class PlayerController : MonoBehaviour
             //audioManager.PlaySFX(audioManager.hit);
             //anim.Play("HammerHit"); 
             anim.Play("Slam 2");
-            slamHitbox.DeactivateCollider();
+            //slamHitbox.DeactivateCollider();
 
             recovering = true;
             hammerTimer = recoveryTime;
+            hammerBounced = false;
         }
         else if (recovering)
         {
             //Debug.Log("recovery ended");
             recovering = false;
+            hammerBounced = false;
         }
         else if (swipingHammer)
         {
@@ -424,14 +451,12 @@ public class PlayerController : MonoBehaviour
         }
         else if (swipeRecovering)
         {
-            Debug.Log("COMBO READY");
             swipeRecovering = false;
             swipeComboReady = true;
             hammerTimer = swipeRecoveryTime;
         }
         else if (swipeComboReady)
         {
-            Debug.Log("COMBO OVER");
             swipeComboReady = false;
             currentCombo = Combo.notSwiping;
         }
@@ -567,6 +592,7 @@ public class PlayerController : MonoBehaviour
             if (isGrounded == false && hangTime >= .25)
             {
                 audioManager.PlaySFX(audioManager.land);
+                StartCoroutine(FindObjectOfType<ScreenShaker>().Shake(0.1f, 0.01f, 0, 0, 0.1f));
             }
             isGrounded = true;
             movementPlane = hit.normal;
@@ -656,15 +682,22 @@ public class PlayerController : MonoBehaviour
             #region Air movement
             else // if we're in the air
             {
-                if(rb.velocity.y <= extraGravityYThreshold)// if we are at the apex of our air height
+                if (rb.velocity.y > -maxFallingSpeed)
                 {
-                    rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
+                    if(rb.velocity.y <= extraGravityYThreshold)// if we are at the apex of our air height
+                    {
+                        rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
+                    }
+                    
+                    if (hammerCharged && !isGrounded && hangTime > 1)
+                    {
+                        rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
+                    }
                 }
-                
-                if (hammerCharged && !isGrounded && hangTime > 1)
-                {
-                    rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
-                }
+            else
+            {
+                rb.velocity = new Vector3(rb.velocity.x, -maxFallingSpeed, rb.velocity.z);
+            }
 
                 if (movementInputVector.magnitude > 0.001)
                 {
@@ -705,21 +738,25 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            if(rb.velocity.y <= extraGravityYThreshold)// if we are at the apex of our air height
+            if (rb.velocity.y > -maxFallingSpeed)
             {
-                rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
+                if(rb.velocity.y <= extraGravityYThreshold)// if we are at the apex of our air height
+                {
+                    rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
+                }
+                
+                if (hammerCharged && !isGrounded && hangTime > 1)
+                {
+                    rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
+                }
             }
-            
-            if (hammerCharged && !isGrounded && hangTime > 1)
+            else
             {
-                rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
+                rb.velocity = new Vector3(rb.velocity.x, -maxFallingSpeed, rb.velocity.z);
             }
-
-        
 
             if (movementInputVector.magnitude > 0.001)
             {
-                Debug.Log((rb.velocity + movementInputVector).magnitude + ", " + rb.velocity.magnitude);
 
                 if ((rb.velocity + movementInputVector).magnitude > rb.velocity.magnitude - 0.5)
                 {
@@ -764,32 +801,71 @@ public class PlayerController : MonoBehaviour
         hasJumped = true; // let the engine know we have jumped.
     }
 
+    bool hammerBounced = false;
+
     private void HammerBounce()
     {
-        Ray ray = gameCamera.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit1;
-
-        if (Physics.Raycast(ray, out hit1, hitLength, bouncableLayers))
+        
+        if (hammerBounced)
         {
+            return;
+        }
+
+        Ray ray = gameCamera.ScreenPointToRay(Input.mousePosition);
+        bool bouncy = false;
+
+        RaycastHit[] hits = Physics.SphereCastAll(ray, hitRadius, hitLength, bouncableLayers, QueryTriggerInteraction.Collide);
+
+        if (hits.Length > 0 || currentPowerup == Powerup.Airburst)
+        {
+            foreach (RaycastHit hit in hits)
+            {
+                if (hit.transform.gameObject.tag == "Bouncy")
+                {
+                    bouncy = true;
+                }
+                else if (hit.transform.gameObject.tag == "Enemy Flyer")
+                {
+                    hit.transform.gameObject.GetComponent<FlyingEnemy>().TakeDamage(1);
+                }
+                else if (hit.transform.gameObject.tag == "Enemy Shooter")
+                {
+                    hit.transform.gameObject.GetComponent<ShooterEnemy>().TakeDamage(1);
+                }
+            }
+
+            //Vector3 normal = hit1.normal.normalized;
+            //float angle = Vector3.Angle(hit1.point - cameraObject.transform.position, -transform.up);
+            //float wallAngle = Vector3.Angle(normal, Vector3.down);
+            //float wallVSFlatVelAngle = Vector3.Angle(normal, rb.velocity);
+
             rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
 
-            Vector3 normal = hit1.normal.normalized;
-            float angle = Vector3.Angle(hit1.point - cameraObject.transform.position, -transform.up);
-            float wallAngle = Vector3.Angle(normal, Vector3.down);
-            float wallVSFlatVelAngle = Vector3.Angle(normal, rb.velocity);
+            
+            if (currentPowerup == Powerup.Airburst)
+            {
+                ResetPowerup();
+            }
 
-            if (hit1.transform.gameObject.tag == "Bouncy")
+            if (currentPowerup == Powerup.Explosive)
+            {
+                isLaunched = true;
+                rb.AddForce((-ray.direction).normalized * explosiveForce, ForceMode.Impulse);
+            }
+            else if (bouncy)
             {
                 isLaunched = true;
                 rb.velocity = Vector3.zero;
-                rb.AddForce((transform.position - hit1.point).normalized * bouncyForce/* + normal * 10*/, ForceMode.Impulse);
+                rb.AddForce((-ray.direction).normalized * bouncyForce/* + normal * 10*/, ForceMode.Impulse);
                 rb.AddForce(transform.up * bouncyUpForce, ForceMode.Impulse);
             }
             else if (!isLaunched)
             {
                 isLaunched = true;
                 rb.velocity = rb.velocity / 8;
-                Vector3 force = (transform.position - hit1.point).normalized * initialBounceForce;
+                Vector3 force = (-ray.direction).normalized * initialBounceForce;
+
+
                 if (force.y > maxInitialBounceYForce)
                 {
                     rb.AddForce(new Vector3(force.x, maxInitialBounceYForce, force.z), ForceMode.Impulse);
@@ -801,10 +877,12 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                rb.AddForce((transform.position - hit1.point).normalized * bounceForce/* + normal * 10*/, ForceMode.Impulse);
+                rb.AddForce((-ray.direction).normalized * bounceForce/* + normal * 10*/, ForceMode.Impulse);
             }
             
             Instantiate(HammerSound, gameObject.transform.position, Quaternion.identity);
+            StartCoroutine(FindObjectOfType<ScreenShaker>().Shake(0.25f, 0.01f, 0, 0, 0.25f));
+            
 
             // bouncing up one wall over and over again is still far too viable, but theres some improvement to the basic 90 degree angled hammer wall bounces
             // if (angle < 110 && angle > 30 && wallAngle > 80 && wallAngle < 100)
@@ -817,15 +895,11 @@ public class PlayerController : MonoBehaviour
             //     rb.velocity = new Vector3(0, rb.velocity.y, 0);
             // }
 
-
-            if (hit1.transform.gameObject.tag == "Enemy Flyer")
+            if (currentPowerup == Powerup.Explosive)
             {
-                hit1.transform.gameObject.GetComponent<FlyingEnemy>().TakeDamage(1);
+                LoseExplosive();
             }
-            else if (hit1.transform.gameObject.tag == "Enemy Shooter")
-            {
-                hit1.transform.gameObject.GetComponent<ShooterEnemy>().TakeDamage(1);
-            }
+            hammerBounced = true;
         }
         else 
         {
@@ -833,29 +907,101 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    [Header("Parrying")]
+    [SerializeField] float maxTargetAngle = 30f;
+    [SerializeField] float minTargetDistance = 5f;
+    [SerializeField] float maxTargetDistance = 50f;
+
     private void HammerHit()
     {
         //Add parry and hit sounds in if statements
         Ray ray = gameCamera.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit1;
-        if (Physics.Raycast(ray, out hit1, hitLength, swipeLayers))
+
+        RaycastHit[] hits = Physics.SphereCastAll(ray, hitRadius, hitLength, swipeLayers);
+
+        if (hits.Length > 0)
         {
-            if (hit1.transform.gameObject.tag == "Enemy Flyer")
+            foreach (RaycastHit hit in hits)
             {
-                hit1.transform.gameObject.GetComponent<FlyingEnemy>().TakeDamage(1);
-                audioManager.PlaySFX(audioManager.hit);
+                if (hit.transform.gameObject.tag == "Enemy Flyer")
+                {
+                    hit.transform.gameObject.GetComponent<FlyingEnemy>().TakeDamage(1);
+                }
+                else if (hit.transform.gameObject.tag == "Enemy Shooter")
+                {
+                    hit.transform.gameObject.GetComponent<ShooterEnemy>().TakeDamage(1);
+                }
+                else if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Projectile"))
+                {
+                    Projectile projectile = hit.transform.gameObject.GetComponent<Projectile>();
+
+                    if (!projectile.CheckParried())
+                    {
+                        projectile.initializeProjectile(ray.GetPoint(100), parriedProjectileSpeed, parriedProjectileLifetime, true, CalculateTargetEnemy(ray));
+                        FindObjectOfType<Hitstop>().Stop(0.15f);
+                    }
+                }
+                else if (hit.transform.gameObject.tag == "Collectible")
+                {
+                    hit.transform.gameObject.GetComponent<Rigidbody>().AddForce(ray.direction * 50, ForceMode.Impulse);
+                }
             }
-            else if (hit1.transform.gameObject.tag == "Enemy Shooter")
+
+            StartCoroutine(FindObjectOfType<ScreenShaker>().Shake(0.1f, 0.01f, 0, 0, 0.1f));
+        }
+    }
+
+    [SerializeField] LayerMask enemyLayers;
+
+    private GameObject CalculateTargetEnemy(Ray mouseLookDirection)
+    {
+        GameObject targetCandidate = null;
+
+        Collider[] enemies = Physics.OverlapSphere(transform.position, maxTargetDistance, enemyLayers);
+
+        float targetCandidateAngle = 1000;
+
+        foreach (Collider enemy in enemies)
+        {
+            float distance = Vector3.Distance(transform.position, enemy.transform.position);
+            if (distance < minTargetDistance)
             {
-                hit1.transform.gameObject.GetComponent<ShooterEnemy>().TakeDamage(1);
-                audioManager.PlaySFX(audioManager.hit);
+                continue;
             }
-            else if (hit1.transform.gameObject.layer == LayerMask.NameToLayer("Projectile"))
+
+            float angle = Vector3.Angle(mouseLookDirection.direction, enemy.transform.position - transform.position);
+            if (angle > maxTargetAngle)
             {
-                hit1.transform.gameObject.GetComponent<Projectile>().initializeProjectile(ray.GetPoint(100), parriedProjectileSpeed, parriedProjectileLifetime, true);
-                FindObjectOfType<Hitstop>().Stop(0.15f);
+                continue;
+            }
+
+            Debug.Log(angle);
+
+            if (targetCandidate != null)
+            {
+                if (targetCandidateAngle > angle)
+                {
+                    Debug.Log("targetfound");
+                    targetCandidate = enemy.gameObject;
+                    targetCandidateAngle = angle;
+                }
+            }
+            else
+            {
+                Debug.Log("targetfound");
+                targetCandidate = enemy.gameObject;
+                targetCandidateAngle = angle;
             }
         }
+
+        return targetCandidate;
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, minTargetDistance);
+        Gizmos.DrawWireSphere(transform.position, maxTargetDistance);
     }
 
     void UpdateDistanceHud()
@@ -914,10 +1060,14 @@ public class PlayerController : MonoBehaviour
     {
         alive = true;
 
-        if (currentCheckpoint != null) //if the player has a checkpoint stored, remove it and get an updated one.
+        if (currentCheckpoint == null)
         {
-            currentCheckpoint.Reset();
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            return;
         }
+
+        //if the player has a checkpoint stored, remove it and get an updated one.
+        currentCheckpoint.Reset();
 
         rb.velocity = Vector3.zero;
 
@@ -929,5 +1079,32 @@ public class PlayerController : MonoBehaviour
     public bool CheckMoving()
     {
         return movementInputVector.magnitude != 0;
+    }
+
+    public void CollectPowerup(Powerup newPowerup)
+    {
+        currentPowerup = newPowerup;
+        if (currentPowerup == Powerup.Explosive)
+        {
+            tempPowerupUI.text = "Active Powerup: Explosive";
+        }
+        else if (currentPowerup == Powerup.Airburst)
+        {
+            tempPowerupUI.text = "Active Powerup: Airburst";
+        }
+    }
+
+    void LoseExplosive()
+    {
+        ResetPowerup();
+    }
+
+    void ResetPowerup()
+    {
+        currentPowerup = Powerup.None;
+        if (tempPowerupUI != null)
+        {
+            tempPowerupUI.text = "Active Powerup: None";
+        }
     }
 }
