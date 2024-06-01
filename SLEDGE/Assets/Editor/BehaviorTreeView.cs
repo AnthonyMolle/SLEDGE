@@ -109,6 +109,12 @@ public class BehaviorTreeView : GraphView
             });
         }
 
+        if (tree != null)
+        {
+            EditorUtility.SetDirty(tree);
+            AssetDatabase.SaveAssets();
+        }
+
         return graphViewChange;
     }
 
