@@ -15,7 +15,7 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: 87f44f9c26459a24d83c8ea718a0656a
-  position: {x: 115.20001, y: -16}
+  position: {x: 129.74754, y: -35.160393}
   blackboard:
     currentState: 0
     player: {fileID: 0}
@@ -38,7 +38,7 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: a6b8a4a8f0d4186409a5941a1125c751
-  position: {x: -205.59998, y: -163.2}
+  position: {x: -207.0525, y: -206.36041}
   blackboard:
     currentState: 0
     player: {fileID: 0}
@@ -46,7 +46,10 @@ MonoBehaviour:
     alertRange: 0
   description: Check if IDLE
   child: {fileID: 1230481549355620063}
+  flag: 0
+  i: 0
   stateToCheckFor: 0
+  BlackboardVariableName: attackRange
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -88,7 +91,7 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: aeb4b53ca73ec524f84f5ff4ea62e4dd
-  position: {x: 115.400024, y: -163.2}
+  position: {x: 130.54747, y: -182.3604}
   blackboard:
     currentState: 0
     player: {fileID: 0}
@@ -96,7 +99,10 @@ MonoBehaviour:
     alertRange: 0
   description: Check if Hostile
   child: {fileID: -8444841181762312169}
+  flag: 0
+  i: 0
   stateToCheckFor: 1
+  BlackboardVariableName: 
 --- !u!114 &1230481549355620063
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -112,7 +118,7 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: 6e6f89c98e9a5c64eb89ddba7a30d62d
-  position: {x: -221.64877, y: -15.999995}
+  position: {x: -207.0525, y: -35.160393}
   blackboard:
     currentState: 0
     player: {fileID: 0}
@@ -135,7 +141,7 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: 11d37fa38c4b2c6429d0ec4ecf4f0ae7
-  position: {x: -34.399822, y: -412.8721}
+  position: {x: -35.200024, y: -399.3641}
   blackboard:
     currentState: 0
     player: {fileID: 0}
