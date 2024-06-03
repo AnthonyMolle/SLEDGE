@@ -24,10 +24,10 @@ MonoBehaviour:
   description: 
   child: {fileID: -8444841181762312169}
   currentState: 1
-  player: {fileID: 0}
-  attackRange: 0
+  player: {fileID: 765358623864573794, guid: 0b402d229c8451245b63baec8f5eee3a, type: 3}
+  attackRange: 10
   alertRange: 0
-  variableName: currentState
+  local_input: player
 --- !u!114 &-8444841181762312169
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -43,7 +43,7 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: 87f44f9c26459a24d83c8ea718a0656a
-  position: {x: 129.59998, y: 137.6}
+  position: {x: 129.6, y: 137.6}
   blackboard:
     currentState: 0
     player: {fileID: 0}
@@ -75,10 +75,10 @@ MonoBehaviour:
   description: 
   child: {fileID: 1230481549355620063}
   currentState: 0
-  player: {fileID: 0}
-  attackRange: 0
-  alertRange: 0
-  variableName: currentState
+  player: {fileID: 765358623864573794, guid: 72791d95cee660147917361f531f775b, type: 3}
+  attackRange: 6
+  alertRange: 6
+  local_input: player
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -101,8 +101,8 @@ MonoBehaviour:
   - {fileID: -6948589007078128407}
   - {fileID: -8539460249734804569}
   blackboard:
-    currentState: 1
-    player: {fileID: 0}
+    currentState: 0
+    player: {fileID: 765358623864573794, guid: 72791d95cee660147917361f531f775b, type: 3}
     attackRange: 10
     alertRange: 0
 --- !u!114 &1230481549355620063

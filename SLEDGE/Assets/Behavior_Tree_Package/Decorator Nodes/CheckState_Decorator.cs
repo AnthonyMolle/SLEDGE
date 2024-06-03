@@ -11,14 +11,14 @@ public class CheckState_Decorator : DecoratorNode
     public float alertRange;
 
     // Unique to state
-    public string variableName = "";
     public FieldInfo currentField_blackboard;
     public FieldInfo currentField_local;
 
+    public string local_input;
 
     protected override void OnStart()
     {
-        updateField();
+        updateField(local_input);
     }
 
     protected override void OnStop()
@@ -27,24 +27,31 @@ public class CheckState_Decorator : DecoratorNode
 
     protected override State OnUpdate()
     {
-
-        Debug.Log("Blackboard field: " + currentField_blackboard + " Blackboard Value: " + currentField_blackboard.GetValue(blackboard));
-        Debug.Log("Local field: " + currentField_local + " Local Value: " + currentField_local.GetValue(this));
-        if (currentField_blackboard == null || currentField_local == null || currentField_blackboard.GetValue(blackboard) != currentField_local.GetValue(this))
+        if(currentField_blackboard == null || currentField_local == null)
         {
             return State.Failure;
-        } 
+        }
 
+        object x = currentField_blackboard.GetValue(blackboard);
+        object y = currentField_local.GetValue(this);
+
+        if (x.ToString() != y.ToString())
+        {
+            return State.Failure;
+        }
+        
         return child.Update();
     }
 
-    public void updateField()
+    public void updateField(string name)
     {
+        local_input = name;
+
         FieldInfo[] fields = blackboard.GetType().GetFields();
 
         foreach (var field in fields)
         {
-            if (field.Name == variableName)
+            if (field.Name == name)
             {
                 currentField_blackboard = field;
                 break;
@@ -55,7 +62,7 @@ public class CheckState_Decorator : DecoratorNode
 
         foreach (var field in theseFields)
         {
-            if (field.Name == variableName)
+            if (field.Name == name)
             {
                 currentField_local = field;
                 break;
@@ -73,47 +80,45 @@ public class CheckState_Decorator : DecoratorNode
 [CustomEditor(typeof(CheckState_Decorator))]
 public class CheckStateEditor : Editor
 {
+    SerializedProperty comparison; 
+    string input = "";
+
+    CheckState_Decorator last_decor;
+
+
     // Create Inspector UI 
     public override void OnInspectorGUI()
     {
         var script = target as CheckState_Decorator;
-        script.variableName = EditorGUILayout.TextField("Enter Variable:", script.variableName);
-     
-        if (script.variableName != null)
+
+        if(last_decor != script)
+        {
+            input = script.local_input;
+        }
+
+        last_decor = script;
+
+        input = EditorGUILayout.TextField("Enter Variable:", input);
+
+        if (input != null)
         {
             // Goal is to have generic SerializedProperty that can be modified 
 
             // This will be the value compared to the matching blackboard name.
 
             // This finds one of the above containers that match the variables in our blackboard
-            SerializedProperty comparison = serializedObject.FindProperty(script.variableName);
+            comparison = serializedObject.FindProperty(input);
 
             if (comparison != null)
             {
                 // This tells the inspector to update the matching container when modified
                 EditorGUILayout.PropertyField(comparison);
-                script.updateField();
+                script.updateField(input);
             }
         }
         if (serializedObject != null)
         {
             serializedObject.ApplyModifiedProperties();
         }
-
-        /*        if (GUI.changed)
-                {
-                    if (script.comparison != null)
-                    {
-                        object tempValue = script.comparison.boxedValue;
-
-                        if (tempValue != null)
-                        {
-                            script.lastValue = tempValue;
-                        }
-
-                        script.carryOver = 100;
-                    }
-                    script.updateField();
-                }*/
     }
 }
