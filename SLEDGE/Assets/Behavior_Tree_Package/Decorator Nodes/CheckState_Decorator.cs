@@ -1,23 +1,24 @@
 using UnityEngine;
 using UnityEditor;
 using System.Reflection;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 
 public class CheckState_Decorator : DecoratorNode
 {
-    public string _string;
-    public int _i;
-    public float _f;
-    public GameObject _object;
-    public Blackboard.EnemyStates _enum;
+    // Copied from blackboard to store what this checkState is looking for
+    public Blackboard.EnemyStates currentState;
+    public GameObject player;
+    public float attackRange;
+    public float alertRange;
 
-    public string BlackboardVariableName;
-    public FieldInfo BlackboardInfo;
+    // Unique to state
+    public string variableName = "";
+    public FieldInfo currentField_blackboard;
+    public FieldInfo currentField_local;
+
 
     protected override void OnStart()
     {
-
+        updateField();
     }
 
     protected override void OnStop()
@@ -27,98 +28,92 @@ public class CheckState_Decorator : DecoratorNode
     protected override State OnUpdate()
     {
 
-
-        if(BlackboardInfo == null && BlackboardVariableName != null)
+        Debug.Log("Blackboard field: " + currentField_blackboard + " Blackboard Value: " + currentField_blackboard.GetValue(blackboard));
+        Debug.Log("Local field: " + currentField_local + " Local Value: " + currentField_local.GetValue(this));
+        if (currentField_blackboard == null || currentField_local == null || currentField_blackboard.GetValue(blackboard) != currentField_local.GetValue(this))
         {
-            BlackboardInfo = blackboard.GetType().GetField(BlackboardVariableName);
-        }
-
-        var obj = BlackboardInfo.GetValue(blackboard);
-
-        if (BlackboardInfo?.FieldType == typeof(string))
-        {
-            if((string) obj != _string)
-            {
-                return State.Failure;
-            }
-        }
-        else if (BlackboardInfo?.FieldType == typeof(int))
-        {
-            if ((int)obj != _i)
-            {
-                return State.Failure;
-            }
-        }
-        else if (BlackboardInfo?.FieldType == typeof(float))
-        {
-            if ((float)obj != _f)
-            {
-                return State.Failure;
-            }
-        }
-        else if (BlackboardInfo?.FieldType == typeof(Blackboard.EnemyStates))
-        {
-            if ((Blackboard.EnemyStates)obj != _enum)
-            {
-                return State.Failure;
-            }
-        }
-        else if (BlackboardInfo is { } && BlackboardInfo.FieldType.IsClass)
-        {
-            if ((GameObject)obj != _object)
-            {
-                return State.Failure;
-            }
-        }
-
-        // Otherwise pass through the node execution
+            return State.Failure;
+        } 
 
         return child.Update();
+    }
+
+    public void updateField()
+    {
+        FieldInfo[] fields = blackboard.GetType().GetFields();
+
+        foreach (var field in fields)
+        {
+            if (field.Name == variableName)
+            {
+                currentField_blackboard = field;
+                break;
+            }
+        }
+
+        FieldInfo[] theseFields = this.GetType().GetFields();
+
+        foreach (var field in theseFields)
+        {
+            if (field.Name == variableName)
+            {
+                currentField_local = field;
+                break;
+            }
+        }
+    }
+    public override Node Clone()
+    {
+        CheckState_Decorator node = Instantiate(this);
+        node.child = child.Clone();
+        return node;
     }
 }
 
 [CustomEditor(typeof(CheckState_Decorator))]
-public class CheckStateEditor: Editor
+public class CheckStateEditor : Editor
 {
-
     // Create Inspector UI 
     public override void OnInspectorGUI()
     {
         var script = target as CheckState_Decorator;
-
-        script.BlackboardVariableName = EditorGUILayout.TextField("Blackboard Variable Name: ", script.BlackboardVariableName);
-
-        if (script.BlackboardVariableName != null)
+        script.variableName = EditorGUILayout.TextField("Enter Variable:", script.variableName);
+     
+        if (script.variableName != null)
         {
-            script.BlackboardInfo = script.blackboard.GetType().GetField(script.BlackboardVariableName); // Get Type to show in inspector
+            // Goal is to have generic SerializedProperty that can be modified 
 
-            DisplayGuiLayoutForType(script.BlackboardInfo);
-        }
-    }
+            // This will be the value compared to the matching blackboard name.
 
-    private void DisplayGuiLayoutForType(FieldInfo field)
-    {
-        var script = target as CheckState_Decorator;
+            // This finds one of the above containers that match the variables in our blackboard
+            SerializedProperty comparison = serializedObject.FindProperty(script.variableName);
 
-        if (field?.FieldType == typeof(string))
-        { 
-            script._string = EditorGUILayout.TextArea(script._string);
+            if (comparison != null)
+            {
+                // This tells the inspector to update the matching container when modified
+                EditorGUILayout.PropertyField(comparison);
+                script.updateField();
+            }
         }
-        else if (field?.FieldType == typeof(int))
+        if (serializedObject != null)
         {
-            script._i = EditorGUILayout.IntField(script._i);
+            serializedObject.ApplyModifiedProperties();
         }
-        else if (field?.FieldType == typeof(float))
-        {
-            script._f = EditorGUILayout.FloatField(script._f);
-        }else if (field?.FieldType == typeof(Blackboard.EnemyStates))
-        {
-            script._enum = (Blackboard.EnemyStates)EditorGUILayout.EnumPopup("Test:", script._enum);
-        }
-        else if (field is { } && field.FieldType.IsClass)
-        {
-            var obj = field.FieldType;
-            script._object = (GameObject) EditorGUILayout.ObjectField(script._object, obj, true);
-        }
+
+        /*        if (GUI.changed)
+                {
+                    if (script.comparison != null)
+                    {
+                        object tempValue = script.comparison.boxedValue;
+
+                        if (tempValue != null)
+                        {
+                            script.lastValue = tempValue;
+                        }
+
+                        script.carryOver = 100;
+                    }
+                    script.updateField();
+                }*/
     }
 }

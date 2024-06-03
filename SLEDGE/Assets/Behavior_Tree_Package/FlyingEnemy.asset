@@ -1,5 +1,33 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-8539460249734804569
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb4c67464829fc142b8fb071ac91850a, type: 3}
+  m_Name: CheckState_Decorator
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 0cda84d9baef2e54ea40c2b21879298d
+  position: {x: 129.59998, y: -24}
+  blackboard:
+    currentState: 0
+    player: {fileID: 0}
+    attackRange: 0
+    alertRange: 0
+  description: 
+  child: {fileID: -8444841181762312169}
+  currentState: 1
+  player: {fileID: 0}
+  attackRange: 0
+  alertRange: 0
+  variableName: currentState
 --- !u!114 &-8444841181762312169
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15,7 +43,7 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: 87f44f9c26459a24d83c8ea718a0656a
-  position: {x: 129.74754, y: -35.160393}
+  position: {x: 129.59998, y: 137.6}
   blackboard:
     currentState: 0
     player: {fileID: 0}
@@ -23,7 +51,7 @@ MonoBehaviour:
     alertRange: 0
   description: IN HOSTILE
   message: IN HOSTILE
---- !u!114 &-7450822200019330730
+--- !u!114 &-6948589007078128407
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -37,19 +65,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: a6b8a4a8f0d4186409a5941a1125c751
-  position: {x: -207.0525, y: -206.36041}
+  guid: 2f23f5c3211fe114a9b6176b010005e6
+  position: {x: -207.19998, y: -34}
   blackboard:
     currentState: 0
     player: {fileID: 0}
     attackRange: 0
     alertRange: 0
-  description: Check if IDLE
+  description: 
   child: {fileID: 1230481549355620063}
-  flag: 0
-  i: 0
-  stateToCheckFor: 0
-  BlackboardVariableName: attackRange
+  currentState: 0
+  player: {fileID: 0}
+  attackRange: 0
+  alertRange: 0
+  variableName: currentState
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -66,43 +95,16 @@ MonoBehaviour:
   treeState: 0
   nodes:
   - {fileID: 5992932366734594618}
-  - {fileID: -7450822200019330730}
-  - {fileID: 1092813263244083003}
   - {fileID: 1230481549355620063}
   - {fileID: -8444841181762312169}
   - {fileID: 4461066357445086568}
+  - {fileID: -6948589007078128407}
+  - {fileID: -8539460249734804569}
   blackboard:
-    currentState: 0
+    currentState: 1
     player: {fileID: 0}
-    attackRange: 0
+    attackRange: 10
     alertRange: 0
---- !u!114 &1092813263244083003
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eb4c67464829fc142b8fb071ac91850a, type: 3}
-  m_Name: CheckState_Decorator
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: aeb4b53ca73ec524f84f5ff4ea62e4dd
-  position: {x: 130.54747, y: -182.3604}
-  blackboard:
-    currentState: 0
-    player: {fileID: 0}
-    attackRange: 0
-    alertRange: 0
-  description: Check if Hostile
-  child: {fileID: -8444841181762312169}
-  flag: 0
-  i: 0
-  stateToCheckFor: 1
-  BlackboardVariableName: 
 --- !u!114 &1230481549355620063
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -118,7 +120,7 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: 6e6f89c98e9a5c64eb89ddba7a30d62d
-  position: {x: -207.0525, y: -35.160393}
+  position: {x: -207.19995, y: 137.568}
   blackboard:
     currentState: 0
     player: {fileID: 0}
@@ -141,7 +143,7 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: 11d37fa38c4b2c6429d0ec4ecf4f0ae7
-  position: {x: -35.200024, y: -399.3641}
+  position: {x: -20.799988, y: -173.40799}
   blackboard:
     currentState: 0
     player: {fileID: 0}
@@ -149,8 +151,8 @@ MonoBehaviour:
     alertRange: 0
   description: 
   children:
-  - {fileID: -7450822200019330730}
-  - {fileID: 1092813263244083003}
+  - {fileID: -6948589007078128407}
+  - {fileID: -8539460249734804569}
 --- !u!114 &5992932366734594618
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -166,7 +168,7 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: fefcb5f0d309e244db6c20d73abfafc1
-  position: {x: -34.39989, y: -587.4318}
+  position: {x: -20.79996, y: -406.18402}
   blackboard:
     currentState: 0
     player: {fileID: 0}
