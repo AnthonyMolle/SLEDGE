@@ -100,6 +100,11 @@ public class CheckStateEditor : Editor
 
         input = EditorGUILayout.TextField("Enter Variable:", input);
 
+        if (script.currentField_local != null)
+        {
+            script.description = "Check if " + input + " = " + script.currentField_local.GetValue(script);
+        }
+
         if (input != null)
         {
             // Goal is to have generic SerializedProperty that can be modified 

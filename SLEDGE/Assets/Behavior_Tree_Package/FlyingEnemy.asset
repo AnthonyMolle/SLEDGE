@@ -21,13 +21,13 @@ MonoBehaviour:
     player: {fileID: 0}
     attackRange: 0
     alertRange: 0
-  description: 
+  description: Check if alertRange = 5
   child: {fileID: -8444841181762312169}
   currentState: 1
   player: {fileID: 765358623864573794, guid: 0b402d229c8451245b63baec8f5eee3a, type: 3}
   attackRange: 10
-  alertRange: 0
-  local_input: player
+  alertRange: 5
+  local_input: alertRange
 --- !u!114 &-8444841181762312169
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -50,7 +50,7 @@ MonoBehaviour:
     attackRange: 0
     alertRange: 0
   description: IN HOSTILE
-  message: IN HOSTILE
+  message: Range 5!
 --- !u!114 &-6948589007078128407
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -72,13 +72,13 @@ MonoBehaviour:
     player: {fileID: 0}
     attackRange: 0
     alertRange: 0
-  description: 
+  description: Check if alertRange = 6
   child: {fileID: 1230481549355620063}
   currentState: 0
   player: {fileID: 765358623864573794, guid: 72791d95cee660147917361f531f775b, type: 3}
-  attackRange: 6
+  attackRange: 4
   alertRange: 6
-  local_input: player
+  local_input: alertRange
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -104,7 +104,7 @@ MonoBehaviour:
     currentState: 0
     player: {fileID: 765358623864573794, guid: 72791d95cee660147917361f531f775b, type: 3}
     attackRange: 10
-    alertRange: 0
+    alertRange: 5
 --- !u!114 &1230481549355620063
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -127,7 +127,7 @@ MonoBehaviour:
     attackRange: 0
     alertRange: 0
   description: In IDLE
-  message: In IDLE
+  message: Failure
 --- !u!114 &4461066357445086568
 MonoBehaviour:
   m_ObjectHideFlags: 0
