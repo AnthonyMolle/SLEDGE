@@ -12,23 +12,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb4c67464829fc142b8fb071ac91850a, type: 3}
   m_Name: CheckState_Decorator
   m_EditorClassIdentifier: 
-  state: 0
+  state: 1
   started: 0
   guid: 0cda84d9baef2e54ea40c2b21879298d
-  position: {x: 129.59998, y: -24}
+  position: {x: 129.59993, y: -24.000046}
   blackboard:
     currentState: 0
-    player: {fileID: 0}
     attackRange: 0
     alertRange: 0
+    objectAName: 
   description: Check if alertRange = 5
-  child: {fileID: -8444841181762312169}
+  beingInspected: 0
+  child: {fileID: -7802946791513412652}
   currentState: 1
   player: {fileID: 765358623864573794, guid: 0b402d229c8451245b63baec8f5eee3a, type: 3}
   attackRange: 10
   alertRange: 5
   local_input: alertRange
---- !u!114 &-8444841181762312169
+--- !u!114 &-7802946791513412652
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -37,20 +38,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 091f3a82cc8db814daac999008d343d1, type: 3}
-  m_Name: DebugLog_Action
+  m_Script: {fileID: 11500000, guid: d3d57040dacaa1d4ba77a20f23ea8d3c, type: 3}
+  m_Name: RotateTowards_Action
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: 87f44f9c26459a24d83c8ea718a0656a
-  position: {x: 129.6, y: 137.6}
+  guid: 7deaba192bba3284e938c6f01eac30f7
+  position: {x: 129.60002, y: 169.47989}
   blackboard:
     currentState: 0
-    player: {fileID: 0}
     attackRange: 0
     alertRange: 0
-  description: IN HOSTILE
-  message: Range 5!
+    objectAName: 
+  description: 
+  beingInspected: 0
 --- !u!114 &-6948589007078128407
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -63,16 +64,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb4c67464829fc142b8fb071ac91850a, type: 3}
   m_Name: CheckState_Decorator
   m_EditorClassIdentifier: 
-  state: 0
+  state: 1
   started: 0
   guid: 2f23f5c3211fe114a9b6176b010005e6
-  position: {x: -207.19998, y: -34}
+  position: {x: -206.39998, y: -24.000015}
   blackboard:
     currentState: 0
-    player: {fileID: 0}
     attackRange: 0
     alertRange: 0
+    objectAName: 
   description: Check if alertRange = 6
+  beingInspected: 1
   child: {fileID: 1230481549355620063}
   currentState: 0
   player: {fileID: 765358623864573794, guid: 72791d95cee660147917361f531f775b, type: 3}
@@ -92,19 +94,21 @@ MonoBehaviour:
   m_Name: FlyingEnemy
   m_EditorClassIdentifier: 
   rootNode: {fileID: 5992932366734594618}
+  currentRunner: {fileID: 0}
+  currentPlayer: {fileID: 0}
   treeState: 0
   nodes:
   - {fileID: 5992932366734594618}
   - {fileID: 1230481549355620063}
-  - {fileID: -8444841181762312169}
   - {fileID: 4461066357445086568}
   - {fileID: -6948589007078128407}
   - {fileID: -8539460249734804569}
+  - {fileID: -7802946791513412652}
   blackboard:
     currentState: 0
-    player: {fileID: 765358623864573794, guid: 72791d95cee660147917361f531f775b, type: 3}
     attackRange: 10
     alertRange: 5
+    objectAName: VictoryPillar
 --- !u!114 &1230481549355620063
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -120,13 +124,14 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: 6e6f89c98e9a5c64eb89ddba7a30d62d
-  position: {x: -207.19995, y: 137.568}
+  position: {x: -206.40004, y: 156.8}
   blackboard:
     currentState: 0
-    player: {fileID: 0}
     attackRange: 0
     alertRange: 0
+    objectAName: 
   description: In IDLE
+  beingInspected: 0
   message: Failure
 --- !u!114 &4461066357445086568
 MonoBehaviour:
@@ -146,10 +151,11 @@ MonoBehaviour:
   position: {x: -20.799988, y: -173.40799}
   blackboard:
     currentState: 0
-    player: {fileID: 0}
     attackRange: 0
     alertRange: 0
+    objectAName: 
   description: 
+  beingInspected: 0
   children:
   - {fileID: -6948589007078128407}
   - {fileID: -8539460249734804569}
@@ -171,8 +177,9 @@ MonoBehaviour:
   position: {x: -20.79996, y: -406.18402}
   blackboard:
     currentState: 0
-    player: {fileID: 0}
     attackRange: 0
     alertRange: 0
+    objectAName: 
   description: Test
+  beingInspected: 0
   child: {fileID: 4461066357445086568}

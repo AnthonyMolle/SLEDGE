@@ -27,7 +27,8 @@ public class CheckState_Decorator : DecoratorNode
 
     protected override State OnUpdate()
     {
-        if(currentField_blackboard == null || currentField_local == null)
+
+        if (currentField_blackboard == null || currentField_local == null)
         {
             return State.Failure;
         }
@@ -73,6 +74,8 @@ public class CheckState_Decorator : DecoratorNode
     {
         CheckState_Decorator node = Instantiate(this);
         node.child = child.Clone();
+        node.state = State.Running;
+        node.started = false;
         return node;
     }
 }

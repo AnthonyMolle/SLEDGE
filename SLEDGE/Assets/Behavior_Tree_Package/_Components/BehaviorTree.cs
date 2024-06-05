@@ -3,19 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using UnityEngine.AI;
+using UnityEditor.Experimental.GraphView;
 
 
 [CreateAssetMenu()]
 public class BehaviorTree : ScriptableObject
 {
     public Node rootNode;
+    public GameObject currentRunner;
+    public GameObject currentPlayer;
     public Node.State treeState = Node.State.Running;
     public List<Node> nodes = new List<Node>();
     public Blackboard blackboard = new Blackboard();
 
     public Node.State Update()
     {
-
         // Run root until we get back a success or failure
         if(rootNode.state == Node.State.Running)
         {
@@ -140,6 +142,9 @@ public class BehaviorTree : ScriptableObject
 
     public void Bind()
     {
+        blackboard.setCurrentRunner(currentRunner);
+        blackboard.findObjectA();
+
         Traverse(rootNode, node =>
         {
             node.blackboard = blackboard;

@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
 using UnityEngine;
 
 public abstract class Node : ScriptableObject
@@ -12,12 +9,14 @@ public abstract class Node : ScriptableObject
         Success
     }
 
-    [HideInInspector] public State state = State.Running;
+    public State state = State.Running;
     [HideInInspector] public bool started = false; // Tells us if node has ever executed
     [HideInInspector] public string guid;
     [HideInInspector] public Vector2 position;
     [HideInInspector] public Blackboard blackboard;
     [TextArea] public string description;
+
+    [HideInInspector] public bool beingInspected = false;
     // Can add more dependencies here too
 
     public State Update()
