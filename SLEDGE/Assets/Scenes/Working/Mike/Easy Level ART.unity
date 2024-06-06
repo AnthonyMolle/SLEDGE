@@ -672,7 +672,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &90104992
 Transform:
   m_ObjectHideFlags: 0
@@ -3798,6 +3798,7 @@ MonoBehaviour:
   master_slider: {fileID: 1390310216}
   sfx_slider: {fileID: 808887167}
   music_slider: {fileID: 1210454472}
+  audio_manager: {fileID: 0}
 --- !u!114 &301543900
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4289,6 +4290,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: SledgeHammer1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 2c9968d7c73ebd34e8a5cba23ba91b6e,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -8070,7 +8076,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 45c0fe54c92c90f43a770f7d61fd6869,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 2.6326456
+      value: 15.58
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 45c0fe54c92c90f43a770f7d61fd6869,
         type: 3}
@@ -8080,7 +8086,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 45c0fe54c92c90f43a770f7d61fd6869,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -24.469652
+      value: -24.48
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 45c0fe54c92c90f43a770f7d61fd6869,
         type: 3}
@@ -8131,6 +8137,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: checkpointGate
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 45c0fe54c92c90f43a770f7d61fd6869,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4517996882990165669, guid: 45c0fe54c92c90f43a770f7d61fd6869,
         type: 3}
@@ -30316,39 +30327,39 @@ PrefabInstance:
       addedObject: {fileID: 1613697397}
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 65ea0a261d4d590408d843b74699821a,
         type: 3}
-      insertIndex: 41
+      insertIndex: -1
       addedObject: {fileID: 580459735}
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 65ea0a261d4d590408d843b74699821a,
         type: 3}
-      insertIndex: 44
+      insertIndex: -1
       addedObject: {fileID: 1736275500}
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 65ea0a261d4d590408d843b74699821a,
         type: 3}
-      insertIndex: 45
+      insertIndex: -1
       addedObject: {fileID: 939302176}
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 65ea0a261d4d590408d843b74699821a,
         type: 3}
-      insertIndex: 46
+      insertIndex: -1
       addedObject: {fileID: 276573753}
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 65ea0a261d4d590408d843b74699821a,
         type: 3}
-      insertIndex: 53
+      insertIndex: -1
       addedObject: {fileID: 1588448635}
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 65ea0a261d4d590408d843b74699821a,
         type: 3}
-      insertIndex: 55
+      insertIndex: -1
       addedObject: {fileID: 1135466930}
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 65ea0a261d4d590408d843b74699821a,
         type: 3}
-      insertIndex: 57
+      insertIndex: -1
       addedObject: {fileID: 391188937}
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 65ea0a261d4d590408d843b74699821a,
         type: 3}
-      insertIndex: 58
+      insertIndex: -1
       addedObject: {fileID: 1758603059}
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 65ea0a261d4d590408d843b74699821a,
         type: 3}
-      insertIndex: 59
+      insertIndex: -1
       addedObject: {fileID: 508586416}
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 65ea0a261d4d590408d843b74699821a,
         type: 3}
