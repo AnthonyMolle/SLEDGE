@@ -47040,6 +47040,12 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1126625870}
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
+--- !u!1 &1413861089 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4840767753443748911, guid: 472cdce8629221545b7b8e06983f6054,
+    type: 3}
+  m_PrefabInstance: {fileID: 4620777890453623515}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1431220423
 GameObject:
   m_ObjectHideFlags: 0
@@ -53259,8 +53265,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5077e02968564d34eba2af94a55cc986, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cameraObj: {fileID: 0}
-  hammerCameraObject: {fileID: 0}
+  cameraObj: {fileID: 1413861089}
+  hammerCameraObject: {fileID: 1890849867}
 --- !u!4 &1886605596
 Transform:
   m_ObjectHideFlags: 0
@@ -53276,6 +53282,12 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1890849867 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2632596805358502235, guid: 472cdce8629221545b7b8e06983f6054,
+    type: 3}
+  m_PrefabInstance: {fileID: 4620777890453623515}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1902227983
 GameObject:
   m_ObjectHideFlags: 0
