@@ -54,9 +54,9 @@ public class PlayerController : MonoBehaviour
     int currentSpawnIndex = 0;
     Checkpoint currentCheckpoint;
     
-    [SerializeField] int maxHealth = 3;
-    private int currentHealth = 3;
-    bool alive = true;
+    [SerializeField] int maxHealth = 3; // Maximum health the player can have
+    private int currentHealth = 3; // Current health the player is at
+    bool alive = true; // Tracks if the player is alive
     #endregion
 
     #region Player Settings
@@ -114,7 +114,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] string hudDistance;
 
     float currentDistance = 0; // current distance between the player and a surface.
-    bool isInRange = false; // represents if we are in range to sue the hammer.
+    bool isInRange = false; // represents if hammer is in range to hit an object
     #endregion
 
     #region Hammer
@@ -140,21 +140,21 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] LayerMask swipeLayers;
 
-    RaycastHit distanceCheck;
+    RaycastHit distanceCheck; // Checks to see the distance between the player and an object they are lookign at
     
-
+    bool hammerBounced = false; // Tracks if hammer hit a surface
     bool isLaunched = false;
 
-    bool hittingHammer = false;
+    bool hittingHammer = false; // Tracks if we are currently swinging our hammer
     bool chargingHammer = false;
     bool recovering = false;
 
-    bool swipingHammer = false;
+    bool swipingHammer = false; // Tracks if the player used the secondary hammer action (swipe/parry)
     bool swipeRecovering = false;
     bool swipeComboReady = false;
 
     bool hammerCharged = false;
-    bool hammerHit = false;
+    bool hammerHit = false; // tracks if we just swung hammer
     bool hammerSwipe = false;
 
     Vector3 hitDirection;
@@ -194,8 +194,8 @@ public class PlayerController : MonoBehaviour
     public GameObject canvas;
 
     public TextMeshProUGUI displayDistance;
-    public TextMeshProUGUI speedometer;
-    public TextMeshProUGUI tempPowerupUI;
+    public TextMeshProUGUI speedometer; // UI that displays how fast we are going
+    public TextMeshProUGUI tempPowerupUI; // UI element that displays current equipped powerup
     public TextMeshProUGUI healthDisplay;
 
     [SerializeField] GameObject pause;
@@ -207,9 +207,9 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     #region Power Ups
-    public enum Powerup { None, Airburst, Explosive }
+    public enum Powerup { None, Airburst, Explosive } // List of powerups in game (including none)
 
-    Powerup currentPowerup;
+    Powerup currentPowerup; // Hold the currently equipped powerup
 
     [Header("Power Ups")]
     [Tooltip("How much we add to bounce force when the explosive powerup is enabled.")]
@@ -217,80 +217,7 @@ public class PlayerController : MonoBehaviour
 
     #endregion
 
-    void Start()
-    {
-        audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
-
-        Cursor.lockState = CursorLockMode.Locked; // lock the cursor to the center of the screen
-        Cursor.visible = false; // make the cursor not visible
-        
-        rb = GetComponent<Rigidbody>(); // get the rigidbody of the parent component
-        deathScreen = canvas.transform.Find("Death Screen").gameObject;
-        settings = canvas.transform.Find("Pause Setting Screen").gameObject;
-        pause = canvas.transform.Find("PauseMenu").gameObject;
-        displayDistance = canvas.transform.Find("Distance").gameObject.GetComponent<TextMeshProUGUI>();
-
-        mouseSensitivity = PlayerPrefs.GetFloat("Sensitivity", 400); // set the mouse sensitivity
-
-        currentHealth = maxHealth; // set health to max
-        if (healthDisplay != null)
-        {
-            healthDisplay.text = "Health: " + currentHealth;
-        }
-
-        ResetPowerup();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        HandleInput();
-        HandleHammer();
-        HandleLookRotation();
-        HandleSpeedFX();
-
-        if(!isGrounded)
-        {
-            hangTime += Time.deltaTime;
-        }
-        else
-        {
-            hangTime = 0;
-        }
-
-        speedometer.text = rb.velocity.magnitude.ToString("0.0") + "mph";
-    }
-
-    void FixedUpdate()
-    {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        Physics.Raycast(ray, out distanceCheck, 100000, bouncableLayers);
-
-        HandleMovement();
-        UpdateDistanceHud();
-
-        if (hammerHit)
-        {
-            hammerHit = false;
-            hammerBounced = false;
-        }
-
-        if (hammerSwipe)
-        {
-            hammerSwipe = false;
-        }
-
-        if (hittingHammer)
-        {
-            HammerBounce();
-        }
-
-        if (swipingHammer)
-        {
-            HammerHit();
-        }
-    }
-
+    #region SpeedLines
     [SerializeField] float speedlineThreshold = 10f;
     [SerializeField] float fovThreshold = 20f;
     [SerializeField] float speedlineMax = 100f;
@@ -308,8 +235,97 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float initialParticleEmission = 25;
     [SerializeField] float maxParticleEmission = 200;
     float targetEmission;
+    #endregion
+   
+    #region Parrying
+    [SerializeField] float maxTargetAngle = 30f;
+    [SerializeField] float minTargetDistance = 5f;
+    [SerializeField] float maxTargetDistance = 50f;
+    #endregion
+    [SerializeField] LayerMask enemyLayers;
 
-    private void HandleSpeedFX()
+    void Start() // Runs at the start of the Scene
+    {
+        // Set Player Audio Manager
+        audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
+
+        // Lock the cursor to center screen and make it invisible
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+        
+        // Set RigidBody of Player
+        rb = GetComponent<Rigidbody>();
+
+        // Find these specific UI objects and assign them a variable
+        deathScreen = canvas.transform.Find("Death Screen").gameObject;
+        settings = canvas.transform.Find("Pause Setting Screen").gameObject;
+        pause = canvas.transform.Find("PauseMenu").gameObject;
+        displayDistance = canvas.transform.Find("Distance").gameObject.GetComponent<TextMeshProUGUI>();
+
+        // Set the mouse sensitivity
+        mouseSensitivity = PlayerPrefs.GetFloat("Sensitivity", 400); 
+
+        // Set health to max
+        currentHealth = maxHealth; 
+
+        // If the health display is on, display it.
+        if (healthDisplay != null){healthDisplay.text = "Health: " + currentHealth;}
+
+        // Remove any equiped powerups
+        ResetPowerup();
+    }
+
+    void Update() // Function Called once per frame
+    {
+        // Self Explanatory Functions
+        HandleInput();
+        HandleHammer();
+        HandleLookRotation();
+        HandleSpeedFX();
+
+        // Record how long we are in the air, reset the timer while grounded
+        if(!isGrounded)
+        {
+            hangTime += Time.deltaTime;
+        }
+        else
+        {
+            hangTime = 0;
+        }
+
+        // Set speedometer to players velocity
+        speedometer.text = rb.velocity.magnitude.ToString("0.0") + "mph";
+    }
+
+    void FixedUpdate() // Function Called once per tick
+    {
+        // Shoot a raycast where the players looking, look for objects the player can bounce on
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Physics.Raycast(ray, out distanceCheck, 100000, bouncableLayers);
+
+        // COMMENT: Self explanatory function calls. Should they be in here or Update() with the others?
+        HandleMovement();
+        UpdateDistanceHud();
+
+        // if we just finished swinging the hammer...
+        if (hammerHit)
+        {
+            // Tell game we arent in just swinging hammer state, and we haven't bounced off of a surface
+            hammerHit = false;
+            hammerBounced = false;
+        }
+
+        // If we just swiped our hammer (rmb) reset this variable. COMMENT: I think this could be implemented better
+        if (hammerSwipe){hammerSwipe = false;}
+
+        // If we are currently swinging our hammer, check to see if we bounced off something. COMMENT: I think this can be put elsewhere
+        if (hittingHammer){HammerBounce();}
+
+        // If we are currently swiping our hammer (rmb), see if we hit an enemy OR projectile
+        if (swipingHammer){HammerHit();}
+    }
+
+    private void HandleSpeedFX() // Handles speed effects while moving quickly
     {
         if (rb.velocity.magnitude > 10)
         {
@@ -351,9 +367,8 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void HandleHammer()
+    private void HandleHammer() // Handles all hammer states and plays according animations.
     {
-
         if (secondaryPressed && !chargingHammer && !recovering && !hittingHammer && !hammerCharged && !swipingHammer && currentCombo == Combo.notSwiping)
         {
             swipingHammer = true;
@@ -385,15 +400,18 @@ public class PlayerController : MonoBehaviour
             hitDirection = new Vector3(1f, -0.8f, 0);
             swingForce = swipeForceBase;
         }
-        // if (secondaryPressed && !chargingHammer && !recovering && !hittingHammer && !hammerCharged && !swipeRecovering && !swipingHammer && swipeComboReady && currentCombo == Combo.Swipe2)
-        // {
-        //     Debug.Log("hammer swipe final");
-        //     swipingHammer = true;
-        //     swipeComboReady = false;
-        //     hammerTimer = swipeTime;
-        //     anim.Play("Hit 3");
-        //     currentCombo = Combo.Swipe3;
-        // }
+
+        /*
+        if (secondaryPressed && !chargingHammer && !recovering && !hittingHammer && !hammerCharged && !swipeRecovering && !swipingHammer && swipeComboReady && currentCombo == Combo.Swipe2)
+        {
+            Debug.Log("hammer swipe final");
+            swipingHammer = true;
+            swipeComboReady = false;
+            hammerTimer = swipeTime;
+            anim.Play("Hit 3");
+            currentCombo = Combo.Swipe3;
+        }
+        */
         
         if (mousePressed && !chargingHammer && !recovering && !hittingHammer && !hammerCharged && !swipeRecovering && !swipingHammer)
         {
@@ -419,9 +437,7 @@ public class PlayerController : MonoBehaviour
             hammerCharged = false;
             hittingHammer = true;
             //slamHitbox.ActivateCollider();
-
             hammerTimer = hitTime;
-            
         }
 
         if (hammerTimer > 0)
@@ -479,10 +495,9 @@ public class PlayerController : MonoBehaviour
             swipeComboReady = false;
             currentCombo = Combo.notSwiping;
         }
-
     }
 
-    private void HandleLookRotation()
+    private void HandleLookRotation() // Handles camera movement from mouse
     {
         //rotating player body left and right
         yRotation += mouseInputVector.x;
@@ -494,7 +509,7 @@ public class PlayerController : MonoBehaviour
         cameraObject.transform.localRotation = Quaternion.RotateTowards(cameraObject.transform.localRotation, Quaternion.Euler(xRotation, 0, 0), 20);
     }
 
-    private void HandleInput()
+    private void HandleInput() // Handles all inputs
     {
         float mouseX = Input.GetAxisRaw("Mouse X") * Time.deltaTime * mouseSensitivity;
         float mouseY = Input.GetAxisRaw("Mouse Y") * Time.deltaTime * mouseSensitivity;
@@ -514,21 +529,11 @@ public class PlayerController : MonoBehaviour
         
         if (Input.GetKeyDown(KeyCode.Space))// If the player has pressed the space key...
         {
-            //if(!mustReleaseJump) // and they haven't been holding the button down...
-            //{
-                jumpPressed = true; // let the engine know jump was pressed
-            //}
-            
+            jumpPressed = true; // let the engine know jump was pressed
         }
-        // if (Input.GetKey(KeyCode.Space)) // If the player might be holding the jump button down...
-        // {
-        //     StartCoroutine(JumpHoldTimer());// Start a coroutine to check if they have been holding the button.
-        // }
 
         if (Input.GetKeyUp(KeyCode.Space)) // if the player releases the jump button...
         {
-            //StopCoroutine(JumpHoldTimer()); // stop checking to see if they are holding it.
-
             // reset these variable to how they were before they pressed the jump button.
             jumpPressed = false;
             mustReleaseJump = false;
@@ -598,7 +603,7 @@ public class PlayerController : MonoBehaviour
         cameraHolder.transform.localRotation = Quaternion.RotateTowards(cameraHolder.transform.localRotation, Quaternion.Euler(0, 0, zCamRotate), camRotateSpeed * Time.deltaTime);
     }
 
-    private void HandleMovement()
+    private void HandleMovement() // Handles all Player Rigidbody movements apart from hammer launches
     {
 
         #region Raycast Checks
@@ -791,7 +796,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private IEnumerator DecreaseCoyoteTime(){ // this coroutine decreases jump coyote time and doesnt let the player jump once its done running 
+    private IEnumerator DecreaseCoyoteTime(){ // This coroutine decreases jump coyote time and doesnt let the player jump once its done running 
         if(!decreasingCoyoteTime && hasCoyoteTime) // if we have coyote time and we aren't decreasing it yet
         {
             decreasingCoyoteTime = true; // let the coroutine know we are decreasing coyote time. this makes the coroutine only run when needed.
@@ -801,28 +806,14 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private IEnumerator JumpHoldTimer(){ // this coroutine checks to see if the player has been holding the jump button.
-        if(!jumpHoldChecking && jumpPressed == true) // if the coroutine isnt already running, and the player is pressing the jump button.
-        {
-            jumpHoldChecking = true; // let the engine know we are running the coroutine
-            yield return new WaitForSeconds(jumpHoldCheckWindow); // check if the player is holding jump for this long.
-            // the following variable will be set given the player has not let go of the jump key.
-            mustReleaseJump = true; // let the engine know they are holding jump.
-            //jumpPressed = false; // tell the engine they arent trying to jump.
-            jumpHoldChecking = false; // stop running current instance of the coruoutine.
-        }
-    }
-
-    private void Jump() // is called when the player tried and is allowed to jump
+    private void Jump() // Is called when the player tried and is allowed to jump
     {
-        rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z); //remove our falling velocity so our jump doesnt have to fight gravity.
-        rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse); // add a force upward
-        hasJumped = true; // let the engine know we have jumped.
+        rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z); // Remove our falling velocity so our jump doesnt have to fight gravity.
+        rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse); // Add a force upward
+        hasJumped = true; // Let the engine know we have jumped.
     }
 
-    bool hammerBounced = false;
-
-    private void HammerBounce()
+    private void HammerBounce() // Checks if we have bounced off a surface, if so apply physics or hurt enemys
     {
         
         if (hammerBounced)
@@ -920,6 +911,7 @@ public class PlayerController : MonoBehaviour
             {
                 LoseExplosive();
             }
+
             hammerBounced = true;
         }
         else 
@@ -928,12 +920,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    [Header("Parrying")]
-    [SerializeField] float maxTargetAngle = 30f;
-    [SerializeField] float minTargetDistance = 5f;
-    [SerializeField] float maxTargetDistance = 50f;
-
-    private void HammerHit()
+    private void HammerHit() // See if we it an enemy or projectile. Respond accordingly.
     {
         //Add parry and hit sounds in if statements
         Ray ray = gameCamera.ScreenPointToRay(Input.mousePosition);
@@ -971,8 +958,6 @@ public class PlayerController : MonoBehaviour
             StartCoroutine(FindObjectOfType<ScreenShaker>().Shake(0.1f, 0.01f, 0, 0, 0.1f));
         }
     }
-
-    [SerializeField] LayerMask enemyLayers;
 
     private GameObject CalculateTargetEnemy(Ray mouseLookDirection)
     {
@@ -1018,17 +1003,19 @@ public class PlayerController : MonoBehaviour
         return targetCandidate;
     }
 
-    void OnDrawGizmosSelected()
+    void OnDrawGizmosSelected()// Draws selected Gizmos for testing (I think)
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, minTargetDistance);
         Gizmos.DrawWireSphere(transform.position, maxTargetDistance);
     }
 
-    void UpdateDistanceHud()
+    void UpdateDistanceHud() // Update UI to show how far away the player is from an object the crosshair is over
     {
+        // Set the current distance to the distance of the object from the player minus our hitrange
         currentDistance = distanceCheck.distance - (hitLength + distanceCheckBuffer);
 
+        // If object is too far away, update UI to be red and say "Infinite" for range.
         if(distanceCheck.distance == 0)
         {
             displayDistance.color = Color.red;
@@ -1036,13 +1023,14 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
+            // If the current object is in range, update distance text to be cyan and say in range
             if(currentDistance <= 0)
             {
                 displayDistance.text = "in range";
                 displayDistance.color = Color.cyan;
                 isInRange = true;
             }
-            else
+            else // If current object is out of range then say we arent in range, display how far it is and change the color to red.
             {
                 displayDistance.text = (currentDistance).ToString("0.00m");
                 displayDistance.color = Color.red;
@@ -1066,6 +1054,7 @@ public class PlayerController : MonoBehaviour
             Die();
         }
     }
+    
     public void UpdateSpawn(int index, Checkpoint check)
     {
         if (index > currentSpawnIndex)
@@ -1077,6 +1066,7 @@ public class PlayerController : MonoBehaviour
 
     public void Die() // this function is called when the player dies
     {
+        // Kill the player, activate the death screen UI, and reset the timescale.
         alive = false;
         deathScreen.SetActive(true);
         Time.timeScale = 0;
@@ -1084,20 +1074,21 @@ public class PlayerController : MonoBehaviour
 
     public void ResetPlayer() // this function resets the player fully
     {
+        // Make sure the player is alive. If they have no checkpoints, simply reload the scene.
         alive = true;
-
         if (currentCheckpoint == null)
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             return;
         }
+        // COMMENT: Code below should be in an else statement for clarity's sake methinks.
 
-        //if the player has a checkpoint stored, remove it and get an updated one.
+        //if the player has a checkpoint stored, remove it and get an updated one. COMMENT: Doesnt this do what the code above does?
         currentCheckpoint.Reset();
 
+        // Remove any velocity from player and set their position to their current checkpoint position
         rb.velocity = Vector3.zero;
-
-        transform.position = currentCheckpoint.transform.position; // set the player to the current check point pos.
+        transform.position = currentCheckpoint.transform.position;
 
         currentHealth = maxHealth;
         if (healthDisplay != null)
@@ -1106,12 +1097,12 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public bool CheckMoving()
+    public bool CheckMoving() // Check to see if the player has any velocity
     {
         return movementInputVector.magnitude != 0;
     }
 
-    public void CollectPowerup(Powerup newPowerup)
+    public void CollectPowerup(Powerup newPowerup) // Equips a new powerup to the player and updates UI to display equiped powerup
     {
         currentPowerup = newPowerup;
         if (currentPowerup == Powerup.Explosive)
@@ -1124,12 +1115,12 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void LoseExplosive()
+    void LoseExplosive()// Removes any equipped powerups COMMENT: Seems useless?
     {
         ResetPowerup();
     }
 
-    void ResetPowerup()
+    void ResetPowerup() // Removes any equipped powerups
     {
         currentPowerup = Powerup.None;
         if (tempPowerupUI != null)
