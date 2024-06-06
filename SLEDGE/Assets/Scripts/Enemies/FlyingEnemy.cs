@@ -183,6 +183,7 @@ public class FlyingEnemy : MonoBehaviour
         if (other.gameObject.tag == "Player")
         {
             other.gameObject.GetComponent<PlayerController>().TakeDamage(1);
+            TakeDamage(1, new Vector3(0, 0, -1), 10f);
         }
     }
 

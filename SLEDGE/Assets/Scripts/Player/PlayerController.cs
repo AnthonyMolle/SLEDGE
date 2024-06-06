@@ -54,8 +54,8 @@ public class PlayerController : MonoBehaviour
     int currentSpawnIndex = 0;
     Checkpoint currentCheckpoint;
     
-    [SerializeField] int maxHealth = 1;
-    private int currentHealth = 1;
+    [SerializeField] int maxHealth = 3;
+    private int currentHealth = 3;
     bool alive = true;
     #endregion
 
@@ -196,6 +196,7 @@ public class PlayerController : MonoBehaviour
     public TextMeshProUGUI displayDistance;
     public TextMeshProUGUI speedometer;
     public TextMeshProUGUI tempPowerupUI;
+    public TextMeshProUGUI healthDisplay;
 
     [SerializeField] GameObject pause;
 
@@ -232,6 +233,10 @@ public class PlayerController : MonoBehaviour
         mouseSensitivity = PlayerPrefs.GetFloat("Sensitivity", 400); // set the mouse sensitivity
 
         currentHealth = maxHealth; // set health to max
+        if (healthDisplay != null)
+        {
+            healthDisplay.text = "Health: " + currentHealth;
+        }
 
         ResetPowerup();
     }
@@ -1049,7 +1054,13 @@ public class PlayerController : MonoBehaviour
 
     public void TakeDamage(int damage) // called when the player needs to take damage
     {
+        StartCoroutine(FindObjectOfType<ScreenShaker>().Shake(0.1f, 0.01f, 0, 0, 0.1f));
+
         currentHealth -= damage;
+        if (healthDisplay != null)
+        {
+            healthDisplay.text = "Health: " + currentHealth;
+        }
         if (currentHealth <= 0)
         {
             Die();
@@ -1089,6 +1100,10 @@ public class PlayerController : MonoBehaviour
         transform.position = currentCheckpoint.transform.position; // set the player to the current check point pos.
 
         currentHealth = maxHealth;
+        if (healthDisplay != null)
+        {
+            healthDisplay.text = "Health: " + currentHealth;
+        }
     }
 
     public bool CheckMoving()
