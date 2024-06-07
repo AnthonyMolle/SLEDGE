@@ -16,7 +16,7 @@ public class Checkpoint : MonoBehaviour
         {
             other.gameObject.GetComponent<PlayerController>().UpdateSpawn(spawnPointIndex, this);
             activated = true;
-            GetComponent<MeshRenderer>().enabled = false;
+            //GetComponent<MeshRenderer>().enabled = false;
         }
     }
 
