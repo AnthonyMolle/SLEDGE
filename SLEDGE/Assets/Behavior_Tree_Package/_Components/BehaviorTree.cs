@@ -143,7 +143,7 @@ public class BehaviorTree : ScriptableObject
     public void Bind()
     {
         blackboard.setCurrentRunner(currentRunner);
-        blackboard.findObjectA();
+        blackboard.findObjectReferences();
 
         Traverse(rootNode, node =>
         {

@@ -1,4 +1,7 @@
+using System;
+using Unity.VisualScripting;
 using UnityEngine;
+using static Blackboard;
 
 [System.Serializable]
 public class Blackboard
@@ -8,13 +11,20 @@ public class Blackboard
         IDLE, HOSTILE
     }
 
+    public enum ObjectOptions
+    {
+        objectA, objectB
+    }
+
     public EnemyStates currentState;
     public float attackRange;
     public float alertRange;
     public string objectAName;
+    public string objectBName;
 
     private GameObject currentRunner;
     private GameObject objectA;
+    private GameObject objectB;
 
     public GameObject getCurrentRunner()
     {
@@ -25,17 +35,22 @@ public class Blackboard
         currentRunner = newRunner;
     }
 
-    public GameObject getObjectA()
+    public GameObject getObject(ObjectOptions objectToGet)
     {
-        return objectA;
+        switch (objectToGet)
+        {
+            case ObjectOptions.objectA:
+                return objectA;
+            case ObjectOptions.objectB:
+                return objectB;
+            default:
+                return objectA;
+        }
     }
 
-    public void findObjectA()
+    public void findObjectReferences()
     {
         objectA = GameObject.Find(objectAName);
-        if (objectA == null)
-        {
-            Debug.LogWarning("Behavior Tree Blackboard requires " + objectAName + " ot be in scene. Not in scene.");
-        }
+        objectB = GameObject.Find(objectBName);
     }
 }

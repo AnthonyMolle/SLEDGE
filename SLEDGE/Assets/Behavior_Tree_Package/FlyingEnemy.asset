@@ -21,6 +21,7 @@ MonoBehaviour:
     attackRange: 0
     alertRange: 0
     objectAName: 
+    objectBName: 
   description: Check if alertRange = 5
   beingInspected: 0
   child: {fileID: -7802946791513412652}
@@ -50,8 +51,10 @@ MonoBehaviour:
     attackRange: 0
     alertRange: 0
     objectAName: 
+    objectBName: 
   description: 
-  beingInspected: 0
+  beingInspected: 1
+  rotateTarget: 0
 --- !u!114 &-6948589007078128407
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -73,8 +76,9 @@ MonoBehaviour:
     attackRange: 0
     alertRange: 0
     objectAName: 
+    objectBName: 
   description: Check if alertRange = 6
-  beingInspected: 1
+  beingInspected: 0
   child: {fileID: 1230481549355620063}
   currentState: 0
   player: {fileID: 765358623864573794, guid: 72791d95cee660147917361f531f775b, type: 3}
@@ -109,6 +113,7 @@ MonoBehaviour:
     attackRange: 10
     alertRange: 5
     objectAName: VictoryPillar
+    objectBName: Player
 --- !u!114 &1230481549355620063
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -130,6 +135,7 @@ MonoBehaviour:
     attackRange: 0
     alertRange: 0
     objectAName: 
+    objectBName: 
   description: In IDLE
   beingInspected: 0
   message: Failure
@@ -154,6 +160,7 @@ MonoBehaviour:
     attackRange: 0
     alertRange: 0
     objectAName: 
+    objectBName: 
   description: 
   beingInspected: 0
   children:
@@ -180,6 +187,7 @@ MonoBehaviour:
     attackRange: 0
     alertRange: 0
     objectAName: 
+    objectBName: 
   description: Test
   beingInspected: 0
   child: {fileID: 4461066357445086568}

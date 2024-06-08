@@ -1,10 +1,15 @@
+using CW.Common;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Windows;
+using static UnityEditor.Progress;
 
 public class RotateTowards_Action : ActionNode
 {
+    public Blackboard.ObjectOptions rotateTarget;
+
     protected override void OnStart()
     {
     }
@@ -15,7 +20,10 @@ public class RotateTowards_Action : ActionNode
 
     protected override State OnUpdate()
     {
-        blackboard.getCurrentRunner().transform.LookAt(blackboard.getObjectA().transform);
+        GameObject target;
+
+        target = blackboard.getObject(rotateTarget);
+        blackboard.getCurrentRunner().transform.LookAt(target.transform);
         return State.Running;
     }
 }
