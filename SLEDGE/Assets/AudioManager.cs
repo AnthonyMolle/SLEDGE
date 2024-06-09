@@ -19,6 +19,7 @@ public class AudioManager : MonoBehaviour
     public AudioClip walk4;
     public AudioClip walk5;
     public AudioClip land;
+    public AudioClip parry;
 
     int previousChoice = 1;
     /*

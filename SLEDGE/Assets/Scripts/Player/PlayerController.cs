@@ -143,6 +143,8 @@ public class PlayerController : MonoBehaviour
     float hammerTimer = 0;
     float hangTime = 0;
     float walkTime = 0;
+    float soundTime = 0;
+    bool readyToPlay = true;
 
     [SerializeField] float parriedProjectileSpeed = 1f;
     [SerializeField] float parriedProjectileLifetime = 10f;
@@ -199,6 +201,23 @@ public class PlayerController : MonoBehaviour
         {
             hangTime = 0;
         }
+<<<<<<< Updated upstream
+=======
+
+        if(readyToPlay)
+        {
+            soundTime += Time.deltaTime;
+        }
+        else
+        {
+            soundTime = 0;
+            readyToPlay = true;
+        }
+
+
+        // Set speedometer to players velocity
+        speedometer.text = rb.velocity.magnitude.ToString("0.0") + "mph";
+>>>>>>> Stashed changes
     }
 
     void FixedUpdate()
@@ -601,10 +620,153 @@ public class PlayerController : MonoBehaviour
 
             rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
 
+<<<<<<< Updated upstream
             Vector3 normal = hit1.normal;
             float angle = Vector3.Angle(hit1.point - cameraObject.transform.position, -transform.up);
             float wallAngle = Vector3.Angle(normal, Vector3.down);
             float wallVSFlatVelAngle = Vector3.Angle(normal, rb.velocity);
+=======
+            
+            if (currentPowerup == Powerup.Airburst)
+            {
+                ResetPowerup();
+            }
+
+            if (currentPowerup == Powerup.Explosive)
+            {
+                isLaunched = true;
+                rb.AddForce((-ray.direction).normalized * explosiveForce, ForceMode.Impulse);
+            }
+            else if (bouncy)
+            {
+                isLaunched = true;
+                rb.velocity = Vector3.zero;
+                rb.AddForce((-ray.direction).normalized * bouncyForce/* + normal * 10*/, ForceMode.Impulse);
+                rb.AddForce(transform.up * bouncyUpForce, ForceMode.Impulse);
+            }
+            else if (!isLaunched)
+            {
+                isLaunched = true;
+                rb.velocity = rb.velocity / 8;
+                Vector3 force = (-ray.direction).normalized * initialBounceForce;
+
+
+                if (force.y > maxInitialBounceYForce)
+                {
+                    rb.AddForce(new Vector3(force.x, maxInitialBounceYForce, force.z), ForceMode.Impulse);
+                }
+                else
+                {
+                    rb.AddForce(force, ForceMode.Impulse);
+                }
+            }
+            else
+            {
+                rb.AddForce((-ray.direction).normalized * bounceForce/* + normal * 10*/, ForceMode.Impulse);
+            }
+            
+            Instantiate(HammerSound, gameObject.transform.position, Quaternion.identity);
+            StartCoroutine(FindObjectOfType<ScreenShaker>().Shake(0.25f, 0.01f, 0, 0, 0.25f));
+            
+
+            // bouncing up one wall over and over again is still far too viable, but theres some improvement to the basic 90 degree angled hammer wall bounces
+            // if (angle < 110 && angle > 30 && wallAngle > 80 && wallAngle < 100)
+            // {
+            //     rb.AddForce(transform.up * 10, ForceMode.Impulse);
+            // }
+
+            // if (wallVSFlatVelAngle > 140)
+            // {
+            //     rb.velocity = new Vector3(0, rb.velocity.y, 0);
+            // }
+
+            if (currentPowerup == Powerup.Explosive)
+            {
+                LoseExplosive();
+            }
+
+            hammerBounced = true;
+        }
+        else 
+        {
+            if(soundTime >= 0.5)
+            {
+                audioManager.PlaySFX(audioManager.whiff);
+                readyToPlay = false;
+            }
+        }
+    }
+
+    private void HammerHit() // See if we it an enemy or projectile. Respond accordingly.
+    {
+        //Add parry and hit sounds in if statements
+        Ray ray = gameCamera.ScreenPointToRay(Input.mousePosition);
+
+        RaycastHit[] hits = Physics.SphereCastAll(ray, hitRadius, hitLength, swipeLayers);
+
+        if (hits.Length > 0)
+        {
+            foreach (RaycastHit hit in hits)
+            {
+                if (hit.transform.gameObject.tag == "Enemy Flyer")
+                {
+                    hit.transform.gameObject.GetComponent<FlyingEnemy>().TakeDamage(1, hitDirection, swingForce);
+                }
+                else if (hit.transform.gameObject.tag == "Enemy Shooter")
+                {
+                    hit.transform.gameObject.GetComponent<ShooterEnemy>().TakeDamage(1, hitDirection, swingForce);
+                }
+                else if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Projectile"))
+                {
+                    Projectile projectile = hit.transform.gameObject.GetComponent<Projectile>();
+
+                    if (!projectile.CheckParried())
+                    {
+                        audioManager.PlaySFX(audioManager.parry);
+                        projectile.initializeProjectile(ray.GetPoint(100), parriedProjectileSpeed, parriedProjectileLifetime, true, CalculateTargetEnemy(ray));
+                        FindObjectOfType<Hitstop>().Stop(0.15f);
+                    }
+                }
+                else if (hit.transform.gameObject.tag == "Collectible")
+                {
+                    hit.transform.gameObject.GetComponent<Rigidbody>().AddForce(ray.direction * 50, ForceMode.Impulse);
+                }
+            }
+
+            StartCoroutine(FindObjectOfType<ScreenShaker>().Shake(0.1f, 0.01f, 0, 0, 0.1f));
+        }
+        else 
+        {
+            if(soundTime >= 0.5)
+            {
+                audioManager.PlaySFX(audioManager.whiff);
+                readyToPlay = false;
+            }
+        }
+    }
+
+    private GameObject CalculateTargetEnemy(Ray mouseLookDirection)
+    {
+        GameObject targetCandidate = null;
+
+        Collider[] enemies = Physics.OverlapSphere(transform.position, maxTargetDistance, enemyLayers);
+
+        float targetCandidateAngle = 1000;
+
+        foreach (Collider enemy in enemies)
+        {
+            float distance = Vector3.Distance(transform.position, enemy.transform.position);
+            if (distance < minTargetDistance)
+            {
+                continue;
+            }
+
+            float angle = Vector3.Angle(mouseLookDirection.direction, enemy.transform.position - transform.position);
+            if (angle > maxTargetAngle)
+            {
+                continue;
+            }
+>>>>>>> Stashed changes
 
             Debug.Log(angle);
 
