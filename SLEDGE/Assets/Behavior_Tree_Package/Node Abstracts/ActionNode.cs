@@ -4,5 +4,16 @@ using UnityEngine;
 
 public abstract class ActionNode : Node
 {
-   // No children, leaf node! Does a action!
+    [HideInInspector] public Node child; // Has one child, modifies childs properties.
+
+    public override Node Clone()
+    {
+        ActionNode node = Instantiate(this);
+        if (child != null)
+        {
+            node.child = child.Clone();
+            node.state = State.Running;
+        }
+        return node;
+    }
 }

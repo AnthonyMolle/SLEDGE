@@ -69,6 +69,12 @@ public class BehaviorTree : ScriptableObject
         {
             composite.children.Add(child);
         }
+
+        ActionNode action = parent as ActionNode;
+        if (action)
+        {
+            action.child = child;
+        }
     }
 
     public void RemoveChild(Node parent, Node child)
@@ -77,6 +83,12 @@ public class BehaviorTree : ScriptableObject
         if (decorator)
         {
             decorator.child = null;
+        }
+
+        ActionNode action = parent as ActionNode;
+        if (action)
+        {
+            action.child = null;
         }
 
         RootNode rootNode = parent as RootNode;
@@ -101,6 +113,14 @@ public class BehaviorTree : ScriptableObject
         {
             children.Add(decorator.child);
         }
+
+
+        ActionNode action = parent as ActionNode;
+        if (action && action.child != null)
+        {
+            children.Add(action.child);
+        }
+
 
         RootNode rootNode = parent as RootNode;
         if (rootNode && rootNode.child != null)

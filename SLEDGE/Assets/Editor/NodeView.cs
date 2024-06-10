@@ -52,6 +52,9 @@ public class NodeView : UnityEditor.Experimental.GraphView.Node
         else if (node is RootNode)
         {
             AddToClassList("root");
+        }else if (node is ServiceNode)
+        {
+            AddToClassList("service");
         }
     }
 
@@ -93,6 +96,10 @@ public class NodeView : UnityEditor.Experimental.GraphView.Node
         {
 
         }
+        else if (node is ServiceNode)
+        {
+            input = InstantiatePort(Orientation.Vertical, Direction.Input, Port.Capacity.Single, typeof(bool)); 
+        }
 
         if (input != null)
         {
@@ -107,7 +114,7 @@ public class NodeView : UnityEditor.Experimental.GraphView.Node
     {
         if (node is ActionNode)
         {
-
+            output = InstantiatePort(Orientation.Vertical, Direction.Output, Port.Capacity.Single, typeof(bool));
         }
         else if (node is CompositeNode)
         {
@@ -120,6 +127,10 @@ public class NodeView : UnityEditor.Experimental.GraphView.Node
         else if (node is RootNode)
         {
             output = InstantiatePort(Orientation.Vertical, Direction.Output, Port.Capacity.Single, typeof(bool));
+        }
+        else if (node is ServiceNode)
+        {
+            
         }
 
         if (output != null)

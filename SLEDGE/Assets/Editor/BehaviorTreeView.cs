@@ -117,6 +117,25 @@ public class BehaviorTreeView : GraphView
 
         return graphViewChange;
     }
+    private string FormatNodeName(string nodeName)
+    {
+        nodeName = nodeName.Split('_')[0];
+
+        var newString = "";
+        var prevCharUpper = false;
+
+        foreach (char c in nodeName)
+        {
+            if (char.IsUpper(c) && !prevCharUpper)
+            {
+                newString += " ";
+            }
+            newString += c;
+            prevCharUpper = char.IsUpper(c);
+        }
+
+        return newString.Trim();
+    }
 
     public override void BuildContextualMenu(ContextualMenuPopulateEvent evt)
     {
@@ -125,15 +144,14 @@ public class BehaviorTreeView : GraphView
             var types = TypeCache.GetTypesDerivedFrom<ActionNode>();
             foreach(var type in types)
             {
-                evt.menu.AppendAction($"[{type.BaseType.Name}] {type.Name}", (a) => CreateNode(type));
+                evt.menu.AppendAction($"{type.BaseType.Name}/ {FormatNodeName(type.Name)}", (a) => CreateNode(type));
             }
         }
-
         {
             var types = TypeCache.GetTypesDerivedFrom<CompositeNode>();
             foreach (var type in types)
             {
-                evt.menu.AppendAction($"[{type.BaseType.Name}] {type.Name}", (a) => CreateNode(type));
+                evt.menu.AppendAction($"{type.BaseType.Name}/ {FormatNodeName(type.Name)}", (a) => CreateNode(type));
             }
         }
 
@@ -141,7 +159,14 @@ public class BehaviorTreeView : GraphView
             var types = TypeCache.GetTypesDerivedFrom<DecoratorNode>();
             foreach (var type in types)
             {
-                evt.menu.AppendAction($"[{type.BaseType.Name}] {type.Name}", (a) => CreateNode(type));
+                evt.menu.AppendAction($"{type.BaseType.Name}/ {FormatNodeName(type.Name)}", (a) => CreateNode(type));
+            }
+        }
+        {
+            var types = TypeCache.GetTypesDerivedFrom<ServiceNode>();
+            foreach (var type in types)
+            {
+                evt.menu.AppendAction($"{type.BaseType.Name}/ {FormatNodeName(type.Name)}", (a) => CreateNode(type));
             }
         }
     }

@@ -22,6 +22,8 @@ public class Wait_Action : ActionNode
         {
             return State.Success;
         }
+        child.state = State.Running;
+        child.Update();
         return State.Running;
     }
 }
