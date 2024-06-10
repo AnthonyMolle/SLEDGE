@@ -15,46 +15,21 @@ MonoBehaviour:
   state: 1
   started: 0
   guid: 0cda84d9baef2e54ea40c2b21879298d
-  position: {x: 129.59993, y: -24.000046}
+  position: {x: 129.60005, y: -38.400024}
   blackboard:
     currentState: 0
     attackRange: 0
     alertRange: 0
     objectAName: 
     objectBName: 
-  description: Check if alertRange = 5
-  beingInspected: 0
-  child: {fileID: -7802946791513412652}
+  description: Check if currentState = HOSTILE
+  beingInspected: 1
+  child: {fileID: -5769395659886034071}
   currentState: 1
   player: {fileID: 765358623864573794, guid: 0b402d229c8451245b63baec8f5eee3a, type: 3}
   attackRange: 10
   alertRange: 5
-  local_input: alertRange
---- !u!114 &-7802946791513412652
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d3d57040dacaa1d4ba77a20f23ea8d3c, type: 3}
-  m_Name: RotateTowards_Action
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: 7deaba192bba3284e938c6f01eac30f7
-  position: {x: 129.60002, y: 169.47989}
-  blackboard:
-    currentState: 0
-    attackRange: 0
-    alertRange: 0
-    objectAName: 
-    objectBName: 
-  description: 
-  beingInspected: 1
-  rotateTarget: 0
+  local_input: currentState
 --- !u!114 &-6948589007078128407
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -70,21 +45,98 @@ MonoBehaviour:
   state: 1
   started: 0
   guid: 2f23f5c3211fe114a9b6176b010005e6
-  position: {x: -206.39998, y: -24.000015}
+  position: {x: -214.40002, y: -24}
   blackboard:
     currentState: 0
     attackRange: 0
     alertRange: 0
     objectAName: 
     objectBName: 
-  description: Check if alertRange = 6
+  description: Check if attackRange = 4
   beingInspected: 0
   child: {fileID: 1230481549355620063}
   currentState: 0
   player: {fileID: 765358623864573794, guid: 72791d95cee660147917361f531f775b, type: 3}
   attackRange: 4
-  alertRange: 6
-  local_input: alertRange
+  alertRange: 5
+  local_input: attackRange
+--- !u!114 &-5769395659886034071
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91b65ea087088ca4f9b68f48f42106a1, type: 3}
+  m_Name: Selector_Composite
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: ad9069ef069d38e499bee9a17274bd4c
+  position: {x: 140.80002, y: 119.19999}
+  blackboard:
+    currentState: 0
+    attackRange: 0
+    alertRange: 0
+    objectAName: 
+    objectBName: 
+  description: 
+  beingInspected: 0
+  children:
+  - {fileID: 6979679674927077702}
+--- !u!114 &-3664941445102664253
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3d57040dacaa1d4ba77a20f23ea8d3c, type: 3}
+  m_Name: RotateTowards_Action
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 3fcc42a75c305854abb3904f78e2404e
+  position: {x: 140.80002, y: 466.60938}
+  blackboard:
+    currentState: 0
+    attackRange: 0
+    alertRange: 0
+    objectAName: 
+    objectBName: 
+  description: 
+  beingInspected: 1
+  rotateTarget: 1
+--- !u!114 &-1896376429001060587
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5671c8f1355fcc40bf249a5233dc689, type: 3}
+  m_Name: Repeat_Decorator
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 2899fa4fa3bdcb341a58d6a38958b7d5
+  position: {x: -20.799997, y: -261.6826}
+  blackboard:
+    currentState: 0
+    attackRange: 0
+    alertRange: 0
+    objectAName: 
+    objectBName: 
+  description: 
+  beingInspected: 0
+  child: {fileID: 2226405812531665431}
+  repeatNumber: -1
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -104,12 +156,15 @@ MonoBehaviour:
   nodes:
   - {fileID: 5992932366734594618}
   - {fileID: 1230481549355620063}
-  - {fileID: 4461066357445086568}
   - {fileID: -6948589007078128407}
   - {fileID: -8539460249734804569}
-  - {fileID: -7802946791513412652}
+  - {fileID: -5769395659886034071}
+  - {fileID: -3664941445102664253}
+  - {fileID: 6979679674927077702}
+  - {fileID: -1896376429001060587}
+  - {fileID: 2226405812531665431}
   blackboard:
-    currentState: 0
+    currentState: 1
     attackRange: 10
     alertRange: 5
     objectAName: VictoryPillar
@@ -139,7 +194,7 @@ MonoBehaviour:
   description: In IDLE
   beingInspected: 0
   message: Failure
---- !u!114 &4461066357445086568
+--- !u!114 &2226405812531665431
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -153,8 +208,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: 11d37fa38c4b2c6429d0ec4ecf4f0ae7
-  position: {x: -20.799988, y: -173.40799}
+  guid: 8fffc3763c1d2d54a9c4d8178ddf0833
+  position: {x: -20.799997, y: -138.40002}
   blackboard:
     currentState: 0
     attackRange: 0
@@ -162,7 +217,7 @@ MonoBehaviour:
     objectAName: 
     objectBName: 
   description: 
-  beingInspected: 0
+  beingInspected: 1
   children:
   - {fileID: -6948589007078128407}
   - {fileID: -8539460249734804569}
@@ -190,4 +245,31 @@ MonoBehaviour:
     objectBName: 
   description: Test
   beingInspected: 0
-  child: {fileID: 4461066357445086568}
+  child: {fileID: -1896376429001060587}
+--- !u!114 &6979679674927077702
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50309d6ee5dcc244da16622f68f9eea8, type: 3}
+  m_Name: DistanceFromObject_Decorator
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 5922ab8666dcbb74c86e28cb65661cba
+  position: {x: 118.39996, y: 296.952}
+  blackboard:
+    currentState: 0
+    attackRange: 0
+    alertRange: 0
+    objectAName: 
+    objectBName: 
+  description: True if distance from Object B is less than 10
+  beingInspected: 0
+  child: {fileID: -3664941445102664253}
+  objectTarget: 1
+  distance: 10

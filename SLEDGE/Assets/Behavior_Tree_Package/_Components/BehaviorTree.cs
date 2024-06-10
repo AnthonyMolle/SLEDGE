@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEditor;
 using UnityEngine.AI;
 using UnityEditor.Experimental.GraphView;
-
+using UnityEditor.AssetImporters;
 
 [CreateAssetMenu()]
 public class BehaviorTree : ScriptableObject
@@ -147,6 +147,7 @@ public class BehaviorTree : ScriptableObject
 
         Traverse(rootNode, node =>
         {
+            node.state = Node.State.Running;
             node.blackboard = blackboard;
         });
     }

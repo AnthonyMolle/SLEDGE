@@ -10,6 +10,7 @@ public abstract class DecoratorNode : Node
     {
         DecoratorNode node = Instantiate(this);
         node.child = child.Clone();
+        node.state = State.Running;
         return node;
     }
 }

@@ -27,7 +27,6 @@ public class CheckState_Decorator : DecoratorNode
 
     protected override State OnUpdate()
     {
-
         if (currentField_blackboard == null || currentField_local == null)
         {
             return State.Failure;
@@ -40,7 +39,8 @@ public class CheckState_Decorator : DecoratorNode
         {
             return State.Failure;
         }
-        
+
+        child.state = State.Running;
         return child.Update();
     }
 
@@ -70,6 +70,7 @@ public class CheckState_Decorator : DecoratorNode
             }
         }
     }
+
     public override Node Clone()
     {
         CheckState_Decorator node = Instantiate(this);
@@ -113,7 +114,7 @@ public class CheckStateEditor : Editor
             // Goal is to have generic SerializedProperty that can be modified 
 
             // This will be the value compared to the matching blackboard name.
-
+            EditorGUILayout.EnumPopup(script.state);
             // This finds one of the above containers that match the variables in our blackboard
             comparison = serializedObject.FindProperty(input);
 

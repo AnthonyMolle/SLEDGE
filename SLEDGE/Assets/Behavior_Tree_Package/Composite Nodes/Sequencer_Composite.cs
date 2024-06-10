@@ -12,6 +12,10 @@ public class Sequencer_Composite : CompositeNode
     protected override void OnStart()
     {
         current = 0;
+        foreach (Node node in children)
+        {
+            node.state = Node.State.Running;
+        }
     }
 
     protected override void OnStop()

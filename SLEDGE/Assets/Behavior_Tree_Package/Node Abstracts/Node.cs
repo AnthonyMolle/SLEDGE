@@ -9,7 +9,7 @@ public abstract class Node : ScriptableObject
         Success
     }
 
-    public State state = State.Running;
+    [HideInInspector] public State state = State.Running;
     [HideInInspector] public bool started = false; // Tells us if node has ever executed
     [HideInInspector] public string guid;
     [HideInInspector] public Vector2 position;
@@ -40,7 +40,9 @@ public abstract class Node : ScriptableObject
 
     public virtual Node Clone()
     {
-        return Instantiate(this);
+        Node instance = Instantiate(this);
+        instance.state = State.Running;
+        return instance;
     }
 
     protected abstract void OnStart();
