@@ -354,7 +354,7 @@ public class PlayerController : MonoBehaviour
             swipingHammer = true;
             swipeComboReady = false;
             hammerTimer = swipeTime;
-            anim.Play("Hit 1");
+            anim.Play("Swipe Right");
             currentCombo = Combo.Swipe1;
             hitDirection = new Vector3(1f, -0.8f, 0);
             swingForce = swipeForceBase;
@@ -365,7 +365,7 @@ public class PlayerController : MonoBehaviour
             swipingHammer = true;
             swipeComboReady = false;
             hammerTimer = swipeTime;
-            anim.Play("Hit 2");
+            anim.Play("Swipe Left");
             currentCombo = Combo.Swipe2;
             hitDirection = new Vector3(-1f, -0.8f, 0);
             swingForce = swipeForceBase;
@@ -375,7 +375,7 @@ public class PlayerController : MonoBehaviour
             swipingHammer = true;
             swipeComboReady = false;
             hammerTimer = swipeTime;
-            anim.Play("Hit 1");
+            anim.Play("Swipe Right");
             currentCombo = Combo.Swipe1;
             hitDirection = new Vector3(1f, -0.8f, 0);
             swingForce = swipeForceBase;
