@@ -8,23 +8,44 @@ public class Checkpoint : MonoBehaviour
     [SerializeField] Spawner[] enemies;
     [SerializeField] int spawnPointIndex;
 
-    bool activated = false;
+    public bool activated = false;
+    private Dictionary<GameObject, bool> savedEnemyStatus;
+
+    private void Start()
+    {
+        //savedEnemyStatus = EnemyManager.Instance.GetEnemyStatus();
+    }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.tag == "Player" && !activated)
         {
-            other.gameObject.GetComponent<PlayerController>().UpdateSpawn(spawnPointIndex, this);
-            activated = true;
-            //GetComponent<MeshRenderer>().enabled = false;
+            other.gameObject.GetComponent<PlayerController>().UpdateSpawn(this);
+            ActivateCheckpoint();
         }
     }
 
-    public void Reset()
+    private void ActivateCheckpoint()
     {
-        foreach (Spawner spawner in enemies)
+        activated = true;
+        //savedEnemyStatus = EnemyManager.Instance.GetEnemyStatus();
+        savedEnemyStatus = new Dictionary<GameObject, bool>();
+        foreach (KeyValuePair<GameObject, bool> entry in EnemyManager.Instance.GetEnemyStatus())
         {
-            spawner.Respawn();
+            savedEnemyStatus.Add(entry.Key, entry.Value);
         }
+
+        gameObject.transform.GetChild(1).transform.GetChild(1).GetComponent<MeshRenderer>().enabled = false;
+    }
+
+    public void DeactivateCheckpoint()
+    {
+        activated = false;
+        gameObject.transform.GetChild(1).transform.GetChild(1).GetComponent<MeshRenderer>().enabled = true;
+    }
+
+    public void ResetState()
+    {
+        EnemyManager.Instance.ResetEnemyState(savedEnemyStatus);
     }
 }

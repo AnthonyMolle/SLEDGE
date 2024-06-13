@@ -1055,13 +1055,13 @@ public class PlayerController : MonoBehaviour
         }
     }
     
-    public void UpdateSpawn(int index, Checkpoint check)
+    public void UpdateSpawn(Checkpoint check)
     {
-        if (index > currentSpawnIndex)
+        if (currentCheckpoint != null)
         {
-            currentSpawnIndex = index;
-            currentCheckpoint = check;
+            currentCheckpoint.DeactivateCheckpoint();
         }
+        currentCheckpoint = check;
     }
 
     public void Die() // this function is called when the player dies
@@ -1084,7 +1084,7 @@ public class PlayerController : MonoBehaviour
         // COMMENT: Code below should be in an else statement for clarity's sake methinks.
 
         //if the player has a checkpoint stored, remove it and get an updated one. COMMENT: Doesnt this do what the code above does?
-        currentCheckpoint.Reset();
+        currentCheckpoint.ResetState();
 
         // Remove any velocity from player and set their position to their current checkpoint position
         rb.velocity = Vector3.zero;

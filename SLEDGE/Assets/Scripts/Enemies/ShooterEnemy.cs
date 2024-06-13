@@ -21,7 +21,7 @@ public class ShooterEnemy : MonoBehaviour
     public float detectionRadius = 20;
 
     Rigidbody rb;
-    Vector3 position;
+    Vector3 startPosition;
 
     GameObject player;
     float cooldown = 2.0f;
@@ -57,7 +57,7 @@ public class ShooterEnemy : MonoBehaviour
         rb = GetComponent<Rigidbody>();
 
         // gun = transform.Find("Gun");
-        position = transform.position;
+        startPosition = transform.position;
         currentHealth = maxHealth;
         chestConstraint = trackConstraints[0].GetComponent<MultiAimConstraint>();
     }
@@ -68,7 +68,6 @@ public class ShooterEnemy : MonoBehaviour
         lookAtTarget.transform.position = player.transform.position;
         // transform.rotation = Quaternion.LookRotation(lookPos);
         rb.velocity = Vector3.zero;
-        // transform.position = position;
         cooldown += Time.deltaTime;
         // rotate dude if you are behind him
         Vector3 targetpos = new Vector3(lookAtTarget.transform.position.x, 0, lookAtTarget.transform.position.z);
@@ -165,16 +164,23 @@ public class ShooterEnemy : MonoBehaviour
         GameObject.Find("ScoreManager").GetComponent<ScoreManager>().AddEnemiesKilled(1);
         GameObject yeesus = Instantiate(deathRagdoll, transform.position, Quaternion.identity);
         yeesus.GetComponent<Rigidbody>().AddForce(rb.velocity, ForceMode.Impulse);
-        Destroy(gameObject);
+        DestroyProjectiles();
+        EnemyManager.Instance.EnemyDeath(gameObject);
+        gameObject.SetActive(false);
     }
 
-    public void Destroy()
+    public void Reset()
+    {
+        transform.position = startPosition;
+        enemyState = EnemyState.IDLE;
+    }
+
+    public void DestroyProjectiles()
     {
         foreach (GameObject p in projectiles)
         {
             Destroy(p);
         }
-        Destroy(gameObject);
     }
 
 }

@@ -220,6 +220,7 @@ public class FlyingEnemy : MonoBehaviour
         GameObject.Find("ScoreManager").GetComponent<ScoreManager>().AddEnemiesKilled(1);
         GameObject cheesus = Instantiate(deathRagdoll, transform.position, Quaternion.identity);
         cheesus.GetComponent<Rigidbody>().AddForce(rb.velocity, ForceMode.VelocityChange);
-        Destroy(gameObject);
+        EnemyManager.Instance.EnemyDeath(gameObject);
+        gameObject.SetActive(false);
     }
 }
