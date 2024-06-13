@@ -63,10 +63,50 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7065037303146516648, guid: 5b26387205838b34c984fb0474f2a687,
+        type: 3}
+      propertyPath: m_Layer
+      value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: -4977339319212372911, guid: 5b26387205838b34c984fb0474f2a687,
+        type: 3}
+      propertyPath: m_Layer
+      value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: -4819223349682164798, guid: 5b26387205838b34c984fb0474f2a687,
+        type: 3}
+      propertyPath: m_Layer
+      value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: -3823932595669593202, guid: 5b26387205838b34c984fb0474f2a687,
+        type: 3}
+      propertyPath: m_Layer
+      value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: -3713006921689149617, guid: 5b26387205838b34c984fb0474f2a687,
+        type: 3}
+      propertyPath: m_Layer
+      value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: -3650928225696642572, guid: 5b26387205838b34c984fb0474f2a687,
+        type: 3}
+      propertyPath: m_Layer
+      value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: -3290173663471768200, guid: 5b26387205838b34c984fb0474f2a687,
+        type: 3}
+      propertyPath: m_Layer
+      value: 11
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 5b26387205838b34c984fb0474f2a687,
         type: 3}
       propertyPath: m_Name
       value: Flyer Ragdoll
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 5b26387205838b34c984fb0474f2a687,
+        type: 3}
+      propertyPath: m_Layer
+      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 1295848904125432484, guid: 5b26387205838b34c984fb0474f2a687,
         type: 3}
@@ -78,6 +118,21 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 02ef87f2379e4904aa43f6f63eb332a4, type: 2}
+    - target: {fileID: 2345503392635361144, guid: 5b26387205838b34c984fb0474f2a687,
+        type: 3}
+      propertyPath: m_Layer
+      value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: 4029592487224896923, guid: 5b26387205838b34c984fb0474f2a687,
+        type: 3}
+      propertyPath: m_Layer
+      value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: 4322895422027795927, guid: 5b26387205838b34c984fb0474f2a687,
+        type: 3}
+      propertyPath: m_Layer
+      value: 11
+      objectReference: {fileID: 0}
     - target: {fileID: 5654720126909002841, guid: 5b26387205838b34c984fb0474f2a687,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -98,6 +153,11 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 02ef87f2379e4904aa43f6f63eb332a4, type: 2}
+    - target: {fileID: 7370744216600920176, guid: 5b26387205838b34c984fb0474f2a687,
+        type: 3}
+      propertyPath: m_Layer
+      value: 11
+      objectReference: {fileID: 0}
     - target: {fileID: 8449996119470504636, guid: 5b26387205838b34c984fb0474f2a687,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -108,6 +168,11 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 02ef87f2379e4904aa43f6f63eb332a4, type: 2}
+    - target: {fileID: 9140796281310863781, guid: 5b26387205838b34c984fb0474f2a687,
+        type: 3}
+      propertyPath: m_Layer
+      value: 11
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -147,7 +212,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7952471370293192832}
   serializedVersion: 4
-  m_Mass: 1
+  m_Mass: 15
   m_Drag: 0
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -158,14 +223,14 @@ Rigidbody:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 1024
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 2
 --- !u!65 &7901577735025387715
 BoxCollider:
   m_ObjectHideFlags: 0

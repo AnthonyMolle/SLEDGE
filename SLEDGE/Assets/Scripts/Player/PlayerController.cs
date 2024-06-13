@@ -12,6 +12,7 @@ using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.ProBuilder.Shapes;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Random=UnityEngine.Random;
 
 public class PlayerController : MonoBehaviour
 {
@@ -159,8 +160,8 @@ public class PlayerController : MonoBehaviour
 
     Vector3 hitDirection;
     float swingForce;
-    float swipeForceBase = 20f;
-    float smashForceBase = 30f;
+    [SerializeField] float swipeForceBase = 20f;
+    [SerializeField] float smashForceBase = 30f;
 
     float hammerTimer = 0;
     float hangTime = 0;
@@ -374,9 +375,9 @@ public class PlayerController : MonoBehaviour
             swipingHammer = true;
             swipeComboReady = false;
             hammerTimer = swipeTime;
-            anim.Play("Hit 1");
+            anim.Play("Swipe Right", -1, 0.25f);
             currentCombo = Combo.Swipe1;
-            hitDirection = new Vector3(1f, -0.8f, 0);
+            hitDirection = Vector3.Normalize(new Vector3(Random.Range(-15f, -30f), Random.Range(-5.0f, 5.0f), Random.Range(0f, 10f)) + transform.forward);
             swingForce = swipeForceBase;
         }
         // combo swipes
@@ -385,9 +386,9 @@ public class PlayerController : MonoBehaviour
             swipingHammer = true;
             swipeComboReady = false;
             hammerTimer = swipeTime;
-            anim.Play("Hit 2");
+            anim.Play("Swipe Left", -1, 0.01f);
             currentCombo = Combo.Swipe2;
-            hitDirection = new Vector3(-1f, -0.8f, 0);
+            hitDirection = Vector3.Normalize(new Vector3(Random.Range(15f, 30f), Random.Range(-5.0f, 5.0f), Random.Range(0f, 10f)) + transform.forward);
             swingForce = swipeForceBase;
         }
         if (secondaryPressed && !chargingHammer && !recovering && !hittingHammer && !hammerCharged && !swipingHammer && swipeComboReady && currentCombo == Combo.Swipe2)
@@ -395,9 +396,9 @@ public class PlayerController : MonoBehaviour
             swipingHammer = true;
             swipeComboReady = false;
             hammerTimer = swipeTime;
-            anim.Play("Hit 1");
+            anim.Play("Swipe Right", -1, 0.25f);
             currentCombo = Combo.Swipe1;
-            hitDirection = new Vector3(1f, -0.8f, 0);
+            hitDirection = Vector3.Normalize(new Vector3(Random.Range(-15f, -30f), Random.Range(-5.0f, 5.0f), Random.Range(0f, 10f)) + transform.forward);
             swingForce = swipeForceBase;
         }
 
@@ -419,13 +420,14 @@ public class PlayerController : MonoBehaviour
             chargingHammer = true;
             hammerTimer = chargeTime;
             //anim.Play("HammerCharge"); 
-            anim.Play("Charge 2");
+            anim.Play("Charge");
+            hitDirection = transform.forward;
             hammerBounced = false;
         }
 
         if (chargingHammer && hammerTimer > 0.1 && mouseReleased)
         {
-            anim.Play("Idle 2");
+            anim.Play("Idle");
             currentCombo = Combo.notSwiping;
             chargingHammer = false;
             hammerTimer = 0;
@@ -450,7 +452,7 @@ public class PlayerController : MonoBehaviour
             hammerCharged = true;
             chargingHammer = false;
             //anim.Play("HammerHold"); 
-            anim.Play("Charged 1 Hold");
+            anim.Play("Charged");
             hammerBounced = false;
         }
         else if (hittingHammer)
@@ -460,13 +462,14 @@ public class PlayerController : MonoBehaviour
             hittingHammer = false;
             //audioManager.PlaySFX(audioManager.hit);
             //anim.Play("HammerHit"); 
-            anim.Play("Slam 2");
+            anim.Play("Slam");
             //slamHitbox.DeactivateCollider();
 
             recovering = true;
             hammerTimer = recoveryTime;
             hammerBounced = false;
-            hitDirection = new Vector3(-0.1f, -0.2f, -1f);
+            hitDirection = transform.forward;
+            // hitDirection = Vector3.left + transform.forward;
             swingForce = smashForceBase;
         }
         else if (recovering)
@@ -584,6 +587,11 @@ public class PlayerController : MonoBehaviour
             Time.timeScale = 1;
         }
 
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            anim.Play("Equip");
+        }
+
         //all upcoming code could be put somewhere way better or in a function but its cool ok lol
         float zCamRotate;
 
@@ -617,8 +625,12 @@ public class PlayerController : MonoBehaviour
             {
                 audioManager.PlaySFX(audioManager.land);
                 StartCoroutine(FindObjectOfType<ScreenShaker>().Shake(0.1f, 0.01f, 0, 0, 0.1f));
+                if (!hammerCharged) {
+                    anim.Play("Land");
+                }
             }
             isGrounded = true;
+            anim.SetBool("grounded", true);
             movementPlane = hit.normal;
 
             StopCoroutine(DecreaseCoyoteTime()); // Stop the coroutine that lets us have jump leinency
@@ -638,6 +650,7 @@ public class PlayerController : MonoBehaviour
         {
             movementPlane = transform.up;
             isGrounded = false;
+            anim.SetBool("grounded", false);
             isOnSlope = false;
 
             // Let the player jump until this coroutine is finished.
@@ -666,15 +679,22 @@ public class PlayerController : MonoBehaviour
                 {
                     isLaunched = false;
                 }
+                // Debug.Log(flatVelocity);
+                // Debug.Log("Velo: " + (flatVelocity + transform.forward));
+                // Debug.Log("Velo Magnitude: " + flatVelocity.magnitude);
+                anim.SetFloat("Speed", flatVelocity.magnitude);
+                Debug.Log(anim.GetFloat("Speed"));
+
 
                 if (movementInputVector.magnitude > 0.001)
                 {
                     walkTime += 1;
-                    if (walkTime >= 15)
+                    if (walkTime%15 == 0)
                     {
                         audioManager.PlayWalk();
                         walkTime = 0;
                     }
+                    // add some anims for changing direction, or move arms in direction of movement? (kaelen idea)
                     if (flatVelocity.magnitude < maxSpeed || flatVelocity.magnitude >= maxSpeed && isChangingDirection)
                     {
                         isChangingDirection = false;
@@ -695,6 +715,7 @@ public class PlayerController : MonoBehaviour
                     if (flatVelocity.magnitude > 0.01)
                     {
                         rb.AddForce(-flatVelocity * decelerationRate);
+                        walkTime = 0;
                     }
                     else
                     {
@@ -808,9 +829,12 @@ public class PlayerController : MonoBehaviour
 
     private void Jump() // Is called when the player tried and is allowed to jump
     {
-        rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z); // Remove our falling velocity so our jump doesnt have to fight gravity.
-        rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse); // Add a force upward
-        hasJumped = true; // Let the engine know we have jumped.
+        rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z); //remove our falling velocity so our jump doesnt have to fight gravity.
+        rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse); // add a force upward
+        hasJumped = true; // let the engine know we have jumped.
+        if (!hammerCharged) {
+            anim.Play("Jump");
+        }
     }
 
     private void HammerBounce() // Checks if we have bounced off a surface, if so apply physics or hurt enemys
@@ -837,12 +861,17 @@ public class PlayerController : MonoBehaviour
                 else if (hit.transform.gameObject.tag == "Enemy Flyer")
                 {
                     var e = hit.transform.gameObject.GetComponent<FlyingEnemy>();
+                    Debug.Log("CALL ME ;)");
                     e.TakeDamage(1, hitDirection, swingForce * 1.5f);
                 }
                 else if (hit.transform.gameObject.tag == "Enemy Shooter")
                 {
                     var e = hit.transform.gameObject.GetComponent<ShooterEnemy>();
                     e.TakeDamage(1, hitDirection, swingForce * 1.5f);
+                }
+                else if (hit.transform.gameObject.tag == "Collectible" || hit.transform.gameObject.layer == 11) // 11 == gibs layer
+                {
+                    hit.transform.gameObject.GetComponent<Rigidbody>().AddForce(ray.direction * 50f, ForceMode.Impulse);
                 }
             }
 
@@ -922,6 +951,7 @@ public class PlayerController : MonoBehaviour
 
     private void HammerHit() // See if we it an enemy or projectile. Respond accordingly.
     {
+        Debug.Log("YOWZA BABOWZA BABYYYY");
         //Add parry and hit sounds in if statements
         Ray ray = gameCamera.ScreenPointToRay(Input.mousePosition);
 
@@ -931,9 +961,12 @@ public class PlayerController : MonoBehaviour
         {
             foreach (RaycastHit hit in hits)
             {
+                Debug.Log(hit.collider.gameObject);
                 if (hit.transform.gameObject.tag == "Enemy Flyer")
                 {
+                    Debug.Log("CALL ME ;)");
                     hit.transform.gameObject.GetComponent<FlyingEnemy>().TakeDamage(1, hitDirection, swingForce);
+                    Debug.Log(hitDirection);
                 }
                 else if (hit.transform.gameObject.tag == "Enemy Shooter")
                 {
@@ -949,9 +982,9 @@ public class PlayerController : MonoBehaviour
                         FindObjectOfType<Hitstop>().Stop(0.15f);
                     }
                 }
-                else if (hit.transform.gameObject.tag == "Collectible")
+                else if (hit.transform.gameObject.tag == "Collectible" || hit.transform.gameObject.layer == 11) // 11 == gibs layer
                 {
-                    hit.transform.gameObject.GetComponent<Rigidbody>().AddForce(ray.direction * 50, ForceMode.Impulse);
+                    hit.transform.gameObject.GetComponent<Rigidbody>().AddForce(ray.direction * 50f, ForceMode.Impulse);
                 }
             }
 
