@@ -12,6 +12,7 @@ using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.ProBuilder.Shapes;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Random=UnityEngine.Random;
 
 public class PlayerController : MonoBehaviour
 {
@@ -159,8 +160,8 @@ public class PlayerController : MonoBehaviour
 
     Vector3 hitDirection;
     float swingForce;
-    float swipeForceBase = 20f;
-    float smashForceBase = 30f;
+    [SerializeField] float swipeForceBase = 20f;
+    [SerializeField] float smashForceBase = 30f;
 
     float hammerTimer = 0;
     float hangTime = 0;
@@ -356,7 +357,7 @@ public class PlayerController : MonoBehaviour
             hammerTimer = swipeTime;
             anim.Play("Swipe Right");
             currentCombo = Combo.Swipe1;
-            hitDirection = new Vector3(1f, -0.8f, 0);
+            hitDirection = Vector3.Normalize(new Vector3(Random.Range(-15f, -30f), Random.Range(-5.0f, 5.0f), Random.Range(0f, 10f)) + transform.forward);
             swingForce = swipeForceBase;
         }
         // combo swipes
@@ -367,7 +368,7 @@ public class PlayerController : MonoBehaviour
             hammerTimer = swipeTime;
             anim.Play("Swipe Left");
             currentCombo = Combo.Swipe2;
-            hitDirection = new Vector3(-1f, -0.8f, 0);
+            hitDirection = Vector3.Normalize(new Vector3(Random.Range(15f, 30f), Random.Range(-5.0f, 5.0f), Random.Range(0f, 10f)) + transform.forward);
             swingForce = swipeForceBase;
         }
         if (secondaryPressed && !chargingHammer && !recovering && !hittingHammer && !hammerCharged && !swipingHammer && swipeComboReady && currentCombo == Combo.Swipe2)
@@ -377,7 +378,7 @@ public class PlayerController : MonoBehaviour
             hammerTimer = swipeTime;
             anim.Play("Swipe Right");
             currentCombo = Combo.Swipe1;
-            hitDirection = new Vector3(1f, -0.8f, 0);
+            hitDirection = Vector3.Normalize(new Vector3(Random.Range(-15f, -30f), Random.Range(-5.0f, 5.0f), Random.Range(0f, 10f)) + transform.forward);
             swingForce = swipeForceBase;
         }
         // if (secondaryPressed && !chargingHammer && !recovering && !hittingHammer && !hammerCharged && !swipeRecovering && !swipingHammer && swipeComboReady && currentCombo == Combo.Swipe2)
@@ -397,6 +398,7 @@ public class PlayerController : MonoBehaviour
             hammerTimer = chargeTime;
             //anim.Play("HammerCharge"); 
             anim.Play("Charge");
+            hitDirection = transform.forward;
             hammerBounced = false;
         }
 
@@ -445,7 +447,7 @@ public class PlayerController : MonoBehaviour
             recovering = true;
             hammerTimer = recoveryTime;
             hammerBounced = false;
-            hitDirection = new Vector3(-0.1f, -0.2f, -1f);
+            // hitDirection = Vector3.left + transform.forward;
             swingForce = smashForceBase;
         }
         else if (recovering)
@@ -664,7 +666,7 @@ public class PlayerController : MonoBehaviour
                     if (walkTime >= 15)
                     {
                         audioManager.PlayWalk();
-                        anim.Play("Walk");
+                        anim.Play("Run");
                         walkTime = 0;
                     }
                     // add some anims for changing direction, or move arms in direction of movement
@@ -846,6 +848,7 @@ public class PlayerController : MonoBehaviour
                 else if (hit.transform.gameObject.tag == "Enemy Flyer")
                 {
                     var e = hit.transform.gameObject.GetComponent<FlyingEnemy>();
+                    Debug.Log("CALL ME ;)");
                     e.TakeDamage(1, hitDirection, swingForce * 1.5f);
                 }
                 else if (hit.transform.gameObject.tag == "Enemy Shooter")
@@ -935,6 +938,7 @@ public class PlayerController : MonoBehaviour
 
     private void HammerHit()
     {
+        Debug.Log("YOWZA BABOWZA BABYYYY");
         //Add parry and hit sounds in if statements
         Ray ray = gameCamera.ScreenPointToRay(Input.mousePosition);
 
@@ -944,9 +948,12 @@ public class PlayerController : MonoBehaviour
         {
             foreach (RaycastHit hit in hits)
             {
+                Debug.Log(hit.collider.gameObject);
                 if (hit.transform.gameObject.tag == "Enemy Flyer")
                 {
+                    Debug.Log("CALL ME ;)");
                     hit.transform.gameObject.GetComponent<FlyingEnemy>().TakeDamage(1, hitDirection, swingForce);
+                    Debug.Log(hitDirection);
                 }
                 else if (hit.transform.gameObject.tag == "Enemy Shooter")
                 {
@@ -962,9 +969,9 @@ public class PlayerController : MonoBehaviour
                         FindObjectOfType<Hitstop>().Stop(0.15f);
                     }
                 }
-                else if (hit.transform.gameObject.tag == "Collectible")
+                else if (hit.transform.gameObject.tag == "Collectible" || hit.transform.gameObject.layer == 11) // 11 == gibs layer
                 {
-                    hit.transform.gameObject.GetComponent<Rigidbody>().AddForce(ray.direction * 50, ForceMode.Impulse);
+                    hit.transform.gameObject.GetComponent<Rigidbody>().AddForce(ray.direction * 50f, ForceMode.Impulse);
                 }
             }
 

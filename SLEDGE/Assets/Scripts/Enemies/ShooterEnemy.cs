@@ -163,8 +163,9 @@ public class ShooterEnemy : MonoBehaviour
     {
         // add sfx and vfx and such!
         GameObject.Find("ScoreManager").GetComponent<ScoreManager>().AddEnemiesKilled(1);
-        GameObject yeesus = Instantiate(deathRagdoll, transform.position, Quaternion.identity);
+        GameObject yeesus = Instantiate(deathRagdoll, transform.position, transform.rotation);
         yeesus.GetComponent<Rigidbody>().AddForce(rb.velocity, ForceMode.Impulse);
+        // foreach (var bone in yeesus.)  // need a way to get the position of the premortum state
         Destroy(gameObject);
     }
 

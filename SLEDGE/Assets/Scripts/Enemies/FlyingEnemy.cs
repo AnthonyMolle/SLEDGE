@@ -194,12 +194,12 @@ public class FlyingEnemy : MonoBehaviour
     public void TakeDamage(int damage, Vector3 direction, float force)
     {
         enemyState = EnemyState.STUNNED;
-        rb.AddForce(transform.rotation * direction * force, ForceMode.Impulse);
+        rb.AddForce(direction * force, ForceMode.Impulse);
         Debug.Log("afterlocity: "+ rb.velocity);
         currentHealth -= damage;
         if (currentHealth <= 0)
         {
-            Die();
+            Die(direction * force);
         }
     }
 
@@ -213,12 +213,13 @@ public class FlyingEnemy : MonoBehaviour
     // }
 
 
-    public void Die()
+    public void Die(Vector3 force)
     {
+        Debug.Log("DIEEEEEEE");
         // add sfx and vfx and such!
         GameObject.Find("ScoreManager").GetComponent<ScoreManager>().AddEnemiesKilled(1);
-        GameObject cheesus = Instantiate(deathRagdoll, transform.position, Quaternion.identity);
-        cheesus.GetComponent<Rigidbody>().AddForce(rb.velocity, ForceMode.VelocityChange);
+        GameObject cheesus = Instantiate(deathRagdoll, transform.position, transform.rotation);
+        cheesus.GetComponent<Rigidbody>().AddForce(force, ForceMode.Impulse);
         Destroy(gameObject);
     }
 }
