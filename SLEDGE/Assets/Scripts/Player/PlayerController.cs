@@ -355,7 +355,7 @@ public class PlayerController : MonoBehaviour
             swipingHammer = true;
             swipeComboReady = false;
             hammerTimer = swipeTime;
-            anim.Play("Swipe Right");
+            anim.Play("Swipe Right", -1, 0.25f);
             currentCombo = Combo.Swipe1;
             hitDirection = Vector3.Normalize(new Vector3(Random.Range(-15f, -30f), Random.Range(-5.0f, 5.0f), Random.Range(0f, 10f)) + transform.forward);
             swingForce = swipeForceBase;
@@ -366,7 +366,7 @@ public class PlayerController : MonoBehaviour
             swipingHammer = true;
             swipeComboReady = false;
             hammerTimer = swipeTime;
-            anim.Play("Swipe Left");
+            anim.Play("Swipe Left", -1, 0.01f);
             currentCombo = Combo.Swipe2;
             hitDirection = Vector3.Normalize(new Vector3(Random.Range(15f, 30f), Random.Range(-5.0f, 5.0f), Random.Range(0f, 10f)) + transform.forward);
             swingForce = swipeForceBase;
@@ -376,7 +376,7 @@ public class PlayerController : MonoBehaviour
             swipingHammer = true;
             swipeComboReady = false;
             hammerTimer = swipeTime;
-            anim.Play("Swipe Right");
+            anim.Play("Swipe Right", -1, 0.25f);
             currentCombo = Combo.Swipe1;
             hitDirection = Vector3.Normalize(new Vector3(Random.Range(-15f, -30f), Random.Range(-5.0f, 5.0f), Random.Range(0f, 10f)) + transform.forward);
             swingForce = swipeForceBase;
@@ -431,7 +431,7 @@ public class PlayerController : MonoBehaviour
             hammerCharged = true;
             chargingHammer = false;
             //anim.Play("HammerHold"); 
-            anim.Play("Charge Hold");
+            anim.Play("Charged");
             hammerBounced = false;
         }
         else if (hittingHammer)
@@ -612,6 +612,7 @@ public class PlayerController : MonoBehaviour
                 anim.Play("Land");
             }
             isGrounded = true;
+            anim.SetBool("grounded", true);
             movementPlane = hit.normal;
 
             StopCoroutine(DecreaseCoyoteTime()); // Stop the coroutine that lets us have jump leinency
@@ -631,6 +632,7 @@ public class PlayerController : MonoBehaviour
         {
             movementPlane = transform.up;
             isGrounded = false;
+            anim.SetBool("grounded", false);
             isOnSlope = false;
 
             // Let the player jump until this coroutine is finished.
@@ -659,17 +661,22 @@ public class PlayerController : MonoBehaviour
                 {
                     isLaunched = false;
                 }
+                // Debug.Log(flatVelocity);
+                // Debug.Log("Velo: " + (flatVelocity + transform.forward));
+                // Debug.Log("Velo Magnitude: " + flatVelocity.magnitude);
+                anim.SetFloat("Speed", flatVelocity.magnitude);
+                Debug.Log(anim.GetFloat("Speed"));
+
 
                 if (movementInputVector.magnitude > 0.001)
                 {
                     walkTime += 1;
-                    if (walkTime >= 15)
+                    if (walkTime%15 == 0)
                     {
                         audioManager.PlayWalk();
-                        anim.Play("Run");
                         walkTime = 0;
                     }
-                    // add some anims for changing direction, or move arms in direction of movement
+                    // add some anims for changing direction, or move arms in direction of movement? (kaelen idea)
                     if (flatVelocity.magnitude < maxSpeed || flatVelocity.magnitude >= maxSpeed && isChangingDirection)
                     {
                         isChangingDirection = false;
@@ -690,11 +697,11 @@ public class PlayerController : MonoBehaviour
                     if (flatVelocity.magnitude > 0.01)
                     {
                         rb.AddForce(-flatVelocity * decelerationRate);
+                        walkTime = 0;
                     }
                     else
                     {
                         rb.velocity = new Vector3(0, rb.velocity.y, 0); //Vector3.ProjectOnPlane(new Vector3(0, rb.velocity.y, 0), movementPlane);
-                        anim.Play("Idle");
                     }
                 }
             }
