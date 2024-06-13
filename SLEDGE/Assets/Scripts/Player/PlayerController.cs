@@ -396,13 +396,13 @@ public class PlayerController : MonoBehaviour
             chargingHammer = true;
             hammerTimer = chargeTime;
             //anim.Play("HammerCharge"); 
-            anim.Play("Charge 2");
+            anim.Play("Charge");
             hammerBounced = false;
         }
 
         if (chargingHammer && hammerTimer > 0.1 && mouseReleased)
         {
-            anim.Play("Idle 2");
+            anim.Play("Idle");
             currentCombo = Combo.notSwiping;
             chargingHammer = false;
             hammerTimer = 0;
@@ -429,7 +429,7 @@ public class PlayerController : MonoBehaviour
             hammerCharged = true;
             chargingHammer = false;
             //anim.Play("HammerHold"); 
-            anim.Play("Charged 1 Hold");
+            anim.Play("Charge Hold");
             hammerBounced = false;
         }
         else if (hittingHammer)
@@ -439,7 +439,7 @@ public class PlayerController : MonoBehaviour
             hittingHammer = false;
             //audioManager.PlaySFX(audioManager.hit);
             //anim.Play("HammerHit"); 
-            anim.Play("Slam 2");
+            anim.Play("Slam");
             //slamHitbox.DeactivateCollider();
 
             recovering = true;
@@ -607,6 +607,7 @@ public class PlayerController : MonoBehaviour
             {
                 audioManager.PlaySFX(audioManager.land);
                 StartCoroutine(FindObjectOfType<ScreenShaker>().Shake(0.1f, 0.01f, 0, 0, 0.1f));
+                anim.Play("Land");
             }
             isGrounded = true;
             movementPlane = hit.normal;
@@ -663,8 +664,10 @@ public class PlayerController : MonoBehaviour
                     if (walkTime >= 15)
                     {
                         audioManager.PlayWalk();
+                        anim.Play("Walk");
                         walkTime = 0;
                     }
+                    // add some anims for changing direction, or move arms in direction of movement
                     if (flatVelocity.magnitude < maxSpeed || flatVelocity.magnitude >= maxSpeed && isChangingDirection)
                     {
                         isChangingDirection = false;
@@ -689,6 +692,7 @@ public class PlayerController : MonoBehaviour
                     else
                     {
                         rb.velocity = new Vector3(0, rb.velocity.y, 0); //Vector3.ProjectOnPlane(new Vector3(0, rb.velocity.y, 0), movementPlane);
+                        anim.Play("Idle");
                     }
                 }
             }
@@ -813,6 +817,7 @@ public class PlayerController : MonoBehaviour
         rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z); //remove our falling velocity so our jump doesnt have to fight gravity.
         rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse); // add a force upward
         hasJumped = true; // let the engine know we have jumped.
+        anim.Play("Jump");
     }
 
     bool hammerBounced = false;
