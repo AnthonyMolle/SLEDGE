@@ -10,6 +10,11 @@ public class Checkpoint : MonoBehaviour
 
     public bool activated = false;
     private Dictionary<GameObject, bool> savedEnemyStatus;
+    
+    PlayerController playerController;
+    PlayerController.Powerup savedPowerup = PlayerController.Powerup.None;
+    int savedKills;
+    int savedStyle;
 
     private void Start()
     {
@@ -20,15 +25,22 @@ public class Checkpoint : MonoBehaviour
     {
         if (other.gameObject.tag == "Player" && !activated)
         {
-            other.gameObject.GetComponent<PlayerController>().UpdateSpawn(this);
+            playerController = other.gameObject.GetComponent<PlayerController>();
             ActivateCheckpoint();
         }
     }
 
     private void ActivateCheckpoint()
     {
+        playerController.UpdateSpawn(this);
+        playerController.ResetHealth();
+        
+        savedPowerup = playerController.GetCurrentPowerup();
+        savedKills = ScoreManager.Instance.GetEnemiesKilled();
+        savedStyle = ScoreManager.Instance.GetStyleKills();
+        
         activated = true;
-        //savedEnemyStatus = EnemyManager.Instance.GetEnemyStatus();
+
         savedEnemyStatus = new Dictionary<GameObject, bool>();
         foreach (KeyValuePair<GameObject, bool> entry in EnemyManager.Instance.GetEnemyStatus())
         {
@@ -47,5 +59,11 @@ public class Checkpoint : MonoBehaviour
     public void ResetState()
     {
         EnemyManager.Instance.ResetEnemyState(savedEnemyStatus);
+        if (savedPowerup != PlayerController.Powerup.None)
+        {
+            playerController.CollectPowerup(savedPowerup);
+        }
+        ScoreManager.Instance.ResetKills(savedKills);
+        ScoreManager.Instance.ResetStyle(savedStyle);
     }
 }

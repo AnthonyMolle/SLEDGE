@@ -61,7 +61,9 @@ public class ScoreManager : MonoBehaviour
         StyleKills += 100;
         EnemiesKilled += _enemiesKilled; 
     }
+    public void ResetKills(int _kills) {  EnemiesKilled = _kills; }
     public void AddStyleKills(int _styleKills) { StyleKills += _styleKills; }
+    public void ResetStyle(int _style) { StyleKills = _style; }
     public void AddDamageTaken(float _damageTaken) { DamageTaken += _damageTaken; }
     #endregion
 

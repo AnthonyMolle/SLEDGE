@@ -41,6 +41,7 @@ public class FlyingEnemy : MonoBehaviour
 
     [Header("Death")]
     public GameObject deathRagdoll;
+    GameObject ragdoll;
 
     EnemyState enemyState = EnemyState.IDLE;
 
@@ -174,6 +175,8 @@ public class FlyingEnemy : MonoBehaviour
 
     public void Reset()
     {
+        Destroy(ragdoll);
+        ragdoll = null;
         transform.position = startPosition;
         enemyState = EnemyState.IDLE;
     }
@@ -220,8 +223,8 @@ public class FlyingEnemy : MonoBehaviour
         // add sfx and vfx and such!
         GameObject.Find("ScoreManager").GetComponent<ScoreManager>().AddEnemiesKilled(1);
 
-        GameObject cheesus = Instantiate(deathRagdoll, transform.position, transform.rotation);
-        cheesus.GetComponent<Rigidbody>().AddForce(force, ForceMode.Impulse);
+        ragdoll = Instantiate(deathRagdoll, transform.position, transform.rotation);
+        ragdoll.GetComponent<Rigidbody>().AddForce(force, ForceMode.Impulse);
         EnemyManager.Instance.EnemyDeath(gameObject);
         gameObject.SetActive(false);
     }

@@ -683,7 +683,7 @@ public class PlayerController : MonoBehaviour
                 // Debug.Log("Velo: " + (flatVelocity + transform.forward));
                 // Debug.Log("Velo Magnitude: " + flatVelocity.magnitude);
                 anim.SetFloat("Speed", flatVelocity.magnitude);
-                Debug.Log(anim.GetFloat("Speed"));
+                //Debug.Log(anim.GetFloat("Speed"));
 
 
                 if (movementInputVector.magnitude > 0.001)
@@ -1073,6 +1073,15 @@ public class PlayerController : MonoBehaviour
 
     }
 
+    public void ResetHealth()
+    {
+        currentHealth = maxHealth;
+        if (healthDisplay != null)
+        {
+            healthDisplay.text = "Health: " + currentHealth;
+        }
+    }
+
     public void TakeDamage(int damage) // called when the player needs to take damage
     {
         StartCoroutine(FindObjectOfType<ScreenShaker>().Shake(0.1f, 0.01f, 0, 0, 0.1f));
@@ -1134,6 +1143,8 @@ public class PlayerController : MonoBehaviour
     {
         return movementInputVector.magnitude != 0;
     }
+
+    public Powerup GetCurrentPowerup() {  return currentPowerup; }
 
     public void CollectPowerup(Powerup newPowerup) // Equips a new powerup to the player and updates UI to display equiped powerup
     {
