@@ -447,6 +447,7 @@ public class PlayerController : MonoBehaviour
             recovering = true;
             hammerTimer = recoveryTime;
             hammerBounced = false;
+            hitDirection = transform.forward;
             // hitDirection = Vector3.left + transform.forward;
             swingForce = smashForceBase;
         }
@@ -576,6 +577,11 @@ public class PlayerController : MonoBehaviour
             Time.timeScale = 1;
         }
 
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            anim.Play("Equip");
+        }
+
         //all upcoming code could be put somewhere way better or in a function but its cool ok lol
         float zCamRotate;
 
@@ -609,7 +615,9 @@ public class PlayerController : MonoBehaviour
             {
                 audioManager.PlaySFX(audioManager.land);
                 StartCoroutine(FindObjectOfType<ScreenShaker>().Shake(0.1f, 0.01f, 0, 0, 0.1f));
-                anim.Play("Land");
+                if (!hammerCharged) {
+                    anim.Play("Land");
+                }
             }
             isGrounded = true;
             anim.SetBool("grounded", true);
@@ -826,7 +834,9 @@ public class PlayerController : MonoBehaviour
         rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z); //remove our falling velocity so our jump doesnt have to fight gravity.
         rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse); // add a force upward
         hasJumped = true; // let the engine know we have jumped.
-        anim.Play("Jump");
+        if (!hammerCharged) {
+            anim.Play("Jump");
+        }
     }
 
     bool hammerBounced = false;
@@ -862,6 +872,10 @@ public class PlayerController : MonoBehaviour
                 {
                     var e = hit.transform.gameObject.GetComponent<ShooterEnemy>();
                     e.TakeDamage(1, hitDirection, swingForce * 1.5f);
+                }
+                else if (hit.transform.gameObject.tag == "Collectible" || hit.transform.gameObject.layer == 11) // 11 == gibs layer
+                {
+                    hit.transform.gameObject.GetComponent<Rigidbody>().AddForce(ray.direction * 50f, ForceMode.Impulse);
                 }
             }
 
