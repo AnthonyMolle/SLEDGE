@@ -183,6 +183,7 @@ public class FlyingEnemy : MonoBehaviour
         if (other.gameObject.tag == "Player")
         {
             other.gameObject.GetComponent<PlayerController>().TakeDamage(1);
+            TakeDamage(1, new Vector3(0, 0, -1), 10f);
         }
     }
 
@@ -218,8 +219,10 @@ public class FlyingEnemy : MonoBehaviour
         Debug.Log("DIEEEEEEE");
         // add sfx and vfx and such!
         GameObject.Find("ScoreManager").GetComponent<ScoreManager>().AddEnemiesKilled(1);
+
         GameObject cheesus = Instantiate(deathRagdoll, transform.position, transform.rotation);
         cheesus.GetComponent<Rigidbody>().AddForce(force, ForceMode.Impulse);
-        Destroy(gameObject);
+        EnemyManager.Instance.EnemyDeath(gameObject);
+        gameObject.SetActive(false);
     }
 }

@@ -1123,7 +1123,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: EvanLevel3
+          m_StringArgument: Level 3 ART
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &172267238
@@ -1146,7 +1146,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 04903803d6c3ef64999f5077843914c8, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 7273e3a1a7c59954d8bab561173c5617, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -3043,6 +3043,81 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   translationName: exit
   FallbackText: Exit
+--- !u!1 &422691571
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 422691572}
+  - component: {fileID: 422691574}
+  - component: {fileID: 422691573}
+  m_Layer: 5
+  m_Name: Image
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &422691572
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 422691571}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1033364381}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -65, y: 0}
+  m_SizeDelta: {x: 1280, y: 241}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &422691573
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 422691571}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: b2dc999e42233514a88b7d8a2e7f5531, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &422691574
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 422691571}
+  m_CullTransparentMesh: 1
 --- !u!1001 &462432154
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3664,6 +3739,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 1883033551}
+    - targetCorrespondingSourceObject: {fileID: 2595841393310147819, guid: 6ca881f9a28067e4e85175e88c73895e,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 422691572}
     - targetCorrespondingSourceObject: {fileID: 6385169151274281595, guid: 6ca881f9a28067e4e85175e88c73895e,
         type: 3}
       insertIndex: -1
@@ -6510,7 +6589,7 @@ MonoBehaviour:
   timeText: {fileID: 352574119}
   rankText: {fileID: 1041162635}
   collectibleText: {fileID: 1181367376}
-  LevelName: EvanLevel3
+  LevelName: Level 3 ART
 --- !u!1 &839219939
 GameObject:
   m_ObjectHideFlags: 0
@@ -11565,6 +11644,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Text Title
+      objectReference: {fileID: 0}
+    - target: {fileID: 4260408186358448269, guid: 48c68e11416dbf344a65e3498cd9c25b,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 5477337653776270134, guid: 48c68e11416dbf344a65e3498cd9c25b, type: 3}

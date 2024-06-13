@@ -24,7 +24,7 @@ public class Spawner : MonoBehaviour
         {
             if (currentEnemy.gameObject.name.Contains("Shooter"))
             {
-                currentEnemy.gameObject.GetComponent<ShooterEnemy>().Destroy();
+                //currentEnemy.gameObject.GetComponent<ShooterEnemy>().Destroy();
             }
             else
             {
