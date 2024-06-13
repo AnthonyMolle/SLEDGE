@@ -41,10 +41,13 @@ public class Checkpoint : MonoBehaviour
         
         activated = true;
 
-        savedEnemyStatus = new Dictionary<GameObject, bool>();
-        foreach (KeyValuePair<GameObject, bool> entry in EnemyManager.Instance.GetEnemyStatus())
+        if (EnemyManager.Instance != null)
         {
-            savedEnemyStatus.Add(entry.Key, entry.Value);
+            savedEnemyStatus = new Dictionary<GameObject, bool>();
+            foreach (KeyValuePair<GameObject, bool> entry in EnemyManager.Instance.GetEnemyStatus())
+            {
+                savedEnemyStatus.Add(entry.Key, entry.Value);
+            }
         }
 
         gameObject.transform.GetChild(1).transform.GetChild(1).GetComponent<MeshRenderer>().enabled = false;
@@ -58,7 +61,10 @@ public class Checkpoint : MonoBehaviour
 
     public void ResetState()
     {
-        EnemyManager.Instance.ResetEnemyState(savedEnemyStatus);
+        if (EnemyManager.Instance != null)
+        {
+            EnemyManager.Instance.ResetEnemyState(savedEnemyStatus);
+        }
         if (savedPowerup != PlayerController.Powerup.None)
         {
             playerController.CollectPowerup(savedPowerup);
