@@ -46,7 +46,7 @@ public class PlayerSaveData : MonoBehaviour
         }
     }
 
-    struct LevelStats
+    class LevelStats
     {
         public float time;
         public Grade grade;
