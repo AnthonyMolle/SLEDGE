@@ -1130,7 +1130,7 @@ public class PlayerController : MonoBehaviour
 
         // Remove any velocity from player and set their position to their current checkpoint position
         rb.velocity = Vector3.zero;
-        transform.position = currentCheckpoint.transform.position;
+        transform.position = currentCheckpoint.transform.GetChild(0).position;
 
         currentHealth = maxHealth;
         if (healthDisplay != null)
