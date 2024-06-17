@@ -81,7 +81,7 @@ MonoBehaviour:
     objectBName: 
     dashAvailable: 0
   description: Set currentState = HOSTILE
-  beingInspected: 0
+  beingInspected: 1
   child: {fileID: 0}
   currentState: 1
   attackRange: 0
@@ -277,8 +277,8 @@ MonoBehaviour:
     currentState: 0
     attackRange: 10
     alertRange: 5
-    objectAName: Player
-    objectBName: Player
+    objectAName: Player.v3 Variant
+    objectBName: Player.v3 Variant
     dashAvailable: 1
 --- !u!114 &823518354002767614
 MonoBehaviour:
@@ -371,7 +371,7 @@ MonoBehaviour:
   beingInspected: 1
   child: {fileID: 2587021329056328059}
   objectTarget: 0
-  speed: 250
+  speed: 1000
 --- !u!114 &2587021329056328059
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -396,7 +396,7 @@ MonoBehaviour:
     objectBName: 
     dashAvailable: 0
   description: 
-  beingInspected: 0
+  beingInspected: 1
   rotateTarget: 0
 --- !u!114 &4320703270194755856
 MonoBehaviour:
