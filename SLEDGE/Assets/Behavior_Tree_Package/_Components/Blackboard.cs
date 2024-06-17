@@ -21,6 +21,7 @@ public class Blackboard
     public float alertRange;
     public string objectAName;
     public string objectBName;
+    public bool dashAvailable;
 
     private GameObject currentRunner;
     private GameObject objectA;

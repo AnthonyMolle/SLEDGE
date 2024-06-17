@@ -14,9 +14,12 @@ public class DebugLog_Action : ActionNode
 
     protected override State OnUpdate()
     {
-        Debug.Log($"OnUpdate{message}");
-        child.state = State.Running;
-        child.Update();
+        Debug.Log($"{message}");
+        if (child != null)
+        {
+            child.state = State.Running;
+            child.Update();
+        }
         return State.Success;
     }
 }

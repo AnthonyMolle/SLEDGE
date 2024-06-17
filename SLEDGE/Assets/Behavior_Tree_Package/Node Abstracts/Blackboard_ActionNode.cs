@@ -1,11 +1,12 @@
-using UnityEngine;
-using UnityEditor;
+using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
-using static Blackboard;
+using UnityEditor;
+using UnityEngine;
 
-public class CheckState_Decorator : DecoratorNode
+public class Blackboard_ActionNode : ActionNode
 {
-    // Copied from blackboard to store what this checkState is looking for
+    // Copied from Blackboard -- 
     public Blackboard.EnemyStates currentState;
     public float attackRange;
     public float alertRange;
@@ -16,12 +17,13 @@ public class CheckState_Decorator : DecoratorNode
     public GameObject objectA;
     public GameObject objectB;
     public bool dashAvailable;
+    // Copied from Blackboard -- 
 
-    // Unique to state
-    public FieldInfo currentField_blackboard;
     public FieldInfo currentField_local;
-
+    public FieldInfo currentField_blackboard;
     public string local_input;
+
+    protected object ourValue;
 
     protected override void OnStart()
     {
@@ -34,21 +36,27 @@ public class CheckState_Decorator : DecoratorNode
 
     protected override State OnUpdate()
     {
+        // ONLY THING YOU NEED TO COPY FOR CHILDREN
+        ourValue = getBlackboardValue();
+        if(ourValue == null) return State.Failure;
+        // ---------
+
+        if (child != null)
+        {
+            child.state = State.Running;
+            child.Update();
+        }
+        return State.Success;
+    }
+
+    public object getBlackboardValue()
+    {
         if (currentField_blackboard == null || currentField_local == null)
         {
-            return State.Failure;
+            return null;
         }
 
-        object x = currentField_blackboard.GetValue(blackboard);
-        object y = currentField_local.GetValue(this);
-
-        if (x.ToString() != y.ToString())
-        {
-            return State.Failure;
-        }
-
-        child.state = State.Running;
-        return child.Update();
+        return currentField_local.GetValue(this);
     }
 
     public void updateField(string name)
@@ -77,43 +85,35 @@ public class CheckState_Decorator : DecoratorNode
             }
         }
     }
-
-    public override Node Clone()
-    {
-        CheckState_Decorator node = Instantiate(this);
-        node.child = child.Clone();
-        node.state = State.Running;
-        node.started = false;
-        return node;
-    }
 }
 
-[CustomEditor(typeof(CheckState_Decorator))]
-public class CheckStateEditor : Editor
+
+[CustomEditor(typeof(Blackboard_ActionNode), true)]
+public class Blackboard_ActionNodeEditor : Editor
 {
-    SerializedProperty comparison; 
+    SerializedProperty comparison;
     string input = "";
 
-    CheckState_Decorator last_decor;
+    Blackboard_ActionNode last_ref;
 
 
     // Create Inspector UI 
     public override void OnInspectorGUI()
     {
-        var script = target as CheckState_Decorator;
+        var script = target as Blackboard_ActionNode;
 
-        if(last_decor != script)
+        if (last_ref != script)
         {
             input = script.local_input;
         }
 
-        last_decor = script;
+        last_ref = script;
 
         input = EditorGUILayout.TextField("Enter Variable:", input);
 
         if (script.currentField_local != null)
         {
-            script.description = "Check if " + input + " = " + script.currentField_local.GetValue(script);
+            script.description = "Set " + input + " = " + script.currentField_local.GetValue(script);
         }
 
         if (input != null)
@@ -121,7 +121,7 @@ public class CheckStateEditor : Editor
             // Goal is to have generic SerializedProperty that can be modified 
 
             // This will be the value compared to the matching blackboard name.
-     
+
             // This finds one of the above containers that match the variables in our blackboard
             comparison = serializedObject.FindProperty(input);
 
