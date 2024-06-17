@@ -28,8 +28,7 @@ public class MoveTowards_Action : ActionNode
     {
         // Do stuff
         Vector3 targetDirection = (target.transform.position - currentTransform.position).normalized;
-
-        currentRigidbody.velocity = targetDirection * speed * Time.deltaTime;
+        currentRigidbody.velocity = targetDirection * speed;
 
         if (child != null)
         {
