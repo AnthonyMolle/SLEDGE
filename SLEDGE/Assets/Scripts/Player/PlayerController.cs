@@ -8,11 +8,18 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.PlayerLoop;
+using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.ProBuilder.Shapes;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Random=UnityEngine.Random;
 
 public class PlayerController : MonoBehaviour
 {
+    //EXPERIMENTAL SHIT
+    [SerializeField] GameObject speedlines;
+    [SerializeField] ParticleSystem speed;
+
     #region Character Component References
     [Header("Character Component References")]
     [SerializeField] Camera gameCamera;
@@ -48,9 +55,9 @@ public class PlayerController : MonoBehaviour
     int currentSpawnIndex = 0;
     Checkpoint currentCheckpoint;
     
-    [SerializeField] int maxHealth = 1;
-    private int currentHealth = 1;
-    bool alive = true;
+    [SerializeField] int maxHealth = 3; // Maximum health the player can have
+    private int currentHealth = 3; // Current health the player is at
+    bool alive = true; // Tracks if the player is alive
     #endregion
 
     #region Player Settings
@@ -72,7 +79,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float airAccelerationRate = 10f;
     [SerializeField] float airMaxSpeed = 100f;
 
+    [SerializeField] float maxLaunchedSpeed = 100f;
+    [SerializeField] float maxFallingSpeed = 100f;
+
     [SerializeField] float naturalAdditionalFallingSpeed = 4f; //natural rate our player will fall after the apex of their falling height.
+    [SerializeField] float extraGravityYThreshold = 5f;
     #endregion
 
     #region Jump
@@ -104,19 +115,24 @@ public class PlayerController : MonoBehaviour
     [SerializeField] string hudDistance;
 
     float currentDistance = 0; // current distance between the player and a surface.
-    bool isInRange = false; // represents if we are in range to sue the hammer.
+    bool isInRange = false; // represents if hammer is in range to hit an object
     #endregion
 
     #region Hammer
     [Header("Hammer")]
+    [SerializeField] float initialBounceForce = 15f;
+    [SerializeField] float maxInitialBounceYForce = 15f;
     [SerializeField] float bounceForce = 10f;
+    [SerializeField] float bouncyUpForce = 10f;
+    [SerializeField] float bouncyForce = 25f;
     [SerializeField] float hitLength = 5f;
+    [SerializeField] float hitRadius = 1f;
 
     [SerializeField] float chargeTime = 1f;
     [SerializeField] float hitTime = 1f;
     [SerializeField] float recoveryTime = 1f;
 
-    [SerializeField] float swipeTime = 0.5f;
+    [SerializeField] float swipeTime = 1f;
     [SerializeField] float swipeRecoveryTime = 0.5f;
 
     [SerializeField] float launchedRotationSpeed = 0.02f;
@@ -125,42 +141,63 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] LayerMask swipeLayers;
 
-    RaycastHit distanceCheck;
-
+    RaycastHit distanceCheck; // Checks to see the distance between the player and an object they are lookign at
+    
+    bool hammerBounced = false; // Tracks if hammer hit a surface
     bool isLaunched = false;
 
-    bool hittingHammer = false;
+    bool hittingHammer = false; // Tracks if we are currently swinging our hammer
     bool chargingHammer = false;
     bool recovering = false;
 
-    bool swipingHammer = false;
+    bool swipingHammer = false; // Tracks if the player used the secondary hammer action (swipe/parry)
     bool swipeRecovering = false;
+    bool swipeComboReady = false;
 
     bool hammerCharged = false;
-    bool hammerHit = false;
+    bool hammerHit = false; // tracks if we just swung hammer
     bool hammerSwipe = false;
+
+    Vector3 hitDirection;
+    float swingForce;
+    [SerializeField] float swipeForceBase = 20f;
+    [SerializeField] float smashForceBase = 30f;
 
     float hammerTimer = 0;
     float hangTime = 0;
     float walkTime = 0;
 
+    enum Combo 
+    {
+        notSwiping,
+        Swipe1,
+        Swipe2,
+        Swipe3
+    }
+    Combo currentCombo = Combo.notSwiping;
+
+
     [SerializeField] float parriedProjectileSpeed = 1f;
     [SerializeField] float parriedProjectileLifetime = 10f;
-
 
     AudioManager audioManager;
     [SerializeField] GameObject HammerSound;
 
     private void Awake()
     {
-        audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
+
     }
 
     #endregion
 
     #region UI
+    [Header("UI")]
+    public GameObject canvas;
 
     public TextMeshProUGUI displayDistance;
+    public TextMeshProUGUI speedometer; // UI that displays how fast we are going
+    public TextMeshProUGUI tempPowerupUI; // UI element that displays current equipped powerup
+    public TextMeshProUGUI healthDisplay;
 
     [SerializeField] GameObject pause;
 
@@ -170,26 +207,84 @@ public class PlayerController : MonoBehaviour
 
     #endregion
 
-    void Start()
+    #region Power Ups
+    public enum Powerup { None, Airburst, Explosive } // List of powerups in game (including none)
+
+    Powerup currentPowerup; // Hold the currently equipped powerup
+
+    [Header("Power Ups")]
+    [Tooltip("How much we add to bounce force when the explosive powerup is enabled.")]
+    public float explosiveForce;
+
+    #endregion
+
+    #region SpeedLines
+    [SerializeField] float speedlineThreshold = 10f;
+    [SerializeField] float fovThreshold = 20f;
+    [SerializeField] float speedlineMax = 100f;
+    float targetAlpha;
+    [SerializeField] Camera[] cameras;
+    [SerializeField] float initialFOV = 75;
+    [SerializeField] float maxAdditionalFOV = 25;
+    float targetFOV;
+    [SerializeField] float initialParticleZ = 1;
+    [SerializeField] float maxParticleZ = 4;
+    float targetZ;
+    [SerializeField] float initialParticleSpeed = 4;
+    [SerializeField] float maxParticleSpeed = 20;
+    float targetSpeed;
+    [SerializeField] float initialParticleEmission = 25;
+    [SerializeField] float maxParticleEmission = 200;
+    float targetEmission;
+    #endregion
+   
+    #region Parrying
+    [SerializeField] float maxTargetAngle = 30f;
+    [SerializeField] float minTargetDistance = 5f;
+    [SerializeField] float maxTargetDistance = 50f;
+    #endregion
+    [SerializeField] LayerMask enemyLayers;
+
+    void Start() // Runs at the start of the Scene
     {
-        Cursor.lockState = CursorLockMode.Locked; // lock the cursor to the center of the screen
-        Cursor.visible = false; // make the cursor not visible
+        // Set Player Audio Manager
+        audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
+
+        // Lock the cursor to center screen and make it invisible
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
         
-        rb = GetComponent<Rigidbody>(); // get the rigidbody of the parent component
+        // Set RigidBody of Player
+        rb = GetComponent<Rigidbody>();
 
-        mouseSensitivity = PlayerPrefs.GetFloat("Sensitivity", 400); // set the mouse sensitivity
+        // Find these specific UI objects and assign them a variable
+        deathScreen = canvas.transform.Find("Death Screen").gameObject;
+        settings = canvas.transform.Find("Pause Setting Screen").gameObject;
+        pause = canvas.transform.Find("PauseMenu").gameObject;
+        displayDistance = canvas.transform.Find("Distance").gameObject.GetComponent<TextMeshProUGUI>();
 
-        currentHealth = maxHealth; // set health to max
+        // Set the mouse sensitivity
+        mouseSensitivity = PlayerPrefs.GetFloat("Sensitivity", 400); 
 
-        currentCheckpoint = firstCheckpoint; //set the currentcheckpoint to the start of the level.
+        // Set health to max
+        currentHealth = maxHealth; 
+
+        // If the health display is on, display it.
+        if (healthDisplay != null){healthDisplay.text = "Health: " + currentHealth;}
+
+        // Remove any equiped powerups
+        ResetPowerup();
     }
 
-    // Update is called once per frame
-    void Update()
+    void Update() // Function Called once per frame
     {
+        // Self Explanatory Functions
         HandleInput();
         HandleHammer();
         HandleLookRotation();
+        HandleSpeedFX();
+
+        // Record how long we are in the air, reset the timer while grounded
         if(!isGrounded)
         {
             hangTime += Time.deltaTime;
@@ -198,63 +293,153 @@ public class PlayerController : MonoBehaviour
         {
             hangTime = 0;
         }
+
+        // Set speedometer to players velocity
+        speedometer.text = rb.velocity.magnitude.ToString("0.0") + "mph";
     }
 
-    void FixedUpdate()
+    void FixedUpdate() // Function Called once per tick
     {
+        // Shoot a raycast where the players looking, look for objects the player can bounce on
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         Physics.Raycast(ray, out distanceCheck, 100000, bouncableLayers);
 
+        // COMMENT: Self explanatory function calls. Should they be in here or Update() with the others?
         HandleMovement();
         UpdateDistanceHud();
 
+        // if we just finished swinging the hammer...
         if (hammerHit)
         {
+            // Tell game we arent in just swinging hammer state, and we haven't bounced off of a surface
             hammerHit = false;
-            HammerBounce();
+            hammerBounced = false;
         }
 
-        if (hammerSwipe)
+        // If we just swiped our hammer (rmb) reset this variable. COMMENT: I think this could be implemented better
+        if (hammerSwipe){hammerSwipe = false;}
+
+        // If we are currently swinging our hammer, check to see if we bounced off something. COMMENT: I think this can be put elsewhere
+        if (hittingHammer){HammerBounce();}
+
+        // If we are currently swiping our hammer (rmb), see if we hit an enemy OR projectile
+        if (swipingHammer){HammerHit();}
+    }
+
+    private void HandleSpeedFX() // Handles speed effects while moving quickly
+    {
+        if (rb.velocity.magnitude > 10)
         {
-            hammerSwipe = false;
-            HammerHit();
+            speedlines.transform.LookAt(rb.velocity * 1000);
+        }
+
+        ParticleSystem.MainModule main = speed.main;
+        ParticleSystem.EmissionModule emission = speed.emission;
+
+        if (rb.velocity.magnitude > speedlineThreshold)
+        {
+            targetAlpha = (rb.velocity.magnitude - speedlineThreshold)/(speedlineMax - speedlineThreshold);
+            targetSpeed = (rb.velocity.magnitude - speedlineThreshold)/(speedlineMax - speedlineThreshold) * maxParticleSpeed;
+            targetEmission = (rb.velocity.magnitude - speedlineThreshold)/(speedlineMax - speedlineThreshold) * maxParticleEmission;
+            targetZ = (rb.velocity.magnitude - speedlineThreshold)/(speedlineMax - speedlineThreshold) * maxParticleZ;
+
+            if (rb.velocity.magnitude > fovThreshold)
+            {
+                targetFOV = ((rb.velocity.magnitude - fovThreshold)/(speedlineMax - fovThreshold) * maxAdditionalFOV) + initialFOV;
+            }
+        }
+        else
+        {
+            targetAlpha = 0;
+            targetSpeed = initialParticleSpeed;
+            targetEmission = initialParticleEmission;
+            targetZ = initialParticleZ;
+            targetFOV = initialFOV;
+        }
+
+        main.startColor = new Color(1, 1, 1, Mathf.MoveTowards(main.startColor.color.a, targetAlpha, 100f * Time.deltaTime));
+        main.startSpeed = Mathf.MoveTowards(main.startSpeed.constant, targetSpeed, 100f * Time.deltaTime);
+        emission.rateOverTime = Mathf.MoveTowards(emission.rateOverTime.constant, targetEmission, 100f * Time.deltaTime);
+        speed.gameObject.transform.localPosition = new Vector3(0, 0.5f, Mathf.MoveTowards(speed.gameObject.transform.localPosition.z, targetZ, 100f * Time.deltaTime));
+
+        foreach (Camera cam in cameras)
+        {
+            cam.fieldOfView = Mathf.MoveTowards(cam.fieldOfView, targetFOV, 100f * Time.deltaTime);
         }
     }
 
-    private void HandleHammer()
+    private void HandleHammer() // Handles all hammer states and plays according animations.
     {
-        if (secondaryPressed && !chargingHammer && !recovering && !hittingHammer && !hammerCharged && !swipeRecovering && !swipingHammer)
+        if (secondaryPressed && !chargingHammer && !recovering && !hittingHammer && !hammerCharged && !swipingHammer && currentCombo == Combo.notSwiping)
         {
-
-
             swipingHammer = true;
+            swipeComboReady = false;
             hammerTimer = swipeTime;
-            anim.Play("HammerSwipe"); //anim.Play("Hit 1");
-            
+            anim.Play("Swipe Right", -1, 0.25f);
+            currentCombo = Combo.Swipe1;
+            hitDirection = Vector3.Normalize(new Vector3(Random.Range(-15f, -30f), Random.Range(-5.0f, 5.0f), Random.Range(0f, 10f)) + transform.forward);
+            swingForce = swipeForceBase;
         }
+        // combo swipes
+        if (secondaryPressed && !chargingHammer && !recovering && !hittingHammer && !hammerCharged && !swipingHammer && swipeComboReady && currentCombo == Combo.Swipe1) // for a lil combo, might want to include input when swiping
+        {
+            swipingHammer = true;
+            swipeComboReady = false;
+            hammerTimer = swipeTime;
+            anim.Play("Swipe Left", -1, 0.01f);
+            currentCombo = Combo.Swipe2;
+            hitDirection = Vector3.Normalize(new Vector3(Random.Range(15f, 30f), Random.Range(-5.0f, 5.0f), Random.Range(0f, 10f)) + transform.forward);
+            swingForce = swipeForceBase;
+        }
+        if (secondaryPressed && !chargingHammer && !recovering && !hittingHammer && !hammerCharged && !swipingHammer && swipeComboReady && currentCombo == Combo.Swipe2)
+        {
+            swipingHammer = true;
+            swipeComboReady = false;
+            hammerTimer = swipeTime;
+            anim.Play("Swipe Right", -1, 0.25f);
+            currentCombo = Combo.Swipe1;
+            hitDirection = Vector3.Normalize(new Vector3(Random.Range(-15f, -30f), Random.Range(-5.0f, 5.0f), Random.Range(0f, 10f)) + transform.forward);
+            swingForce = swipeForceBase;
+        }
+
+        /*
+        if (secondaryPressed && !chargingHammer && !recovering && !hittingHammer && !hammerCharged && !swipeRecovering && !swipingHammer && swipeComboReady && currentCombo == Combo.Swipe2)
+        {
+            Debug.Log("hammer swipe final");
+            swipingHammer = true;
+            swipeComboReady = false;
+            hammerTimer = swipeTime;
+            anim.Play("Hit 3");
+            currentCombo = Combo.Swipe3;
+        }
+        */
         
         if (mousePressed && !chargingHammer && !recovering && !hittingHammer && !hammerCharged && !swipeRecovering && !swipingHammer)
         {
             //Debug.Log("hammer startin");
             chargingHammer = true;
             hammerTimer = chargeTime;
-            anim.Play("HammerCharge"); //anim.Play("Charge 2");
+            //anim.Play("HammerCharge"); 
+            anim.Play("Charge");
+            hitDirection = transform.forward;
+            hammerBounced = false;
         }
 
         if (chargingHammer && hammerTimer > 0.1 && mouseReleased)
         {
-            anim.Play("HammerIdle"); //anim.Play("Idle 1");
+            anim.Play("Idle");
+            currentCombo = Combo.notSwiping;
             chargingHammer = false;
             hammerTimer = 0;
+            hammerBounced = false;
         }
 
         if (mouseReleased && hammerCharged)
         {
             hammerCharged = false;
             hittingHammer = true;
-
+            //slamHitbox.ActivateCollider();
             hammerTimer = hitTime;
-            
         }
 
         if (hammerTimer > 0)
@@ -266,7 +451,9 @@ public class PlayerController : MonoBehaviour
             //Debug.Log("charging hammer ended");
             hammerCharged = true;
             chargingHammer = false;
-            anim.Play("HammerHold"); //anim.Play("Charge 2 Hold");
+            //anim.Play("HammerHold"); 
+            anim.Play("Charged");
+            hammerBounced = false;
         }
         else if (hittingHammer)
         {
@@ -274,18 +461,26 @@ public class PlayerController : MonoBehaviour
             hammerHit = true;
             hittingHammer = false;
             //audioManager.PlaySFX(audioManager.hit);
-            anim.Play("HammerHit"); //anim.Play("Slam 2");
+            //anim.Play("HammerHit"); 
+            anim.Play("Slam");
+            //slamHitbox.DeactivateCollider();
 
             recovering = true;
             hammerTimer = recoveryTime;
+            hammerBounced = false;
+            hitDirection = transform.forward;
+            // hitDirection = Vector3.left + transform.forward;
+            swingForce = smashForceBase;
         }
         else if (recovering)
         {
             //Debug.Log("recovery ended");
             recovering = false;
+            hammerBounced = false;
         }
         else if (swipingHammer)
         {
+            // Debug.Log("SWIPE OVER");
             hammerSwipe = true;
             swipingHammer = false;
 
@@ -295,11 +490,17 @@ public class PlayerController : MonoBehaviour
         else if (swipeRecovering)
         {
             swipeRecovering = false;
+            swipeComboReady = true;
+            hammerTimer = swipeRecoveryTime;
         }
-
+        else if (swipeComboReady)
+        {
+            swipeComboReady = false;
+            currentCombo = Combo.notSwiping;
+        }
     }
 
-    private void HandleLookRotation()
+    private void HandleLookRotation() // Handles camera movement from mouse
     {
         //rotating player body left and right
         yRotation += mouseInputVector.x;
@@ -311,7 +512,7 @@ public class PlayerController : MonoBehaviour
         cameraObject.transform.localRotation = Quaternion.RotateTowards(cameraObject.transform.localRotation, Quaternion.Euler(xRotation, 0, 0), 20);
     }
 
-    private void HandleInput()
+    private void HandleInput() // Handles all inputs
     {
         float mouseX = Input.GetAxisRaw("Mouse X") * Time.deltaTime * mouseSensitivity;
         float mouseY = Input.GetAxisRaw("Mouse Y") * Time.deltaTime * mouseSensitivity;
@@ -331,21 +532,11 @@ public class PlayerController : MonoBehaviour
         
         if (Input.GetKeyDown(KeyCode.Space))// If the player has pressed the space key...
         {
-            if(!mustReleaseJump) // and they haven't been holding the button down...
-            {
-                jumpPressed = true; // let the engine know jump was pressed
-            }
-            
-        }
-        if (Input.GetKey(KeyCode.Space)) // If the player might be holding the jump button down...
-        {
-            StartCoroutine(JumpHoldTimer());// Start a coroutine to check if they have been holding the button.
+            jumpPressed = true; // let the engine know jump was pressed
         }
 
         if (Input.GetKeyUp(KeyCode.Space)) // if the player releases the jump button...
         {
-            StopCoroutine(JumpHoldTimer()); // stop checking to see if they are holding it.
-
             // reset these variable to how they were before they pressed the jump button.
             jumpPressed = false;
             mustReleaseJump = false;
@@ -396,6 +587,11 @@ public class PlayerController : MonoBehaviour
             Time.timeScale = 1;
         }
 
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            anim.Play("Equip");
+        }
+
         //all upcoming code could be put somewhere way better or in a function but its cool ok lol
         float zCamRotate;
 
@@ -415,8 +611,9 @@ public class PlayerController : MonoBehaviour
         cameraHolder.transform.localRotation = Quaternion.RotateTowards(cameraHolder.transform.localRotation, Quaternion.Euler(0, 0, zCamRotate), camRotateSpeed * Time.deltaTime);
     }
 
-    private void HandleMovement()
+    private void HandleMovement() // Handles all Player Rigidbody movements apart from hammer launches
     {
+
         #region Raycast Checks
         //all this raycast slope stuff is getting kinda out of hand
         // i agree -other programmer
@@ -427,8 +624,13 @@ public class PlayerController : MonoBehaviour
             if (isGrounded == false && hangTime >= .25)
             {
                 audioManager.PlaySFX(audioManager.land);
+                StartCoroutine(FindObjectOfType<ScreenShaker>().Shake(0.1f, 0.01f, 0, 0, 0.1f));
+                if (!hammerCharged) {
+                    anim.Play("Land");
+                }
             }
             isGrounded = true;
+            anim.SetBool("grounded", true);
             movementPlane = hit.normal;
 
             StopCoroutine(DecreaseCoyoteTime()); // Stop the coroutine that lets us have jump leinency
@@ -448,6 +650,7 @@ public class PlayerController : MonoBehaviour
         {
             movementPlane = transform.up;
             isGrounded = false;
+            anim.SetBool("grounded", false);
             isOnSlope = false;
 
             // Let the player jump until this coroutine is finished.
@@ -476,15 +679,22 @@ public class PlayerController : MonoBehaviour
                 {
                     isLaunched = false;
                 }
+                // Debug.Log(flatVelocity);
+                // Debug.Log("Velo: " + (flatVelocity + transform.forward));
+                // Debug.Log("Velo Magnitude: " + flatVelocity.magnitude);
+                anim.SetFloat("Speed", flatVelocity.magnitude);
+                //Debug.Log(anim.GetFloat("Speed"));
+
 
                 if (movementInputVector.magnitude > 0.001)
                 {
                     walkTime += 1;
-                    if (walkTime >= 15)
+                    if (walkTime%15 == 0)
                     {
                         audioManager.PlayWalk();
                         walkTime = 0;
                     }
+                    // add some anims for changing direction, or move arms in direction of movement? (kaelen idea)
                     if (flatVelocity.magnitude < maxSpeed || flatVelocity.magnitude >= maxSpeed && isChangingDirection)
                     {
                         isChangingDirection = false;
@@ -505,6 +715,7 @@ public class PlayerController : MonoBehaviour
                     if (flatVelocity.magnitude > 0.01)
                     {
                         rb.AddForce(-flatVelocity * decelerationRate);
+                        walkTime = 0;
                     }
                     else
                     {
@@ -516,10 +727,22 @@ public class PlayerController : MonoBehaviour
             #region Air movement
             else // if we're in the air
             {
-                if(rb.velocity.y <= 0)// if we are at the apex of our air height
+                if (rb.velocity.y > -maxFallingSpeed)
                 {
-                    rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
+                    if(rb.velocity.y <= extraGravityYThreshold)// if we are at the apex of our air height
+                    {
+                        rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
+                    }
+                    
+                    if (hammerCharged && !isGrounded && hangTime > 1)
+                    {
+                        rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
+                    }
                 }
+            else
+            {
+                rb.velocity = new Vector3(rb.velocity.x, -maxFallingSpeed, rb.velocity.z);
+            }
 
                 if (movementInputVector.magnitude > 0.001)
                 {
@@ -540,12 +763,16 @@ public class PlayerController : MonoBehaviour
             }
             #endregion
 
+            //Debug.Log("is grounded: " + isGrounded);
             #region Jump
             if (jumpPressed && isGrounded && !hasJumped || jumpPressed && !isGrounded && hasCoyoteTime == true && !hasJumped)
             {
-                //Debug.Log("jump!");
                 srcJumpPoint = rb.transform.position.y;
                 Jump();
+            }
+            else if(jumpPressed)
+            {
+                //Debug.Log("NO JUMP");
             }
             #endregion
         }
@@ -556,16 +783,25 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            if(rb.velocity.y <= 0)// if we are at the apex of our air height
+            if (rb.velocity.y > -maxFallingSpeed)
             {
-                rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
+                if(rb.velocity.y <= extraGravityYThreshold)// if we are at the apex of our air height
+                {
+                    rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
+                }
+                
+                if (hammerCharged && !isGrounded && hangTime > 1)
+                {
+                    rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
+                }
             }
-
-        
+            else
+            {
+                rb.velocity = new Vector3(rb.velocity.x, -maxFallingSpeed, rb.velocity.z);
+            }
 
             if (movementInputVector.magnitude > 0.001)
             {
-                Debug.Log((rb.velocity + movementInputVector).magnitude + ", " + rb.velocity.magnitude);
 
                 if ((rb.velocity + movementInputVector).magnitude > rb.velocity.magnitude - 0.5)
                 {
@@ -581,7 +817,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private IEnumerator DecreaseCoyoteTime(){ // this coroutine decreases jump coyote time and doesnt let the player jump once its done running 
+    private IEnumerator DecreaseCoyoteTime(){ // This coroutine decreases jump coyote time and doesnt let the player jump once its done running 
         if(!decreasingCoyoteTime && hasCoyoteTime) // if we have coyote time and we aren't decreasing it yet
         {
             decreasingCoyoteTime = true; // let the coroutine know we are decreasing coyote time. this makes the coroutine only run when needed.
@@ -591,99 +827,228 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private IEnumerator JumpHoldTimer(){ // this coroutine checks to see if the player has been holding the jump button.
-        if(!jumpHoldChecking && jumpPressed == true) // if the coroutine isnt already running, and the player is pressing the jump button.
-        {
-            jumpHoldChecking = true; // let the engine know we are running the coroutine
-            yield return new WaitForSeconds(jumpHoldCheckWindow); // check if the player is holding jump for this long.
-            // the following variable will be set given the player has not let go of the jump key.
-            mustReleaseJump = true; // let the engine know they are holding jump.
-            jumpPressed = false; // tell the engine they arent trying to jump.
-            jumpHoldChecking = false; // stop running current instance of the coruoutine.
-        }
-    }
-
-    private void Jump() // is called when the player tried and is allowed to jump
+    private void Jump() // Is called when the player tried and is allowed to jump
     {
         rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z); //remove our falling velocity so our jump doesnt have to fight gravity.
         rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse); // add a force upward
         hasJumped = true; // let the engine know we have jumped.
+        if (!hammerCharged) {
+            anim.Play("Jump");
+        }
     }
 
-    private void HammerBounce()
+    private void HammerBounce() // Checks if we have bounced off a surface, if so apply physics or hurt enemys
     {
-        Ray ray = gameCamera.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit1;
-        if (Physics.Raycast(ray, out hit1, hitLength, bouncableLayers))
+        
+        if (hammerBounced)
         {
-            //FindObjectOfType<ScreenShaker>().Shake(100f, 100f);
+            return;
+        }
+
+        Ray ray = gameCamera.ScreenPointToRay(Input.mousePosition);
+        bool bouncy = false;
+
+        RaycastHit[] hits = Physics.SphereCastAll(ray, hitRadius, hitLength, bouncableLayers, QueryTriggerInteraction.Collide);
+
+        if (hits.Length > 0 || currentPowerup == Powerup.Airburst)
+        {
+            foreach (RaycastHit hit in hits)
+            {
+                if (hit.transform.gameObject.tag == "Bouncy")
+                {
+                    bouncy = true;
+                }
+                else if (hit.transform.gameObject.tag == "Enemy Flyer")
+                {
+                    var e = hit.transform.gameObject.GetComponent<FlyingEnemy>();
+                    Debug.Log("CALL ME ;)");
+                    e.TakeDamage(1, hitDirection, swingForce * 1.5f);
+                }
+                else if (hit.transform.gameObject.tag == "Enemy Shooter")
+                {
+                    var e = hit.transform.gameObject.GetComponent<ShooterEnemy>();
+                    e.TakeDamage(1, hitDirection, swingForce * 1.5f);
+                }
+                else if (hit.transform.gameObject.tag == "Collectible" || hit.transform.gameObject.layer == 11) // 11 == gibs layer
+                {
+                    hit.transform.gameObject.GetComponent<Rigidbody>().AddForce(ray.direction * 50f, ForceMode.Impulse);
+                }
+            }
+
+            //Vector3 normal = hit1.normal.normalized;
+            //float angle = Vector3.Angle(hit1.point - cameraObject.transform.position, -transform.up);
+            //float wallAngle = Vector3.Angle(normal, Vector3.down);
+            //float wallVSFlatVelAngle = Vector3.Angle(normal, rb.velocity);
 
             rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
 
-            Vector3 normal = hit1.normal.normalized;
-            float angle = Vector3.Angle(hit1.point - cameraObject.transform.position, -transform.up);
-            float wallAngle = Vector3.Angle(normal, Vector3.down);
-            float wallVSFlatVelAngle = Vector3.Angle(normal, rb.velocity);
-
-           // bouncing up one wall over and over again is still far too viable, but theres some improvement to the basic 90 degree angled hammer wall bounces
-            if (angle < 110 && angle > 30 && wallAngle > 80 && wallAngle < 100)
+            
+            if (currentPowerup == Powerup.Airburst)
             {
-                rb.AddForce(transform.up * 10, ForceMode.Impulse);
+                ResetPowerup();
             }
 
-            if (wallVSFlatVelAngle > 140)
+            if (currentPowerup == Powerup.Explosive)
             {
-                rb.velocity = new Vector3(0, rb.velocity.y, 0);
+                isLaunched = true;
+                rb.AddForce((-ray.direction).normalized * explosiveForce, ForceMode.Impulse);
+            }
+            else if (bouncy)
+            {
+                isLaunched = true;
+                rb.velocity = Vector3.zero;
+                rb.AddForce((-ray.direction).normalized * bouncyForce/* + normal * 10*/, ForceMode.Impulse);
+                rb.AddForce(transform.up * bouncyUpForce, ForceMode.Impulse);
+            }
+            else if (!isLaunched)
+            {
+                isLaunched = true;
+                rb.velocity = rb.velocity / 8;
+                Vector3 force = (-ray.direction).normalized * initialBounceForce;
+
+
+                if (force.y > maxInitialBounceYForce)
+                {
+                    rb.AddForce(new Vector3(force.x, maxInitialBounceYForce, force.z), ForceMode.Impulse);
+                }
+                else
+                {
+                    rb.AddForce(force, ForceMode.Impulse);
+                }
+            }
+            else
+            {
+                rb.AddForce((-ray.direction).normalized * bounceForce/* + normal * 10*/, ForceMode.Impulse);
+            }
+            
+            Instantiate(HammerSound, gameObject.transform.position, Quaternion.identity);
+            StartCoroutine(FindObjectOfType<ScreenShaker>().Shake(0.25f, 0.01f, 0, 0, 0.25f));
+            
+
+            // bouncing up one wall over and over again is still far too viable, but theres some improvement to the basic 90 degree angled hammer wall bounces
+            // if (angle < 110 && angle > 30 && wallAngle > 80 && wallAngle < 100)
+            // {
+            //     rb.AddForce(transform.up * 10, ForceMode.Impulse);
+            // }
+
+            // if (wallVSFlatVelAngle > 140)
+            // {
+            //     rb.velocity = new Vector3(0, rb.velocity.y, 0);
+            // }
+
+            if (currentPowerup == Powerup.Explosive)
+            {
+                LoseExplosive();
             }
 
-            rb.AddForce((transform.position - hit1.point).normalized * bounceForce/* + normal * 10*/, ForceMode.Impulse);
-            isLaunched = true;
-            Instantiate(HammerSound, gameObject.transform.position,Quaternion.identity);
-
-
-            if (hit1.transform.gameObject.tag == "Enemy Flyer")
-            {
-                hit1.transform.gameObject.GetComponent<FlyingEnemy>().TakeDamage(1);
-            }
-            else if (hit1.transform.gameObject.tag == "Enemy Shooter")
-            {
-                hit1.transform.gameObject.GetComponent<ShooterEnemy>().TakeDamage(1);
-            }
+            hammerBounced = true;
         }
         else 
         {
-            audioManager.PlaySFX(audioManager.whiff);
+            //audioManager.PlaySFX(audioManager.whiff);
         }
     }
 
-    private void HammerHit()
+    private void HammerHit() // See if we it an enemy or projectile. Respond accordingly.
     {
+        Debug.Log("YOWZA BABOWZA BABYYYY");
         //Add parry and hit sounds in if statements
         Ray ray = gameCamera.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit1;
-        if (Physics.Raycast(ray, out hit1, hitLength, swipeLayers))
+
+        RaycastHit[] hits = Physics.SphereCastAll(ray, hitRadius, hitLength, swipeLayers);
+
+        if (hits.Length > 0)
         {
-            if (hit1.transform.gameObject.tag == "Enemy Flyer")
+            foreach (RaycastHit hit in hits)
             {
-                hit1.transform.gameObject.GetComponent<FlyingEnemy>().TakeDamage(1);
-                audioManager.PlaySFX(audioManager.hit);
+                Debug.Log(hit.collider.gameObject);
+                if (hit.transform.gameObject.tag == "Enemy Flyer")
+                {
+                    Debug.Log("CALL ME ;)");
+                    hit.transform.gameObject.GetComponent<FlyingEnemy>().TakeDamage(1, hitDirection, swingForce);
+                    Debug.Log(hitDirection);
+                }
+                else if (hit.transform.gameObject.tag == "Enemy Shooter")
+                {
+                    hit.transform.gameObject.GetComponent<ShooterEnemy>().TakeDamage(1, hitDirection, swingForce);
+                }
+                else if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Projectile"))
+                {
+                    Projectile projectile = hit.transform.gameObject.GetComponent<Projectile>();
+
+                    if (!projectile.CheckParried())
+                    {
+                        projectile.initializeProjectile(ray.GetPoint(100), parriedProjectileSpeed, parriedProjectileLifetime, true, CalculateTargetEnemy(ray));
+                        FindObjectOfType<Hitstop>().Stop(0.15f);
+                    }
+                }
+                else if (hit.transform.gameObject.tag == "Collectible" || hit.transform.gameObject.layer == 11) // 11 == gibs layer
+                {
+                    hit.transform.gameObject.GetComponent<Rigidbody>().AddForce(ray.direction * 50f, ForceMode.Impulse);
+                }
             }
-            else if (hit1.transform.gameObject.tag == "Enemy Shooter")
-            {
-                hit1.transform.gameObject.GetComponent<ShooterEnemy>().TakeDamage(1);
-                audioManager.PlaySFX(audioManager.hit);
-            }
-            else if (hit1.transform.gameObject.layer == LayerMask.NameToLayer("Projectile"))
-            {
-                hit1.transform.gameObject.GetComponent<Projectile>().initializeProjectile(ray.GetPoint(100), parriedProjectileSpeed, parriedProjectileLifetime, true);
-            }
+
+            StartCoroutine(FindObjectOfType<ScreenShaker>().Shake(0.1f, 0.01f, 0, 0, 0.1f));
         }
     }
 
-    void UpdateDistanceHud()
+    private GameObject CalculateTargetEnemy(Ray mouseLookDirection)
     {
+        GameObject targetCandidate = null;
+
+        Collider[] enemies = Physics.OverlapSphere(transform.position, maxTargetDistance, enemyLayers);
+
+        float targetCandidateAngle = 1000;
+
+        foreach (Collider enemy in enemies)
+        {
+            float distance = Vector3.Distance(transform.position, enemy.transform.position);
+            if (distance < minTargetDistance)
+            {
+                continue;
+            }
+
+            float angle = Vector3.Angle(mouseLookDirection.direction, enemy.transform.position - transform.position);
+            if (angle > maxTargetAngle)
+            {
+                continue;
+            }
+
+            Debug.Log(angle);
+
+            if (targetCandidate != null)
+            {
+                if (targetCandidateAngle > angle)
+                {
+                    Debug.Log("targetfound");
+                    targetCandidate = enemy.gameObject;
+                    targetCandidateAngle = angle;
+                }
+            }
+            else
+            {
+                Debug.Log("targetfound");
+                targetCandidate = enemy.gameObject;
+                targetCandidateAngle = angle;
+            }
+        }
+
+        return targetCandidate;
+    }
+
+    void OnDrawGizmosSelected()// Draws selected Gizmos for testing (I think)
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, minTargetDistance);
+        Gizmos.DrawWireSphere(transform.position, maxTargetDistance);
+    }
+
+    void UpdateDistanceHud() // Update UI to show how far away the player is from an object the crosshair is over
+    {
+        // Set the current distance to the distance of the object from the player minus our hitrange
         currentDistance = distanceCheck.distance - (hitLength + distanceCheckBuffer);
 
+        // If object is too far away, update UI to be red and say "Infinite" for range.
         if(distanceCheck.distance == 0)
         {
             displayDistance.color = Color.red;
@@ -691,13 +1056,14 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
+            // If the current object is in range, update distance text to be cyan and say in range
             if(currentDistance <= 0)
             {
                 displayDistance.text = "in range";
                 displayDistance.color = Color.cyan;
                 isInRange = true;
             }
-            else
+            else // If current object is out of range then say we arent in range, display how far it is and change the color to red.
             {
                 displayDistance.text = (currentDistance).ToString("0.00m");
                 displayDistance.color = Color.red;
@@ -707,26 +1073,42 @@ public class PlayerController : MonoBehaviour
 
     }
 
+    public void ResetHealth()
+    {
+        currentHealth = maxHealth;
+        if (healthDisplay != null)
+        {
+            healthDisplay.text = "Health: " + currentHealth;
+        }
+    }
+
     public void TakeDamage(int damage) // called when the player needs to take damage
     {
+        StartCoroutine(FindObjectOfType<ScreenShaker>().Shake(0.1f, 0.01f, 0, 0, 0.1f));
+
         currentHealth -= damage;
+        if (healthDisplay != null)
+        {
+            healthDisplay.text = "Health: " + currentHealth;
+        }
         if (currentHealth <= 0)
         {
             Die();
         }
     }
-
-    public void UpdateSpawn(int index, Checkpoint check)
+    
+    public void UpdateSpawn(Checkpoint check)
     {
-        if (index > currentSpawnIndex)
+        if (currentCheckpoint != null)
         {
-            currentSpawnIndex = index;
-            currentCheckpoint = check;
+            currentCheckpoint.DeactivateCheckpoint();
         }
+        currentCheckpoint = check;
     }
 
     public void Die() // this function is called when the player dies
     {
+        // Kill the player, activate the death screen UI, and reset the timescale.
         alive = false;
         deathScreen.SetActive(true);
         Time.timeScale = 0;
@@ -734,22 +1116,60 @@ public class PlayerController : MonoBehaviour
 
     public void ResetPlayer() // this function resets the player fully
     {
+        // Make sure the player is alive. If they have no checkpoints, simply reload the scene.
         alive = true;
-
-        if (currentCheckpoint != null) //if the player has a checkpoint stored, remove it and get an updated one.
+        if (currentCheckpoint == null)
         {
-            currentCheckpoint.Reset();
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            return;
         }
+        // COMMENT: Code below should be in an else statement for clarity's sake methinks.
 
+        //if the player has a checkpoint stored, remove it and get an updated one. COMMENT: Doesnt this do what the code above does?
+        currentCheckpoint.ResetState();
+
+        // Remove any velocity from player and set their position to their current checkpoint position
         rb.velocity = Vector3.zero;
-
-        transform.position = currentCheckpoint.transform.position; // set the player to the current check point pos.
+        transform.position = currentCheckpoint.transform.GetChild(0).position;
 
         currentHealth = maxHealth;
+        if (healthDisplay != null)
+        {
+            healthDisplay.text = "Health: " + currentHealth;
+        }
     }
 
-    public bool CheckMoving()
+    public bool CheckMoving() // Check to see if the player has any velocity
     {
         return movementInputVector.magnitude != 0;
+    }
+
+    public Powerup GetCurrentPowerup() {  return currentPowerup; }
+
+    public void CollectPowerup(Powerup newPowerup) // Equips a new powerup to the player and updates UI to display equiped powerup
+    {
+        currentPowerup = newPowerup;
+        if (currentPowerup == Powerup.Explosive)
+        {
+            tempPowerupUI.text = "Active Powerup: Explosive";
+        }
+        else if (currentPowerup == Powerup.Airburst)
+        {
+            tempPowerupUI.text = "Active Powerup: Airburst";
+        }
+    }
+
+    void LoseExplosive()// Removes any equipped powerups COMMENT: Seems useless?
+    {
+        ResetPowerup();
+    }
+
+    void ResetPowerup() // Removes any equipped powerups
+    {
+        currentPowerup = Powerup.None;
+        if (tempPowerupUI != null)
+        {
+            tempPowerupUI.text = "Active Powerup: None";
+        }
     }
 }

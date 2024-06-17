@@ -1,31 +1,80 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class ScreenShaker : MonoBehaviour
 {
-    GameObject cameraObj;
+    [SerializeField] GameObject cameraObj;
+    [SerializeField] GameObject hammerCameraObject;
     float shakeTimer;
 
-    // Start is called before the first frame update
-    void Start()
+    Vector3 orignalMainCamPos;
+    Vector3 originalHammerCamPos;
+
+    private void Start()
     {
-        cameraObj = Camera.main.gameObject;
+        orignalMainCamPos = cameraObj.transform.localPosition;
+        originalHammerCamPos = hammerCameraObject.transform.localPosition;
     }
 
-    public void Shake(float duration, float power)
+    //this script needs easing
+    public IEnumerator Shake(float duration, float timeBetweenShake, float buildTime, float fallTime, float power)
     {
+        float currentPower = 0;
+
+        shakeTimer = 0;
+        while (shakeTimer < buildTime)
+        {
+            shakeTimer += timeBetweenShake;
+            float xPos = Random.Range(-currentPower, currentPower);
+            float yPos = Random.Range(-currentPower, currentPower);
+
+            cameraObj.transform.localPosition = new Vector3(xPos, yPos, orignalMainCamPos.z);
+            //hammerCameraObject.transform.localPosition = new Vector3(-xPos, -yPos, originalHammerCamPos.z);
+
+            currentPower = power * shakeTimer / buildTime;
+
+            yield return new WaitForSeconds(timeBetweenShake);
+        }
+
+        currentPower = power;
+
         shakeTimer = duration;
         while (shakeTimer > 0)
         {
-            shakeTimer -= Time.deltaTime;
-            float xPos = Random.Range(-power, power);
-            float yPos = Random.Range(-power, power);
+            shakeTimer -= timeBetweenShake;
+            float xPos = Random.Range(-currentPower, currentPower);
+            float yPos = Random.Range(-currentPower, currentPower);
 
-            cameraObj.transform.localPosition = new Vector3(xPos, yPos + 0.5f, cameraObj.transform.position.z);
+            cameraObj.transform.localPosition = new Vector3(xPos, yPos, orignalMainCamPos.z);
+            //hammerCameraObject.transform.localPosition = new Vector3(-xPos, -yPos, originalHammerCamPos.z);
+
+            yield return new WaitForSeconds(timeBetweenShake);
         }
 
-        cameraObj.transform.localPosition = new Vector3(0, 0.5f, 0);
+        shakeTimer = fallTime;
+        while (shakeTimer > 0)
+        {
+            shakeTimer -= timeBetweenShake;
+            float xPos = Random.Range(-currentPower, currentPower);
+            float yPos = Random.Range(-currentPower, currentPower);
+
+            cameraObj.transform.localPosition = new Vector3(xPos, yPos, orignalMainCamPos.z);
+            //hammerCameraObject.transform.localPosition = new Vector3(-xPos, -yPos, originalHammerCamPos.z);
+
+            currentPower = power * shakeTimer / fallTime;
+
+            yield return new WaitForSeconds(timeBetweenShake);
+        }
+
+        cameraObj.transform.localPosition = orignalMainCamPos;
+        hammerCameraObject.transform.localPosition = originalHammerCamPos;
     }
-    
+
+    public IEnumerator ContinuousShake()
+    {
+        //this will be a function we can use to do screenshake over a period of time we do not have a measure of, and there will be a secondary function that can be used to cut it off
+        yield return null;
+    }
 }
