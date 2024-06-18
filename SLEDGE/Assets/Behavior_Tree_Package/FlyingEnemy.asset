@@ -271,7 +271,6 @@ MonoBehaviour:
   - {fileID: -4020441479685208783}
   - {fileID: 5010339158128779743}
   - {fileID: -2673610945444410791}
-  - {fileID: 2587021329056328059}
   - {fileID: 1870455110899637565}
   blackboard:
     currentState: 0
@@ -369,40 +368,9 @@ MonoBehaviour:
     dashAvailable: 0
   description: Follow Player
   beingInspected: 1
-  child: {fileID: 2587021329056328059}
-  visionBlocking:
-    serializedVersion: 2
-    m_Bits: 4294967295
+  child: {fileID: 0}
   objectTarget: 0
   speed: 5
-  playerInView: 0
-  currentIndexOnPath: -1
---- !u!114 &2587021329056328059
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d3d57040dacaa1d4ba77a20f23ea8d3c, type: 3}
-  m_Name: RotateTowards_Service
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: 2964a6d35a3a0da47a97af366f863a0f
-  position: {x: 294.40005, y: 365.47998}
-  blackboard:
-    currentState: 0
-    attackRange: 0
-    alertRange: 0
-    objectAName: 
-    objectBName: 
-    dashAvailable: 0
-  description: 
-  beingInspected: 1
-  rotateTarget: 0
 --- !u!114 &4320703270194755856
 MonoBehaviour:
   m_ObjectHideFlags: 0
