@@ -370,8 +370,13 @@ MonoBehaviour:
   description: Follow Player
   beingInspected: 1
   child: {fileID: 2587021329056328059}
+  visionBlocking:
+    serializedVersion: 2
+    m_Bits: 4294967295
   objectTarget: 0
   speed: 5
+  playerInView: 0
+  currentIndexOnPath: -1
 --- !u!114 &2587021329056328059
 MonoBehaviour:
   m_ObjectHideFlags: 0
