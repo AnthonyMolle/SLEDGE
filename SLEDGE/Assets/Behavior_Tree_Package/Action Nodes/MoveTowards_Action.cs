@@ -9,6 +9,9 @@ public class MoveTowards_Action : ActionNode
     BoxCollider rootCollider;
     GameObject currentTarget;
 
+    Vector3 currentKnownTargetPos;
+    float count = 0;
+
     // Public Parameters
     public Blackboard.ObjectOptions objectTarget;
     public float speed;
@@ -37,11 +40,27 @@ public class MoveTowards_Action : ActionNode
 
     protected override State OnUpdate()
     {
-        Debug.Log("Target in view is: " + targetInView);
+        count += Time.deltaTime;
+        if (count >= 0.5)
+        {
+            Debug.Log("Update");
+            currentKnownTargetPos = currentTarget.transform.position;
+            count = 0;
+        }
 
         if (isTargetInView())
         {
-            MoveTowardsTarget(currentTarget.transform.position);
+
+            bool reachedPoint = Vector3.Distance(rootTransform.position, currentKnownTargetPos) < 1;
+
+            if (reachedPoint)
+            {
+                currentKnownTargetPos = currentTarget.transform.position;
+                count = 0;
+            }
+
+            MoveTowardsTarget(currentKnownTargetPos);
+
             rootCollider.enabled = true;
 
             if (pathing) pathing = false;
@@ -95,7 +114,11 @@ public class MoveTowards_Action : ActionNode
         Vector3 targetDirection = (currentTarget - rootTransform.position).normalized;
 
         rootRigidbody.velocity = targetDirection * speed;
-        blackboard.getCurrentRunner().transform.LookAt(currentTarget);
+
+        var targetRotation = Quaternion.LookRotation(currentTarget - rootTransform.position);
+        rootTransform.rotation = Quaternion.Slerp(rootTransform.rotation, targetRotation, 5f * Time.deltaTime);
+
+        //blackboard.getCurrentRunner().transform.LookAt(currentTarget);
     }
 
     private bool isTargetInView()
