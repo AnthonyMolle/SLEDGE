@@ -71,7 +71,7 @@ public class MoveTowards_Action : ActionNode
 
     private State moveTowardsTarget()
     {
-        moveTowardsPoint(currentKnownTargetPos);
+        moveTowardsPoint(currentKnownTargetPos, true);
 
         if (reachedPoint(currentKnownTargetPos))
         {
@@ -106,7 +106,7 @@ public class MoveTowards_Action : ActionNode
 
     private State followPathToTarget()
     {
-        moveTowardsPoint(currentPathPoint);
+        moveTowardsPoint(currentPathPoint, false);
 
         if (reachedPoint(currentPathPoint))
         {
@@ -144,13 +144,19 @@ public class MoveTowards_Action : ActionNode
         }
     }
 
-    private void moveTowardsPoint(Vector3 currentTarget)
+    private void moveTowardsPoint(Vector3 currentTarget, bool usingOffset)
     {
         Vector3 targetDirection = (currentTarget - rootTransform.position).normalized;
 
         rootRigidbody.velocity = targetDirection * speed;
 
-        var targetRotation = Quaternion.LookRotation(currentTarget - rootTransform.position);
+        Vector3 actualTarget = currentTarget;
+        if (usingOffset)
+        {
+            actualTarget -= offset;
+        }
+
+        var targetRotation = Quaternion.LookRotation((actualTarget) - rootTransform.position);
         rootTransform.rotation = Quaternion.Slerp(rootTransform.rotation, targetRotation, 5f * Time.deltaTime);
     }
 
