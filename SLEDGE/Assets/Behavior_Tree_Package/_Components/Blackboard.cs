@@ -17,8 +17,6 @@ public class Blackboard
     }
 
     public EnemyStates currentState;
-    public float attackRange;
-    public float alertRange;
     public string objectAName;
     public string objectBName;
     public bool dashAvailable;

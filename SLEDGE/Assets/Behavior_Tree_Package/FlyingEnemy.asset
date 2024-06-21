@@ -18,13 +18,11 @@ MonoBehaviour:
   position: {x: 348.59998, y: 605.5999}
   blackboard:
     currentState: 0
-    attackRange: 0
-    alertRange: 0
     objectAName: 
     objectBName: 
     dashAvailable: 0
   description: Set dashAvailable = False
-  beingInspected: 1
+  beingInspected: 0
   child: {fileID: 0}
   currentState: 0
   attackRange: 0
@@ -54,13 +52,11 @@ MonoBehaviour:
   position: {x: 88.00003, y: 233.59999}
   blackboard:
     currentState: 0
-    attackRange: 0
-    alertRange: 0
     objectAName: 
     objectBName: 
     dashAvailable: 0
   description: Check if Player in Attack Range
-  beingInspected: 0
+  beingInspected: 1
   child: {fileID: -2673610945444410791}
   objectTarget: 0
   distance: 15
@@ -82,8 +78,6 @@ MonoBehaviour:
   position: {x: 104.39997, y: 466.79926}
   blackboard:
     currentState: 0
-    attackRange: 0
-    alertRange: 0
     objectAName: 
     objectBName: 
     dashAvailable: 0
@@ -93,6 +87,40 @@ MonoBehaviour:
   - {fileID: 4320703270194755856}
   - {fileID: 1369026680667207393}
   - {fileID: -9109743001786678120}
+--- !u!114 &-6627734279994945571
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51e461eb9e3ffdb4988619cc9011a18c, type: 3}
+  m_Name: UpdateBlackboard_Action
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: de479598d0324a94891dce28d684f109
+  position: {x: 301.59995, y: 348.8}
+  blackboard:
+    currentState: 0
+    objectAName: 
+    objectBName: 
+    dashAvailable: 0
+  description: Set dashAvailable = True
+  beingInspected: 0
+  child: {fileID: 0}
+  currentState: 0
+  attackRange: 0
+  alertRange: 0
+  objectAName: 
+  objectBName: 
+  currentRunner: {fileID: 0}
+  objectA: {fileID: 0}
+  objectB: {fileID: 0}
+  dashAvailable: 1
+  local_input: dashAvailable
 --- !u!114 &-6054487518090257587
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -111,8 +139,6 @@ MonoBehaviour:
   position: {x: -138.4, y: 233.6}
   blackboard:
     currentState: 0
-    attackRange: 0
-    alertRange: 0
     objectAName: 
     objectBName: 
     dashAvailable: 0
@@ -147,8 +173,6 @@ MonoBehaviour:
   position: {x: -148.59998, y: 85.79999}
   blackboard:
     currentState: 0
-    attackRange: 0
-    alertRange: 0
     objectAName: 
     objectBName: 
     dashAvailable: 0
@@ -175,8 +199,6 @@ MonoBehaviour:
   position: {x: 103.99984, y: 348.8}
   blackboard:
     currentState: 0
-    attackRange: 0
-    alertRange: 0
     objectAName: 
     objectBName: 
     dashAvailable: 0
@@ -211,8 +233,6 @@ MonoBehaviour:
   position: {x: -24.00003, y: -260}
   blackboard:
     currentState: 0
-    attackRange: 0
-    alertRange: 0
     objectAName: 
     objectBName: 
     dashAvailable: 0
@@ -235,19 +255,17 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: e2e4b5a6323d6bc4382665fa4e83d021
-  position: {x: 178.6, y: 113.00001}
+  position: {x: 167.20004, y: 100.000015}
   blackboard:
     currentState: 0
-    attackRange: 0
-    alertRange: 0
     objectAName: 
     objectBName: 
     dashAvailable: 0
   description: 
-  beingInspected: 0
+  beingInspected: 1
   children:
   - {fileID: -7746754487305563561}
-  - {fileID: 1870455110899637565}
+  - {fileID: 6590153299904880064}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -281,10 +299,10 @@ MonoBehaviour:
   - {fileID: 1870455110899637565}
   - {fileID: 1369026680667207393}
   - {fileID: -9109743001786678120}
+  - {fileID: 6590153299904880064}
+  - {fileID: -6627734279994945571}
   blackboard:
     currentState: 0
-    attackRange: 10
-    alertRange: 5
     objectAName: Player.v3 Variant
     objectBName: Player.v3 Variant
     dashAvailable: 1
@@ -306,8 +324,6 @@ MonoBehaviour:
   position: {x: 167.20001, y: -39.999996}
   blackboard:
     currentState: 0
-    attackRange: 0
-    alertRange: 0
     objectAName: 
     objectBName: 
     dashAvailable: 0
@@ -342,8 +358,6 @@ MonoBehaviour:
   position: {x: 179.2002, y: 606.4}
   blackboard:
     currentState: 0
-    attackRange: 0
-    alertRange: 0
     objectAName: 
     objectBName: 
     dashAvailable: 0
@@ -351,7 +365,7 @@ MonoBehaviour:
   beingInspected: 0
   child: {fileID: 0}
   objectTarget: 0
-  speed: 10
+  speed: 25
 --- !u!114 &1672742071497722815
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -370,8 +384,6 @@ MonoBehaviour:
   position: {x: -24, y: -159.2}
   blackboard:
     currentState: 0
-    attackRange: 0
-    alertRange: 0
     objectAName: 
     objectBName: 
     dashAvailable: 0
@@ -395,16 +407,14 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: ba93c7d6914feef46b53d57cfd74f86f
-  position: {x: 294.6667, y: 233.33331}
+  position: {x: 482.99997, y: 348.8}
   blackboard:
     currentState: 0
-    attackRange: 0
-    alertRange: 0
     objectAName: 
     objectBName: 
     dashAvailable: 0
   description: Go to 3 units above player
-  beingInspected: 0
+  beingInspected: 1
   child: {fileID: 0}
   objectTarget: 0
   speed: 8
@@ -428,15 +438,13 @@ MonoBehaviour:
   position: {x: 11.60006, y: 605.99927}
   blackboard:
     currentState: 0
-    attackRange: 0
-    alertRange: 0
     objectAName: 
     objectBName: 
     dashAvailable: 0
   description: Charge for Dash
   beingInspected: 0
   child: {fileID: 7062431056821504270}
-  duration: 5
+  duration: 2
 --- !u!114 &4669117311234261647
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -481,8 +489,6 @@ MonoBehaviour:
   position: {x: -23.799988, y: -356.40002}
   blackboard:
     currentState: 0
-    attackRange: 0
-    alertRange: 0
     objectAName: 
     objectBName: 
     dashAvailable: 0
@@ -507,8 +513,6 @@ MonoBehaviour:
   position: {x: -137, y: -40}
   blackboard:
     currentState: 0
-    attackRange: 0
-    alertRange: 0
     objectAName: 
     objectBName: 
     dashAvailable: 0
@@ -525,6 +529,32 @@ MonoBehaviour:
   objectB: {fileID: 0}
   dashAvailable: 0
   local_input: currentState
+--- !u!114 &6590153299904880064
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c78ec8d46b1c19a4fa99127cb31764e5, type: 3}
+  m_Name: Sequencer_Composite
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: bc025482cfb03d04d9577e5f815b67ca
+  position: {x: 348.80002, y: 212.79999}
+  blackboard:
+    currentState: 0
+    objectAName: 
+    objectBName: 
+    dashAvailable: 0
+  description: 
+  beingInspected: 0
+  children:
+  - {fileID: -6627734279994945571}
+  - {fileID: 1870455110899637565}
 --- !u!114 &7062431056821504270
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -543,8 +573,6 @@ MonoBehaviour:
   position: {x: 11.60006, y: 742.7992}
   blackboard:
     currentState: 0
-    attackRange: 0
-    alertRange: 0
     objectAName: 
     objectBName: 
     dashAvailable: 0
