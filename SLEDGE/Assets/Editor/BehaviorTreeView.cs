@@ -144,7 +144,18 @@ public class BehaviorTreeView : GraphView
             var types = TypeCache.GetTypesDerivedFrom<ActionNode>();
             foreach(var type in types)
             {
-                evt.menu.AppendAction($"{type.BaseType.Name}/ {FormatNodeName(type.Name)}", (a) => CreateNode(type));
+                if (type.Name == "Blackboard_ActionNode")
+                {
+                    // Do nothing
+                }
+                else if (type.BaseType.Name == "Blackboard_ActionNode")
+                {
+                    evt.menu.AppendAction($"ActionNode/ {FormatNodeName(type.Name)}", (a) => CreateNode(type));
+                }
+                else
+                {
+                    evt.menu.AppendAction($"{type.BaseType.Name}/ {FormatNodeName(type.Name)}", (a) => CreateNode(type));
+                }
             }
         }
         {

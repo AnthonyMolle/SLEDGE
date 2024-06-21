@@ -1,5 +1,41 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-9109743001786678120
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51e461eb9e3ffdb4988619cc9011a18c, type: 3}
+  m_Name: UpdateBlackboard_Action
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 8bdb0477cf50d5b48bcf015fc3ffbeeb
+  position: {x: 348.59998, y: 605.5999}
+  blackboard:
+    currentState: 0
+    attackRange: 0
+    alertRange: 0
+    objectAName: 
+    objectBName: 
+    dashAvailable: 0
+  description: Set dashAvailable = False
+  beingInspected: 1
+  child: {fileID: 0}
+  currentState: 0
+  attackRange: 0
+  alertRange: 0
+  objectAName: 
+  objectBName: 
+  currentRunner: {fileID: 0}
+  objectA: {fileID: 0}
+  objectB: {fileID: 0}
+  dashAvailable: 0
+  local_input: dashAvailable
 --- !u!114 &-7746754487305563561
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -55,8 +91,8 @@ MonoBehaviour:
   beingInspected: 0
   children:
   - {fileID: 4320703270194755856}
-  - {fileID: -4020441479685208783}
-  - {fileID: 5010339158128779743}
+  - {fileID: 1369026680667207393}
+  - {fileID: -9109743001786678120}
 --- !u!114 &-6054487518090257587
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -93,33 +129,6 @@ MonoBehaviour:
   objectB: {fileID: 0}
   dashAvailable: 0
   local_input: currentState
---- !u!114 &-4020441479685208783
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 091f3a82cc8db814daac999008d343d1, type: 3}
-  m_Name: DebugLog_Action
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: 591e78bb76a103b4ea727520a862b51d
-  position: {x: 178.79999, y: 605.99927}
-  blackboard:
-    currentState: 0
-    attackRange: 0
-    alertRange: 0
-    objectAName: 
-    objectBName: 
-    dashAvailable: 0
-  description: Dash Attack
-  beingInspected: 0
-  child: {fileID: 0}
-  message: dash!
 --- !u!114 &-3279453770233949116
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -268,10 +277,10 @@ MonoBehaviour:
   - {fileID: -7705707784739115694}
   - {fileID: 4320703270194755856}
   - {fileID: 7062431056821504270}
-  - {fileID: -4020441479685208783}
-  - {fileID: 5010339158128779743}
   - {fileID: -2673610945444410791}
   - {fileID: 1870455110899637565}
+  - {fileID: 1369026680667207393}
+  - {fileID: -9109743001786678120}
   blackboard:
     currentState: 0
     attackRange: 10
@@ -315,6 +324,34 @@ MonoBehaviour:
   objectB: {fileID: 0}
   dashAvailable: 0
   local_input: currentState
+--- !u!114 &1369026680667207393
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f78eedc9cf95474c82040e31a7a6920, type: 3}
+  m_Name: DashAttack_Action
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: f9678111fe4bd8146aa03bd4ddd74dba
+  position: {x: 179.2002, y: 606.4}
+  blackboard:
+    currentState: 0
+    attackRange: 0
+    alertRange: 0
+    objectAName: 
+    objectBName: 
+    dashAvailable: 0
+  description: 
+  beingInspected: 0
+  child: {fileID: 0}
+  objectTarget: 0
+  speed: 10
 --- !u!114 &1672742071497722815
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -366,8 +403,8 @@ MonoBehaviour:
     objectAName: 
     objectBName: 
     dashAvailable: 0
-  description: Follow Player
-  beingInspected: 1
+  description: Go to 3 units above player
+  beingInspected: 0
   child: {fileID: 0}
   objectTarget: 0
   speed: 8
@@ -426,42 +463,6 @@ MonoBehaviour:
   beingInspected: 0
   service: {fileID: 0}
   rotateTarget: 0
---- !u!114 &5010339158128779743
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 51e461eb9e3ffdb4988619cc9011a18c, type: 3}
-  m_Name: UpdateBlackboard_Action
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: 1b92e0925b6703d48b79a3dae84c8313
-  position: {x: 338, y: 605.99927}
-  blackboard:
-    currentState: 0
-    attackRange: 0
-    alertRange: 0
-    objectAName: 
-    objectBName: 
-    dashAvailable: 0
-  description: Set dashAvailable = False
-  beingInspected: 0
-  child: {fileID: 0}
-  currentState: 0
-  attackRange: 0
-  alertRange: 0
-  objectAName: 
-  objectBName: 
-  currentRunner: {fileID: 0}
-  objectA: {fileID: 0}
-  objectB: {fileID: 0}
-  dashAvailable: 0
-  local_input: dashAvailable
 --- !u!114 &5992932366734594618
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -548,5 +549,5 @@ MonoBehaviour:
     objectBName: 
     dashAvailable: 0
   description: 
-  beingInspected: 0
+  beingInspected: 1
   rotateTarget: 0
