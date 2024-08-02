@@ -637,6 +637,8 @@ public class PlayerController : MonoBehaviour
             hasCoyoteTime = true; // Reset our coyote time
             hasJumped = false; // Reset our jump tracker. 
 
+            Debug.Log(Vector3.Angle(hit.transform.up, hit.normal));
+
             if (Vector3.Angle(hit.transform.up, hit.normal) > 1)
             {
                 isOnSlope = true;
