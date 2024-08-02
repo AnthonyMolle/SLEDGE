@@ -637,7 +637,7 @@ public class PlayerController : MonoBehaviour
             hasCoyoteTime = true; // Reset our coyote time
             hasJumped = false; // Reset our jump tracker. 
 
-            Debug.Log(Vector3.Angle(hit.transform.up, hit.normal));
+            //Debug.Log(Vector3.Angle(hit.transform.up, hit.normal));
 
             if (Vector3.Angle(hit.transform.up, hit.normal) > 1)
             {
@@ -972,6 +972,7 @@ public class PlayerController : MonoBehaviour
                 }
                 else if (hit.transform.gameObject.tag == "Enemy Shooter")
                 {
+                    Debug.Log(hit.transform.gameObject.GetComponent<ShooterEnemy>() != null);
                     hit.transform.gameObject.GetComponent<ShooterEnemy>().TakeDamage(1, hitDirection, swingForce);
                 }
                 else if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Projectile"))
