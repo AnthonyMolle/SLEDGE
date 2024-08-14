@@ -621,6 +621,16 @@ public class PlayerController : MonoBehaviour
         Vector3 movementPlane;
         if (Physics.Raycast(gameObject.transform.position, Vector3.down, out hit, playerHeight/2 + groundCheckDist, groundLayers)) //if on the ground
         {
+            float slopeAngle = Vector3.Angle(hit.transform.up, hit.normal);
+            if (slopeAngle > 1 && slopeAngle < maxSlopeAngle)
+            {
+                isOnSlope = true;
+            }
+            else
+            {
+                isOnSlope = false;
+            }
+
             if (isGrounded == false && hangTime >= .25)
             {
                 audioManager.PlaySFX(audioManager.land);
@@ -630,6 +640,7 @@ public class PlayerController : MonoBehaviour
                 }
             }
             isGrounded = true;
+            rb.useGravity = false;
             anim.SetBool("grounded", true);
             movementPlane = hit.normal;
 
@@ -638,20 +649,12 @@ public class PlayerController : MonoBehaviour
             hasJumped = false; // Reset our jump tracker. 
 
             //Debug.Log(Vector3.Angle(hit.transform.up, hit.normal));
-
-            if (Vector3.Angle(hit.transform.up, hit.normal) > 1)
-            {
-                isOnSlope = true;
-            }
-            else
-            {
-                isOnSlope = false;
-            }
         }
         else // if not on the ground
         {
             movementPlane = transform.up;
             isGrounded = false;
+            rb.useGravity = true;
             anim.SetBool("grounded", false);
             isOnSlope = false;
 
