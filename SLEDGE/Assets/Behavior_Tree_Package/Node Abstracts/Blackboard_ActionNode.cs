@@ -59,10 +59,16 @@ public class Blackboard_ActionNode : ActionNode
         return currentField_local.GetValue(this);
     }
 
+    // Links our internal tracker of the current field our blackboard action node is using
+    // With the external field that we want to reference
     public void updateField(string name)
     {
         local_input = name;
 
+        /*
+         * In case of myBaseClass o = DerivedType; o.GetType() will refer to the DerivedType
+         * So we can create children of the blackboard instance and it should know its the child I HOPE
+         */
         FieldInfo[] fields = blackboard.GetType().GetFields();
 
         foreach (var field in fields)
@@ -128,6 +134,16 @@ public class Blackboard_ActionNodeEditor : Editor
             if (comparison != null)
             {
                 // This tells the inspector to update the matching container when modified
+
+                /*
+                 * If user typed in a valid property (one listed in this classes varaibles)...
+                 * Then create a text field in the BehaviorTree inspector
+                 * 
+                 * We then update our selected fields
+                 * When this node starts running (OnStart)
+                 * We update the fields again IDK WHY maybe they reset?
+                 * Then in update we can pull the set data
+                */
                 EditorGUILayout.PropertyField(comparison);
                 script.updateField(input);
             }

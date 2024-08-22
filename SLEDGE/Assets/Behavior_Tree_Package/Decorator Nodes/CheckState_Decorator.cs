@@ -3,29 +3,16 @@ using UnityEditor;
 using System.Reflection;
 using static Blackboard;
 
+// Check a blackboard variable == valueToCheckFor
 public class CheckState_Decorator : DecoratorNode
 {
-    // Copied from blackboard to store what this checkState is looking for
-    public Blackboard.EnemyStates currentState;
-    public float attackRange;
-    public float alertRange;
-    public string objectAName;
-    public string objectBName;
-
-    public GameObject currentRunner;
-    public GameObject objectA;
-    public GameObject objectB;
-    public bool dashAvailable;
-
-    // Unique to state
-    public FieldInfo currentField_blackboard;
-    public FieldInfo currentField_local;
-
-    public string local_input;
+    public string blackboard_var_name;
+    public FieldInfo blackboard_var;
+    public string valueToCheckFor;
 
     protected override void OnStart()
     {
-        updateField(local_input);
+        blackboard_var = GetBlackboardVarByName(blackboard_var_name);
     }
 
     protected override void OnStop()
@@ -34,15 +21,14 @@ public class CheckState_Decorator : DecoratorNode
 
     protected override State OnUpdate()
     {
-        if (currentField_blackboard == null || currentField_local == null)
+        if (blackboard_var == null)
         {
             return State.Failure;
         }
 
-        object x = currentField_blackboard.GetValue(blackboard);
-        object y = currentField_local.GetValue(this);
+        object x = blackboard_var.GetValue(blackboard);
 
-        if (x.ToString() != y.ToString())
+        if (x.ToString() != this.valueToCheckFor)
         {
             return State.Failure;
         }
@@ -51,9 +37,9 @@ public class CheckState_Decorator : DecoratorNode
         return child.Update();
     }
 
-    public void updateField(string name)
+    public FieldInfo GetBlackboardVarByName(string name)
     {
-        local_input = name;
+        blackboard_var_name = name;
 
         FieldInfo[] fields = blackboard.GetType().GetFields();
 
@@ -61,21 +47,12 @@ public class CheckState_Decorator : DecoratorNode
         {
             if (field.Name == name)
             {
-                currentField_blackboard = field;
-                break;
+
+                return field;
             }
         }
 
-        FieldInfo[] theseFields = this.GetType().GetFields();
-
-        foreach (var field in theseFields)
-        {
-            if (field.Name == name)
-            {
-                currentField_local = field;
-                break;
-            }
-        }
+        return null;
     }
 
     public override Node Clone()
@@ -91,47 +68,32 @@ public class CheckState_Decorator : DecoratorNode
 [CustomEditor(typeof(CheckState_Decorator))]
 public class CheckStateEditor : Editor
 {
-    SerializedProperty comparison; 
-    string input = "";
+    string variableName = "";
 
-    CheckState_Decorator last_decor;
-
+    CheckState_Decorator last_opened_checkStateClass;
 
     // Create Inspector UI 
     public override void OnInspectorGUI()
     {
-        var script = target as CheckState_Decorator;
+        var checkStateClass = target as CheckState_Decorator;
 
-        if(last_decor != script)
+        if (last_opened_checkStateClass != checkStateClass)
         {
-            input = script.local_input;
+            variableName = checkStateClass.blackboard_var_name;
+            last_opened_checkStateClass = checkStateClass;
         }
 
-        last_decor = script;
+        variableName = EditorGUILayout.TextField("Enter Variable:", variableName);
 
-        input = EditorGUILayout.TextField("Enter Variable:", input);
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("valueToCheckFor"));
 
-        if (script.currentField_local != null)
+        checkStateClass.description = "Check if " + variableName + " = " + checkStateClass.valueToCheckFor;
+
+        if (variableName != checkStateClass.blackboard_var_name)
         {
-            script.description = "Check if " + input + " = " + script.currentField_local.GetValue(script);
+            checkStateClass.blackboard_var = checkStateClass.GetBlackboardVarByName(variableName);
         }
-
-        if (input != null)
-        {
-            // Goal is to have generic SerializedProperty that can be modified 
-
-            // This will be the value compared to the matching blackboard name.
-     
-            // This finds one of the above containers that match the variables in our blackboard
-            comparison = serializedObject.FindProperty(input);
-
-            if (comparison != null)
-            {
-                // This tells the inspector to update the matching container when modified
-                EditorGUILayout.PropertyField(comparison);
-                script.updateField(input);
-            }
-        }
+        
         if (serializedObject != null)
         {
             serializedObject.ApplyModifiedProperties();

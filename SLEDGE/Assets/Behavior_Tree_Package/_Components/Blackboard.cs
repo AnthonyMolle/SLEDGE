@@ -1,8 +1,23 @@
 using System;
 using Unity.VisualScripting;
 using UnityEngine;
-using static Blackboard;
 
+
+/*public class EnemyBlackboard : Blackboard, IBlackboard
+{
+    public enum EnemyStates
+    {
+        IDLE, HOSTILE
+    }
+
+    public EnemyStates currentState;
+    public bool dashAvailable;
+}
+public interface IBlackboard
+{
+
+}
+*/
 [System.Serializable]
 public class Blackboard
 {
@@ -11,19 +26,13 @@ public class Blackboard
         IDLE, HOSTILE
     }
 
+    public EnemyStates currentState;
+    public bool dashAvailable;
+    private GameObject currentRunner;
     public enum ObjectOptions
     {
         objectA, objectB
     }
-
-    public EnemyStates currentState;
-    public string objectAName;
-    public string objectBName;
-    public bool dashAvailable;
-
-    private GameObject currentRunner;
-    private GameObject objectA;
-    private GameObject objectB;
 
     public GameObject getCurrentRunner()
     {
@@ -33,6 +42,12 @@ public class Blackboard
     {
         currentRunner = newRunner;
     }
+
+    private GameObject objectA;
+    private GameObject objectB;
+
+    public string objectAName;
+    public string objectBName;
 
     public GameObject getObject(ObjectOptions objectToGet)
     {

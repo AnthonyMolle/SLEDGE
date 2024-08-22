@@ -18,9 +18,9 @@ MonoBehaviour:
   position: {x: 348.59998, y: 605.5999}
   blackboard:
     currentState: 0
+    dashAvailable: 0
     objectAName: 
     objectBName: 
-    dashAvailable: 0
   description: Set dashAvailable = False
   beingInspected: 0
   child: {fileID: 0}
@@ -52,11 +52,11 @@ MonoBehaviour:
   position: {x: 88.00003, y: 233.59999}
   blackboard:
     currentState: 0
+    dashAvailable: 0
     objectAName: 
     objectBName: 
-    dashAvailable: 0
   description: Check if Player in Attack Range
-  beingInspected: 1
+  beingInspected: 0
   child: {fileID: -2673610945444410791}
   objectTarget: 0
   distance: 15
@@ -78,9 +78,9 @@ MonoBehaviour:
   position: {x: 104.39997, y: 466.79926}
   blackboard:
     currentState: 0
+    dashAvailable: 0
     objectAName: 
     objectBName: 
-    dashAvailable: 0
   description: 
   beingInspected: 0
   children:
@@ -105,9 +105,9 @@ MonoBehaviour:
   position: {x: 301.59995, y: 348.8}
   blackboard:
     currentState: 0
+    dashAvailable: 0
     objectAName: 
     objectBName: 
-    dashAvailable: 0
   description: Set dashAvailable = True
   beingInspected: 0
   child: {fileID: 0}
@@ -139,9 +139,9 @@ MonoBehaviour:
   position: {x: -138.4, y: 233.6}
   blackboard:
     currentState: 0
+    dashAvailable: 0
     objectAName: 
     objectBName: 
-    dashAvailable: 0
   description: Set currentState = HOSTILE
   beingInspected: 1
   child: {fileID: 0}
@@ -173,9 +173,9 @@ MonoBehaviour:
   position: {x: -148.59998, y: 85.79999}
   blackboard:
     currentState: 0
+    dashAvailable: 0
     objectAName: 
     objectBName: 
-    dashAvailable: 0
   description: Check if Player in Alert Range
   beingInspected: 0
   child: {fileID: -6054487518090257587}
@@ -199,22 +199,14 @@ MonoBehaviour:
   position: {x: 103.99984, y: 348.8}
   blackboard:
     currentState: 0
+    dashAvailable: 0
     objectAName: 
     objectBName: 
-    dashAvailable: 0
   description: Check if dashAvailable = True
-  beingInspected: 0
+  beingInspected: 1
   child: {fileID: -7705707784739115694}
-  currentState: 0
-  attackRange: 0
-  alertRange: 0
-  objectAName: 
-  objectBName: 
-  currentRunner: {fileID: 0}
-  objectA: {fileID: 0}
-  objectB: {fileID: 0}
-  dashAvailable: 1
-  local_input: dashAvailable
+  blackboard_var_name: dashAvailable
+  valueToCheckFor: True
 --- !u!114 &-2167015080791951902
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -233,9 +225,9 @@ MonoBehaviour:
   position: {x: -24.00003, y: -260}
   blackboard:
     currentState: 0
+    dashAvailable: 0
     objectAName: 
     objectBName: 
-    dashAvailable: 0
   description: Repeat Forever
   beingInspected: 0
   child: {fileID: 1672742071497722815}
@@ -258,9 +250,9 @@ MonoBehaviour:
   position: {x: 167.20004, y: 100.000015}
   blackboard:
     currentState: 0
+    dashAvailable: 0
     objectAName: 
     objectBName: 
-    dashAvailable: 0
   description: 
   beingInspected: 1
   children:
@@ -303,9 +295,9 @@ MonoBehaviour:
   - {fileID: -6627734279994945571}
   blackboard:
     currentState: 0
+    dashAvailable: 1
     objectAName: Player.v3 Variant
     objectBName: Player.v3 Variant
-    dashAvailable: 1
 --- !u!114 &823518354002767614
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -321,25 +313,17 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: 08bc90847ef7a434db17092600dbe7a7
-  position: {x: 167.20001, y: -39.999996}
+  position: {x: 167.33334, y: -50.893333}
   blackboard:
     currentState: 0
+    dashAvailable: 0
     objectAName: 
     objectBName: 
-    dashAvailable: 0
   description: Check if currentState = HOSTILE
   beingInspected: 0
   child: {fileID: -1894315541405159807}
-  currentState: 1
-  attackRange: 0
-  alertRange: 0
-  objectAName: 
-  objectBName: 
-  currentRunner: {fileID: 0}
-  objectA: {fileID: 0}
-  objectB: {fileID: 0}
-  dashAvailable: 0
-  local_input: currentState
+  blackboard_var_name: currentState
+  valueToCheckFor: HOSTILE
 --- !u!114 &1369026680667207393
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -358,11 +342,11 @@ MonoBehaviour:
   position: {x: 179.2002, y: 606.4}
   blackboard:
     currentState: 0
+    dashAvailable: 0
     objectAName: 
     objectBName: 
-    dashAvailable: 0
   description: 
-  beingInspected: 0
+  beingInspected: 1
   child: {fileID: 0}
   objectTarget: 0
   speed: 25
@@ -384,9 +368,9 @@ MonoBehaviour:
   position: {x: -24, y: -159.2}
   blackboard:
     currentState: 0
+    dashAvailable: 0
     objectAName: 
     objectBName: 
-    dashAvailable: 0
   description: 
   beingInspected: 0
   children:
@@ -410,9 +394,9 @@ MonoBehaviour:
   position: {x: 482.99997, y: 348.8}
   blackboard:
     currentState: 0
+    dashAvailable: 0
     objectAName: 
     objectBName: 
-    dashAvailable: 0
   description: Go to 3 units above player
   beingInspected: 1
   child: {fileID: 0}
@@ -438,9 +422,9 @@ MonoBehaviour:
   position: {x: 11.60006, y: 605.99927}
   blackboard:
     currentState: 0
+    dashAvailable: 0
     objectAName: 
     objectBName: 
-    dashAvailable: 0
   description: Charge for Dash
   beingInspected: 0
   child: {fileID: 7062431056821504270}
@@ -489,9 +473,9 @@ MonoBehaviour:
   position: {x: -23.799988, y: -356.40002}
   blackboard:
     currentState: 0
+    dashAvailable: 0
     objectAName: 
     objectBName: 
-    dashAvailable: 0
   description: 
   beingInspected: 0
   child: {fileID: -2167015080791951902}
@@ -513,22 +497,14 @@ MonoBehaviour:
   position: {x: -137, y: -40}
   blackboard:
     currentState: 0
+    dashAvailable: 0
     objectAName: 
     objectBName: 
-    dashAvailable: 0
   description: Check if currentState = IDLE
-  beingInspected: 0
+  beingInspected: 1
   child: {fileID: -3279453770233949116}
-  currentState: 0
-  attackRange: 0
-  alertRange: 0
-  objectAName: 
-  objectBName: 
-  currentRunner: {fileID: 0}
-  objectA: {fileID: 0}
-  objectB: {fileID: 0}
-  dashAvailable: 0
-  local_input: currentState
+  blackboard_var_name: currentState
+  valueToCheckFor: IDLE
 --- !u!114 &6590153299904880064
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -547,9 +523,9 @@ MonoBehaviour:
   position: {x: 348.80002, y: 212.79999}
   blackboard:
     currentState: 0
+    dashAvailable: 0
     objectAName: 
     objectBName: 
-    dashAvailable: 0
   description: 
   beingInspected: 0
   children:
@@ -573,9 +549,9 @@ MonoBehaviour:
   position: {x: 11.60006, y: 742.7992}
   blackboard:
     currentState: 0
+    dashAvailable: 0
     objectAName: 
     objectBName: 
-    dashAvailable: 0
   description: 
   beingInspected: 1
   rotateTarget: 0
