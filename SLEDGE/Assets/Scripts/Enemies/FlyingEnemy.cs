@@ -1,5 +1,6 @@
 using System.Collections;
 using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 
 // Jonah Ryan
@@ -130,8 +131,8 @@ public class FlyingEnemy : MonoBehaviour
                 // Initialize path following with closest node on path
                 if (currentIndexOnPath == -1)
                 {
-                    currentIndexOnPath = PlayerTracker.getNearestOnPath(transform.position);
-                    currentWaypoint = PlayerTracker.getIndexOnPath(currentIndexOnPath);
+                    currentIndexOnPath = PlayerTracker.getPathIndex(transform.position);
+                    currentWaypoint = PlayerTracker.getPointFromIndex(currentIndexOnPath);
                 }
 
                 // If you can see player, leave pathing, enter hunt state
@@ -150,13 +151,13 @@ public class FlyingEnemy : MonoBehaviour
                     // If reached end of path, restart path following with new path information
                     if(PlayerTracker.getSize() <= currentIndexOnPath)
                     {
-                        currentIndexOnPath = PlayerTracker.getNearestOnPath(transform.position);
-                        currentWaypoint = PlayerTracker.getIndexOnPath(currentIndexOnPath);
+                        currentIndexOnPath = PlayerTracker.getPathIndex(transform.position);
+                        currentWaypoint = PlayerTracker.getPointFromIndex(currentIndexOnPath);
                         break;
                     }
 
                     // Update target to next on path
-                    currentWaypoint = PlayerTracker.getIndexOnPath(currentIndexOnPath);
+                    currentWaypoint = PlayerTracker.getPointFromIndex(currentIndexOnPath);
                 }
 
                 // Move towards our current path target

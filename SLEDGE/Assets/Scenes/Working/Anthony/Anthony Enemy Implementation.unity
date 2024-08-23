@@ -4026,6 +4026,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &243020896 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4840767753443748911, guid: 472cdce8629221545b7b8e06983f6054,
+    type: 3}
+  m_PrefabInstance: {fileID: 4620777890453623515}
+  m_PrefabAsset: {fileID: 0}
 --- !u!43 &254750382
 Mesh:
   m_ObjectHideFlags: 0
@@ -5859,6 +5865,12 @@ MonoBehaviour:
     m_RotationOrder: 4
   fade: {fileID: 0}
   mouseSense: {fileID: 234126969}
+--- !u!1 &310619978 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2632596805358502235, guid: 472cdce8629221545b7b8e06983f6054,
+    type: 3}
+  m_PrefabInstance: {fileID: 4620777890453623515}
+  m_PrefabAsset: {fileID: 0}
 --- !u!43 &324264673
 Mesh:
   m_ObjectHideFlags: 0
@@ -53597,8 +53609,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5077e02968564d34eba2af94a55cc986, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cameraObj: {fileID: 0}
-  hammerCameraObject: {fileID: 0}
+  cameraObj: {fileID: 243020896}
+  hammerCameraObject: {fileID: 310619978}
 --- !u!4 &1886605596
 Transform:
   m_ObjectHideFlags: 0
@@ -58517,7 +58529,7 @@ PrefabInstance:
     - target: {fileID: 6569979679882466707, guid: 472cdce8629221545b7b8e06983f6054,
         type: 3}
       propertyPath: m_Name
-      value: Player.v3
+      value: Player.v3 Variant
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
