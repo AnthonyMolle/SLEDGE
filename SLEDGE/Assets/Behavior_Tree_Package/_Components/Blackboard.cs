@@ -26,14 +26,14 @@ public class Blackboard
     [Header("Shooter Variables")]
     [HorizontalLine]
 
-    public bool notImplemented;
+    public float detectionRadius = 20;
 
 
     /* Enum Grave */
 
     public enum EnemyStates
     {
-        IDLE, HOSTILE
+        IDLE, HOSTILE, STUNNED
     }
 
     public enum ObjectOptions
