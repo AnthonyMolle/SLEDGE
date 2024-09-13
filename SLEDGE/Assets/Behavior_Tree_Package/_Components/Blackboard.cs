@@ -1,53 +1,53 @@
-using System;
-using Unity.VisualScripting;
+using NaughtyAttributes;
 using UnityEngine;
 
 
-/*public class EnemyBlackboard : Blackboard, IBlackboard
-{
-    public enum EnemyStates
-    {
-        IDLE, HOSTILE
-    }
-
-    public EnemyStates currentState;
-    public bool dashAvailable;
-}
-public interface IBlackboard
-{
-
-}
-*/
 [System.Serializable]
 public class Blackboard
 {
+    /* Shared Variables */
+
+    [Header("Shared Variables")]
+    [HorizontalLine]
+
+    public EnemyStates currentState;
+    public string objectAName;
+    public string objectBName;
+
+    /* Flyer Enemy Variables */
+
+    [Header("Flyer Variables")]
+    [HorizontalLine]
+
+    public bool dashAvailable;
+
+    /* Shooter Enemy Variables */
+
+    [Header("Shooter Variables")]
+    [HorizontalLine]
+
+    public bool notImplemented;
+
+
+    /* Enum Grave */
+
     public enum EnemyStates
     {
         IDLE, HOSTILE
     }
 
-    public EnemyStates currentState;
-    public bool dashAvailable;
-    private GameObject currentRunner;
     public enum ObjectOptions
     {
         objectA, objectB
     }
 
-    public GameObject getCurrentRunner()
-    {
-        return currentRunner;
-    }
-    public void setCurrentRunner(GameObject newRunner)
-    {
-        currentRunner = newRunner;
-    }
+    /* Helper Methods */
 
-    private GameObject objectA;
-    private GameObject objectB;
-
-    public string objectAName;
-    public string objectBName;
+    public void findObjectReferences()
+    {
+        objectA = GameObject.Find(objectAName);
+        objectB = GameObject.Find(objectBName);
+    }
 
     public GameObject getObject(ObjectOptions objectToGet)
     {
@@ -61,10 +61,17 @@ public class Blackboard
                 return objectA;
         }
     }
-
-    public void findObjectReferences()
+    public GameObject getCurrentRunner()
     {
-        objectA = GameObject.Find(objectAName);
-        objectB = GameObject.Find(objectBName);
+        return currentRunner;
     }
+    public void setCurrentRunner(GameObject newRunner)
+    {
+        currentRunner = newRunner;
+    }
+
+    /* Hidden Data */
+    private GameObject objectA;
+    private GameObject objectB;
+    private GameObject currentRunner;
 }
