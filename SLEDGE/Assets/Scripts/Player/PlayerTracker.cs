@@ -44,12 +44,12 @@ public class PlayerTracker : MonoBehaviour
         return instance.player;
     }
     
-    public static Vector3 getIndexOnPath(int index)
+    public static Vector3 getPointFromIndex(int index)
     {
         return instance.playerPath[index];
     }
 
-    public static int getNearestOnPath(Vector3 currentPosition)
+    public static int getPathIndex(Vector3 currentPosition)
     {
         int nearestIndex = 0;
         float distance = 0;
@@ -119,7 +119,7 @@ public class PlayerTracker : MonoBehaviour
             Gizmos.DrawLine(lastPoint, x);
 
             Gizmos.color = Color.black;
-            Gizmos.DrawSphere(x, 0.5f);
+            Gizmos.DrawSphere(x, 0.2f);
             
 
             lastPoint = x;

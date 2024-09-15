@@ -24,6 +24,7 @@ public class PlayerController : MonoBehaviour
     [Header("Character Component References")]
     [SerializeField] Camera gameCamera;
     Rigidbody rb; // parent rigidbody
+    CapsuleCollider characterCollider;
     [SerializeField] Animator anim; // parent animator
     #endregion
 
@@ -41,6 +42,9 @@ public class PlayerController : MonoBehaviour
     Vector2 mouseInputVector;
     float xRotation;
     float yRotation;
+
+    bool ctrlPressed = false;
+    bool ctrlReleased = true;
 
     bool mousePressed = false;
     bool mouseReleased = true;
@@ -87,11 +91,12 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     #region Jump
-    [Header("Jump")]
+    
     bool jumpPressed = false;
     bool jumpHoldChecking = false;
     bool mustReleaseJump = false;
 
+    [Header("Jump")]
     [SerializeField] float srcJumpPoint = 0.0f;
     [SerializeField] float jumpHoldCheckWindow = 0.25f;
     [SerializeField] float jumpForce = 2f;
@@ -99,6 +104,19 @@ public class PlayerController : MonoBehaviour
     [SerializeField] bool hasCoyoteTime = true;// THIS IS THE DEFAULT VALUE OF COYOTETIME
     [SerializeField] bool decreasingCoyoteTime = false;
     [SerializeField] bool hasJumped = false;
+    #endregion
+
+    #region Slide
+    [Header("Slide")]
+    [SerializeField] float slideHitboxHeight;
+    [SerializeField] float slideCameraOffset;
+    
+    [SerializeField] float minSlideSpeed;
+    [SerializeField] float flatSlideDrag;
+    [SerializeField] float maxSlideDrag;
+    [SerializeField] float maxSlideAcceleration;
+    bool isSliding = false;
+
     #endregion
 
     #region Raycast Checks
@@ -274,6 +292,9 @@ public class PlayerController : MonoBehaviour
 
         // Remove any equiped powerups
         ResetPowerup();
+
+        //get capsule collider
+        characterCollider = GetComponent<CapsuleCollider>();
     }
 
     void Update() // Function Called once per frame
@@ -592,6 +613,18 @@ public class PlayerController : MonoBehaviour
             anim.Play("Equip");
         }
 
+        if (Input.GetKeyDown(KeyCode.LeftControl))
+        {
+            ctrlPressed = true;
+            ctrlReleased = false;
+        }
+
+        if (Input.GetKeyUp(KeyCode.LeftControl))
+        {
+            ctrlPressed = false;
+            ctrlReleased = true;
+        }
+
         //all upcoming code could be put somewhere way better or in a function but its cool ok lol
         float zCamRotate;
 
@@ -619,8 +652,20 @@ public class PlayerController : MonoBehaviour
         // i agree -other programmer
         RaycastHit hit;
         Vector3 movementPlane;
+        float slopeAngle = 0;
         if (Physics.Raycast(gameObject.transform.position, Vector3.down, out hit, playerHeight/2 + groundCheckDist, groundLayers)) //if on the ground
         {
+            slopeAngle = Vector3.Angle(hit.transform.up, hit.normal);
+            Debug.Log(slopeAngle);
+            if (slopeAngle > 1 && slopeAngle < maxSlopeAngle)
+            {
+                isOnSlope = true;
+            }
+            else
+            {
+                isOnSlope = false;
+            }
+
             if (isGrounded == false && hangTime >= .25)
             {
                 audioManager.PlaySFX(audioManager.land);
@@ -630,6 +675,7 @@ public class PlayerController : MonoBehaviour
                 }
             }
             isGrounded = true;
+            rb.useGravity = false;
             anim.SetBool("grounded", true);
             movementPlane = hit.normal;
 
@@ -637,19 +683,13 @@ public class PlayerController : MonoBehaviour
             hasCoyoteTime = true; // Reset our coyote time
             hasJumped = false; // Reset our jump tracker. 
 
-            if (Vector3.Angle(hit.transform.up, hit.normal) > 1)
-            {
-                isOnSlope = true;
-            }
-            else
-            {
-                isOnSlope = false;
-            }
+            //Debug.Log(Vector3.Angle(hit.transform.up, hit.normal));
         }
         else // if not on the ground
         {
             movementPlane = transform.up;
             isGrounded = false;
+            rb.useGravity = true;
             anim.SetBool("grounded", false);
             isOnSlope = false;
 
@@ -662,6 +702,21 @@ public class PlayerController : MonoBehaviour
 
         #region Ground Movement
         
+        if (ctrlPressed && !isSliding) //might need to add additional requirements to this for if we, say, dont want to be able to slide during certain powerups
+        {
+            isSliding = true;
+            characterCollider.height = slideHitboxHeight;
+            characterCollider.center = new Vector3(0, -1 * ((2 - slideHitboxHeight)/2), 0);
+            cameraHolder.transform.position = new Vector3(cameraHolder.transform.position.x, cameraHolder.transform.position.y - slideCameraOffset, cameraHolder.transform.position.z);
+        }
+        else if (ctrlReleased && isSliding)
+        {
+            isSliding = false;
+            characterCollider.height = 2;
+            characterCollider.center = new Vector3(0, 0, 0);
+            cameraHolder.transform.position = new Vector3(cameraHolder.transform.position.x, cameraHolder.transform.position.y + slideCameraOffset, cameraHolder.transform.position.z);
+        }
+
         Vector3 flatVelocity;
 
         if (isOnSlope)
@@ -685,41 +740,69 @@ public class PlayerController : MonoBehaviour
                 anim.SetFloat("Speed", flatVelocity.magnitude);
                 //Debug.Log(anim.GetFloat("Speed"));
 
-
-                if (movementInputVector.magnitude > 0.001)
+                if (!isSliding)
                 {
-                    walkTime += 1;
-                    if (walkTime%15 == 0)
+                    if (movementInputVector.magnitude > 0.001)
                     {
-                        audioManager.PlayWalk();
-                        walkTime = 0;
-                    }
-                    // add some anims for changing direction, or move arms in direction of movement? (kaelen idea)
-                    if (flatVelocity.magnitude < maxSpeed || flatVelocity.magnitude >= maxSpeed && isChangingDirection)
-                    {
-                        isChangingDirection = false;
-                        rb.AddForce(movementInputVector * accelerationRate);
+                        walkTime += 1;
+                        if (walkTime%15 == 0)
+                        {
+                            audioManager.PlayWalk();
+                            walkTime = 0;
+                        }
+                        // add some anims for changing direction, or move arms in direction of movement? (kaelen idea)
+                        if (flatVelocity.magnitude < maxSpeed || flatVelocity.magnitude >= maxSpeed && isChangingDirection)
+                        {
+                            isChangingDirection = false;
+                            rb.AddForce(movementInputVector * accelerationRate);
 
-                        if (flatVelocity.magnitude > maxSpeed)
+                            if (flatVelocity.magnitude > maxSpeed)
+                            {
+                                rb.velocity = new Vector3((movementInputVector * maxSpeed).x, rb.velocity.y, (movementInputVector * maxSpeed).z); //Vector3.ProjectOnPlane(new Vector3((movementInputVector * maxSpeed).x, rb.velocity.y, (movementInputVector * maxSpeed).z), movementPlane);
+                            }
+                        }
+                        else
                         {
                             rb.velocity = new Vector3((movementInputVector * maxSpeed).x, rb.velocity.y, (movementInputVector * maxSpeed).z); //Vector3.ProjectOnPlane(new Vector3((movementInputVector * maxSpeed).x, rb.velocity.y, (movementInputVector * maxSpeed).z), movementPlane);
                         }
                     }
                     else
                     {
-                        rb.velocity = new Vector3((movementInputVector * maxSpeed).x, rb.velocity.y, (movementInputVector * maxSpeed).z); //Vector3.ProjectOnPlane(new Vector3((movementInputVector * maxSpeed).x, rb.velocity.y, (movementInputVector * maxSpeed).z), movementPlane);
+                        if (flatVelocity.magnitude > 0.01)
+                        {
+                            rb.AddForce(-flatVelocity * decelerationRate);
+                            walkTime = 0;
+                        }
+                        else
+                        {
+                            rb.velocity = new Vector3(0, rb.velocity.y, 0); //Vector3.ProjectOnPlane(new Vector3(0, rb.velocity.y, 0), movementPlane);
+                        }
                     }
                 }
                 else
                 {
-                    if (flatVelocity.magnitude > 0.01)
+                    if (movementInputVector.magnitude > 0.001)
                     {
-                        rb.AddForce(-flatVelocity * decelerationRate);
-                        walkTime = 0;
+                        //adapt the launched air turning code to turning the slide
                     }
                     else
                     {
-                        rb.velocity = new Vector3(0, rb.velocity.y, 0); //Vector3.ProjectOnPlane(new Vector3(0, rb.velocity.y, 0), movementPlane);
+                        if (flatVelocity.magnitude > minSlideSpeed)
+                        {
+                            if (slopeAngle == 0)
+                            {
+                                rb.AddForce(-flatVelocity * flatSlideDrag);
+                            }
+                            else if (slopeAngle > 0 && slopeAngle < maxSlopeAngle)
+                            {
+                                rb.AddForce(flatVelocity * ((slopeAngle/maxSlopeAngle) * maxSlideAcceleration));
+                            }
+                        }
+                        else
+                        {
+                            //isSliding = false;
+                            //add other necessary stuff to end the slide properly without falling through floor
+                        }
                     }
                 }
             }
@@ -903,7 +986,10 @@ public class PlayerController : MonoBehaviour
             else if (!isLaunched)
             {
                 isLaunched = true;
-                rb.velocity = rb.velocity / 8;
+                if (!isSliding)
+                {
+                    rb.velocity = rb.velocity / 8;
+                }
                 Vector3 force = (-ray.direction).normalized * initialBounceForce;
 
 
@@ -970,6 +1056,7 @@ public class PlayerController : MonoBehaviour
                 }
                 else if (hit.transform.gameObject.tag == "Enemy Shooter")
                 {
+                    Debug.Log(hit.transform.gameObject.GetComponent<ShooterEnemy>() != null);
                     hit.transform.gameObject.GetComponent<ShooterEnemy>().TakeDamage(1, hitDirection, swingForce);
                 }
                 else if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Projectile"))
