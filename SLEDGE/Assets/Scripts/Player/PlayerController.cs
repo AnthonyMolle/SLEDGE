@@ -7,6 +7,7 @@ using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Events;
 using UnityEngine.PlayerLoop;
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.ProBuilder.Shapes;
@@ -260,6 +261,12 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float maxTargetAngle = 30f;
     [SerializeField] float minTargetDistance = 5f;
     [SerializeField] float maxTargetDistance = 50f;
+    #endregion
+
+    #region Events
+
+    public UnityEvent onHammerHit;
+
     #endregion
     [SerializeField] LayerMask enemyLayers;
 
@@ -922,7 +929,9 @@ public class PlayerController : MonoBehaviour
 
     private void HammerBounce() // Checks if we have bounced off a surface, if so apply physics or hurt enemys
     {
-        
+
+        onHammerHit.Invoke();
+
         if (hammerBounced)
         {
             return;
