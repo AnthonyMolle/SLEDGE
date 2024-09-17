@@ -5158,6 +5158,8 @@ MonoBehaviour:
   maxSlopeAngle: 45
   airAccelerationRate: 25
   airMaxSpeed: 12
+  maxLaunchedSpeed: 100
+  maxFallingSpeed: 100
   naturalAdditionalFallingSpeed: 15
   extraGravityYThreshold: 5
   srcJumpPoint: 0
@@ -5193,15 +5195,21 @@ MonoBehaviour:
   swipeLayers:
     serializedVersion: 2
     m_Bits: 1280
+  swipeForceBase: 20
+  smashForceBase: 30
   parriedProjectileSpeed: 60
   parriedProjectileLifetime: 10
   HammerSound: {fileID: 3787150718103105937, guid: b5d8e58a0976b3546aaaef7e665df4c0,
     type: 3}
   canvas: {fileID: 0}
   displayDistance: {fileID: 0}
+  speedometer: {fileID: 0}
+  tempPowerupUI: {fileID: 0}
+  healthDisplay: {fileID: 0}
   pause: {fileID: 0}
   settings: {fileID: 0}
   deathScreen: {fileID: 0}
+  explosiveForce: 0
   speedlineThreshold: 12
   fovThreshold: 16
   speedlineMax: 45
@@ -5216,6 +5224,12 @@ MonoBehaviour:
   maxParticleSpeed: 20
   initialParticleEmission: 50
   maxParticleEmission: 200
+  maxTargetAngle: 30
+  minTargetDistance: 5
+  maxTargetDistance: 50
+  enemyLayers:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!136 &6158243655809749295
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -5258,7 +5272,7 @@ Rigidbody:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 256
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1

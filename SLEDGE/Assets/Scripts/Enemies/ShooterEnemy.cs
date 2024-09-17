@@ -41,6 +41,8 @@ public class ShooterEnemy : MonoBehaviour
     private MultiAimConstraint chestConstraint;
     [SerializeField] GameObject ShootSound;
 
+    GameObject ragdoll;
+
     public enum EnemyState
     {
         IDLE,
@@ -162,8 +164,8 @@ public class ShooterEnemy : MonoBehaviour
     {
         // add sfx and vfx and such!
         GameObject.Find("ScoreManager").GetComponent<ScoreManager>().AddEnemiesKilled(1);
-        GameObject yeesus = Instantiate(deathRagdoll, transform.position, transform.rotation);
-        yeesus.GetComponent<Rigidbody>().AddForce(rb.velocity, ForceMode.Impulse);
+        ragdoll = Instantiate(deathRagdoll, transform.position, transform.rotation);
+        ragdoll.GetComponent<Rigidbody>().AddForce(rb.velocity, ForceMode.Impulse);
         // foreach (var bone in yeesus.)  // need a way to get the position of the premortum state
         
         DestroyProjectiles();
@@ -173,6 +175,9 @@ public class ShooterEnemy : MonoBehaviour
 
     public void Reset()
     {
+        DestroyProjectiles();
+        Destroy(ragdoll);
+        ragdoll = null;
         transform.position = startPosition;
         enemyState = EnemyState.IDLE;
     }
