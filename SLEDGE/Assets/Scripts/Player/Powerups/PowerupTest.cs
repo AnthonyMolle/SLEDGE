@@ -17,8 +17,9 @@ public class PowerupTest : MonoBehaviour
         Debug.Log("Fuck yeah!");
     }
 
-    void OnDisable()
+    public void RemovePowerup()
     {
         playerController.onHammerHit.RemoveListener(Test);
+        Destroy(this);
     }
 }

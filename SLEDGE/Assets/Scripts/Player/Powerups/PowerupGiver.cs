@@ -12,6 +12,7 @@ public class PowerupGiver : MonoBehaviour
         {
             System.Type scriptType = System.Type.GetType(powerup + ",Assembly-CSharp");
             other.gameObject.AddComponent(scriptType);
+            other.transform.parent.GetComponent<PowerupBase>().CollectPowerup();
         }
     }
 }
