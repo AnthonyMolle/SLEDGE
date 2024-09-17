@@ -38,6 +38,9 @@ public class ShooterEnemy : MonoBehaviour
     public GameObject lookAtTarget;
     public List<GameObject> trackConstraints;
     public float angle;
+    private Material baseMaterial;
+    public List<GameObject> parts;      // all parts with rigidbodies/materials that can be manipulated
+    public Material hitGlow;
     private MultiAimConstraint chestConstraint;
     [SerializeField] GameObject ShootSound;
 
@@ -142,6 +145,8 @@ public class ShooterEnemy : MonoBehaviour
     {
         Debug.Log("danage");
         enemyState = EnemyState.STUNNED;
+        StartCoroutine(FlashWhite());
+
         rb.AddForce(direction * force, ForceMode.Impulse);
         currentHealth -= damage;
         if (currentHealth <= 0)
@@ -187,6 +192,19 @@ public class ShooterEnemy : MonoBehaviour
         foreach (GameObject p in projectiles)
         {
             Destroy(p);
+        }
+    }
+
+    IEnumerator FlashWhite()
+    {
+        foreach (GameObject part in parts)
+        {
+            part.GetComponent<Renderer>().material = hitGlow;
+        }
+        yield return new WaitForSeconds(0.2f);
+        foreach(GameObject part in parts)
+        {
+            part.GetComponent<Renderer>().material = baseMaterial;
         }
     }
 

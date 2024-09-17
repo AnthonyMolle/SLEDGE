@@ -158,6 +158,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] LayerMask bouncableLayers;
 
     [SerializeField] LayerMask swipeLayers;
+    [SerializeField] GameObject collisionBox; 
 
     RaycastHit distanceCheck; // Checks to see the distance between the player and an object they are lookign at
     
