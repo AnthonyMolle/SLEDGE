@@ -853,7 +853,12 @@ public class PlayerController : MonoBehaviour
         if (hits.Length > 0 || currentPowerup == Powerup.Airburst)
         {
             foreach (RaycastHit hit in hits)
-            {
+            { 
+                if (hit.transform.gameObject.GetComponent<Renderer>() != null && hit.transform.gameObject.GetComponent<Renderer>().sharedMaterial.name == "ShockAbsorbMat")
+                {
+                    return;
+                }
+
                 if (hit.transform.gameObject.tag == "Bouncy")
                 {
                     bouncy = true;
