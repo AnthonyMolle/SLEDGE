@@ -155,6 +155,12 @@ public class ShooterEnemy : MonoBehaviour
         rb.AddForce(direction * force, ForceMode.Impulse);
         StartCoroutine(Pause(0.18f));
         StartCoroutine(Shake(0.2f));
+        if (direction.x <= 0) {
+            StartCoroutine(Hit("left"));
+        }
+        else if (direction.x > 0) {
+            StartCoroutine(Hit("right"));
+        }
         currentHealth -= damage;
         if (currentHealth <= 0)
         {
@@ -249,5 +255,22 @@ public class ShooterEnemy : MonoBehaviour
             yield return new WaitForSeconds(timeBetweenShake);
         }
         transform.localRotation = ogrotation;
+    }
+
+    public IEnumerator Hit(string dir)
+    {
+        Debug.Log("Hit coroutine run");
+        if (dir == "left")
+        {
+            anim.Play("shooter_hit_left 0");
+            anim.speed = 0f;
+        }
+        if (dir == "right")
+        {
+            anim.Play("shooter_hit_right 0");
+            anim.speed = 0f;
+        }
+        yield return new WaitForSeconds(0.2f);
+        anim.speed = 1f;
     }
 }
