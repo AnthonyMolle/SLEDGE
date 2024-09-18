@@ -9,6 +9,7 @@ public class ShooterEnemy : MonoBehaviour
     [SerializeField] int maxHealth = 1;
     int currentHealth = 1;
     public GameObject projectileType;
+    public bool canShoot = true;
     
     [SerializeField] float bulletLifetime = 5.0f;
     [SerializeField] float bulletSpeed = 0.2f;
@@ -43,6 +44,7 @@ public class ShooterEnemy : MonoBehaviour
     public Material hitGlow;
     private MultiAimConstraint chestConstraint;
     [SerializeField] GameObject ShootSound;
+    public Quaternion ogrotation;
 
     GameObject ragdoll;
 
@@ -60,6 +62,7 @@ public class ShooterEnemy : MonoBehaviour
     {
         player = GameObject.FindGameObjectWithTag("Player");
         rb = GetComponent<Rigidbody>();
+        ogrotation = transform.localRotation;
 
         // gun = transform.Find("Gun");
         startPosition = transform.position;
@@ -98,7 +101,9 @@ public class ShooterEnemy : MonoBehaviour
                 if (PlayerinLOS() && cooldown >= 2.0f)
                 {
                     cooldown = 0.0f;
-                    FireProjectile();
+                    if (canShoot) {
+                        FireProjectile();
+                    }
                 } else if (!PlayerinLOS())
                 {
                     enemyState = EnemyState.IDLE;
@@ -145,9 +150,11 @@ public class ShooterEnemy : MonoBehaviour
     {
         Debug.Log("danage");
         enemyState = EnemyState.STUNNED;
-        StartCoroutine(FlashWhite());
+        FlashWhite(damage, direction * force);
 
         rb.AddForce(direction * force, ForceMode.Impulse);
+        StartCoroutine(Pause(0.18f));
+        StartCoroutine(Shake(0.2f));
         currentHealth -= damage;
         if (currentHealth <= 0)
         {
@@ -195,17 +202,52 @@ public class ShooterEnemy : MonoBehaviour
         }
     }
 
-    IEnumerator FlashWhite()
+    public IEnumerator Pause(float time)
+    {
+        var currentVelo = rb.velocity;
+        var currentAngularVelo = rb.angularVelocity;
+        anim.speed = 0;
+        rb.isKinematic = true;
+        yield return new WaitForSeconds(time);
+        rb.velocity = currentVelo;
+        // rb.angularVelocity = currentAngularVelo;
+        rb.isKinematic = false;
+        anim.speed = 1;
+    }
+
+    public void FlashWhite(int damage, Vector3 force)
     {
         foreach (GameObject part in parts)
         {
-            part.GetComponent<Renderer>().material = hitGlow;
-        }
-        yield return new WaitForSeconds(0.2f);
-        foreach(GameObject part in parts)
-        {
-            part.GetComponent<Renderer>().material = baseMaterial;
+            part.GetComponent<Part>().TakeDamage(damage, force);
         }
     }
 
+    public IEnumerator Shake(float time)
+    {
+        var timeBetweenShake = 0.02f;
+        var shakeTimer = 0f;
+        var power = 10f;
+        var currentPower = 5f;
+        var shakeTime = time;
+        float xRot = 0;
+        float yRot = 0;
+        float zRot = 0;
+        while (shakeTimer < shakeTime)
+        {
+            shakeTimer += timeBetweenShake;
+            transform.Rotate(-xRot, -yRot, -zRot, Space.Self);
+            xRot = Random.Range(-currentPower, currentPower);
+            yRot = Random.Range(-currentPower, currentPower);
+            // zRot = Random.Range(-currentPower, currentPower);
+
+            transform.Rotate(xRot, yRot, 0, Space.Self);
+            //hammerCameraObject.transform.localPosition = new Vector3(-xPos, -yPos, originalHammerCamPos.z);
+
+            currentPower = power * shakeTimer / shakeTime;
+
+            yield return new WaitForSeconds(timeBetweenShake);
+        }
+        transform.localRotation = ogrotation;
+    }
 }

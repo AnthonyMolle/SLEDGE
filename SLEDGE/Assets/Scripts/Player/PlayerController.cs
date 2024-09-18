@@ -281,6 +281,10 @@ public class PlayerController : MonoBehaviour
         settings = canvas.transform.Find("Pause Setting Screen").gameObject;
         pause = canvas.transform.Find("PauseMenu").gameObject;
         displayDistance = canvas.transform.Find("Distance").gameObject.GetComponent<TextMeshProUGUI>();
+        speedometer = canvas.transform.Find("Speedometer").gameObject.GetComponent<TextMeshProUGUI>();
+        tempPowerupUI = canvas.transform.Find("Powerup UI").gameObject.GetComponent<TextMeshProUGUI>();
+        healthDisplay = canvas.transform.Find("HealthCount").gameObject.GetComponent<TextMeshProUGUI>();
+
 
         // Set the mouse sensitivity
         mouseSensitivity = PlayerPrefs.GetFloat("Sensitivity", 400); 
