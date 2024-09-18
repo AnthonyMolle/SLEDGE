@@ -234,26 +234,33 @@ public class ShooterEnemy : MonoBehaviour
         var timeBetweenShake = 0.02f;
         var shakeTimer = 0f;
         var power = 10f;
-        var currentPower = 5f;
+        var currentPower = 0f;
+        var scale = 0.5f;
+        var currentScale = 0f;
         var shakeTime = time;
-        float xRot = 0;
-        float yRot = 0;
-        float zRot = 0;
+        float xRot = 0f;
+        float yRot = 0f;
+        float zRot = 0f;
+        var ogScale = transform.localScale;
         while (shakeTimer < shakeTime)
         {
             shakeTimer += timeBetweenShake;
-            transform.Rotate(-xRot, -yRot, -zRot, Space.Self);
+            currentPower = power * (shakeTime - shakeTimer)/ shakeTime;
+            currentScale = 1f + scale * (shakeTime - shakeTimer)/ shakeTime;
             xRot = Random.Range(-currentPower, currentPower);
             yRot = Random.Range(-currentPower, currentPower);
+            transform.Rotate(-xRot, -yRot, -zRot, Space.Self);
+            transform.localScale = new Vector3(currentScale, currentScale, currentScale);
             // zRot = Random.Range(-currentPower, currentPower);
 
             transform.Rotate(xRot, yRot, 0, Space.Self);
             //hammerCameraObject.transform.localPosition = new Vector3(-xPos, -yPos, originalHammerCamPos.z);
 
-            currentPower = power * shakeTimer / shakeTime;
 
             yield return new WaitForSeconds(timeBetweenShake);
         }
+        Debug.Log("HUZZAH");
+        transform.localScale = new Vector3(1, 1, 1);
         transform.localRotation = ogrotation;
     }
 
