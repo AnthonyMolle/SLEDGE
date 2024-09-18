@@ -10,9 +10,18 @@ public class PowerupGiver : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            GameObject player = other.gameObject;
             System.Type scriptType = System.Type.GetType(powerup + ",Assembly-CSharp");
-            other.gameObject.AddComponent(scriptType);
-            other.transform.parent.GetComponent<PowerupBase>().CollectPowerup();
+
+            //Prevents the player from having two of a power-up at once
+            if (player.GetComponent(scriptType))
+            {
+                Destroy(player.GetComponent(scriptType));
+            }
+            player.AddComponent(scriptType);
+            
+            //Tells the power-up spawner to disable this for a bit
+            transform.parent.GetComponent<PowerupBase>().CollectPowerup();
         }
     }
 }
