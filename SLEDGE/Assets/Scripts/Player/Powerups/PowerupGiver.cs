@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class PowerupGiver : MonoBehaviour
 {
+    [Tooltip("Write in the EXACT name of the component you want to add to the player!")]
     public string powerup;
     void OnTriggerEnter(Collider other)
     {
