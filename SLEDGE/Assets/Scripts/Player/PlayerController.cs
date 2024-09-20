@@ -7,6 +7,7 @@ using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Events;
 using UnityEngine.PlayerLoop;
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.ProBuilder.Shapes;
@@ -260,6 +261,12 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float maxTargetAngle = 30f;
     [SerializeField] float minTargetDistance = 5f;
     [SerializeField] float maxTargetDistance = 50f;
+    #endregion
+
+    #region Events
+
+    public UnityEvent onHammerHit;
+
     #endregion
     [SerializeField] LayerMask enemyLayers;
 
@@ -922,7 +929,9 @@ public class PlayerController : MonoBehaviour
 
     private void HammerBounce() // Checks if we have bounced off a surface, if so apply physics or hurt enemys
     {
-        
+
+        onHammerHit.Invoke();
+
         if (hammerBounced)
         {
             return;
@@ -1236,6 +1245,7 @@ public class PlayerController : MonoBehaviour
         return movementInputVector.magnitude != 0;
     }
 
+    #region Powerups
     public Powerup GetCurrentPowerup() {  return currentPowerup; }
 
     public void CollectPowerup(Powerup newPowerup) // Equips a new powerup to the player and updates UI to display equiped powerup
@@ -1264,4 +1274,18 @@ public class PlayerController : MonoBehaviour
             tempPowerupUI.text = "Active Powerup: None";
         }
     }
+
+    //Used by powerups
+    public void LaunchPlayer(float force)
+    {
+        Ray ray = gameCamera.ScreenPointToRay(Input.mousePosition);
+        rb.AddForce((-ray.direction).normalized * force, ForceMode.Impulse);
+    }
+
+    public void IncreaseInitialForce(float amount)
+    {
+        initialBounceForce += amount;
+    }
+    #endregion
+
 }
