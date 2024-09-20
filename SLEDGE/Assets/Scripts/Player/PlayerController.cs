@@ -851,6 +851,9 @@ public class PlayerController : MonoBehaviour
                     // }
                 }
             }
+
+            anim.SetBool("Moving", CheckMoving());
+
             #endregion
 
             //Debug.Log("is grounded: " + isGrounded);
@@ -1240,7 +1243,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public bool CheckMoving() // Check to see if the player has any velocity
+    public bool CheckMoving() // Check to see if the player is putting in any movement input
     {
         return movementInputVector.magnitude != 0;
     }
