@@ -1248,6 +1248,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+// Not called
     public bool CheckMoving() // Check to see if the player has any velocity
     {
         return movementInputVector.magnitude != 0;
