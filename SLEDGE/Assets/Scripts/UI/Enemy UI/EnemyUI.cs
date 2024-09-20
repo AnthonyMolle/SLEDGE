@@ -23,6 +23,8 @@ public class EnemyUI : MonoBehaviour
     public float rotationSpeed = 1.0f;
     [Range(0f, 10f)]
     public float scalar;
+    public bool lerping;
+    public Coroutine flashlerp;
     // Start is called before the first frame update
     void Start()
     {
@@ -55,7 +57,10 @@ public class EnemyUI : MonoBehaviour
         {
             damage += getPercentage(hurt, maxhealth);
             healthbarFlash.SetActive(true);
-            StartCoroutine(FlashLerp());
+            if (flashlerp != null) {
+                StopCoroutine(flashlerp);
+            }
+            flashlerp = StartCoroutine(FlashLerp(0.35f));
         }
         // set hbfPivot to hbPivot + bounding box x width
         hbfPivot.transform.localPosition = new Vector3(hbPivot.transform.localPosition.x - healthBarWidth * health,
@@ -83,16 +88,19 @@ public class EnemyUI : MonoBehaviour
         return pct;
     }
 
-    private IEnumerator FlashLerp()
+    private IEnumerator FlashLerp(float time)
     {
+        yield return new WaitForSeconds(time);
         while (damage > 0)
         {
-            damage -= 0.001f;
+            damage -= 0.01f;
             setBarScale("flash");
             yield return new WaitForSeconds(0.01f);
         }
         damage = 0;
         healthbarFlash.SetActive(false);
+        lerping = false;
+        flashlerp = null;
     }
 
     public void SetHealth(float maxHealth, float currentHealth)
