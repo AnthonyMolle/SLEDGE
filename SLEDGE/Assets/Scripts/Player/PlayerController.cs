@@ -414,7 +414,8 @@ public class PlayerController : MonoBehaviour
             hammerTimer = swipeTime;
             anim.Play("Swipe Left", -1, 0.01f);
             currentCombo = Combo.Swipe2;
-            hitDirection = Vector3.Normalize(new Vector3(Random.Range(15f, 30f), Random.Range(-5.0f, 5.0f), Random.Range(0f, 10f)) + transform.forward);
+            // hitDirection = Vector3.Normalize(new Vector3(Random.Range(15f, 30f), Random.Range(-5.0f, 5.0f), Random.Range(0f, 10f)) + transform.forward);
+            hitDirection = transform.right;
             swingForce = swipeForceBase;
         }
         if (secondaryPressed && !chargingHammer && !recovering && !hittingHammer && !hammerCharged && !swipingHammer && swipeComboReady && currentCombo == Combo.Swipe2)
@@ -424,7 +425,8 @@ public class PlayerController : MonoBehaviour
             hammerTimer = swipeTime;
             anim.Play("Swipe Right", -1, 0.25f);
             currentCombo = Combo.Swipe1;
-            hitDirection = Vector3.Normalize(new Vector3(Random.Range(-15f, -30f), Random.Range(-5.0f, 5.0f), Random.Range(0f, 10f)) + transform.forward);
+            // hitDirection = Vector3.Normalize(new Vector3(Random.Range(-15f, -30f), Random.Range(-5.0f, 5.0f), Random.Range(0f, 10f)) + transform.forward);
+            hitDirection = -transform.right;
             swingForce = swipeForceBase;
         }
 
@@ -1057,12 +1059,13 @@ public class PlayerController : MonoBehaviour
                 {
                     Debug.Log("CALL ME ;)");
                     hit.transform.gameObject.GetComponent<FlyingEnemy>().TakeDamage(1, hitDirection, swingForce);
-                    Debug.Log(hitDirection);
+                    Debug.Log($"Hit Direction: ${hitDirection}");
                 }
                 else if (hit.transform.gameObject.tag == "Enemy Shooter")
                 {
                     Debug.Log(hit.transform.gameObject.GetComponent<ShooterEnemy>() != null);
                     hit.transform.gameObject.GetComponent<ShooterEnemy>().TakeDamage(1, hitDirection, swingForce);
+                    Debug.Log($"Hit Direction: ${hitDirection}");
                 }
                 else if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Projectile"))
                 {

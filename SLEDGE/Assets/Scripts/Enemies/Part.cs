@@ -9,7 +9,7 @@ public class Part : MonoBehaviour
     private Material baseMaterial;
     private Renderer renderer;
     public Material hitGlow;
-    public float flashTime = 0.2f;
+    public float flashTime = 0.1f;
     // Part things:
     [Header("Model")]
     public int health = 10;                 // total health
@@ -74,7 +74,7 @@ public class Part : MonoBehaviour
             crb.AddForce(force, ForceMode.Impulse);
             crb.AddForce(normalizedDirection * Random.Range(1f, 10f), ForceMode.Impulse);
         }
-        Destroy(gameObject);
+        // Destroy(gameObject);
     }
 
     public IEnumerator Shake(Vector3 force)

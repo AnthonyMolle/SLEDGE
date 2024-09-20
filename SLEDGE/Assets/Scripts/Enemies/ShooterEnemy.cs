@@ -45,6 +45,8 @@ public class ShooterEnemy : MonoBehaviour
     private MultiAimConstraint chestConstraint;
     [SerializeField] GameObject ShootSound;
     public Quaternion ogrotation;
+    [SerializeField] ParticleSystem HitFX;
+    [SerializeField] GameObject DeathFX;
 
     GameObject ragdoll;
 
@@ -152,9 +154,11 @@ public class ShooterEnemy : MonoBehaviour
         enemyState = EnemyState.STUNNED;
         FlashWhite(damage, direction * force);
 
-        rb.AddForce(direction * force, ForceMode.Impulse);
+        // rb.AddForce(direction * force, ForceMode.Impulse);
+        rb.velocity = rb.velocity + direction * force;
         StartCoroutine(Pause(0.18f));
         StartCoroutine(Shake(0.2f));
+        PlayParticles();
         if (direction.x <= 0) {
             StartCoroutine(Hit("left"));
         }
@@ -164,6 +168,7 @@ public class ShooterEnemy : MonoBehaviour
         currentHealth -= damage;
         if (currentHealth <= 0)
         {
+            Debug.Log("calling ded");
             Die();
         }
     }
@@ -184,10 +189,14 @@ public class ShooterEnemy : MonoBehaviour
         GameObject.Find("ScoreManager").GetComponent<ScoreManager>().AddEnemiesKilled(1);
         ragdoll = Instantiate(deathRagdoll, transform.position, transform.rotation);
         ragdoll.GetComponent<Rigidbody>().AddForce(rb.velocity, ForceMode.Impulse);
+        var dfx = Instantiate(DeathFX, transform.position, transform.rotation);
+        dfx.SetActive(true);
+        Debug.Log($"Ragdoll: {ragdoll.name}");
         // foreach (var bone in yeesus.)  // need a way to get the position of the premortum state
         
         DestroyProjectiles();
         EnemyManager.Instance.EnemyDeath(gameObject);
+        Debug.Log("ded");
         gameObject.SetActive(false);
     }
 
@@ -215,9 +224,9 @@ public class ShooterEnemy : MonoBehaviour
         anim.speed = 0;
         rb.isKinematic = true;
         yield return new WaitForSeconds(time);
-        rb.velocity = currentVelo;
         // rb.angularVelocity = currentAngularVelo;
         rb.isKinematic = false;
+        rb.velocity = currentVelo;
         anim.speed = 1;
     }
 
@@ -270,14 +279,20 @@ public class ShooterEnemy : MonoBehaviour
         if (dir == "left")
         {
             anim.Play("shooter_hit_left 0");
-            anim.speed = 0f;
+            // anim.speed = 0f;
         }
         if (dir == "right")
         {
             anim.Play("shooter_hit_right 0");
-            anim.speed = 0f;
+            // anim.speed = 0f;
         }
-        yield return new WaitForSeconds(0.2f);
+        // yield return new WaitForSeconds(0.05f);
         anim.speed = 1f;
+        yield return null;
+    }
+
+    public void PlayParticles()
+    {
+        HitFX.Play();
     }
 }
