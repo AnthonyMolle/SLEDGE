@@ -6,23 +6,31 @@ public class EnemyUI : MonoBehaviour
 {
     public GameObject healthbar;
     public SpriteRenderer hbSprite;
+    private float healthBarWidth = 0;
     public GameObject hbPivot;
     public GameObject healthbarFlash;
     public SpriteRenderer hbfSprite;
+    private float healthFlashWidth = 0;
     public GameObject hbfPivot;
     public GameObject healthbarBack;
     [Range(0f, 1f)]
-    public float health;
+    public float health = 1f;
     public float currenthealth;
-    public float maxhealth;
+    public float maxhealth = 1f;
     [Range(0f, 1f)]
-    public float damage;
+    public float damage = 0f;
     public Camera camera;
     public float rotationSpeed = 1.0f;
+    [Range(0f, 10f)]
+    public float scalar;
     // Start is called before the first frame update
     void Start()
     {
-        
+        // damage = 0f;
+        healthbarFlash.SetActive(false);
+        healthBarWidth = hbSprite.size.x * healthbar.transform.localScale.x;
+        healthFlashWidth = hbfSprite.size.x * healthbarFlash.transform.localScale.x;
+        updateHealth(currenthealth);
     }
 
     // Update is called once per frame
@@ -37,14 +45,21 @@ public class EnemyUI : MonoBehaviour
 //
     }
 
-    void updateHealth(float newHealth)
+    public void updateHealth(float newHealth)
     {
         float hurt = currenthealth - newHealth;
         currenthealth = newHealth;
         health = getPercentage(currenthealth, maxhealth);
-        damage += getPercentage(hurt, maxhealth);
+        Debug.Log($"health: max: {maxhealth}, current: {currenthealth}, ratio: {health}");
+        if (hurt > 0)
+        {
+            damage += getPercentage(hurt, maxhealth);
+            healthbarFlash.SetActive(true);
+            StartCoroutine(FlashLerp());
+        }
         // set hbfPivot to hbPivot + bounding box x width
-//
+        hbfPivot.transform.localPosition = new Vector3(hbPivot.transform.localPosition.x - healthBarWidth * health,
+        hbPivot.transform.localPosition.y, hbPivot.transform.localPosition.z);
 //
         setBarScale("health");
         setBarScale("flash");
@@ -64,7 +79,26 @@ public class EnemyUI : MonoBehaviour
 
     static float getPercentage(float at, float max)
     {
-        var pct = max/at;
+        var pct = at/max;
         return pct;
+    }
+
+    private IEnumerator FlashLerp()
+    {
+        while (damage > 0)
+        {
+            damage -= 0.001f;
+            setBarScale("flash");
+            yield return new WaitForSeconds(0.01f);
+        }
+        damage = 0;
+        healthbarFlash.SetActive(false);
+    }
+
+    public void SetHealth(float maxHealth, float currentHealth)
+    {
+        maxhealth = maxHealth;
+        currenthealth = currentHealth;
+        health = getPercentage(currenthealth, maxhealth);
     }
 }

@@ -47,6 +47,7 @@ public class ShooterEnemy : MonoBehaviour
     public Quaternion ogrotation;
     [SerializeField] ParticleSystem HitFX;
     [SerializeField] GameObject DeathFX;
+    public EnemyUI enemyUI;
 
     GameObject ragdoll;
 
@@ -69,6 +70,7 @@ public class ShooterEnemy : MonoBehaviour
         // gun = transform.Find("Gun");
         startPosition = transform.position;
         currentHealth = maxHealth;
+        enemyUI.SetHealth(maxHealth, currentHealth);
         chestConstraint = trackConstraints[0].GetComponent<MultiAimConstraint>();
     }
 
@@ -159,6 +161,7 @@ public class ShooterEnemy : MonoBehaviour
         StartCoroutine(Pause(0.18f));
         StartCoroutine(Shake(0.2f));
         PlayParticles();
+        enemyUI.updateHealth(currentHealth);
         if (direction.x <= 0) {
             StartCoroutine(Hit("left"));
         }
