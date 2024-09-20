@@ -1088,7 +1088,7 @@ public class PlayerController : MonoBehaviour
                     hit.transform.gameObject.GetComponent<Rigidbody>().AddForce(ray.direction * 50f, ForceMode.Impulse);
                 }
             }
-
+            StartCoroutine(HitStop(0.1f));
             StartCoroutine(FindObjectOfType<ScreenShaker>().Shake(0.1f, 0.01f, 0, 0, 0.1f));
         }
     }
@@ -1196,6 +1196,14 @@ public class PlayerController : MonoBehaviour
         {
             Die();
         }
+    }
+
+    public IEnumerator HitStop(float time)
+    {
+        anim.speed = 0f;
+        yield return new WaitForSeconds(time);
+        // anim.time = anim.time + time;        // a bit more complicated than just that
+        anim.speed = 1f;
     }
     
     public void UpdateSpawn(Checkpoint check)
