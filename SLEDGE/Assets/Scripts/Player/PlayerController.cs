@@ -104,6 +104,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] bool hasCoyoteTime = true;// THIS IS THE DEFAULT VALUE OF COYOTETIME
     [SerializeField] bool decreasingCoyoteTime = false;
     [SerializeField] bool hasJumped = false;
+    [SerializeField] ParticleSystem landFX;
+    [SerializeField] ParticleSystem jumpFX;
     #endregion
 
     #region Slide
@@ -677,6 +679,8 @@ public class PlayerController : MonoBehaviour
             {
                 audioManager.PlaySFX(audioManager.land);
                 StartCoroutine(FindObjectOfType<ScreenShaker>().Shake(0.1f, 0.01f, 0, 0, 0.1f));
+                landFX.Simulate(0);
+                landFX.Play();
                 if (!hammerCharged) {
                     anim.Play("Land");
                 }
@@ -922,6 +926,8 @@ public class PlayerController : MonoBehaviour
         rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z); //remove our falling velocity so our jump doesnt have to fight gravity.
         rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse); // add a force upward
         hasJumped = true; // let the engine know we have jumped.
+        jumpFX.Simulate(0);
+        jumpFX.Play();
         if (!hammerCharged) {
             anim.Play("Jump");
         }

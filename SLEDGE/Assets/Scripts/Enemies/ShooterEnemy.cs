@@ -190,6 +190,9 @@ public class ShooterEnemy : MonoBehaviour
         ragdoll = Instantiate(deathRagdoll, transform.position, transform.rotation);
         ragdoll.GetComponent<Rigidbody>().AddForce(rb.velocity, ForceMode.Impulse);
         var dfx = Instantiate(DeathFX, transform.position, transform.rotation);
+        dfx.transform.position = ragdoll.transform.position;
+        dfx.transform.rotation = ragdoll.transform.rotation;
+        dfx.transform.parent = ragdoll.transform;
         dfx.SetActive(true);
         Debug.Log($"Ragdoll: {ragdoll.name}");
         // foreach (var bone in yeesus.)  // need a way to get the position of the premortum state
@@ -293,6 +296,7 @@ public class ShooterEnemy : MonoBehaviour
 
     public void PlayParticles()
     {
+        HitFX.Simulate(0);
         HitFX.Play();
     }
 }
