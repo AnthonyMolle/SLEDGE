@@ -146,6 +146,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float bouncyForce = 25f;
     [SerializeField] float hitLength = 5f;
     [SerializeField] float hitRadius = 1f;
+    [Tooltip("How many additional bounces do we get when we hit air?")]
+    [SerializeField] int maxAdditionalBounces = 0;
+    int additionalBounces;
 
     [SerializeField] float chargeTime = 1f;
     [SerializeField] float hitTime = 1f;
@@ -266,6 +269,8 @@ public class PlayerController : MonoBehaviour
     #region Events
 
     public UnityEvent onHammerHit;
+    [Tooltip("Invoked if the hammer hit was from an additional bounce.")]
+    public UnityEvent onExtraHammerHit;
 
     #endregion
     [SerializeField] LayerMask enemyLayers;
@@ -302,6 +307,8 @@ public class PlayerController : MonoBehaviour
 
         //get capsule collider
         characterCollider = GetComponent<CapsuleCollider>();
+
+        RefreshAdditionalBounces();
     }
 
     void Update() // Function Called once per frame
@@ -663,7 +670,7 @@ public class PlayerController : MonoBehaviour
         if (Physics.Raycast(gameObject.transform.position, Vector3.down, out hit, playerHeight/2 + groundCheckDist, groundLayers)) //if on the ground
         {
             slopeAngle = Vector3.Angle(hit.transform.up, hit.normal);
-            Debug.Log(slopeAngle);
+            //Debug.Log(slopeAngle);
             if (slopeAngle > 1 && slopeAngle < maxSlopeAngle)
             {
                 isOnSlope = true;
@@ -932,7 +939,6 @@ public class PlayerController : MonoBehaviour
 
     private void HammerBounce() // Checks if we have bounced off a surface, if so apply physics or hurt enemys
     {
-
         onHammerHit.Invoke();
 
         if (hammerBounced)
@@ -945,8 +951,13 @@ public class PlayerController : MonoBehaviour
 
         RaycastHit[] hits = Physics.SphereCastAll(ray, hitRadius, hitLength, bouncableLayers, QueryTriggerInteraction.Collide);
 
-        if (hits.Length > 0 || currentPowerup == Powerup.Airburst)
+        if (hits.Length > 0 || currentPowerup == Powerup.Airburst || additionalBounces > 0)
         {
+            if (additionalBounces > 0 && !isGrounded)
+            {
+                onExtraHammerHit.Invoke();
+                additionalBounces--;
+            }
             foreach (RaycastHit hit in hits)
             {
                 if (hit.transform.gameObject.tag == "Bouncy")
@@ -1283,6 +1294,17 @@ public class PlayerController : MonoBehaviour
     public void IncreaseInitialForce(float amount)
     {
         initialBounceForce += amount;
+    }
+
+    public void IncreaseAdditionalBounces(int amount)
+    {
+        Debug.Log(amount);
+        additionalBounces += amount;
+    }
+
+    void RefreshAdditionalBounces()
+    {
+        additionalBounces = maxAdditionalBounces;
     }
     #endregion
 
