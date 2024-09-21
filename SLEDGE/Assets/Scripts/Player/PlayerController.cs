@@ -450,7 +450,7 @@ public class PlayerController : MonoBehaviour
             chargingHammer = true;
             hammerTimer = chargeTime;
             //anim.Play("HammerCharge"); 
-            anim.Play("Charge");
+            anim.Play("Change Stance");
             hitDirection = transform.forward;
             hammerBounced = false;
         }

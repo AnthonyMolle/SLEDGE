@@ -23,6 +23,8 @@ public class EnemyUI : MonoBehaviour
     public float rotationSpeed = 1.0f;
     [Range(0f, 10f)]
     public float scalar;
+    [Range(0f, 0.2f)]
+    public float klamb;
     public bool lerping;
     public Coroutine flashlerp;
     // Start is called before the first frame update
