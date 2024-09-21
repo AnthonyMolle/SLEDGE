@@ -23,8 +23,12 @@ public class EnemyUI : MonoBehaviour
     public float rotationSpeed = 1.0f;
     [Range(0f, 10f)]
     public float scalar;
-    [Range(0f, 0.2f)]
-    public float klamb;
+    [Range(0.0001f, 0.005f)]
+    [Tooltip("Rate of decay for the flash that appears when hit; lower is slower and higher is flyer baby")]
+    public float DecayRate = 0.01f;
+    [Range(0f, 1f)]
+    [Tooltip("The time the healthbar waits before starting to fade away hit damage")]
+    public float DecayPause = 0.2f;
     public bool lerping;
     public Coroutine flashlerp;
     // Start is called before the first frame update
@@ -62,7 +66,7 @@ public class EnemyUI : MonoBehaviour
             if (flashlerp != null) {
                 StopCoroutine(flashlerp);
             }
-            flashlerp = StartCoroutine(FlashLerp(0.35f));
+            flashlerp = StartCoroutine(FlashLerp(DecayPause));
         }
         // set hbfPivot to hbPivot + bounding box x width
         hbfPivot.transform.localPosition = new Vector3(hbPivot.transform.localPosition.x - healthBarWidth * health,
@@ -93,9 +97,10 @@ public class EnemyUI : MonoBehaviour
     private IEnumerator FlashLerp(float time)
     {
         yield return new WaitForSeconds(time);
+        lerping = true;
         while (damage > 0)
         {
-            damage -= 0.01f;
+            damage -= DecayRate;
             setBarScale("flash");
             yield return new WaitForSeconds(0.01f);
         }
