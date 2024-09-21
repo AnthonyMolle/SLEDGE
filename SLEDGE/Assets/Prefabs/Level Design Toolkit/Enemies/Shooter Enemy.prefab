@@ -135,6 +135,7 @@ GameObject:
   - component: {fileID: 5128094816825782923}
   - component: {fileID: -1935113614177180344}
   - component: {fileID: 5821644538919600140}
+  - component: {fileID: 7090212297456231174}
   m_Layer: 8
   m_Name: Shooter Enemy
   m_TagString: Enemy Shooter
@@ -222,6 +223,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tree: {fileID: 11400000, guid: 2df9d3bf048e27e428281364bc790796, type: 2}
+--- !u!114 &7090212297456231174
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8251860513100324605}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 790ef62da8ec87a43a0aec0813e3bca5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bulletSource: {fileID: 5061608267748852569}
+  lookAtTarget: {fileID: 3277620228275904649}
 --- !u!1001 &6965791814965552213
 PrefabInstance:
   m_ObjectHideFlags: 0

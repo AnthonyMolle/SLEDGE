@@ -13,13 +13,14 @@ public class LookAt_Service : ServiceNode
     protected override void OnStart()
     {
         objectLookingAt = blackboard.getObject(toLookAt);
-        Transform x = blackboard.getCurrentRunner().transform.Find("lookAtTarget");
-        if(x == null)
+
+        EnemyStatsController stats = blackboard.getCurrentRunner().GetComponent<EnemyStatsController>();
+        if (stats == null)
         {
-            Debug.LogWarning("Trying to run a LookAt Service node on a entitiy that has no lookAtTarget object.");
+            Debug.LogError("Trying to run a LookAt Service but missing EnemyStatsController.");
         }
 
-        trackingPoint = x.gameObject;
+        trackingPoint = stats.lookAtTarget;
     }
 
     protected override void OnStop()

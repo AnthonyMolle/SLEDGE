@@ -1,6 +1,91 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-7307276813876128807
+--- !u!114 &-5297877653348779097
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13069e1a7395baa409124bdba77c445c, type: 3}
+  m_Name: Cooldown_Decorator
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 3cb3cd8c879ec7d4f81df68e0db6a973
+  position: {x: 150.40002, y: 354.40002}
+  blackboard:
+    currentState: 0
+    objectAName: 
+    objectBName: 
+    prefabLinkA: {fileID: 0}
+    dashAvailable: 0
+    detectionRadius: 20
+  description: 
+  beingInspected: 1
+  child: {fileID: -2969824660468749776}
+  secondsOfCooldown: 2
+--- !u!114 &-5035440455026217801
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c78ec8d46b1c19a4fa99127cb31764e5, type: 3}
+  m_Name: Sequencer_Composite
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 5621aacd01bec854b8c17ebc25016f8f
+  position: {x: -2.666667, y: 242.18756}
+  blackboard:
+    currentState: 0
+    objectAName: 
+    objectBName: 
+    prefabLinkA: {fileID: 0}
+    dashAvailable: 0
+    detectionRadius: 20
+  description: 
+  beingInspected: 0
+  children:
+  - {fileID: 3764915695955545033}
+  - {fileID: -5297877653348779097}
+--- !u!114 &-2969824660468749776
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8771d9ecf8b9bd94ba8063cf2dbb4ea9, type: 3}
+  m_Name: Shoot_Action
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: c6ad291a052ee4847bdda140dc4fe692
+  position: {x: 147.1999, y: 464.39996}
+  blackboard:
+    currentState: 0
+    objectAName: 
+    objectBName: 
+    prefabLinkA: {fileID: 0}
+    dashAvailable: 0
+    detectionRadius: 20
+  description: 
+  beingInspected: 0
+  child: {fileID: 0}
+  bulletSpeed: 10
+  bulletLifetime: 10
+  shootTarget: 0
+  bulletType: 0
+--- !u!114 &-2928116163761845750
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -14,18 +99,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: c94d5c5677e14774091af467b1e86526
-  position: {x: 0.000038146973, y: 410.05597}
+  guid: 9b3a71b8e09aa0241a11314d4267a3ff
+  position: {x: -152.66658, y: 526.3333}
   blackboard:
     currentState: 0
     objectAName: 
     objectBName: 
+    prefabLinkA: {fileID: 0}
     dashAvailable: 0
     detectionRadius: 20
   description: 
-  beingInspected: 1
+  beingInspected: 0
   toLookAt: 0
-  trackingPointInEnemy: 0
 --- !u!114 &-2031188353842485439
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -46,38 +131,13 @@ MonoBehaviour:
     currentState: 0
     objectAName: 
     objectBName: 
+    prefabLinkA: {fileID: 0}
     dashAvailable: 0
     detectionRadius: 20
   description: Repeat Forever
-  beingInspected: 0
-  child: {fileID: -1416468391912076284}
+  beingInspected: 1
+  child: {fileID: -5035440455026217801}
   repeatNumber: -1
---- !u!114 &-1416468391912076284
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 091f3a82cc8db814daac999008d343d1, type: 3}
-  m_Name: DebugLog_Action
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: 8ba14a21240f9844f82095ab6cf2134e
-  position: {x: 0.0000642395, y: 263.16846}
-  blackboard:
-    currentState: 0
-    objectAName: 
-    objectBName: 
-    dashAvailable: 0
-    detectionRadius: 20
-  description: 
-  beingInspected: 0
-  child: {fileID: -7307276813876128807}
-  message: Rotating
 --- !u!114 &-432707976989282757
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -98,6 +158,7 @@ MonoBehaviour:
     currentState: 0
     objectAName: 
     objectBName: 
+    prefabLinkA: {fileID: 0}
     dashAvailable: 0
     detectionRadius: 20
   description: 
@@ -122,11 +183,43 @@ MonoBehaviour:
   nodes:
   - {fileID: -432707976989282757}
   - {fileID: -2031188353842485439}
-  - {fileID: -1416468391912076284}
-  - {fileID: -7307276813876128807}
+  - {fileID: -2969824660468749776}
+  - {fileID: -5297877653348779097}
+  - {fileID: -5035440455026217801}
+  - {fileID: 3764915695955545033}
+  - {fileID: -2928116163761845750}
   blackboard:
     currentState: 0
     objectAName: Player.v3 Variant
-    objectBName: lookAtTarget
+    objectBName: Player.v3 Variant
+    prefabLinkA: {fileID: 4543102887346889771, guid: ba9cb7ed3bc5e6046b77d646edda3e24,
+      type: 3}
     dashAvailable: 0
     detectionRadius: 20
+--- !u!114 &3764915695955545033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 091f3a82cc8db814daac999008d343d1, type: 3}
+  m_Name: DebugLog_Action
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: a60ce2f9768d5df4c8c1a06c572ee685
+  position: {x: -150.00003, y: 380.44177}
+  blackboard:
+    currentState: 0
+    objectAName: 
+    objectBName: 
+    prefabLinkA: {fileID: 0}
+    dashAvailable: 0
+    detectionRadius: 20
+  description: 
+  beingInspected: 0
+  child: {fileID: -2928116163761845750}
+  message: Beeboop

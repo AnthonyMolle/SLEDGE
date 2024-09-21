@@ -11,8 +11,12 @@ public class Blackboard
     [HorizontalLine]
 
     public EnemyStates currentState;
+    [Header("In scene object references")]
     public string objectAName;
     public string objectBName;
+
+    [Header("Prefab not instanced in scene")]
+    public GameObject prefabLinkA;
 
     /* Flyer Enemy Variables */
 
@@ -41,6 +45,11 @@ public class Blackboard
         objectA, objectB
     }
 
+    public enum PrefabOptions
+    {
+        prefabLinkA
+    }
+
     /* Helper Methods */
 
     public void findObjectReferences()
@@ -61,6 +70,18 @@ public class Blackboard
                 return objectA;
         }
     }
+
+    public GameObject getPrefabLink(PrefabOptions prefabToGet)
+    {
+        switch (prefabToGet)
+        {
+            case PrefabOptions.prefabLinkA:
+                return prefabLinkA;
+            default:
+                return prefabLinkA;
+        }
+    }
+
     public GameObject getCurrentRunner()
     {
         return currentRunner;
