@@ -268,7 +268,7 @@ public class PlayerController : MonoBehaviour
 
     #region Events
 
-    public UnityEvent onHammerHit;
+    public UnityEvent onHammerBounce;
     [Tooltip("Invoked if the hammer hit was from an additional bounce.")]
     public UnityEvent onExtraHammerHit;
 
@@ -939,7 +939,7 @@ public class PlayerController : MonoBehaviour
 
     private void HammerBounce() // Checks if we have bounced off a surface, if so apply physics or hurt enemys
     {
-        onHammerHit.Invoke();
+        onHammerBounce.Invoke();
 
         if (hammerBounced)
         {
