@@ -17,6 +17,7 @@ public class Blackboard
 
     [Header("Prefab not instanced in scene")]
     public GameObject prefabLinkA;
+    public GameObject prefabLinkB;
 
     /* Flyer Enemy Variables */
 
@@ -47,7 +48,7 @@ public class Blackboard
 
     public enum PrefabOptions
     {
-        prefabLinkA
+        prefabLinkA, prefabLinkB
     }
 
     /* Helper Methods */
@@ -77,6 +78,8 @@ public class Blackboard
         {
             case PrefabOptions.prefabLinkA:
                 return prefabLinkA;
+            case PrefabOptions.prefabLinkB:
+                return prefabLinkB;
             default:
                 return prefabLinkA;
         }
