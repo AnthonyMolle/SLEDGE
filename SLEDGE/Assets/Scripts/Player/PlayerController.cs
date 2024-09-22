@@ -1055,9 +1055,11 @@ public class PlayerController : MonoBehaviour
         Ray ray = gameCamera.ScreenPointToRay(Input.mousePosition);
 
         RaycastHit[] hits = Physics.SphereCastAll(ray, hitRadius, hitLength, swipeLayers);
+        var stopTime = 0f;
 
         if (hits.Length > 0)
         {
+            stopTime = 0.1f;
             foreach (RaycastHit hit in hits)
             {
                 Debug.Log(hit.collider.gameObject);
@@ -1081,6 +1083,7 @@ public class PlayerController : MonoBehaviour
                     {
                         projectile.initializeProjectile(ray.GetPoint(100), parriedProjectileSpeed, parriedProjectileLifetime, true, CalculateTargetEnemy(ray));
                         FindObjectOfType<Hitstop>().Stop(0.15f);
+                        stopTime = 0.5f;
                     }
                 }
                 else if (hit.transform.gameObject.tag == "Collectible" || hit.transform.gameObject.layer == 11) // 11 == gibs layer
@@ -1088,8 +1091,14 @@ public class PlayerController : MonoBehaviour
                     hit.transform.gameObject.GetComponent<Rigidbody>().AddForce(ray.direction * 50f, ForceMode.Impulse);
                 }
             }
-            StartCoroutine(HitStop(0.1f));
+            StartCoroutine(HitStop(stopTime));
             StartCoroutine(FindObjectOfType<ScreenShaker>().Shake(0.1f, 0.01f, 0, 0, 0.1f));
+            if (currentCombo == Combo.Swipe1) {
+                anim.Play("Swipe Right Hit");
+            }
+            else if (currentCombo == Combo.Swipe2) {
+                anim.Play("Swipe Left Hit");
+            }
         }
     }
 

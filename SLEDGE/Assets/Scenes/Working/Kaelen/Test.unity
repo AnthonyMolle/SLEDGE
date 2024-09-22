@@ -1315,6 +1315,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 709753720278754437, guid: 472cdce8629221545b7b8e06983f6054,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1534894107817950413, guid: 472cdce8629221545b7b8e06983f6054,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -2032,7 +2037,7 @@ PrefabInstance:
     - target: {fileID: -6718879911656862245, guid: 25ad6ed32270c9f46b3ec94e4d391e0d,
         type: 3}
       propertyPath: maxHealth
-      value: 85
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: -6718879911656862245, guid: 25ad6ed32270c9f46b3ec94e4d391e0d,
         type: 3}
@@ -2217,8 +2222,8 @@ MonoBehaviour:
   camera: {fileID: 863564734}
   rotationSpeed: 1
   scalar: 4.37
-  DecayRate: 0.001
-  DecayPause: 0.2
+  DecayRate: 0.003
+  DecayPause: 0.3
   lerping: 0
 --- !u!1 &1145512455
 GameObject:
