@@ -9,7 +9,7 @@ public class PowerupTest : MonoBehaviour
     void Awake()
     {
         playerController = GetComponent<PlayerController>();
-        playerController.onHammerHit.AddListener(Test);
+        playerController.onHammerBounce.AddListener(Test);
     }
 
     void Test()
@@ -19,7 +19,7 @@ public class PowerupTest : MonoBehaviour
 
     public void RemovePowerup()
     {
-        playerController.onHammerHit.RemoveListener(Test);
+        playerController.onHammerBounce.RemoveListener(Test);
         Destroy(this);
     }
 }
