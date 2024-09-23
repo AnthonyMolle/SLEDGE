@@ -203,6 +203,8 @@ public class PlayerController : MonoBehaviour
 
     AudioManager audioManager;
     [SerializeField] GameObject HammerSound;
+    [SerializeField] GameObject HitFX;
+    [SerializeField] GameObject HitSparks;
 
     private void Awake()
     {
@@ -1093,6 +1095,7 @@ public class PlayerController : MonoBehaviour
             }
             StartCoroutine(HitStop(stopTime));
             StartCoroutine(FindObjectOfType<ScreenShaker>().Shake(0.1f, 0.01f, 0, 0, 0.1f));
+            Instantiate(HitSparks, HitFX.transform.position, HitFX.transform.rotation);
             if (currentCombo == Combo.Swipe1) {
                 anim.Play("Swipe Right Hit");
             }
@@ -1210,7 +1213,9 @@ public class PlayerController : MonoBehaviour
     public IEnumerator HitStop(float time)
     {
         anim.speed = 0f;
+        HitFX.SetActive(true);
         yield return new WaitForSeconds(time);
+        HitFX.SetActive(false);
         // anim.time = anim.time + time;        // a bit more complicated than just that
         anim.speed = 1f;
     }
