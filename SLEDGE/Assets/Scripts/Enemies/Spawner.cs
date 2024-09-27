@@ -24,7 +24,7 @@ public class Spawner : MonoBehaviour
         {
             if (currentEnemy.gameObject.name.Contains("Shooter"))
             {
-                currentEnemy.gameObject.GetComponent<ShooterEnemy>().Destroy();
+                //currentEnemy.gameObject.GetComponent<ShooterEnemy>().Destroy();
             }
             else
             {
@@ -33,5 +33,18 @@ public class Spawner : MonoBehaviour
         }
 
         Spawn();
+    }
+
+    private void OnDrawGizmos()
+    {
+        if(enemyPrefab.name == "Flying Enemy") {
+            Gizmos.color = Color.green;
+        }
+        else
+        {
+            Gizmos.color = Color.magenta;
+        }
+
+        Gizmos.DrawWireCube(transform.position, Vector3.one * 2);
     }
 }

@@ -11,6 +11,16 @@ public class Sound_Manager : MonoBehaviour
     public Shared_Slider_State sfx_slider;
     public Shared_Slider_State music_slider;
 
+    public GameObject audio_manager;
+
+    private void Awake()
+    {
+        if (GameObject.Find("Audio Manager") == null)
+        {
+            Instantiate(audio_manager);
+        }
+    }
+
     private void Start()
     {
         float master = PlayerPrefs.GetFloat("MasterVolume", 50);
@@ -35,6 +45,7 @@ public class Sound_Manager : MonoBehaviour
         mixer.SetFloat("MasterVolume", Mathf.Log10(master) * 20);
 
         PlayerPrefs.SetFloat("MasterVolume", Mathf.Max(master_slider.value, 0.001f));
+        PlayerPrefs.Save();
     }
 
     public void UpdateMusic()
@@ -46,6 +57,7 @@ public class Sound_Manager : MonoBehaviour
         mixer.SetFloat("MusicVolume", Mathf.Log10(music) * 20);
  
         PlayerPrefs.SetFloat("MusicVolume", Mathf.Max(music_slider.value, 0.001f));
+        PlayerPrefs.Save();
     }
 
     public void UpdateSFX()
@@ -57,5 +69,6 @@ public class Sound_Manager : MonoBehaviour
         mixer.SetFloat("SFXVolume", Mathf.Log10(sfx) * 20);
 
         PlayerPrefs.SetFloat("SFXVolume", Mathf.Max(sfx_slider.value, 0.001f));
+        PlayerPrefs.Save();
     }
 }

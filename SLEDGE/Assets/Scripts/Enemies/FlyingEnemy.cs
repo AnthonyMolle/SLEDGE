@@ -1,4 +1,6 @@
+using System.Collections;
 using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 
 // Jonah Ryan
@@ -34,8 +36,13 @@ public class FlyingEnemy : MonoBehaviour
     {
         IDLE,
         DIRECTHUNT,
-        ONPATH
+        ONPATH,
+        STUNNED
     }
+
+    [Header("Death")]
+    public GameObject deathRagdoll;
+    GameObject ragdoll;
 
     EnemyState enemyState = EnemyState.IDLE;
 
@@ -124,8 +131,8 @@ public class FlyingEnemy : MonoBehaviour
                 // Initialize path following with closest node on path
                 if (currentIndexOnPath == -1)
                 {
-                    currentIndexOnPath = PlayerTracker.getNearestOnPath(transform.position);
-                    currentWaypoint = PlayerTracker.getIndexOnPath(currentIndexOnPath);
+                    currentIndexOnPath = PlayerTracker.getPathIndex(transform.position);
+                    currentWaypoint = PlayerTracker.getPointFromIndex(currentIndexOnPath);
                 }
 
                 // If you can see player, leave pathing, enter hunt state
@@ -144,19 +151,22 @@ public class FlyingEnemy : MonoBehaviour
                     // If reached end of path, restart path following with new path information
                     if(PlayerTracker.getSize() <= currentIndexOnPath)
                     {
-                        currentIndexOnPath = PlayerTracker.getNearestOnPath(transform.position);
-                        currentWaypoint = PlayerTracker.getIndexOnPath(currentIndexOnPath);
+                        currentIndexOnPath = PlayerTracker.getPathIndex(transform.position);
+                        currentWaypoint = PlayerTracker.getPointFromIndex(currentIndexOnPath);
                         break;
                     }
 
                     // Update target to next on path
-                    currentWaypoint = PlayerTracker.getIndexOnPath(currentIndexOnPath);
+                    currentWaypoint = PlayerTracker.getPointFromIndex(currentIndexOnPath);
                 }
 
                 // Move towards our current path target
                 targetPos = Vector3.MoveTowards(transform.position, currentWaypoint, movementSpeed * Time.deltaTime);
                 rb.MovePosition(targetPos);
 
+                break;
+            
+            case EnemyState.STUNNED:
                 break;
 
         }
@@ -166,6 +176,8 @@ public class FlyingEnemy : MonoBehaviour
 
     public void Reset()
     {
+        Destroy(ragdoll);
+        ragdoll = null;
         transform.position = startPosition;
         enemyState = EnemyState.IDLE;
     }
@@ -175,6 +187,7 @@ public class FlyingEnemy : MonoBehaviour
         if (other.gameObject.tag == "Player")
         {
             other.gameObject.GetComponent<PlayerController>().TakeDamage(1);
+            TakeDamage(1, new Vector3(0, 0, -1), 10f);
         }
     }
 
@@ -183,19 +196,37 @@ public class FlyingEnemy : MonoBehaviour
         return currentHealth;
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(int damage, Vector3 direction, float force)
     {
+        enemyState = EnemyState.STUNNED;
+        rb.AddForce(direction * force, ForceMode.Impulse);
+        Debug.Log("afterlocity: "+ rb.velocity);
         currentHealth -= damage;
         if (currentHealth <= 0)
         {
-            Die();
+            Die(direction * force);
         }
     }
 
-    private void Die()
+    // public void Knockback(Vector3 direction, float force)
+    // {
+    //     Debug.Log("hello");
+    //     Vector3 dir = new Vector3(-0.5f, 0.5f, 0.5f);
+    //     float frace = 15f;
+    //     rb.AddForce(dir * frace, ForceMode.Impulse);
+    //     Debug.Log(rb.velocity);
+    // }
+
+
+    public void Die(Vector3 force)
     {
+        Debug.Log("DIEEEEEEE");
         // add sfx and vfx and such!
         GameObject.Find("ScoreManager").GetComponent<ScoreManager>().AddEnemiesKilled(1);
-        Destroy(gameObject);
+
+        ragdoll = Instantiate(deathRagdoll, transform.position, transform.rotation);
+        ragdoll.GetComponent<Rigidbody>().AddForce(force, ForceMode.Impulse);
+        EnemyManager.Instance.EnemyDeath(gameObject);
+        gameObject.SetActive(false);
     }
 }

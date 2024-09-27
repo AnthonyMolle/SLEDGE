@@ -1,0 +1,87 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-8985223373851852657
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c78ec8d46b1c19a4fa99127cb31764e5, type: 3}
+  m_Name: Sequencer_Composite
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: d631b63622a192a4eb1e16c9e7fc6217
+  position: {x: 296.71216, y: -30.567059}
+  blackboard:
+    moveToPosition: {x: 0, y: 0, z: 0}
+    moveToObject: {fileID: 0}
+  description: 
+  children:
+  - {fileID: -1129952355523177059}
+--- !u!114 &-6109299475738239597
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 174bd17a088783646ad0a2bca74d1b94, type: 3}
+  m_Name: RootNode
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: e5f8813987c9c144c9e98b8534ce9e13
+  position: {x: 296.79996, y: -178.43866}
+  blackboard:
+    moveToPosition: {x: 0, y: 0, z: 0}
+    moveToObject: {fileID: 0}
+  description: Test
+  child: {fileID: -8985223373851852657}
+--- !u!114 &-1129952355523177059
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 091f3a82cc8db814daac999008d343d1, type: 3}
+  m_Name: DebugLog_Action
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 6e9f8fb638361e448bf2596948088c95
+  position: {x: 296.79996, y: 98.09019}
+  blackboard:
+    moveToPosition: {x: 0, y: 0, z: 0}
+    moveToObject: {fileID: 0}
+  description: This Is a action!
+  message: A
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3f46648108f1dc43a2385dea190afbe, type: 3}
+  m_Name: ABC
+  m_EditorClassIdentifier: 
+  rootNode: {fileID: -6109299475738239597}
+  treeState: 0
+  nodes:
+  - {fileID: -6109299475738239597}
+  - {fileID: -8985223373851852657}
+  - {fileID: -1129952355523177059}
+  blackboard:
+    moveToPosition: {x: 0, y: 0, z: 0}
+    moveToObject: {fileID: 0}
