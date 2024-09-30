@@ -13,6 +13,7 @@ public class AirburstPowerup : MonoBehaviour
     void Awake()
     {
         playerController = GetComponent<PlayerController>();
+        GetComponent<PowerupManager>().AddPowerup(GetType().ToString());
         playerController.onExtraHammerHit.AddListener(RemovePowerup);
         playerController.IncreaseAdditionalBounces(additionalBounces);
     }

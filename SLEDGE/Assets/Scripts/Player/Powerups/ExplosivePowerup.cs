@@ -12,6 +12,7 @@ public class ExplosivePowerup : MonoBehaviour
     void Awake()
     {
         playerController = GetComponent<PlayerController>();
+        GetComponent<PowerupManager>().AddPowerup(GetType().ToString());
         playerController.onHammerBounce.AddListener(RemovePowerup);
         playerController.IncreaseInitialForce(forceAddend);
     }
