@@ -5,6 +5,7 @@ using UnityEngine;
 public class ExplosivePowerup : MonoBehaviour
 {
     PlayerController playerController;
+    PowerupManager powerupManager;
 
     [Tooltip("How much additional force does this powerup provide?")]
     public float forceAddend = 25f;
@@ -12,7 +13,8 @@ public class ExplosivePowerup : MonoBehaviour
     void Awake()
     {
         playerController = GetComponent<PlayerController>();
-        GetComponent<PowerupManager>().AddPowerup(GetType().ToString());
+        powerupManager = GetComponent<PowerupManager>();
+        powerupManager.AddPowerup(GetType().ToString());
         playerController.onHammerBounce.AddListener(RemovePowerup);
         playerController.IncreaseInitialForce(forceAddend);
     }
@@ -21,6 +23,7 @@ public class ExplosivePowerup : MonoBehaviour
     {
         playerController.IncreaseInitialForce(-forceAddend);
         playerController.onHammerBounce.RemoveListener(RemovePowerup);
+        powerupManager.RemoveCurrentPowerup();
         Destroy(this);
     }
 }

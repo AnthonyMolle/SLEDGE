@@ -22,4 +22,9 @@ public class PowerupManager : MonoBehaviour
         currentPowerup = newPowerup;
         powerupText.text = "Active Powerup: " + currentPowerup;
     }
+
+    public void RemoveCurrentPowerup()
+    {
+        currentPowerup = null;
+    }
 }

@@ -5,6 +5,7 @@ using UnityEngine;
 public class AirburstPowerup : MonoBehaviour
 {
     PlayerController playerController;
+    PowerupManager powerupManager;
 
     [Tooltip("How many additional bounces does this powerup provide?")]
     //Add 1 more than you want, first one won't count due to the initial bounce
@@ -13,7 +14,8 @@ public class AirburstPowerup : MonoBehaviour
     void Awake()
     {
         playerController = GetComponent<PlayerController>();
-        GetComponent<PowerupManager>().AddPowerup(GetType().ToString());
+        powerupManager = GetComponent<PowerupManager>();
+        powerupManager.AddPowerup(GetType().ToString());
         playerController.onExtraHammerHit.AddListener(RemovePowerup);
         playerController.IncreaseAdditionalBounces(additionalBounces);
     }
@@ -22,6 +24,7 @@ public class AirburstPowerup : MonoBehaviour
     {
         playerController.IncreaseAdditionalBounces(-additionalBounces);
         playerController.onExtraHammerHit.RemoveListener(RemovePowerup);
+        powerupManager.RemoveCurrentPowerup();
         Destroy(this);
     }
 }

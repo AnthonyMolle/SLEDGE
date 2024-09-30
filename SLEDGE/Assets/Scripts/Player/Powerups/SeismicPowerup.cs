@@ -6,6 +6,7 @@ using UnityEngine;
 public class SeismicPowerup : MonoBehaviour
 {
     PlayerController playerController;
+    PowerupManager powerupManager;
 
     int quakeDamage = 1;
     float quakeRadius = 5f;
@@ -14,7 +15,8 @@ public class SeismicPowerup : MonoBehaviour
     void Awake()
     {
         playerController = GetComponent<PlayerController>();
-        GetComponent<PowerupManager>().AddPowerup(GetType().ToString());
+        powerupManager = GetComponent<PowerupManager>();
+        powerupManager.AddPowerup(GetType().ToString());
         playerController.onHammerBounce.AddListener(Quake);
         playerController.onHammerBounce.AddListener(RemovePowerup);
     }
@@ -39,6 +41,7 @@ public class SeismicPowerup : MonoBehaviour
     public void RemovePowerup()
     {
         playerController.onHammerBounce.RemoveListener(RemovePowerup);
+        powerupManager.RemoveCurrentPowerup();
         Destroy(this);
     }
 }

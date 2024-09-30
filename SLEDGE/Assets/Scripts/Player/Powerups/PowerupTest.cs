@@ -5,11 +5,12 @@ using UnityEngine;
 public class PowerupTest : MonoBehaviour
 {
     PlayerController playerController;
+    PowerupManager powerupManager;
 
     void Awake()
     {
         playerController = GetComponent<PlayerController>();
-        GetComponent<PowerupManager>().AddPowerup(GetType().ToString());
+        powerupManager.AddPowerup(GetType().ToString());
         playerController.onHammerBounce.AddListener(Test);
     }
 
@@ -21,6 +22,7 @@ public class PowerupTest : MonoBehaviour
     public void RemovePowerup()
     {
         playerController.onHammerBounce.RemoveListener(Test);
+        powerupManager.RemoveCurrentPowerup();
         Destroy(this);
     }
 }
