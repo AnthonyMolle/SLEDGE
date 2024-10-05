@@ -361,6 +361,15 @@ public class PlayerController : MonoBehaviour
         if (swipingHammer){HammerHit();}
     }
 
+    private void OnCollisionEnter(Collision other)
+    {
+        // If the player touches this object, they die [kill surface]
+        if(other.gameObject.tag == "Kill")
+        {
+            Die();
+        }
+    }
+
     private void HandleSpeedFX() // Handles speed effects while moving quickly
     {
         if (rb.velocity.magnitude > 10)
@@ -969,6 +978,15 @@ public class PlayerController : MonoBehaviour
                 {
                     bouncy = true;
                 }
+
+                /* This is for the kill surface. makes it so if you even try to bounce off of it, you die.
+                // If the player tries to bounce off of this surface, they die [kill surface]
+                if (hit.transform.gameObject.tag == "Kill")
+                {
+                    Die();
+                }
+                */
+
                 else if (hit.transform.gameObject.tag == "Enemy Flyer")
                 {
                     var e = hit.transform.gameObject.GetComponent<FlyingEnemy>();
@@ -1062,6 +1080,7 @@ public class PlayerController : MonoBehaviour
             //audioManager.PlaySFX(audioManager.whiff);
         }
     }
+
 
     private void HammerHit() // See if we it an enemy or projectile. Respond accordingly.
     {
