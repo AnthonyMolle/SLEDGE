@@ -368,6 +368,20 @@ public class PlayerController : MonoBehaviour
         {
             Die();
         }
+
+        // If the player touches a moving platform, set the platform as the parent so the player moves with it
+        if(other.gameObject.tag == "MovingPlatform")
+        {
+            transform.SetParent(other.gameObject.transform);
+        }
+    }
+    private void OnCollisionExit(Collision other) {
+
+        // If the player gets off a moving platform, remove the platform as the parent so the player doesnt move with it
+        if(other.gameObject.tag == "MovingPlatform")
+        {
+            transform.SetParent(null);
+        }
     }
 
     private void HandleSpeedFX() // Handles speed effects while moving quickly
