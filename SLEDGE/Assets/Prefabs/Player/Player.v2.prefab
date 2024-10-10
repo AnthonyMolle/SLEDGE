@@ -10,8 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 3619832976201607285}
   - component: {fileID: 3348789719317407251}
-  - component: {fileID: 2079649710691961802}
   - component: {fileID: 6035020213324124925}
+  - component: {fileID: -8572958806344552510}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -87,14 +87,6 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!81 &2079649710691961802
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2542612905091929352}
-  m_Enabled: 1
 --- !u!114 &6035020213324124925
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -140,6 +132,20 @@ MonoBehaviour:
     mipBias: 0
     varianceClampScale: 0.9
     contrastAdaptiveSharpening: 0
+--- !u!114 &-8572958806344552510
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2542612905091929352}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86c6556701af9e04380698b89f691b6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nonRigidbodyVelocity: 0
+  attenuationObject: {fileID: 0}
 --- !u!1 &2577700400814474104
 GameObject:
   m_ObjectHideFlags: 0
@@ -5169,6 +5175,12 @@ MonoBehaviour:
   hasCoyoteTime: 1
   decreasingCoyoteTime: 0
   hasJumped: 0
+  slideHitboxHeight: 0
+  slideCameraOffset: 0
+  minSlideSpeed: 0
+  flatSlideDrag: 0
+  maxSlideDrag: 0
+  maxSlideAcceleration: 0
   playerHeight: 1
   groundCheckDist: 0.75
   groundLayers:
@@ -5183,6 +5195,7 @@ MonoBehaviour:
   bouncyForce: 25
   hitLength: 5
   hitRadius: 1
+  maxAdditionalBounces: 0
   chargeTime: 0.5
   hitTime: 0.1
   recoveryTime: 0.25
@@ -5227,6 +5240,12 @@ MonoBehaviour:
   maxTargetAngle: 30
   minTargetDistance: 5
   maxTargetDistance: 50
+  onHammerBounce:
+    m_PersistentCalls:
+      m_Calls: []
+  onExtraHammerHit:
+    m_PersistentCalls:
+      m_Calls: []
   enemyLayers:
     serializedVersion: 2
     m_Bits: 0
