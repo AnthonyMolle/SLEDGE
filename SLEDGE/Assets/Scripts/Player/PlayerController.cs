@@ -369,6 +369,12 @@ public class PlayerController : MonoBehaviour
             Die();
         }
 
+        if(other.gameObject.tag == "Heat")
+        {
+            TakeDamage(1);
+            rb.AddForce(other.GetContact(0).normal * 25f, ForceMode.Impulse);
+        }
+
         // If the player touches a moving platform, set the platform as the parent so the player moves with it
         if(other.gameObject.tag == "MovingPlatform")
         {
