@@ -25,7 +25,7 @@ MonoBehaviour:
     dashAvailable: 0
     detectionRadius: 20
   description: 
-  beingInspected: 1
+  beingInspected: 0
   child: {fileID: -2969824660468749776}
   secondsOfCooldown: 2
 --- !u!114 &-5035440455026217801
@@ -53,7 +53,7 @@ MonoBehaviour:
     dashAvailable: 0
     detectionRadius: 20
   description: 
-  beingInspected: 0
+  beingInspected: 1
   children:
   - {fileID: 3764915695955545033}
   - {fileID: -5297877653348779097}
@@ -82,7 +82,7 @@ MonoBehaviour:
     dashAvailable: 0
     detectionRadius: 20
   description: 
-  beingInspected: 0
+  beingInspected: 1
   child: {fileID: 4955489624724098826}
   bulletSpeed: 10
   bulletLifetime: 10
@@ -140,7 +140,7 @@ MonoBehaviour:
     dashAvailable: 0
     detectionRadius: 20
   description: Repeat Forever
-  beingInspected: 1
+  beingInspected: 0
   child: {fileID: -5035440455026217801}
   repeatNumber: -1
 --- !u!114 &-432707976989282757
@@ -257,5 +257,5 @@ MonoBehaviour:
     dashAvailable: 0
     detectionRadius: 20
   description: 
-  beingInspected: 1
+  beingInspected: 0
   soundToPlay: {fileID: 8300000, guid: 0058d174b500e844fa336f9f5dacf832, type: 3}

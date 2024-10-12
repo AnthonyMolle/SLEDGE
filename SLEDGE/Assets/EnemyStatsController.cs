@@ -72,13 +72,16 @@ public class EnemyStatsController : MonoBehaviour
         EnemyManager.Instance.EnemyDeath(gameObject);
         gameObject.SetActive(false);
     }
-    public void Reset()
+    public void ResetEnemy()
     {
         //DestroyProjectiles();
         Destroy(ragdollInstance);
         ragdollInstance = null;
         transform.position = startPosition;
-        Blackboard.currentState = Blackboard.EnemyStates.IDLE;
+        if (Blackboard != null)
+        {
+            Blackboard.currentState = Blackboard.EnemyStates.IDLE;
+        }
     }
 
 }
