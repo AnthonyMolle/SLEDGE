@@ -65,8 +65,11 @@ public class EnemyStatsController : MonoBehaviour
     {
         GameObject.Find("ScoreManager").GetComponent<ScoreManager>().AddEnemiesKilled(1);
 
-        ragdollInstance = Instantiate(deathRagdoll, transform.position, transform.rotation);
-        ragdollInstance.GetComponent<Rigidbody>().AddForce(rb.velocity, ForceMode.Impulse);
+        if (deathRagdoll)
+        {
+            ragdollInstance = Instantiate(deathRagdoll, transform.position, transform.rotation);
+            ragdollInstance.GetComponent<Rigidbody>().AddForce(rb.velocity, ForceMode.Impulse);
+        }
 
         //DestroyProjectiles();
         EnemyManager.Instance.EnemyDeath(gameObject);
@@ -75,8 +78,11 @@ public class EnemyStatsController : MonoBehaviour
     public void ResetEnemy()
     {
         //DestroyProjectiles();
-        Destroy(ragdollInstance);
-        ragdollInstance = null;
+        if (deathRagdoll)
+        {
+            Destroy(ragdollInstance);
+            ragdollInstance = null;
+        }
         transform.position = startPosition;
         if (Blackboard != null)
         {

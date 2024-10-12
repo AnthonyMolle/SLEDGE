@@ -82,7 +82,7 @@ MonoBehaviour:
     dashAvailable: 0
     detectionRadius: 20
   description: 
-  beingInspected: 1
+  beingInspected: 0
   child: {fileID: 4955489624724098826}
   bulletSpeed: 10
   bulletLifetime: 10
@@ -196,7 +196,7 @@ MonoBehaviour:
   - {fileID: -2928116163761845750}
   - {fileID: 4955489624724098826}
   blackboard:
-    currentState: 0
+    currentState: 2
     objectAName: Player.v3 Variant
     objectBName: Player.v3 Variant
     prefabLinkA: {fileID: 4543102887346889771, guid: ba9cb7ed3bc5e6046b77d646edda3e24,
@@ -219,7 +219,7 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: a60ce2f9768d5df4c8c1a06c572ee685
-  position: {x: -150.00003, y: 380.44177}
+  position: {x: -174.71272, y: 377.75824}
   blackboard:
     currentState: 0
     objectAName: 
@@ -229,7 +229,7 @@ MonoBehaviour:
     dashAvailable: 0
     detectionRadius: 20
   description: 
-  beingInspected: 0
+  beingInspected: 1
   child: {fileID: -2928116163761845750}
   message: Beeboop
 --- !u!114 &4955489624724098826
