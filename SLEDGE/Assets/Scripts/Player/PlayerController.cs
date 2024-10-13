@@ -999,6 +999,12 @@ public class PlayerController : MonoBehaviour
                     bouncy = true;
                 }
 
+                if (hit.transform.gameObject.tag == "End Platform")
+                {
+                    rb.AddForce(hit.transform.up * 50f, ForceMode.Impulse);
+                    GameObject.Find("EndPlatform").GetComponent<EndPlatform>().triggerPlatform();
+                }
+
                 /* This is for the kill surface. makes it so if you even try to bounce off of it, you die.
                 // If the player tries to bounce off of this surface, they die [kill surface]
                 if (hit.transform.gameObject.tag == "Kill")

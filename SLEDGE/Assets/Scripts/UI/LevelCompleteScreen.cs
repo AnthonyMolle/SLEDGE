@@ -33,7 +33,15 @@ public class LevelCompleteScreen : MonoBehaviour
             }
             else
             {
-                portal.GetComponent<EndPortal>().GoToScene();
+                if (GameObject.Find("EndPlatform") != null)
+                {
+                    GameObject.Find("EndPlatform").GetComponent<EndPlatform>().GoToScene();
+                }
+                else // REMOVE ONCE ALL OLD PORTALS ARE PHASED OUT
+                {
+                    portal.GetComponent<EndPortal>().GoToScene();
+                }
+                
             }
         }
     }
