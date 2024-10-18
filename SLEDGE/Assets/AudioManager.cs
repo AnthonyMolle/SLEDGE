@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
+using FMODUnity;
 
 public class AudioManager : MonoBehaviour
 {
@@ -21,6 +22,8 @@ public class AudioManager : MonoBehaviour
     public AudioClip land;
 
     int previousChoice = 1;
+
+    public static AudioManager instance { get; private set; }
     /*
     private void Start()
     {
@@ -65,10 +68,24 @@ public class AudioManager : MonoBehaviour
         }
     }
 
+    private void Awake()
+    {
+        if (instance != null)
+        {
+            Debug.LogError("Found more than one Audio Manager in the scene");
+        }
+        instance = this;
+    }
+
 
     public void PlaySFX(AudioClip clip)
     {
         SFXSource.PlayOneShot(clip);
+    }
+
+    public void PlayOneShot(EventReference sound, Vector3 worldPos)
+    {
+        RuntimeManager.PlayOneShot(sound, worldPos);
     }
 
     public void PlayWalk()
