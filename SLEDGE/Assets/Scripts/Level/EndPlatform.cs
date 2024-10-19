@@ -23,6 +23,7 @@ public class EndPlatform : MonoBehaviour
 
     public void triggerPlatform()
     {
+        GameObject.Find("SpeedRunTimer").GetComponent<Speed_Run_Timer>().timer_running = false;
         StartCoroutine(DelaySequence(2.0f));
     }
 
