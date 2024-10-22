@@ -238,6 +238,12 @@ public class PlayerController : MonoBehaviour
     [Tooltip("How much we add to bounce force when the explosive powerup is enabled.")]
     public float explosiveForce;
 
+    [SerializeField]
+    GameObject fireworksPrefab;
+    [Tooltip("How far away from the player we want to spawn in the fireworks.")]
+    public Vector3 fireworksOffset;
+    public Vector3 fireworksForce;
+
     #endregion
 
     #region SpeedLines
@@ -268,6 +274,7 @@ public class PlayerController : MonoBehaviour
 
     #region Events
 
+    public UnityEvent onHammerSwipe;
     public UnityEvent onHammerBounce;
     [Tooltip("Invoked if the hammer hit was from an additional bounce.")]
     public UnityEvent onExtraHammerHit;
@@ -438,6 +445,7 @@ public class PlayerController : MonoBehaviour
         {
             swipingHammer = true;
             swipeComboReady = false;
+            onHammerSwipe.Invoke();
             hammerTimer = swipeTime;
             anim.Play("Swipe Right", -1, 0.25f);
             currentCombo = Combo.Swipe1;
@@ -1356,6 +1364,13 @@ public class PlayerController : MonoBehaviour
     {
         additionalBounces = maxAdditionalBounces;
     }
+
+    public void SpawnFireworks()
+    {
+        GameObject firework = Instantiate(fireworksPrefab, transform.position + fireworksOffset, transform.rotation);
+        firework.GetComponent<Rigidbody>().AddForce(transform.forward + fireworksForce);
+    }
+
     #endregion
 
 }
