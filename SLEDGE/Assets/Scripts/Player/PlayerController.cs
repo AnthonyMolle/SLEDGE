@@ -7,6 +7,7 @@ using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Events;
 using UnityEngine.PlayerLoop;
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.ProBuilder.Shapes;
@@ -145,6 +146,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float bouncyForce = 25f;
     [SerializeField] float hitLength = 5f;
     [SerializeField] float hitRadius = 1f;
+    [Tooltip("How many additional bounces do we get when we hit air?")]
+    [SerializeField] int maxAdditionalBounces = 0;
+    int additionalBounces;
 
     [SerializeField] float chargeTime = 1f;
     [SerializeField] float hitTime = 1f;
@@ -261,6 +265,14 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float minTargetDistance = 5f;
     [SerializeField] float maxTargetDistance = 50f;
     #endregion
+
+    #region Events
+
+    public UnityEvent onHammerBounce;
+    [Tooltip("Invoked if the hammer hit was from an additional bounce.")]
+    public UnityEvent onExtraHammerHit;
+
+    #endregion
     [SerializeField] LayerMask enemyLayers;
 
     void Start() // Runs at the start of the Scene
@@ -295,6 +307,8 @@ public class PlayerController : MonoBehaviour
 
         //get capsule collider
         characterCollider = GetComponent<CapsuleCollider>();
+
+        RefreshAdditionalBounces();
     }
 
     void Update() // Function Called once per frame
@@ -345,6 +359,35 @@ public class PlayerController : MonoBehaviour
 
         // If we are currently swiping our hammer (rmb), see if we hit an enemy OR projectile
         if (swipingHammer){HammerHit();}
+    }
+
+    private void OnCollisionEnter(Collision other)
+    {
+        // If the player touches this object, they die [kill surface]
+        if(other.gameObject.tag == "Kill")
+        {
+            Die();
+        }
+
+        if(other.gameObject.tag == "Heat")
+        {
+            TakeDamage(1);
+            rb.AddForce(other.GetContact(0).normal * 25f, ForceMode.Impulse);
+        }
+
+        // If the player touches a moving platform, set the platform as the parent so the player moves with it
+        if(other.gameObject.tag == "MovingPlatform")
+        {
+            transform.SetParent(other.gameObject.transform);
+        }
+    }
+    private void OnCollisionExit(Collision other) {
+
+        // If the player gets off a moving platform, remove the platform as the parent so the player doesnt move with it
+        if(other.gameObject.tag == "MovingPlatform")
+        {
+            transform.SetParent(null);
+        }
     }
 
     private void HandleSpeedFX() // Handles speed effects while moving quickly
@@ -656,7 +699,7 @@ public class PlayerController : MonoBehaviour
         if (Physics.Raycast(gameObject.transform.position, Vector3.down, out hit, playerHeight/2 + groundCheckDist, groundLayers)) //if on the ground
         {
             slopeAngle = Vector3.Angle(hit.transform.up, hit.normal);
-            Debug.Log(slopeAngle);
+            //Debug.Log(slopeAngle);
             if (slopeAngle > 1 && slopeAngle < maxSlopeAngle)
             {
                 isOnSlope = true;
@@ -844,6 +887,9 @@ public class PlayerController : MonoBehaviour
                     // }
                 }
             }
+
+            anim.SetBool("Moving", CheckMoving());
+
             #endregion
 
             //Debug.Log("is grounded: " + isGrounded);
@@ -922,7 +968,8 @@ public class PlayerController : MonoBehaviour
 
     private void HammerBounce() // Checks if we have bounced off a surface, if so apply physics or hurt enemys
     {
-        
+        onHammerBounce.Invoke();
+
         if (hammerBounced)
         {
             return;
@@ -933,14 +980,33 @@ public class PlayerController : MonoBehaviour
 
         RaycastHit[] hits = Physics.SphereCastAll(ray, hitRadius, hitLength, bouncableLayers, QueryTriggerInteraction.Collide);
 
-        if (hits.Length > 0 || currentPowerup == Powerup.Airburst)
+        if (hits.Length > 0 || currentPowerup == Powerup.Airburst || additionalBounces > 0)
         {
-            foreach (RaycastHit hit in hits)
+            if (additionalBounces > 0 && !isGrounded)
             {
+                onExtraHammerHit.Invoke();
+                additionalBounces--;
+            }
+            foreach (RaycastHit hit in hits)
+            { 
+                if (hit.transform.gameObject.GetComponent<Renderer>() != null && hit.transform.gameObject.GetComponent<Renderer>().sharedMaterial.name == "ShockAbsorbMat")
+                {
+                    return;
+                }
+
                 if (hit.transform.gameObject.tag == "Bouncy")
                 {
                     bouncy = true;
                 }
+
+                /* This is for the kill surface. makes it so if you even try to bounce off of it, you die.
+                // If the player tries to bounce off of this surface, they die [kill surface]
+                if (hit.transform.gameObject.tag == "Kill")
+                {
+                    Die();
+                }
+                */
+
                 else if (hit.transform.gameObject.tag == "Enemy Flyer")
                 {
                     var e = hit.transform.gameObject.GetComponent<EnemyStatsController>();
@@ -1034,6 +1100,7 @@ public class PlayerController : MonoBehaviour
             //audioManager.PlaySFX(audioManager.whiff);
         }
     }
+
 
     private void HammerHit() // See if we it an enemy or projectile. Respond accordingly.
     {
@@ -1226,11 +1293,12 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public bool CheckMoving() // Check to see if the player has any velocity
+    public bool CheckMoving() // Check to see if the player is putting in any movement input
     {
         return movementInputVector.magnitude != 0;
     }
 
+    #region Powerups
     public Powerup GetCurrentPowerup() {  return currentPowerup; }
 
     public void CollectPowerup(Powerup newPowerup) // Equips a new powerup to the player and updates UI to display equiped powerup
@@ -1259,4 +1327,29 @@ public class PlayerController : MonoBehaviour
             tempPowerupUI.text = "Active Powerup: None";
         }
     }
+
+    //Used by powerups
+    public void LaunchPlayer(float force)
+    {
+        Ray ray = gameCamera.ScreenPointToRay(Input.mousePosition);
+        rb.AddForce((-ray.direction).normalized * force, ForceMode.Impulse);
+    }
+
+    public void IncreaseInitialForce(float amount)
+    {
+        initialBounceForce += amount;
+    }
+
+    public void IncreaseAdditionalBounces(int amount)
+    {
+        Debug.Log(amount);
+        additionalBounces += amount;
+    }
+
+    void RefreshAdditionalBounces()
+    {
+        additionalBounces = maxAdditionalBounces;
+    }
+    #endregion
+
 }

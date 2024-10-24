@@ -12,7 +12,7 @@ public class PowerupBase : MonoBehaviour
     public float powerupReturnTime;
 
     public Image timerFill;
-    
+
     float timer;
 
     bool timerRunning;
@@ -37,12 +37,17 @@ public class PowerupBase : MonoBehaviour
 
             if (timer <= 0)
             {
-                timerRunning = false;
-                ResetTimer();
-                powerup.SetActive(true);
-                timerFill.enabled = false;
+                ReturnPowerup();
             }
         }
+    }
+
+    public void ReturnPowerup()
+    {
+        timerRunning = false;
+        ResetTimer();
+        powerup.SetActive(true);
+        timerFill.enabled = false;
     }
 
     void ResetTimer()
