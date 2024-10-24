@@ -1,5 +1,148 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-5297877653348779097
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13069e1a7395baa409124bdba77c445c, type: 3}
+  m_Name: Cooldown_Decorator
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 3cb3cd8c879ec7d4f81df68e0db6a973
+  position: {x: 150.40002, y: 354.40002}
+  blackboard:
+    currentState: 0
+    objectAName: 
+    objectBName: 
+    prefabLinkA: {fileID: 0}
+    prefabLinkB: {fileID: 0}
+    dashAvailable: 0
+    detectionRadius: 20
+  description: 
+  beingInspected: 0
+  child: {fileID: -2969824660468749776}
+  secondsOfCooldown: 2
+--- !u!114 &-5035440455026217801
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c78ec8d46b1c19a4fa99127cb31764e5, type: 3}
+  m_Name: Sequencer_Composite
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 5621aacd01bec854b8c17ebc25016f8f
+  position: {x: -2.666667, y: 242.18756}
+  blackboard:
+    currentState: 0
+    objectAName: 
+    objectBName: 
+    prefabLinkA: {fileID: 0}
+    prefabLinkB: {fileID: 0}
+    dashAvailable: 0
+    detectionRadius: 20
+  description: 
+  beingInspected: 1
+  children:
+  - {fileID: 3764915695955545033}
+  - {fileID: -5297877653348779097}
+--- !u!114 &-2969824660468749776
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8771d9ecf8b9bd94ba8063cf2dbb4ea9, type: 3}
+  m_Name: Shoot_Action
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: c6ad291a052ee4847bdda140dc4fe692
+  position: {x: 147.1999, y: 464.39996}
+  blackboard:
+    currentState: 0
+    objectAName: 
+    objectBName: 
+    prefabLinkA: {fileID: 0}
+    prefabLinkB: {fileID: 0}
+    dashAvailable: 0
+    detectionRadius: 20
+  description: 
+  beingInspected: 0
+  child: {fileID: 4955489624724098826}
+  bulletSpeed: 10
+  bulletLifetime: 10
+  shootTarget: 0
+  bulletType: 0
+--- !u!114 &-2928116163761845750
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b84f33451b51894794e22e7355908db, type: 3}
+  m_Name: LookAt_Service
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 9b3a71b8e09aa0241a11314d4267a3ff
+  position: {x: -152.66658, y: 526.3333}
+  blackboard:
+    currentState: 0
+    objectAName: 
+    objectBName: 
+    prefabLinkA: {fileID: 0}
+    prefabLinkB: {fileID: 0}
+    dashAvailable: 0
+    detectionRadius: 20
+  description: 
+  beingInspected: 0
+  toLookAt: 0
+--- !u!114 &-2031188353842485439
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5671c8f1355fcc40bf249a5233dc689, type: 3}
+  m_Name: Repeat_Decorator
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: a8073b0f90d77334181523432dcefe59
+  position: {x: -0.000004318237, y: 123.445}
+  blackboard:
+    currentState: 0
+    objectAName: 
+    objectBName: 
+    prefabLinkA: {fileID: 0}
+    prefabLinkB: {fileID: 0}
+    dashAvailable: 0
+    detectionRadius: 20
+  description: Repeat Forever
+  beingInspected: 0
+  child: {fileID: -5035440455026217801}
+  repeatNumber: -1
 --- !u!114 &-432707976989282757
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15,15 +158,18 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: 8e9ac218227b3db4c9da7cb9ce11d31c
-  position: {x: 0, y: 0}
+  position: {x: 0, y: -0.07199097}
   blackboard:
     currentState: 0
     objectAName: 
     objectBName: 
+    prefabLinkA: {fileID: 0}
+    prefabLinkB: {fileID: 0}
     dashAvailable: 0
+    detectionRadius: 20
   description: 
   beingInspected: 0
-  child: {fileID: 0}
+  child: {fileID: -2031188353842485439}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -42,8 +188,74 @@ MonoBehaviour:
   treeState: 0
   nodes:
   - {fileID: -432707976989282757}
+  - {fileID: -2031188353842485439}
+  - {fileID: -2969824660468749776}
+  - {fileID: -5297877653348779097}
+  - {fileID: -5035440455026217801}
+  - {fileID: 3764915695955545033}
+  - {fileID: -2928116163761845750}
+  - {fileID: 4955489624724098826}
+  blackboard:
+    currentState: 2
+    objectAName: Player.v3 Variant
+    objectBName: Player.v3 Variant
+    prefabLinkA: {fileID: 4543102887346889771, guid: ba9cb7ed3bc5e6046b77d646edda3e24,
+      type: 3}
+    prefabLinkB: {fileID: 0}
+    dashAvailable: 0
+    detectionRadius: 20
+--- !u!114 &3764915695955545033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 091f3a82cc8db814daac999008d343d1, type: 3}
+  m_Name: DebugLog_Action
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: a60ce2f9768d5df4c8c1a06c572ee685
+  position: {x: -174.71272, y: 377.75824}
   blackboard:
     currentState: 0
     objectAName: 
     objectBName: 
+    prefabLinkA: {fileID: 0}
+    prefabLinkB: {fileID: 0}
     dashAvailable: 0
+    detectionRadius: 20
+  description: 
+  beingInspected: 1
+  child: {fileID: -2928116163761845750}
+  message: Beeboop
+--- !u!114 &4955489624724098826
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 376d550dc6e561749a5c81e88b05b3e8, type: 3}
+  m_Name: PlaySound_Service
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 735f11bdb6dec88419ebbf3c33c1b54c
+  position: {x: 150.39998, y: 602.39996}
+  blackboard:
+    currentState: 0
+    objectAName: 
+    objectBName: 
+    prefabLinkA: {fileID: 0}
+    prefabLinkB: {fileID: 0}
+    dashAvailable: 0
+    detectionRadius: 20
+  description: 
+  beingInspected: 0
+  soundToPlay: {fileID: 8300000, guid: 0058d174b500e844fa336f9f5dacf832, type: 3}
