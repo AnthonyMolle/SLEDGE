@@ -20,7 +20,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: TriBrick
+  m_Name: TriStone
   m_Shader: {fileID: -6465566751694194690, guid: fd123440b6c697e4d993e0e3253891f2,
     type: 3}
   m_Parent: {fileID: 0}
@@ -38,7 +38,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _2ndTex:
-        m_Texture: {fileID: 2800000, guid: caa5d7e3913fb8f48ad014b51fbd2ae1, type: 3}
+        m_Texture: {fileID: 2800000, guid: a1d06e0cec291b54482dba3aa264960b, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BaseMap:
@@ -66,7 +66,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: caa5d7e3913fb8f48ad014b51fbd2ae1, type: 3}
+        m_Texture: {fileID: 2800000, guid: a1d06e0cec291b54482dba3aa264960b, type: 3}
         m_Scale: {x: 0.3, y: 0.3}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -114,7 +114,7 @@ Material:
     - _DstBlend: 0
     - _DstBlendAlpha: 0
     - _EnvironmentReflections: 1
-    - _Float_Speed: 1
+    - _Float_Speed: 0
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
@@ -137,6 +137,6 @@ Material:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _Float_Direction: {r: 0, g: 0.1, b: 0, a: 0}
+    - _Float_Direction: {r: 0, g: 0, b: 0, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []
