@@ -38,6 +38,11 @@ public class EnemyStatsController : MonoBehaviour
         startPosition = transform.position;
         rb = GetComponent<Rigidbody>();
         Blackboard = GetComponent<BehaviorTreeRunner>().tree.blackboard;
+
+        if (Blackboard != null)
+        {
+            Blackboard.currentState = Blackboard.EnemyStates.IDLE;
+        }
     }
 
     // Update is called once per frame
