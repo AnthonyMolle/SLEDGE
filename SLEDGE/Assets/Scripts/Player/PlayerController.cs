@@ -548,6 +548,8 @@ public class PlayerController : MonoBehaviour
             hammerSwipe = true;
             swipingHammer = false;
 
+            hammerSwung = false;
+
             swipeRecovering = true;
             hammerTimer = swipeRecoveryTime;
         }
@@ -966,6 +968,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+
     private void HammerBounce() // Checks if we have bounced off a surface, if so apply physics or hurt enemys
     {
         onHammerBounce.Invoke();
@@ -1027,6 +1030,10 @@ public class PlayerController : MonoBehaviour
                 else if (hit.transform.gameObject.tag == "Collectible" || hit.transform.gameObject.layer == 11) // 11 == gibs layer
                 {
                     hit.transform.gameObject.GetComponent<Rigidbody>().AddForce(ray.direction * 50f, ForceMode.Impulse);
+                }
+                else if (hit.transform.gameObject.tag == "Switch")
+                {
+                    hit.transform.gameObject.GetComponent<Switch>().SwapStateActive();
                 }
             }
 
@@ -1107,10 +1114,16 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-
+    bool hammerSwung = false;
+    
     private void HammerHit() // See if we it an enemy or projectile. Respond accordingly.
     {
-        Debug.Log("YOWZA BABOWZA BABYYYY");
+
+        if (hammerSwung)
+        {
+            return;
+        }
+
         //Add parry and hit sounds in if statements
         Ray ray = gameCamera.ScreenPointToRay(Input.mousePosition);
 
@@ -1146,7 +1159,13 @@ public class PlayerController : MonoBehaviour
                 {
                     hit.transform.gameObject.GetComponent<Rigidbody>().AddForce(ray.direction * 50f, ForceMode.Impulse);
                 }
+                else if (hit.transform.gameObject.tag == "Switch")
+                {
+                    hit.transform.gameObject.GetComponent<Switch>().SwapStateActive();
+                }
             }
+
+            hammerSwung = true;
 
             StartCoroutine(FindObjectOfType<ScreenShaker>().Shake(0.1f, 0.01f, 0, 0, 0.1f));
         }
