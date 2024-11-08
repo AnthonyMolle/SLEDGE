@@ -1611,7 +1611,7 @@ PrefabInstance:
     - target: {fileID: 3348789719317407251, guid: 5dd5b681c132b964993064fc2d3cde0b,
         type: 3}
       propertyPath: m_CullingMask.m_Bits
-      value: 73015
+      value: 204087
       objectReference: {fileID: 0}
     - target: {fileID: 3380140073417402356, guid: 5dd5b681c132b964993064fc2d3cde0b,
         type: 3}
@@ -1675,6 +1675,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6314295682490010892, guid: 5dd5b681c132b964993064fc2d3cde0b,
         type: 3}
+      propertyPath: maxHealth
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6314295682490010892, guid: 5dd5b681c132b964993064fc2d3cde0b,
+        type: 3}
       propertyPath: chargeTime
       value: 0.35
       objectReference: {fileID: 0}
@@ -1716,22 +1721,27 @@ PrefabInstance:
     - target: {fileID: 6314295682490010892, guid: 5dd5b681c132b964993064fc2d3cde0b,
         type: 3}
       propertyPath: swipeLayers.m_Bits
-      value: 19712
+      value: 150784
+      objectReference: {fileID: 0}
+    - target: {fileID: 6314295682490010892, guid: 5dd5b681c132b964993064fc2d3cde0b,
+        type: 3}
+      propertyPath: bouncableLayers.m_Bits
+      value: 131511
       objectReference: {fileID: 0}
     - target: {fileID: 6469425393073572772, guid: 5dd5b681c132b964993064fc2d3cde0b,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -151.6
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6469425393073572772, guid: 5dd5b681c132b964993064fc2d3cde0b,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 4.326
+      value: -0.5
       objectReference: {fileID: 0}
     - target: {fileID: 6469425393073572772, guid: 5dd5b681c132b964993064fc2d3cde0b,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -18.31
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6469425393073572772, guid: 5dd5b681c132b964993064fc2d3cde0b,
         type: 3}
