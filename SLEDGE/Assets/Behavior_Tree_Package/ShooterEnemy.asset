@@ -25,7 +25,7 @@ MonoBehaviour:
     dashAvailable: 0
     detectionRadius: 20
   description: 
-  beingInspected: 0
+  beingInspected: 1
   child: {fileID: -2969824660468749776}
   secondsOfCooldown: 2
 --- !u!114 &-5035440455026217801
@@ -43,7 +43,7 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: 5621aacd01bec854b8c17ebc25016f8f
-  position: {x: -2.666667, y: 242.18756}
+  position: {x: 0, y: 235}
   blackboard:
     currentState: 0
     objectAName: 
@@ -55,8 +55,8 @@ MonoBehaviour:
   description: 
   beingInspected: 1
   children:
-  - {fileID: 3764915695955545033}
   - {fileID: -5297877653348779097}
+  - {fileID: 7914032234340536993}
 --- !u!114 &-2969824660468749776
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -103,7 +103,7 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: 9b3a71b8e09aa0241a11314d4267a3ff
-  position: {x: -152.66658, y: 526.3333}
+  position: {x: -133, y: 506}
   blackboard:
     currentState: 0
     objectAName: 
@@ -192,11 +192,11 @@ MonoBehaviour:
   - {fileID: -2969824660468749776}
   - {fileID: -5297877653348779097}
   - {fileID: -5035440455026217801}
-  - {fileID: 3764915695955545033}
   - {fileID: -2928116163761845750}
   - {fileID: 4955489624724098826}
+  - {fileID: 7914032234340536993}
   blackboard:
-    currentState: 2
+    currentState: 0
     objectAName: Player.v3 Variant
     objectBName: Player.v3 Variant
     prefabLinkA: {fileID: 4543102887346889771, guid: ba9cb7ed3bc5e6046b77d646edda3e24,
@@ -204,34 +204,6 @@ MonoBehaviour:
     prefabLinkB: {fileID: 0}
     dashAvailable: 0
     detectionRadius: 20
---- !u!114 &3764915695955545033
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 091f3a82cc8db814daac999008d343d1, type: 3}
-  m_Name: DebugLog_Action
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: a60ce2f9768d5df4c8c1a06c572ee685
-  position: {x: -174.71272, y: 377.75824}
-  blackboard:
-    currentState: 0
-    objectAName: 
-    objectBName: 
-    prefabLinkA: {fileID: 0}
-    prefabLinkB: {fileID: 0}
-    dashAvailable: 0
-    detectionRadius: 20
-  description: 
-  beingInspected: 1
-  child: {fileID: -2928116163761845750}
-  message: Beeboop
 --- !u!114 &4955489624724098826
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -259,3 +231,31 @@ MonoBehaviour:
   description: 
   beingInspected: 0
   soundToPlay: {fileID: 8300000, guid: 0058d174b500e844fa336f9f5dacf832, type: 3}
+--- !u!114 &7914032234340536993
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1535a42213d6324aa2718c1b8a571a4, type: 3}
+  m_Name: Wait_Action
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 02b45809b3b1fcb4caf68dcbe49a553c
+  position: {x: -135, y: 370}
+  blackboard:
+    currentState: 0
+    objectAName: 
+    objectBName: 
+    prefabLinkA: {fileID: 0}
+    prefabLinkB: {fileID: 0}
+    dashAvailable: 0
+    detectionRadius: 20
+  description: 
+  beingInspected: 1
+  child: {fileID: -2928116163761845750}
+  duration: 0.1

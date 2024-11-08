@@ -38,13 +38,15 @@ public class DashAttack_Action : ActionNode
             child.state = State.Running;
             child.Update();
         }
-
+        
         bool HitCollidable = Physics.Raycast(rootTransform.position, attackDirection, out hit, 2, 1 << 0 | 1 << 12);
         if (HitCollidable)
         {
             if (hit.transform == target.transform)
             {
                 // Do damage to target, or trigger callback function
+                target.GetComponent<PlayerController>().TakeDamage(1);
+                rootTransform.gameObject.GetComponent<EnemyStatsController>().TakeDamage(1, rootTransform.forward * -1, 25);
             }
 
             return State.Success;

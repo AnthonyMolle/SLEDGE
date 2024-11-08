@@ -47,6 +47,11 @@ public class MoveTowards_Action : ActionNode
         {
             child.state = State.Running;
             child.Update();
+            if (child.state == State.Success)
+            {
+                rootRigidbody.velocity = new Vector3(0, 0, 0);
+                return State.Success;
+            }
         }
 
         if (isTargetInView())
