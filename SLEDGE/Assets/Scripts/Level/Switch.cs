@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Switch : MonoBehaviour
 {
-    bool state = false;
+    public bool state = false;
     [SerializeField] MeshRenderer mr;
     [SerializeField] Material trueMat;
     [SerializeField] Material falseMat;
@@ -19,7 +19,7 @@ public class Switch : MonoBehaviour
 
     public void SwapStateActive() //swaps the state of the switch itself, the objects it controls, and the other switches it shares state with
     {
-        sc.Swap();
+        sc.Swap(this);
     }
 
     public void SwapStatePassive() //swaps the state of only the switch itself, used for updating connected switches to the correct state

@@ -6,6 +6,6 @@ public class Switchable : MonoBehaviour
 {
     public virtual void SwitchState()
     {
-        
+        Debug.Log("activated");
     }
 }

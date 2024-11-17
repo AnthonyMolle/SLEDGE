@@ -1133,7 +1133,7 @@ public class PlayerController : MonoBehaviour
         {
             foreach (RaycastHit hit in hits)
             {
-                Debug.Log(hit.collider.gameObject);
+                //Debug.Log(hit.collider.gameObject);
                 if (hit.transform.gameObject.tag == "Enemy Flyer")
                 {
                     Debug.Log("CALL ME ;)");

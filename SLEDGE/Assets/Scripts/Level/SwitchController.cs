@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -10,13 +11,21 @@ public class SwitchController : MonoBehaviour
 
     [SerializeField] bool initialSwitchState = true;
 
+    // variables for handling timer versions of the switches (CANNOT be active while activateOnMultipleSwitches is)
     [SerializeField] bool isTimed = false;
     [SerializeField] float activeTime = 0;
+
+    // variables for handling multiple switches needing activation before activating the object (CANNOT be active while isTimed id)
+    [SerializeField] bool activateOnMultipleSwitches = false;
+    int numSwitchesToActivate = 0;
+    int numSwitchesActive = 0;
+
     float timer = 0;
 
     private void Start()
     {
         connectedSwitches = GetComponentsInChildren<Switch>();
+        numSwitchesToActivate = connectedSwitches.Length;
 
         foreach (Switch connectedSwitch in connectedSwitches)
         {
@@ -49,9 +58,32 @@ public class SwitchController : MonoBehaviour
         }
     }
 
-    public void Swap()
+    public void Swap(Switch switchToActivate)
     {
-        if (!isTimed)
+        if (activateOnMultipleSwitches)
+        {
+            if (numSwitchesActive < numSwitchesToActivate)
+            {
+                if (switchToActivate.state == initialSwitchState)
+                {
+                    switchToActivate.SwapStatePassive();
+                    numSwitchesActive += 1;
+
+                    if (numSwitchesActive == numSwitchesToActivate)
+                    {
+                        foreach (Switchable controllableObject in controlledObjects)
+                        {
+                            controllableObject.SwitchState();
+                        }
+                    }
+                }
+            }
+            else
+            {
+                return;
+            }
+        }
+        else if (!isTimed)
         {
             foreach (Switchable controllableObject in controlledObjects)
             {
