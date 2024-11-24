@@ -8,9 +8,9 @@ public class SeismicPowerup : MonoBehaviour
     PlayerController playerController;
     PowerupManager powerupManager;
 
-    int quakeDamage = 1;
+    int quakeDamage = 0;
     float quakeRadius = 5f;
-    float quakeForce = 1f;
+    float quakeForce = 500f;
 
     void Awake()
     {

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Firework : MonoBehaviour
 {
-    public int damage;
+    public int damage = 1;
     public float impactForce;
     public float lifeTime;
     void Start()
