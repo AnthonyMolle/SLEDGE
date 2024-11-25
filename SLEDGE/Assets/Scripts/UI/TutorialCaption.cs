@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -7,6 +8,9 @@ using UnityEngine.UI;
 public class TutorialCaption : MonoBehaviour
 {
     public static TutorialCaption instance;
+
+    public const float defaultBGWidth = 500;
+    public const float defaultBGHeight = 150;
 
     [SerializeField]
     TextMeshProUGUI captionText;
@@ -29,7 +33,7 @@ public class TutorialCaption : MonoBehaviour
         captionAnim = GetComponent<Animator>();
     }
 
-    public void ShowCaption(string newText, float width, float height)
+    public void ShowCaption(string newText, float width = defaultBGHeight, float height = defaultBGHeight)
     {
         captionBG.rectTransform.sizeDelta = new Vector2(width, height);
         captionAnim.Play("ShowCaption");
