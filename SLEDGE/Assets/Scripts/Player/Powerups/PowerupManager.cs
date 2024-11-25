@@ -12,15 +12,28 @@ public class PowerupManager : MonoBehaviour
     [SerializeField]
     TextMeshProUGUI powerupText;
 
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            SwapPowerups();
+        }
+    }
+
     public void AddPowerup(string newPowerup)
     {
         if (currentPowerup != null)
         {
-            System.Type scriptType = System.Type.GetType(currentPowerup + ",Assembly-CSharp");
+            Type scriptType = Type.GetType(currentPowerup + ",Assembly-CSharp");
             Destroy(GetComponent(scriptType));
         }
         currentPowerup = newPowerup;
         powerupText.text = "Active Powerup: " + currentPowerup;
+    }
+
+    void SwapPowerups()
+    {
+
     }
 
     public void RemoveCurrentPowerup()
