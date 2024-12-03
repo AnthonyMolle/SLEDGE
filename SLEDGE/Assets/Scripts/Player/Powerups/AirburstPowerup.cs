@@ -15,16 +15,24 @@ public class AirburstPowerup : MonoBehaviour
     {
         playerController = GetComponent<PlayerController>();
         powerupManager = GetComponent<PowerupManager>();
-        powerupManager.AddPowerup(GetType().ToString());
-        playerController.onExtraHammerHit.AddListener(RemovePowerup);
+        powerupManager.AddPowerup(GetName());
+        playerController.onExtraHammerHit.AddListener(UsePowerup);
         playerController.IncreaseAdditionalBounces(additionalBounces);
     }
 
-    public void RemovePowerup()
+    public void UsePowerup()
     {
-        playerController.IncreaseAdditionalBounces(-additionalBounces);
-        playerController.onExtraHammerHit.RemoveListener(RemovePowerup);
-        powerupManager.RemoveCurrentPowerup();
-        Destroy(this);
+        if (powerupManager.IsCurrentPowerup(GetName()))
+        {
+            playerController.IncreaseAdditionalBounces(-additionalBounces);
+            playerController.onExtraHammerHit.RemoveListener(UsePowerup);
+            powerupManager.UsePowerup();
+            Destroy(this);
+        }
+    }
+
+    public string GetName()
+    {
+        return GetType().ToString();
     }
 }

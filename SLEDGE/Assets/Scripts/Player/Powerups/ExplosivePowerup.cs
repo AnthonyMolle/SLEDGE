@@ -14,16 +14,25 @@ public class ExplosivePowerup : MonoBehaviour
     {
         playerController = GetComponent<PlayerController>();
         powerupManager = GetComponent<PowerupManager>();
-        powerupManager.AddPowerup(GetType().ToString());
-        playerController.onHammerBounce.AddListener(RemovePowerup);
+        powerupManager.AddPowerup(GetName());
+        playerController.onHammerBounce.AddListener(UsePowerup);
         playerController.IncreaseInitialForce(forceAddend);
     }
 
-    public void RemovePowerup()
+    public void UsePowerup()
     {
-        playerController.IncreaseInitialForce(-forceAddend);
-        playerController.onHammerBounce.RemoveListener(RemovePowerup);
-        powerupManager.RemoveCurrentPowerup();
-        Destroy(this);
+        if (powerupManager.IsCurrentPowerup(GetName()))
+        {
+            playerController.IncreaseInitialForce(-forceAddend);
+            playerController.onHammerBounce.RemoveListener(UsePowerup);
+            //powerupManager.RemoveCurrentPowerup();
+            powerupManager.UsePowerup();
+            Destroy(this);
+        }
+    }
+
+    public string GetName()
+    {
+        return GetType().ToString();
     }
 }
