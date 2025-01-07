@@ -65,7 +65,7 @@ public class ShooterEnemy : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+ /*   void Update()
     {
         lookAtTarget.transform.position = player.transform.position;
         // transform.rotation = Quaternion.LookRotation(lookPos);
@@ -78,7 +78,7 @@ public class ShooterEnemy : MonoBehaviour
         if (angle > 130) {
             transform.rotation = Quaternion.LookRotation(targetpos - pos);
         }
-    }
+    }*/
 
     private void FixedUpdate()
     {
@@ -138,7 +138,7 @@ public class ShooterEnemy : MonoBehaviour
         return currentHealth;
     }
 
-    public void TakeDamage(int damage, Vector3 direction, float force)
+/*    public void TakeDamage(int damage, Vector3 direction, float force)
     {
         Debug.Log("danage");
         enemyState = EnemyState.STUNNED;
@@ -146,10 +146,10 @@ public class ShooterEnemy : MonoBehaviour
         currentHealth -= damage;
         if (currentHealth <= 0)
         {
-            Die();
+           //Die();
         }
     }
-
+*/
     // public void Knockback(Vector3 direction, float force)
     // {
     //     Debug.Log("hello");
@@ -160,7 +160,7 @@ public class ShooterEnemy : MonoBehaviour
     //     Debug.Log(rb.velocity);
     // }
 
-    private void Die()
+/*    private void Die()
     {
         // add sfx and vfx and such!
         GameObject.Find("ScoreManager").GetComponent<ScoreManager>().AddEnemiesKilled(1);
@@ -171,8 +171,8 @@ public class ShooterEnemy : MonoBehaviour
         DestroyProjectiles();
         EnemyManager.Instance.EnemyDeath(gameObject);
         gameObject.SetActive(false);
-    }
-
+    }*/
+/*
     public void Reset()
     {
         DestroyProjectiles();
@@ -180,8 +180,8 @@ public class ShooterEnemy : MonoBehaviour
         ragdoll = null;
         transform.position = startPosition;
         enemyState = EnemyState.IDLE;
-    }
-
+    }*/
+/*
     public void DestroyProjectiles()
     {
         foreach (GameObject p in projectiles)
@@ -189,5 +189,5 @@ public class ShooterEnemy : MonoBehaviour
             Destroy(p);
         }
     }
-
+*/
 }

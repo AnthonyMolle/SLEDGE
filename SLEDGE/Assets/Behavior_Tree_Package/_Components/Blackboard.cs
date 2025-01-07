@@ -1,53 +1,63 @@
-using System;
-using Unity.VisualScripting;
+using NaughtyAttributes;
 using UnityEngine;
 
 
-/*public class EnemyBlackboard : Blackboard, IBlackboard
-{
-    public enum EnemyStates
-    {
-        IDLE, HOSTILE
-    }
-
-    public EnemyStates currentState;
-    public bool dashAvailable;
-}
-public interface IBlackboard
-{
-
-}
-*/
 [System.Serializable]
 public class Blackboard
 {
-    public enum EnemyStates
-    {
-        IDLE, HOSTILE
-    }
+    /* Shared Variables */
+
+    [Header("Shared Variables")]
+    [HorizontalLine]
 
     public EnemyStates currentState;
+    [Header("In scene object references")]
+    public string objectAName;
+    public string objectBName;
+
+    [Header("Prefab not instanced in scene")]
+    public GameObject prefabLinkA;
+    public GameObject prefabLinkB;
+
+    /* Flyer Enemy Variables */
+
+    [Header("Flyer Variables")]
+    [HorizontalLine]
+
     public bool dashAvailable;
-    private GameObject currentRunner;
+
+    /* Shooter Enemy Variables */
+
+    [Header("Shooter Variables")]
+    [HorizontalLine]
+
+    public float detectionRadius = 20;
+
+
+    /* Enum Grave */
+
+    public enum EnemyStates
+    {
+        IDLE, HOSTILE, STUNNED
+    }
+
     public enum ObjectOptions
     {
         objectA, objectB
     }
 
-    public GameObject getCurrentRunner()
+    public enum PrefabOptions
     {
-        return currentRunner;
-    }
-    public void setCurrentRunner(GameObject newRunner)
-    {
-        currentRunner = newRunner;
+        prefabLinkA, prefabLinkB
     }
 
-    private GameObject objectA;
-    private GameObject objectB;
+    /* Helper Methods */
 
-    public string objectAName;
-    public string objectBName;
+    public void findObjectReferences()
+    {
+        objectA = GameObject.Find(objectAName);
+        objectB = GameObject.Find(objectBName);
+    }
 
     public GameObject getObject(ObjectOptions objectToGet)
     {
@@ -62,9 +72,30 @@ public class Blackboard
         }
     }
 
-    public void findObjectReferences()
+    public GameObject getPrefabLink(PrefabOptions prefabToGet)
     {
-        objectA = GameObject.Find(objectAName);
-        objectB = GameObject.Find(objectBName);
+        switch (prefabToGet)
+        {
+            case PrefabOptions.prefabLinkA:
+                return prefabLinkA;
+            case PrefabOptions.prefabLinkB:
+                return prefabLinkB;
+            default:
+                return prefabLinkA;
+        }
     }
+
+    public GameObject getCurrentRunner()
+    {
+        return currentRunner;
+    }
+    public void setCurrentRunner(GameObject newRunner)
+    {
+        currentRunner = newRunner;
+    }
+
+    /* Hidden Data */
+    private GameObject objectA;
+    private GameObject objectB;
+    private GameObject currentRunner;
 }

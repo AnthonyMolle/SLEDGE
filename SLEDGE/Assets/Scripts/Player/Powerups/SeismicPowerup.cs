@@ -29,11 +29,11 @@ public class SeismicPowerup : MonoBehaviour
         {
             if (hitObject.CompareTag("Enemy Flyer"))
             {
-                hitObject.GetComponent<FlyingEnemy>().TakeDamage(quakeDamage, Vector3.up, quakeForce);
+                hitObject.GetComponent<EnemyStatsController>().TakeDamage(quakeDamage, Vector3.up, quakeForce);
             }
             else if (hitObject.CompareTag("Enemy Shooter"))
             {
-                hitObject.GetComponent<ShooterEnemy>().TakeDamage(quakeDamage, Vector3.up, quakeForce);
+                hitObject.GetComponent<EnemyStatsController>().TakeDamage(quakeDamage, Vector3.up, quakeForce);
             }
         }
     }

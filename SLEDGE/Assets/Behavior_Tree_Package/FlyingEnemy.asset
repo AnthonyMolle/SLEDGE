@@ -15,12 +15,15 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: 8bdb0477cf50d5b48bcf015fc3ffbeeb
-  position: {x: 348.59998, y: 605.5999}
+  position: {x: 243, y: 608}
   blackboard:
     currentState: 0
-    dashAvailable: 0
     objectAName: 
     objectBName: 
+    prefabLinkA: {fileID: 0}
+    prefabLinkB: {fileID: 0}
+    dashAvailable: 0
+    detectionRadius: 20
   description: Set dashAvailable = False
   beingInspected: 0
   child: {fileID: 0}
@@ -52,9 +55,12 @@ MonoBehaviour:
   position: {x: 88.00003, y: 233.59999}
   blackboard:
     currentState: 0
-    dashAvailable: 0
     objectAName: 
     objectBName: 
+    prefabLinkA: {fileID: 0}
+    prefabLinkB: {fileID: 0}
+    dashAvailable: 0
+    detectionRadius: 20
   description: Check if Player in Attack Range
   beingInspected: 0
   child: {fileID: -2673610945444410791}
@@ -78,15 +84,46 @@ MonoBehaviour:
   position: {x: 104.39997, y: 466.79926}
   blackboard:
     currentState: 0
-    dashAvailable: 0
     objectAName: 
     objectBName: 
+    prefabLinkA: {fileID: 0}
+    prefabLinkB: {fileID: 0}
+    dashAvailable: 0
+    detectionRadius: 20
   description: 
   beingInspected: 0
   children:
   - {fileID: 4320703270194755856}
   - {fileID: 1369026680667207393}
   - {fileID: -9109743001786678120}
+--- !u!114 &-6847658318429175794
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 126f6cab960c9d34d8404a013a4315a4, type: 3}
+  m_Name: ReturnAfterTime_Service
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 47c867a6c4436c842b5148d9e9df551f
+  position: {x: 494.615, y: 480.0675}
+  blackboard:
+    currentState: 0
+    objectAName: 
+    objectBName: 
+    prefabLinkA: {fileID: 0}
+    prefabLinkB: {fileID: 0}
+    dashAvailable: 0
+    detectionRadius: 20
+  description: 
+  beingInspected: 0
+  returnSuccess: 1
+  time: 3
 --- !u!114 &-6627734279994945571
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -105,9 +142,12 @@ MonoBehaviour:
   position: {x: 301.59995, y: 348.8}
   blackboard:
     currentState: 0
-    dashAvailable: 0
     objectAName: 
     objectBName: 
+    prefabLinkA: {fileID: 0}
+    prefabLinkB: {fileID: 0}
+    dashAvailable: 0
+    detectionRadius: 20
   description: Set dashAvailable = True
   beingInspected: 0
   child: {fileID: 0}
@@ -139,9 +179,12 @@ MonoBehaviour:
   position: {x: -138.4, y: 233.6}
   blackboard:
     currentState: 0
-    dashAvailable: 0
     objectAName: 
     objectBName: 
+    prefabLinkA: {fileID: 0}
+    prefabLinkB: {fileID: 0}
+    dashAvailable: 0
+    detectionRadius: 20
   description: Set currentState = HOSTILE
   beingInspected: 1
   child: {fileID: 0}
@@ -173,9 +216,12 @@ MonoBehaviour:
   position: {x: -148.59998, y: 85.79999}
   blackboard:
     currentState: 0
-    dashAvailable: 0
     objectAName: 
     objectBName: 
+    prefabLinkA: {fileID: 0}
+    prefabLinkB: {fileID: 0}
+    dashAvailable: 0
+    detectionRadius: 20
   description: Check if Player in Alert Range
   beingInspected: 0
   child: {fileID: -6054487518090257587}
@@ -199,9 +245,12 @@ MonoBehaviour:
   position: {x: 103.99984, y: 348.8}
   blackboard:
     currentState: 0
-    dashAvailable: 0
     objectAName: 
     objectBName: 
+    prefabLinkA: {fileID: 0}
+    prefabLinkB: {fileID: 0}
+    dashAvailable: 0
+    detectionRadius: 20
   description: Check if dashAvailable = True
   beingInspected: 1
   child: {fileID: -7705707784739115694}
@@ -225,9 +274,12 @@ MonoBehaviour:
   position: {x: -24.00003, y: -260}
   blackboard:
     currentState: 0
-    dashAvailable: 0
     objectAName: 
     objectBName: 
+    prefabLinkA: {fileID: 0}
+    prefabLinkB: {fileID: 0}
+    dashAvailable: 0
+    detectionRadius: 20
   description: Repeat Forever
   beingInspected: 0
   child: {fileID: 1672742071497722815}
@@ -250,9 +302,12 @@ MonoBehaviour:
   position: {x: 167.20004, y: 100.000015}
   blackboard:
     currentState: 0
-    dashAvailable: 0
     objectAName: 
     objectBName: 
+    prefabLinkA: {fileID: 0}
+    prefabLinkB: {fileID: 0}
+    dashAvailable: 0
+    detectionRadius: 20
   description: 
   beingInspected: 1
   children:
@@ -293,11 +348,15 @@ MonoBehaviour:
   - {fileID: -9109743001786678120}
   - {fileID: 6590153299904880064}
   - {fileID: -6627734279994945571}
+  - {fileID: -6847658318429175794}
   blackboard:
     currentState: 0
-    dashAvailable: 1
     objectAName: Player.v3 Variant
     objectBName: Player.v3 Variant
+    prefabLinkA: {fileID: 0}
+    prefabLinkB: {fileID: 0}
+    dashAvailable: 1
+    detectionRadius: 20
 --- !u!114 &823518354002767614
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -316,9 +375,12 @@ MonoBehaviour:
   position: {x: 167.33334, y: -50.893333}
   blackboard:
     currentState: 0
-    dashAvailable: 0
     objectAName: 
     objectBName: 
+    prefabLinkA: {fileID: 0}
+    prefabLinkB: {fileID: 0}
+    dashAvailable: 0
+    detectionRadius: 20
   description: Check if currentState = HOSTILE
   beingInspected: 0
   child: {fileID: -1894315541405159807}
@@ -339,14 +401,17 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: f9678111fe4bd8146aa03bd4ddd74dba
-  position: {x: 179.2002, y: 606.4}
+  position: {x: 73, y: 608}
   blackboard:
     currentState: 0
-    dashAvailable: 0
     objectAName: 
     objectBName: 
+    prefabLinkA: {fileID: 0}
+    prefabLinkB: {fileID: 0}
+    dashAvailable: 0
+    detectionRadius: 20
   description: 
-  beingInspected: 1
+  beingInspected: 0
   child: {fileID: 0}
   objectTarget: 0
   speed: 25
@@ -368,9 +433,12 @@ MonoBehaviour:
   position: {x: -24, y: -159.2}
   blackboard:
     currentState: 0
-    dashAvailable: 0
     objectAName: 
     objectBName: 
+    prefabLinkA: {fileID: 0}
+    prefabLinkB: {fileID: 0}
+    dashAvailable: 0
+    detectionRadius: 20
   description: 
   beingInspected: 0
   children:
@@ -394,15 +462,18 @@ MonoBehaviour:
   position: {x: 482.99997, y: 348.8}
   blackboard:
     currentState: 0
-    dashAvailable: 0
     objectAName: 
     objectBName: 
+    prefabLinkA: {fileID: 0}
+    prefabLinkB: {fileID: 0}
+    dashAvailable: 0
+    detectionRadius: 20
   description: Go to 3 units above player
-  beingInspected: 1
-  child: {fileID: 0}
+  beingInspected: 0
+  child: {fileID: -6847658318429175794}
   objectTarget: 0
   speed: 8
-  verticalOffset: 3
+  verticalOffset: 6
   secondsBetweenStateUpdate: 0.5
 --- !u!114 &4320703270194755856
 MonoBehaviour:
@@ -419,12 +490,15 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: c265bfb06ec5a0a4a86385febb5d9db6
-  position: {x: 11.60006, y: 605.99927}
+  position: {x: -94, y: 608}
   blackboard:
     currentState: 0
-    dashAvailable: 0
     objectAName: 
     objectBName: 
+    prefabLinkA: {fileID: 0}
+    prefabLinkB: {fileID: 0}
+    dashAvailable: 0
+    detectionRadius: 20
   description: Charge for Dash
   beingInspected: 0
   child: {fileID: 7062431056821504270}
@@ -473,9 +547,12 @@ MonoBehaviour:
   position: {x: -23.799988, y: -356.40002}
   blackboard:
     currentState: 0
-    dashAvailable: 0
     objectAName: 
     objectBName: 
+    prefabLinkA: {fileID: 0}
+    prefabLinkB: {fileID: 0}
+    dashAvailable: 0
+    detectionRadius: 20
   description: 
   beingInspected: 0
   child: {fileID: -2167015080791951902}
@@ -497,9 +574,12 @@ MonoBehaviour:
   position: {x: -137, y: -40}
   blackboard:
     currentState: 0
-    dashAvailable: 0
     objectAName: 
     objectBName: 
+    prefabLinkA: {fileID: 0}
+    prefabLinkB: {fileID: 0}
+    dashAvailable: 0
+    detectionRadius: 20
   description: Check if currentState = IDLE
   beingInspected: 1
   child: {fileID: -3279453770233949116}
@@ -523,9 +603,12 @@ MonoBehaviour:
   position: {x: 348.80002, y: 212.79999}
   blackboard:
     currentState: 0
-    dashAvailable: 0
     objectAName: 
     objectBName: 
+    prefabLinkA: {fileID: 0}
+    prefabLinkB: {fileID: 0}
+    dashAvailable: 0
+    detectionRadius: 20
   description: 
   beingInspected: 0
   children:
@@ -546,12 +629,15 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: ab5efca775fc80a4c94586c13bdd1c77
-  position: {x: 11.60006, y: 742.7992}
+  position: {x: -94, y: 745}
   blackboard:
     currentState: 0
-    dashAvailable: 0
     objectAName: 
     objectBName: 
+    prefabLinkA: {fileID: 0}
+    prefabLinkB: {fileID: 0}
+    dashAvailable: 0
+    detectionRadius: 20
   description: 
-  beingInspected: 1
+  beingInspected: 0
   rotateTarget: 0

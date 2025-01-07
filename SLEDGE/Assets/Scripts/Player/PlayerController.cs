@@ -548,6 +548,8 @@ public class PlayerController : MonoBehaviour
             hammerSwipe = true;
             swipingHammer = false;
 
+            hammerSwung = false;
+
             swipeRecovering = true;
             hammerTimer = swipeRecoveryTime;
         }
@@ -966,6 +968,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+
     private void HammerBounce() // Checks if we have bounced off a surface, if so apply physics or hurt enemys
     {
         onHammerBounce.Invoke();
@@ -1015,18 +1018,22 @@ public class PlayerController : MonoBehaviour
 
                 else if (hit.transform.gameObject.tag == "Enemy Flyer")
                 {
-                    var e = hit.transform.gameObject.GetComponent<FlyingEnemy>();
+                    var e = hit.transform.gameObject.GetComponent<EnemyStatsController>();
                     Debug.Log("CALL ME ;)");
                     e.TakeDamage(1, hitDirection, swingForce * 1.5f);
                 }
                 else if (hit.transform.gameObject.tag == "Enemy Shooter")
                 {
-                    var e = hit.transform.gameObject.GetComponent<ShooterEnemy>();
+                    var e = hit.transform.gameObject.GetComponent<EnemyStatsController>();
                     e.TakeDamage(1, hitDirection, swingForce * 1.5f);
                 }
                 else if (hit.transform.gameObject.tag == "Collectible" || hit.transform.gameObject.layer == 11) // 11 == gibs layer
                 {
                     hit.transform.gameObject.GetComponent<Rigidbody>().AddForce(ray.direction * 50f, ForceMode.Impulse);
+                }
+                else if (hit.transform.gameObject.tag == "Switch")
+                {
+                    hit.transform.gameObject.GetComponent<Switch>().SwapStateActive();
                 }
             }
 
@@ -1107,10 +1114,16 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-
+    bool hammerSwung = false;
+    
     private void HammerHit() // See if we it an enemy or projectile. Respond accordingly.
     {
-        Debug.Log("YOWZA BABOWZA BABYYYY");
+
+        if (hammerSwung)
+        {
+            return;
+        }
+
         //Add parry and hit sounds in if statements
         Ray ray = gameCamera.ScreenPointToRay(Input.mousePosition);
 
@@ -1120,17 +1133,17 @@ public class PlayerController : MonoBehaviour
         {
             foreach (RaycastHit hit in hits)
             {
-                Debug.Log(hit.collider.gameObject);
+                //Debug.Log(hit.collider.gameObject);
                 if (hit.transform.gameObject.tag == "Enemy Flyer")
                 {
                     Debug.Log("CALL ME ;)");
-                    hit.transform.gameObject.GetComponent<FlyingEnemy>().TakeDamage(1, hitDirection, swingForce);
+                    hit.transform.gameObject.GetComponent<EnemyStatsController>().TakeDamage(1, hitDirection, swingForce);
                     Debug.Log(hitDirection);
                 }
                 else if (hit.transform.gameObject.tag == "Enemy Shooter")
                 {
-                    Debug.Log(hit.transform.gameObject.GetComponent<ShooterEnemy>() != null);
-                    hit.transform.gameObject.GetComponent<ShooterEnemy>().TakeDamage(1, hitDirection, swingForce);
+                    Debug.Log(hit.transform.gameObject.GetComponent<EnemyStatsController>() != null);
+                    hit.transform.gameObject.GetComponent<EnemyStatsController>().TakeDamage(1, hitDirection, swingForce);
                 }
                 else if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Projectile"))
                 {
@@ -1146,7 +1159,13 @@ public class PlayerController : MonoBehaviour
                 {
                     hit.transform.gameObject.GetComponent<Rigidbody>().AddForce(ray.direction * 50f, ForceMode.Impulse);
                 }
+                else if (hit.transform.gameObject.tag == "Switch")
+                {
+                    hit.transform.gameObject.GetComponent<Switch>().SwapStateActive();
+                }
             }
+
+            hammerSwung = true;
 
             StartCoroutine(FindObjectOfType<ScreenShaker>().Shake(0.1f, 0.01f, 0, 0, 0.1f));
         }
