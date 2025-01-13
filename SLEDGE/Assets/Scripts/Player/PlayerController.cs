@@ -574,7 +574,7 @@ public class PlayerController : MonoBehaviour
 
         //rotating camera up and down
         xRotation -= mouseInputVector.y;
-        xRotation = Mathf.Clamp(xRotation, -90f, 90f);
+        xRotation = Mathf.Clamp(xRotation, -90f, 95f);
         cameraObject.transform.localRotation = Quaternion.RotateTowards(cameraObject.transform.localRotation, Quaternion.Euler(xRotation, 0, 0), 20);
     }
 
