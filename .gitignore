@@ -97,5 +97,8 @@ SLEDGE/ProjectSettings/Packages/com.unity.probuilder/Settings.json
 fmod_editor.log
 
 # Safeguarding against issues with end-of-line stuff
-/SLEDGE/Assets/Plugins/FMOD/**/*.bundle text eol=lf
-/SLEDGE/Assets/Plugins/FMOD/**/Info.plist text eol=lf
+/SLEDGE/[Aa]ssets/Plugins/FMOD/**/*.bundle text eol=lf
+/SLEDGE/[Aa]ssets/Plugins/FMOD/**/Info.plist text eol=lf
+
+# Ignore hidden folders
+/SLEDGE/[Aa]ssets/Sledge_FMOD_Session/.**
