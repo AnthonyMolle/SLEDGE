@@ -67,6 +67,8 @@ public class Projectile : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+
+        Debug.Log("blah");
         if (other.gameObject.tag == "Player")
         {
             if (!isParried)
@@ -82,11 +84,11 @@ public class Projectile : MonoBehaviour
             other.gameObject.GetComponent<EnemyStatsController>().TakeDamage(1, new Vector3(0, 0, -1), 10f);
             GameObject.Find("ScoreManager").GetComponent<ScoreManager>().AddStyleKills(400);
         }
-        else if (other.gameObject.tag == "Enemy Shooter" && isParried && other.gameObject.GetComponent<EnemyStatsController>().GetHealth() > 0)
+        else if (other.gameObject.tag == "Enemy Shooter" && isParried && other.gameObject.GetComponent<EnemyShooterController>().GetHealth() > 0)
         {
             Destroy(gameObject);
             //FindObjectOfType<Hitstop>().Stop(hitStopDuration);
-            other.gameObject.GetComponent<EnemyStatsController>().TakeDamage(1, new Vector3(0, 0, -1), 10f);
+            other.gameObject.GetComponent<EnemyShooterController>().TakeDamage(1, new Vector3(0, 0, -1), 10f);
             GameObject.Find("ScoreManager").GetComponent<ScoreManager>().AddStyleKills(400);
         }
         else if (other.gameObject.tag == "Enemy Shooter")

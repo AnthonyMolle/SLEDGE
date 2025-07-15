@@ -74,5 +74,9 @@ public class EnemyManager : MonoBehaviour
         {
             enemy.GetComponent<EnemyStatsController>().ResetEnemy();
         }
+        if (enemy.GetComponent<EnemyBaseController>() != null)
+        {
+            enemy.GetComponent<EnemyBaseController>().ResetEnemy();
+        }
     }
 }
