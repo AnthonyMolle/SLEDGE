@@ -412,8 +412,11 @@ MonoBehaviour:
   VirtualChannelSettings: []
   RealChannelSettings: []
   Plugins: []
-  MasterBanks: []
-  Banks: []
+  MasterBanks:
+  - Common
+  Banks:
+  - Enemy_Flying
+  - Enemy_Shooter
   BanksToLoad: []
   LiveUpdatePort: 9264
   EnableMemoryTracking: 0
