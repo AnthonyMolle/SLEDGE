@@ -9,12 +9,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 420231148312675728}
-  - component: {fileID: 5123134821888624108}
   - component: {fileID: 7685459734728546445}
   - component: {fileID: 727326944254216018}
   - component: {fileID: -3228560789529373364}
   - component: {fileID: 5016654448432381162}
-  - component: {fileID: -6202218961822089470}
+  - component: {fileID: 5619275513568287829}
   m_Layer: 8
   m_Name: Flying Enemy
   m_TagString: Enemy Flyer
@@ -38,19 +37,6 @@ Transform:
   - {fileID: 8132869708891877512}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5123134821888624108
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2178161172080928957}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bad69fb78f9f60b4b8f9b43bac7949e0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  tree: {fileID: 11400000, guid: 8ce23b72267ff9a48a02424d915f804c, type: 2}
 --- !u!135 &7685459734728546445
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -215,9 +201,9 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1.8432589, z: 0.7470367}
+  m_Size: {x: 1.21, y: 2.26, z: 0.9}
   m_Center: {x: 0, y: 0.025260925, z: -0.34267807}
---- !u!114 &-6202218961822089470
+--- !u!114 &5619275513568287829
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -226,13 +212,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 2178161172080928957}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 790ef62da8ec87a43a0aec0813e3bca5, type: 3}
+  m_Script: {fileID: 11500000, guid: cc4c7c157e09b174f8096c8806a50e7b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bulletSource: {fileID: 0}
-  lookAtTarget: {fileID: 0}
   maxHealth: 1
-  deathRagdoll: {fileID: 7952471370293192832, guid: 07f97a8490628ec44b7c608ca70e047b,
+  movementSpeed: 10
+  detectionRadius: 20
+  deathRagdoll: {fileID: 955758079016734691, guid: 90ce17191d6c3c448b016193dc559e81,
     type: 3}
 --- !u!1001 &8599474592378361699
 PrefabInstance:

@@ -1018,7 +1018,7 @@ public class PlayerController : MonoBehaviour
 
                 else if (hit.transform.gameObject.tag == "Enemy Flyer")
                 {
-                    var e = hit.transform.gameObject.GetComponent<EnemyStatsController>();
+                    var e = hit.transform.gameObject.GetComponent<EnemyFlyerController>();
                     e.TakeDamage(1, hitDirection, swingForce * 1.5f);
                 }
                 else if (hit.transform.gameObject.tag == "Enemy Shooter")
@@ -1136,7 +1136,7 @@ public class PlayerController : MonoBehaviour
                 if (hit.transform.gameObject.tag == "Enemy Flyer")
                 {
                     Debug.Log("CALL ME ;)");
-                    hit.transform.gameObject.GetComponent<EnemyStatsController>().TakeDamage(1, hitDirection, swingForce);
+                    hit.transform.gameObject.GetComponent<EnemyFlyerController>().TakeDamage(1, hitDirection, swingForce);
                     Debug.Log(hitDirection);
                 }
                 else if (hit.transform.gameObject.tag == "Enemy Shooter")

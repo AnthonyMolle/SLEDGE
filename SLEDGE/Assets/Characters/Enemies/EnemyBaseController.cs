@@ -1,3 +1,4 @@
+using Autodesk.Fbx;
 using NaughtyAttributes;
 using System.Collections;
 using System.Collections.Generic;
@@ -13,7 +14,7 @@ public class EnemyBaseController : MonoBehaviour
     [SerializeField] protected int maxHealth = 1;
     protected int currentHealth = 1;
     
-    [SerializeField] float movementSpeed;
+    [SerializeField] protected float movementSpeed;
     
     [SerializeField] protected float detectionRadius;
 
@@ -23,8 +24,8 @@ public class EnemyBaseController : MonoBehaviour
     [SerializeField] GameObject deathRagdoll;
     GameObject ragdollInstance;
 
-    Vector3 spawnPosition;
-    Rigidbody rb;
+    protected Vector3 spawnPosition;
+    protected Rigidbody rb;
 
 
 
@@ -94,11 +95,11 @@ public class EnemyBaseController : MonoBehaviour
         if (currentHealth <= 0)
         {
             enemyState = EnemyState.DEAD;
-            Die(direction * force);
+            Die();
         }
     }
 
-    protected virtual void Die(Vector3 launchDirection)
+    protected virtual void Die()
     {
         // Score tracking
         GameObject.Find("ScoreManager").GetComponent<ScoreManager>().AddEnemiesKilled(1);
@@ -106,7 +107,6 @@ public class EnemyBaseController : MonoBehaviour
         // Creating a ragdoll
         if (deathRagdoll)
         {
-            Debug.Log(launchDirection);
             ragdollInstance = Instantiate(deathRagdoll, transform.position, transform.rotation);
             ragdollInstance.GetComponent<Rigidbody>().AddForce(rb.velocity, ForceMode.Impulse);
         }
