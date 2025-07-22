@@ -43,8 +43,14 @@ public class EnemyShooterController : EnemyBaseController
     [SerializeField] AudioClip shootSound;
     AudioSource audioSource;
 
-    bool charging = false;
-    float chargetimer = 0.0f;
+    private enum CombatState
+    {
+        COOLDOWN,
+        AIMING
+    }
+    
+    CombatState combatState = CombatState.COOLDOWN;
+    float aimTimer = 0.0f;
 
     // Start is called before the first frame update
     protected override void Start()
@@ -60,11 +66,11 @@ public class EnemyShooterController : EnemyBaseController
     void Update()
     {
 
-        if (charging)
+        if (combatState == CombatState.AIMING)
         {
-            chargetimer += Time.deltaTime;
+            aimTimer += Time.deltaTime;
 
-            float brightness = Mathf.Lerp(0.1f, 2.0f, chargetimer / 2.0f);
+            float brightness = Mathf.Lerp(0.1f, 2.0f, aimTimer / 2.0f);
             gunLight.GetComponent<Light>().intensity = brightness;
         }
         else
@@ -89,10 +95,10 @@ public class EnemyShooterController : EnemyBaseController
             case EnemyState.HOSTILE:
                 
                 LookAtTarget(player);
-                if (charging && chargetimer >= 2.0f)
+                if (combatState == CombatState.AIMING && aimTimer >= 2.0f)
                 {
-                    charging = false;
-                    chargetimer = 0.0f;
+                    combatState = CombatState.COOLDOWN;
+                    aimTimer = 0.0f;
                     
                     audioSource.Stop();
                     gunLight.GetComponent<Light>().intensity = 0.0f;
@@ -105,7 +111,7 @@ public class EnemyShooterController : EnemyBaseController
                     cooldown = 0.0f;
                     audioSource.time = 0.0f;
                     audioSource.Play();
-                    charging = true;
+                    combatState = CombatState.AIMING;
                 } 
                 else if (!PlayerinLOS())
                 {
