@@ -27,10 +27,6 @@ public class EnemyBaseController : MonoBehaviour
     protected Vector3 spawnPosition;
     protected Rigidbody rb;
 
-
-
-
-
     protected GameObject player;
 
     RaycastHit hit;
@@ -52,18 +48,6 @@ public class EnemyBaseController : MonoBehaviour
 
         spawnPosition = transform.position;
         currentHealth = maxHealth;
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    private void FixedUpdate()
-    {
-        
     }
 
     protected bool PlayerinLOS()

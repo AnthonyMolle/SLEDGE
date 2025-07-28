@@ -11,30 +11,30 @@ public class EnemyShooterController : EnemyBaseController
     [Header("Shooter Stats")]
     [HorizontalLine]
 
-    // Projectile type
     [SerializeField] GameObject projectileClass;
-    
-    // Handling projectile instances
+
+    /* Handling projectile instances */
     GameObject projectile;
     List<GameObject> projectiles = new List<GameObject>();
     
-    // Cooldown between shots
+    /* Cooldown between shots */
     [SerializeField] float shootCooldown = 3.0f;
     float cooldown;
 
-    // Projectile stats
+    [SerializeField] float aimDuration = 2.0f;
+    float aimTimer = 0.0f;
+
+    /* Projectile stats */
     [SerializeField] float projectileLifetime;
     [SerializeField] float projectileSpeed;
 
     [Header("Positional Constants")]
     [HorizontalLine]
 
-    // Used for rotating to face player
+    /* Used for rotating to face player */
     [SerializeField] GameObject lookAtTarget;
 
-    // Where to fire projectiles from
     [SerializeField] Transform gunPosition;
-
     [SerializeField] GameObject gunLight;
 
     [Header("Audio")]
@@ -50,12 +50,12 @@ public class EnemyShooterController : EnemyBaseController
     }
     
     CombatState combatState = CombatState.COOLDOWN;
-    float aimTimer = 0.0f;
 
     // Start is called before the first frame update
     protected override void Start()
     {
         base.Start();
+        
         cooldown = shootCooldown;
         audioSource = GetComponent<AudioSource>();
 
@@ -65,7 +65,6 @@ public class EnemyShooterController : EnemyBaseController
     // Update is called once per frame
     void Update()
     {
-
         if (combatState == CombatState.AIMING)
         {
             aimTimer += Time.deltaTime;
@@ -81,7 +80,6 @@ public class EnemyShooterController : EnemyBaseController
 
     private void FixedUpdate()
     {
-        // Enemy Behaviors
         switch (enemyState)
         {
             case EnemyState.IDLE: 
@@ -95,28 +93,41 @@ public class EnemyShooterController : EnemyBaseController
             case EnemyState.HOSTILE:
                 
                 LookAtTarget(player);
-                if (combatState == CombatState.AIMING && aimTimer >= 2.0f)
-                {
-                    combatState = CombatState.COOLDOWN;
-                    aimTimer = 0.0f;
-                    
-                    audioSource.Stop();
-                    gunLight.GetComponent<Light>().intensity = 0.0f;
-                    
-                    FireProjectile(player.transform.position);
-                }
                 
-                if (PlayerinLOS() && cooldown >= shootCooldown)
+                switch(combatState)
                 {
-                    cooldown = 0.0f;
-                    audioSource.time = 0.0f;
-                    audioSource.Play();
-                    combatState = CombatState.AIMING;
-                } 
-                else if (!PlayerinLOS())
-                {
-                    enemyState = EnemyState.IDLE;
+                    case CombatState.AIMING:
+                        
+                        if (aimTimer >= aimDuration)
+                        {
+                            aimTimer = 0.0f;
+                            combatState = CombatState.COOLDOWN;
+
+                            audioSource.Stop();
+                            gunLight.GetComponent<Light>().intensity = 0.0f;
+
+                            FireProjectile(player.transform.position);
+                        }
+
+                        break;
+
+                    case CombatState.COOLDOWN:
+
+                        if (PlayerinLOS() && cooldown >= shootCooldown)
+                        {
+                            cooldown = 0.0f;
+                            audioSource.time = 0.0f;
+                            audioSource.Play();
+                            combatState = CombatState.AIMING;
+                        }
+                        else if (!PlayerinLOS())
+                        {
+                            enemyState = EnemyState.IDLE;
+                        }
+                        
+                        break;
                 }
+  
                 break;
             
             case EnemyState.DEAD:
