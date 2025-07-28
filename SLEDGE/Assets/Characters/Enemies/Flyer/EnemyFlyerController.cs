@@ -1,3 +1,4 @@
+using NaughtyAttributes;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Rendering;
@@ -6,7 +7,40 @@ using static UnityEditor.FilePathAttribute;
 
 public class EnemyFlyerController : EnemyBaseController
 {
-    
+
+    [Header("Shooter Stats")]
+    [HorizontalLine]
+
+    [SerializeField] float dashCooldown = 3;        // How long the flyer will take before dashing again
+    [SerializeField] float dashRadius = 10;         // Distance from the player the flyer will begin dashing at
+    [SerializeField] float dashSpeed = 30;          // Speed of the flyer while dashing
+
+    [SerializeField] float aimDuration = 1.0f;      // Duration flyer charges attack
+    [SerializeField] float attackDuration = 1.5f;   // Duration flyer dashes
+    [SerializeField] float recoverDuration = 2.0f;  // Duration flyer recovers after dashing
+
+    [Header("VFX/SFX")]
+    [HorizontalLine]
+
+    [SerializeField] GameObject eyeLight;
+    [SerializeField] AudioClip idleSound;
+    [SerializeField] AudioClip telegraphSound;      // Sound the flyer makes while charging an attack
+    AudioSource audioSource;
+
+    /* Timers for tracking cooldowns and action durations */
+    float cooldown;
+    float aimTimer;
+    float attackTimer;
+    float recoverTimer;
+
+    /* Pathing variables */
+    int currentPathIndex = -1;
+    Vector3 currentPathPoint;
+    bool UsingPath = false;
+
+    Vector3 offset = new Vector3(0, 7, 0);  // Offset of the player that the enemy moves toward
+
+    Vector3 recoveryLocation;               // Where the flyer moves to when recovering from a dash
     
     private enum CombatState
     {
@@ -19,57 +53,53 @@ public class EnemyFlyerController : EnemyBaseController
 
     CombatState combatState = CombatState.IDLE;
 
-    float dashCooldown = 3;
-    float cooldown;
-
-    float dashRadius = 10;
-    float dashSpeed = 30;
-
-    float aimTimer;
-    float attackTimer;
-    float recoverTimer;
-
-    Vector3 recoveryLocation;
-
-    int currentPathIndex = -1;
-    Vector3 currentPathPoint;
-    bool UsingPath = false;
-
-    Vector3 offset = new Vector3(0, 7, 0);
-    Vector3 currentKnownTargetPos;
-
-
     // Start is called before the first frame update
     protected override void Start()
     {
         base.Start();
-        cooldown = dashCooldown;
+        
+        cooldown = dashCooldown; // Since we don't want the enemy to spawn with its cooldowns up
+        audioSource = GetComponent<AudioSource>();
+
+        eyeLight.GetComponent<Light>().intensity = 0.0f;
     }
 
     // Update is called once per frame
-    void Update()
+    void Update() // NOTE: This could get moved to FixedUpdate in the future so there isn't two update functions,
+                  // put this here cause I wasn't sure how deltatime interacted with fixedupdate but it seems to be fine to use there - Dom
     {
         // Update Timers
         switch (combatState)
         {
             case CombatState.AIMING:
+                
                 aimTimer += Time.deltaTime;
+                
+                float brightness = Mathf.Lerp(0.1f, 2.0f, aimTimer / aimDuration);    
+                eyeLight.GetComponent<Light>().intensity = brightness; // Light telegraph based on how close to attacking the enemy is            
+                
                 break;
+            
             case CombatState.ATTACKING:
-                attackTimer += Time.deltaTime;
+                
+                attackTimer += Time.deltaTime;             
                 break;
+            
             case CombatState.RECOVERING:
+                
                 recoverTimer += Time.deltaTime;
                 break;
+            
             default:
+                
                 cooldown += Time.deltaTime;
                 break;
+        
         }
     }
 
     private void FixedUpdate()
     {
-        //Debug.Log("Combat state: " + combatState);
         switch (enemyState)
         {
             case EnemyState.IDLE:
@@ -78,14 +108,12 @@ public class EnemyFlyerController : EnemyBaseController
                 if (PlayerinLOS())
                 {
                     enemyState = EnemyState.HOSTILE;
-                    break;
                 }
-
-                if (IsTargetDirectlyReachable(spawnPosition))
+                else if (IsTargetDirectlyReachable(spawnPosition))  // If we can't find player, try to go back to spawn (We can't path there because our pathing logic only works for the player)
                 {
                     MoveTowardsLocation(spawnPosition);
                 }
-                else
+                else                                                // If we can't get back to spawn, stay in place (Not ideal, should set up pathing back to spawn eventually)
                 {
                     rb.velocity = new Vector3(0, 0, 0);
                 }
@@ -94,94 +122,73 @@ public class EnemyFlyerController : EnemyBaseController
 
             case EnemyState.HOSTILE:
 
-                switch (combatState)
+                switch (combatState)                                // Combat State tracks all of the flyer specific behaviors when engaged with the player
                 {
-                    // ENEMY IS AWARE OF PLAYER PRESENCE, BUT HASN'T DONE ANYTHING
-                    case CombatState.IDLE:
+                    case CombatState.IDLE:                          // IDLE: Enemy is aware of players presence, but hasn't done anything yet
 
                         if (Vector3.Distance(transform.position, player.transform.position) <= dashRadius)
                         {
-                            rb.velocity = new Vector3(0, 0, 0);
-                            RotateTowardsTarget(player);
-
-                            if (cooldown >= dashCooldown)
-                            {
-                                aimTimer = 0;
-                                combatState = CombatState.AIMING;
-                            }
+                            TryStartingAttack();
                         }
                         else
                         {
-                            // Begin moving toward player
                             combatState = CombatState.HUNTING;
-                            Debug.Log("HUNTING...");
                             MoveTowardTarget(player.transform.position);
                         }
+
                         break;
 
-                    // ENEMY IS MOVING INTO ATTACK RANGE
-                    case CombatState.HUNTING:
+                    case CombatState.HUNTING:                       // HUNTING: Enemy is moving into attack range
 
                         if (Vector3.Distance(transform.position, player.transform.position) <= dashRadius)
                         {
-                            rb.velocity = new Vector3(0, 0, 0);
-                            RotateTowardsTarget(player);
-
-                            if (cooldown >= dashCooldown)
-                            {
-                                aimTimer = 0;
-                                combatState = CombatState.AIMING;
-                            }
-
-                            Debug.Log("In range!");
+                            TryStartingAttack();
                         }
                         else
                         {
-                            // Continue moving toward player
                             MoveTowardTarget(player.transform.position);
                         }
 
                         break;
 
-                    // ENEMY IS PREPARING TO DASH
-                    case CombatState.AIMING:
+                    case CombatState.AIMING:                        // AIMING: Enemy is preparing to attack
 
                         RotateTowardsTarget(player);
 
-                        if (aimTimer >= 1.0f)
-                        {
-                            Debug.Log("attack!");
+                        if (aimTimer >= aimDuration)
+                        {                           
                             attackTimer = 0;
+                            
+                            audioSource.clip = idleSound;
+                            audioSource.Play();
+
                             combatState = CombatState.ATTACKING;
                             DashForward();
                         }
-                        // Update aim timer, and if we have aimed long enough, begin dash
+
                         break;
 
-                    // ENEMY IS ATTACKING
-                    case CombatState.ATTACKING:
+                    case CombatState.ATTACKING:                     // ATTACKING: Enemy is attacking
 
-                        // If we reached maximum time dashing, return to idle combat state
-                        if (attackTimer >= 1.5)
+                        if (attackTimer >= attackDuration)
                         {
-                            cooldown = 0;
                             rb.velocity = new Vector3(0, 0, 0);
-                            recoveryLocation = transform.position + new Vector3(0, 8, 0);
-                            combatState = CombatState.RECOVERING;
+
+                            BeginAttackRecovery();
                         }
 
                         break;
-                    case CombatState.RECOVERING:
+                    case CombatState.RECOVERING:                    // RECOVERING: Enemy is recovering from their attack
 
-                        if (recoverTimer >= 2.0)
+                        if (recoverTimer >= recoverDuration)
                         {
                             recoverTimer = 0;
-                            rb.velocity = new Vector3(0, 0, 0);
-                            combatState = CombatState.IDLE;
-                            break;
-                        }
 
-                        if (Vector3.Distance(transform.position, recoveryLocation) >= 1)
+                            rb.velocity = new Vector3(0, 0, 0);
+
+                            combatState = CombatState.IDLE;
+                        }
+                        else if (Vector3.Distance(transform.position, recoveryLocation) >= 1)
                         {
                             MoveTowardsLocation(recoveryLocation);
                         }
@@ -196,7 +203,6 @@ public class EnemyFlyerController : EnemyBaseController
                 
                 if (!PlayerinLOS())
                 {
-                    Debug.Log("not in LOS");
                     enemyState = EnemyState.IDLE;
                 }
 
@@ -212,6 +218,46 @@ public class EnemyFlyerController : EnemyBaseController
         }
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if (combatState == CombatState.ATTACKING)
+        {
+            rb.AddForce(transform.forward * -10, ForceMode.Impulse);
+
+            BeginAttackRecovery();
+
+            if (other.gameObject.CompareTag("Player"))
+            {
+                other.gameObject.GetComponent<PlayerController>().TakeDamage(1);
+                TakeDamage(1, transform.forward * -1, 10f);
+            }
+        }
+    }
+    void TryStartingAttack() // Track player and if we are off cooldown, begin aiming our attack
+    {
+        rb.velocity = new Vector3(0, 0, 0);
+        RotateTowardsTarget(player);
+
+        if (cooldown >= dashCooldown)
+        {
+            audioSource.clip = telegraphSound;
+            audioSource.Play();
+
+            aimTimer = 0;
+            combatState = CombatState.AIMING;
+        }
+    }
+    void BeginAttackRecovery()
+    {
+        cooldown = 0;
+        recoveryLocation = transform.position + new Vector3(0, 8, 0);
+
+        eyeLight.GetComponent<Light>().intensity = 0.0f;
+        combatState = CombatState.RECOVERING;
+    }
+
+    #region Movement/Pathing
+    
     void RotateTowardsTarget(GameObject target)
     {
         var targetRotation = Quaternion.LookRotation((target.transform.position) - transform.position);
@@ -223,29 +269,7 @@ public class EnemyFlyerController : EnemyBaseController
         rb.velocity = transform.forward * dashSpeed;
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (combatState == CombatState.ATTACKING)
-        {
-            Debug.Log("hit");
-            cooldown = 0;
-            rb.AddForce(transform.forward * -10, ForceMode.Impulse);
-            recoveryLocation = transform.position + new Vector3(0, 8, 0);
-            combatState = CombatState.RECOVERING;
-
-            if (other.gameObject.CompareTag("Player"))
-            {
-                Debug.Log("KILLL!!!!!");
-                other.gameObject.GetComponent<PlayerController>().TakeDamage(1);
-                TakeDamage(1, transform.forward * -1, 10f);
-            }
-        }
-    }
-
-    #region Movement/Pathing
-
-    // Enemy moves toward player, either directly or by finding a path if there is an obstruction between them
-    void MoveTowardTarget(Vector3 target)
+    void MoveTowardTarget(Vector3 target)   // Enemy moves toward target, either directly or by finding a path if there is an obstruction between them (pathing only works for tracking player)
     {
         if (IsTargetDirectlyReachable(target))
         {
@@ -266,8 +290,7 @@ public class EnemyFlyerController : EnemyBaseController
         }
     }
 
-    // Sets up a path from the enemy to the player to navigate
-    void SetUpPathing()
+    void SetUpPathing()                     // Sets up a path from the enemy to the player to navigate
     {
         currentPathIndex = PlayerTracker.getPathIndex(transform.position);
         currentPathPoint = PlayerTracker.getPointFromIndex(currentPathIndex);
@@ -275,8 +298,7 @@ public class EnemyFlyerController : EnemyBaseController
         UsingPath = true;
     }
 
-    // Moves the enemy along a path toward the player
-    void followPathToTarget()
+    void followPathToTarget()               // Moves the enemy along a path toward the player
     {
         MoveTowardsLocation(currentPathPoint);
 
@@ -295,8 +317,7 @@ public class EnemyFlyerController : EnemyBaseController
         }
     }
 
-    // Moves and rotate the enemy toward a specific location
-    void MoveTowardsLocation(Vector3 location)
+    void MoveTowardsLocation(Vector3 location) // Moves and rotate the enemy toward a specific location
     {
         Vector3 targetDirection = (location - transform.position).normalized;
 
@@ -306,10 +327,9 @@ public class EnemyFlyerController : EnemyBaseController
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 5f * Time.deltaTime);
     }
 
-    // Check if enemy can reach player without pathing, by checking if all four corners of the enemy can successfully raycast the player
-    // 
-    // Note: This can definitely just use a boxcast, which would be more readable and reliable, so we should implement that in the future (not an immediate issue, gets the job done)
-    private bool IsTargetDirectlyReachable(Vector3 target)
+    private bool IsTargetDirectlyReachable(Vector3 target)  // Check if enemy can reach player without pathing, by checking if all four corners of the enemy can successfully raycast the player
+                                                            // Note: This can definitely just use a boxcast, which would be more readable and reliable,
+                                                            // so we should implement that in the future (not an immediate issue, gets the job done) - Dom
     {
         RaycastHit hit;
 
@@ -330,10 +350,6 @@ public class EnemyFlyerController : EnemyBaseController
                 {
                     return false;
                 }
-                /*if (hit.transform != target)
-                {
-                    return false;
-                }*/
             }
         }
 
