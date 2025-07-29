@@ -440,12 +440,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 1
   movementSpeed: 5
-  detectionRadius: 25
+  detectionRadius: 35
   deathRagdoll: {fileID: 1113277637217113217, guid: 35feb300b3d700d48a39ef642c72823a,
     type: 3}
   projectileClass: {fileID: 4543102887346889771, guid: ba9cb7ed3bc5e6046b77d646edda3e24,
     type: 3}
   shootCooldown: 3
+  aimDuration: 2
   projectileLifetime: 10
   projectileSpeed: 40
   lookAtTarget: {fileID: 3277620228275904649}

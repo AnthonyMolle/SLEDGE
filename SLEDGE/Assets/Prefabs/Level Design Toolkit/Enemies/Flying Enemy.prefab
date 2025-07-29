@@ -217,12 +217,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 1
   movementSpeed: 10
-  detectionRadius: 20
+  detectionRadius: 30
   deathRagdoll: {fileID: 955758079016734691, guid: 90ce17191d6c3c448b016193dc559e81,
     type: 3}
   dashCooldown: 3
-  dashRadius: 10
+  dashRadius: 15
   dashSpeed: 30
+  aimDuration: 1
+  attackDuration: 1.5
+  recoverDuration: 2
   eyeLight: {fileID: 6462007928466903554}
   idleSound: {fileID: 8300000, guid: 17428045f3b33f9419a8e485252efe35, type: 3}
   telegraphSound: {fileID: 8300000, guid: 5d3ab2ecb1a0e5e4984aec45db948bc2, type: 3}
