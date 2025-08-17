@@ -5,8 +5,10 @@ using UnityEngine.SceneManagement;
 
 public class EndPlatform : MonoBehaviour
 {
-    public string NextScene = "Jonah";
+    // Scene we move to after the level complete screen
+    public string NextScene = "MainMenu";
 
+    // Screen that shows the player score/time
     public GameObject LevelCompleteScreen;
 
     // Start is called before the first frame update
@@ -21,6 +23,7 @@ public class EndPlatform : MonoBehaviour
  
     }
 
+    // As soon as we hit and trigger the platform, we stop the timer, but delay a few seconds to let the player launch through the air before showing the level complete screen
     public void triggerPlatform()
     {
         GameObject.Find("SpeedRunTimer").GetComponent<Speed_Run_Timer>().timer_running = false;
@@ -34,6 +37,7 @@ public class EndPlatform : MonoBehaviour
         beginEndSequence();
     }
 
+    // Pause the game world by setting time scale to 0, then start the animation for the level complete screen
     public void beginEndSequence()
     {
         Time.timeScale = 0;
@@ -45,6 +49,7 @@ public class EndPlatform : MonoBehaviour
         }
     }
 
+    // Called after we exit the level complete screen
     public void GoToScene()
     {
         Cursor.lockState = CursorLockMode.None;

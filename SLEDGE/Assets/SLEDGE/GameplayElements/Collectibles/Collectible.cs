@@ -4,12 +4,11 @@ using UnityEngine;
 
 public class Collectible : MonoBehaviour
 {
-    //ScoreManager ScoreManager;
     
     // Start is called before the first frame update
     void Start()
     {
-        //ScoreManager = GameObject.Find("ScoreManager").GetComponent<ScoreManager>();
+
     }
 
     // Update is called once per frame
