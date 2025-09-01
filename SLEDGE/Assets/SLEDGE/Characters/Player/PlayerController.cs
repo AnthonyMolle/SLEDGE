@@ -84,11 +84,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float airAccelerationRate = 10f;
     [SerializeField] float airMaxSpeed = 100f;
 
-    [SerializeField] float maxLaunchedSpeed = 100f;
+    //[SerializeField] float maxLaunchedSpeed = 100f;
     [SerializeField] float maxFallingSpeed = 100f;
-
-    [SerializeField] float naturalAdditionalFallingSpeed = 4f; //natural rate our player will fall after the apex of their falling height.
-    [SerializeField] float extraGravityYThreshold = 5f;
+    [Tooltip("natural rate our player will fall after the apex of their falling height.")]
+    [SerializeField] float naturalAdditionalFallingSpeed = 4f;
+    
     #endregion
 
     #region Jump
@@ -139,9 +139,16 @@ public class PlayerController : MonoBehaviour
 
     #region Hammer
     [Header("Hammer")]
+    [Tooltip("used for the bounce force of the first bounce")]
     [SerializeField] float initialBounceForce = 15f;
-    [SerializeField] float maxInitialBounceYForce = 15f;
+
+    [Tooltip("used for the Y bounce force of the first bounce")]
+    [SerializeField] float initialBounceForceY = 15f;
     [SerializeField] float bounceForce = 10f;
+    [Tooltip("How High we go when bouncing. set higher for faster acceleration, use with BounceGravity ")]
+    [SerializeField] float bounceForceY = 10f;
+    [Tooltip("Limits how high the player can bounce regardless of acceleration, increase when increasing bounce force and vice versa")]
+    [SerializeField] float bounceGravity = 5f;
     [SerializeField] float bouncyUpForce = 10f;
     [SerializeField] float bouncyForce = 25f;
     [SerializeField] float hitLength = 5f;
@@ -313,6 +320,7 @@ public class PlayerController : MonoBehaviour
 
     void Update() // Function Called once per frame
     {
+        print(isLaunched);
         // Self Explanatory Functions
         HandleInput();
         HandleHammer();
@@ -720,6 +728,7 @@ public class PlayerController : MonoBehaviour
                 }
             }
             isGrounded = true;
+            isLaunched = false;
             rb.useGravity = false;
             anim.SetBool("grounded", true);
             movementPlane = hit.normal;
@@ -771,14 +780,19 @@ public class PlayerController : MonoBehaviour
 
         flatVelocity = Vector3.ProjectOnPlane(rb.velocity, movementPlane);
         #endregion
-        if (!isLaunched)
+        if (!isLaunched) // if we are not launched
         {
-            if (isGrounded)
+            if (isGrounded) // if were on the ground and not launched
             {
-                if (isLaunched)
+                //Debug.Log("is grounded: " + isGrounded);
+                #region Jump
+                if (jumpPressed && isGrounded && !hasJumped || jumpPressed && !isGrounded && hasCoyoteTime == true && !hasJumped)
                 {
-                    isLaunched = false;
+                    srcJumpPoint = rb.transform.position.y;
+                    Jump();
                 }
+                #endregion
+
                 // Debug.Log(flatVelocity);
                 // Debug.Log("Velo: " + (flatVelocity + transform.forward));
                 // Debug.Log("Velo Magnitude: " + flatVelocity.magnitude);
@@ -853,40 +867,32 @@ public class PlayerController : MonoBehaviour
             }
 
             #region Air movement
-            else // if we're in the air
+            else // if we're in the air but we arent launched from a hammer bounce
             {
-                if (rb.velocity.y > -maxFallingSpeed)
+                if (hammerCharged && !isGrounded && hangTime > 1) // if the hammer is charged in the air for awhile pull us downward
                 {
-                    if(rb.velocity.y <= extraGravityYThreshold)// if we are at the apex of our air height
-                    {
-                        rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
-                    }
-                    
-                    if (hammerCharged && !isGrounded && hangTime > 1)
-                    {
-                        rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
-                    }
+                    rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
                 }
-            else
-            {
-                rb.velocity = new Vector3(rb.velocity.x, -maxFallingSpeed, rb.velocity.z);
-            }
+                /*
+                if (rb.velocity.y > 0) // if were are rising in the air from hammer bounce
+                {
+                    rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0)); // add a force to pull us downward
+                }
+                */
+                else if (rb.velocity.y > -1 && rb.velocity.y < 1) // if we are at the apex of our air height
+                {
+                    rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
+                }
+                else // if were falling
+                {
+                    rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
+                    //rb.velocity = new Vector3(rb.velocity.x, -maxFallingSpeed, rb.velocity.z);
+                }                
 
                 if (movementInputVector.magnitude > 0.001)
                 {
                     rb.AddForce(movementInputVector * airAccelerationRate);
-                    rb.velocity = new Vector3 (Vector3.ClampMagnitude(flatVelocity, airMaxSpeed).x, rb.velocity.y, Vector3.ClampMagnitude(flatVelocity, airMaxSpeed).z);
-                }
-                else
-                {
-                    // if (flatVelocity.magnitude > 0.01)
-                    // {
-                    //     rb.AddForce(-flatVelocity * airDecelerationRate);
-                    // }
-                    // else
-                    // {
-                    //     rb.velocity = new Vector3(0, rb.velocity.y, 0); //Vector3.ProjectOnPlane(new Vector3(0, rb.velocity.y, 0), movementPlane);
-                    // }
+                    rb.velocity = new Vector3(Vector3.ClampMagnitude(flatVelocity, airMaxSpeed).x, rb.velocity.y, Vector3.ClampMagnitude(flatVelocity, airMaxSpeed).z);
                 }
             }
 
@@ -894,46 +900,31 @@ public class PlayerController : MonoBehaviour
 
             #endregion
 
-            //Debug.Log("is grounded: " + isGrounded);
-            #region Jump
-            if (jumpPressed && isGrounded && !hasJumped || jumpPressed && !isGrounded && hasCoyoteTime == true && !hasJumped)
-            {
-                srcJumpPoint = rb.transform.position.y;
-                Jump();
-            }
-            else if(jumpPressed)
-            {
-                //Debug.Log("NO JUMP");
-            }
-            #endregion
-        }
 
-        else if (isGrounded && rb.velocity.y <= 0 || flatVelocity.magnitude <= airMaxSpeed) // can get grounded immediately after launching, should be a slight buffer to when "isgrounded" is activated again
-        {
-            isLaunched = false;
         }
-        else
+        else // if we are launched
         {
-            if (rb.velocity.y > -maxFallingSpeed)
+            if (hammerCharged && !isGrounded && hangTime > 1) // if the hammer is charged in the air for awhile pull us downward
             {
-                if(rb.velocity.y <= extraGravityYThreshold)// if we are at the apex of our air height
-                {
-                    rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
-                }
-                
-                if (hammerCharged && !isGrounded && hangTime > 1)
-                {
-                    rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
-                }
+                rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
             }
-            else
+
+            if (rb.velocity.y > 0) // if were are rising in the air from hammer bounce
             {
-                rb.velocity = new Vector3(rb.velocity.x, -maxFallingSpeed, rb.velocity.z);
+                rb.AddForce(new Vector3(0, -bounceGravity, 0)); // add a force to pull us downward
+            }
+            else if (rb.velocity.y > -1 && rb.velocity.y < 1) // if we are at the apex of our air height
+            {
+                rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
+            }
+            else // if were falling
+            {
+                //rb.velocity = new Vector3(rb.velocity.x, -maxFallingSpeed, rb.velocity.z);
+                rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
             }
 
             if (movementInputVector.magnitude > 0.001)
             {
-
                 if ((rb.velocity + movementInputVector).magnitude > rb.velocity.magnitude - 0.5)
                 {
                     Vector3 rotation = Vector3.RotateTowards(rb.velocity, Quaternion.AngleAxis(Vector3.SignedAngle(flatVelocity, movementInputVector, transform.up), transform.up) * rb.velocity, launchedRotationSpeed/100, 0);
@@ -1061,30 +1052,30 @@ public class PlayerController : MonoBehaviour
                 rb.AddForce((-ray.direction).normalized * bouncyForce/* + normal * 10*/, ForceMode.Impulse);
                 rb.AddForce(transform.up * bouncyUpForce, ForceMode.Impulse);
             }
-            else if (!isLaunched)
+
+            if (isLaunched == false)
             {
-                isLaunched = true;
-                if (!isSliding)
+                /*
+                if (!isSliding) // if were not sliding
                 {
-                    rb.velocity = rb.velocity / 8;
+                    rb.velocity = rb.velocity / 8; // why 8 ?
                 }
-                Vector3 force = (-ray.direction).normalized * initialBounceForce;
+                */
+                Vector3 force = (-ray.direction).normalized;
+                force = new Vector3(force.x * initialBounceForce, force.y * initialBounceForceY, force.z * initialBounceForce);
+                rb.AddForce(force, ForceMode.Impulse);
 
-
-                if (force.y > maxInitialBounceYForce)
-                {
-                    rb.AddForce(new Vector3(force.x, maxInitialBounceYForce, force.z), ForceMode.Impulse);
-                }
-                else
-                {
-                    rb.AddForce(force, ForceMode.Impulse);
-                }
             }
             else
             {
-                rb.AddForce((-ray.direction).normalized * bounceForce/* + normal * 10*/, ForceMode.Impulse);
+                Vector3 force = (-ray.direction).normalized;
+                force = new Vector3(force.x * bounceForce, force.y * bounceForceY, force.z * bounceForce);
+                rb.AddForce(force, ForceMode.Impulse);
             }
-            
+
+            isLaunched = true;
+            hammerBounced = true;
+
             Instantiate(HammerSound, gameObject.transform.position, Quaternion.identity);
             StartCoroutine(FindObjectOfType<ScreenShaker>().Shake(0.25f, 0.01f, 0, 0, 0.25f));
             
@@ -1105,7 +1096,7 @@ public class PlayerController : MonoBehaviour
                 LoseExplosive();
             }
 
-            hammerBounced = true;
+            
         }
         else 
         {
@@ -1357,7 +1348,7 @@ public class PlayerController : MonoBehaviour
         Ray ray = gameCamera.ScreenPointToRay(Input.mousePosition);
         rb.AddForce((-ray.direction).normalized * force, ForceMode.Impulse);
     }
-
+    
     public void IncreaseInitialForce(float amount)
     {
         initialBounceForce += amount;
