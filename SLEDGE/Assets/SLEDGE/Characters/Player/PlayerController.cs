@@ -157,6 +157,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] int maxAdditionalBounces = 0;
     int additionalBounces;
 
+    [SerializeField] GameObject impactPoint;
+
     [SerializeField] float chargeTime = 1f;
     [SerializeField] float hitTime = 1f;
     [SerializeField] float recoveryTime = 1f;
@@ -970,6 +972,7 @@ public class PlayerController : MonoBehaviour
         }
 
         Ray ray = gameCamera.ScreenPointToRay(Input.mousePosition);
+        //Ray ray = gameCamera.ScreenPointToRay(impactPoint.transform.position);
         bool bouncy = false;
 
         RaycastHit[] hits = Physics.SphereCastAll(ray, hitRadius, hitLength, bouncableLayers, QueryTriggerInteraction.Collide);
@@ -1034,7 +1037,9 @@ public class PlayerController : MonoBehaviour
 
             rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
 
-            
+            //Vector3 launchDirection = (-ray.direction).normalized;
+            Vector3 launchDirection = (-(impactPoint.transform.position - transform.position)).normalized;
+
             if (currentPowerup == Powerup.Airburst)
             {
                 ResetPowerup();
@@ -1043,13 +1048,13 @@ public class PlayerController : MonoBehaviour
             if (currentPowerup == Powerup.Explosive)
             {
                 isLaunched = true;
-                rb.AddForce((-ray.direction).normalized * explosiveForce, ForceMode.Impulse);
+                rb.AddForce(launchDirection * explosiveForce, ForceMode.Impulse);
             }
             else if (bouncy)
             {
                 isLaunched = true;
                 rb.velocity = Vector3.zero;
-                rb.AddForce((-ray.direction).normalized * bouncyForce/* + normal * 10*/, ForceMode.Impulse);
+                rb.AddForce(launchDirection * bouncyForce/* + normal * 10*/, ForceMode.Impulse);
                 rb.AddForce(transform.up * bouncyUpForce, ForceMode.Impulse);
             }
 
@@ -1061,14 +1066,14 @@ public class PlayerController : MonoBehaviour
                     rb.velocity = rb.velocity / 8; // why 8 ?
                 }
                 */
-                Vector3 force = (-ray.direction).normalized;
+                Vector3 force = launchDirection;
                 force = new Vector3(force.x * initialBounceForce, force.y * initialBounceForceY, force.z * initialBounceForce);
                 rb.AddForce(force, ForceMode.Impulse);
 
             }
             else
             {
-                Vector3 force = (-ray.direction).normalized;
+                Vector3 force = launchDirection;
                 force = new Vector3(force.x * bounceForce, force.y * bounceForceY, force.z * bounceForce);
                 rb.AddForce(force, ForceMode.Impulse);
             }
