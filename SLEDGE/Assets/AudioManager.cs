@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
+using FMODUnity;
 
 public class AudioManager : MonoBehaviour
 {
@@ -20,7 +21,7 @@ public class AudioManager : MonoBehaviour
     public AudioClip walk5;
     public AudioClip land;
 
-    int previousChoice = 1;
+    public EventReference PlayerFootstepTile;
     /*
     private void Start()
     {
@@ -45,24 +46,24 @@ public class AudioManager : MonoBehaviour
 
     public void Update()
     {
-        Scene currentScene = SceneManager.GetActiveScene();
-        string sceneName = currentScene.name;
-        if(sceneName == "Jonah" && prevScene != "Jonah")
-        {
-            musicSource.clip = mainMenu;
-            musicSource.Play();
-            prevScene = "Jonah";
-        }
-        else if(sceneName == "Anthony Enemy Implementation" || sceneName == "Easy Level ART" || sceneName == "Mid Level ART" || sceneName == "EvanLevel3")
-        {
-            if(musicSource.clip != background)
-            {
-                musicSource.Stop();
-                musicSource.clip = background;
-                musicSource.Play();
-                prevScene = "";
-            }
-        }
+        // Scene currentScene = SceneManager.GetActiveScene();
+        // string sceneName = currentScene.name;
+        // if(sceneName == "Jonah" && prevScene != "Jonah")
+        // {
+        //     musicSource.clip = mainMenu;
+        //     musicSource.Play();
+        //     prevScene = "Jonah";
+        // }
+        // else if(sceneName == "Anthony Enemy Implementation" || sceneName == "Easy Level ART" || sceneName == "Mid Level ART" || sceneName == "EvanLevel3")
+        // {
+        //     if(musicSource.clip != background)
+        //     {
+        //         musicSource.Stop();
+        //         musicSource.clip = background;
+        //         musicSource.Play();
+        //         prevScene = "";
+        //     }
+        // }
     }
 
 
@@ -71,34 +72,13 @@ public class AudioManager : MonoBehaviour
         SFXSource.PlayOneShot(clip);
     }
 
-    public void PlayWalk()
+    public void PlayOneShotSFX2D(EventReference sfxEvent)
     {
-            
-        int walkChoice = UnityEngine.Random.Range(1,6); 
-        if(walkChoice == 1 && previousChoice != 1)
-        {
-            SFXSource.PlayOneShot(walk);
-        }
-        else if(walkChoice == 2 && previousChoice != 2)
-        {
-            SFXSource.PlayOneShot(walk2);
-        }
-        else if(walkChoice == 3 && previousChoice != 3)
-        {
-            SFXSource.PlayOneShot(walk3);
-        }
-        else if(walkChoice == 4 && previousChoice != 4)
-        {
-            SFXSource.PlayOneShot(walk4);
-        }
-        else if(walkChoice == 5 && previousChoice != 5)
-        {
-            SFXSource.PlayOneShot(walk5);
-        }
-        else
-        {
-            PlayWalk();
-        }                      
-        previousChoice = walkChoice;
+        RuntimeManager.PlayOneShot(sfxEvent, transform.position);
+    }
+
+    public void PlayOneShotSFX3D(EventReference sfxEvent, Vector3 position)
+    {
+        RuntimeManager.PlayOneShot(sfxEvent, position);
     }
 }

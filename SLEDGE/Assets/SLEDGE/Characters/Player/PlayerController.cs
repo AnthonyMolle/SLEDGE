@@ -792,7 +792,7 @@ public class PlayerController : MonoBehaviour
                         walkTime += 1;
                         if (walkTime%15 == 0)
                         {
-                            audioManager.PlayWalk();
+                            audioManager.PlayOneShotSFX2D(audioManager.PlayerFootstepTile);
                             walkTime = 0;
                         }
                         // add some anims for changing direction, or move arms in direction of movement? (kaelen idea)
