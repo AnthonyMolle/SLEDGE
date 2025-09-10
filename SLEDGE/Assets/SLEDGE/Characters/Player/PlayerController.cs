@@ -83,6 +83,7 @@ public class PlayerController : MonoBehaviour
     [Header("Air Movement")]
     [SerializeField] float airAccelerationRate = 10f;
     [SerializeField] float airMaxSpeed = 100f;
+    [SerializeField] float airMaxHammerSpeed = 100f;
 
     //[SerializeField] float maxLaunchedSpeed = 100f;
     [SerializeField] float maxFallingSpeed = 100f;
@@ -584,7 +585,7 @@ public class PlayerController : MonoBehaviour
 
         //rotating camera up and down
         xRotation -= mouseInputVector.y;
-        xRotation = Mathf.Clamp(xRotation, -90f, 95f);
+        xRotation = Mathf.Clamp(xRotation, -90f, 90f); // Clamp the rotation to prevent flipping
         cameraObject.transform.localRotation = Quaternion.RotateTowards(cameraObject.transform.localRotation, Quaternion.Euler(xRotation, 0, 0), 20);
     }
 
@@ -906,18 +907,22 @@ public class PlayerController : MonoBehaviour
         }
         else // if we are launched
         {
+            // clamp the max speed we can actually go, may need to be changed for powerups and such
+            rb.velocity = new Vector3(Vector3.ClampMagnitude(rb.velocity, airMaxHammerSpeed).x, rb.velocity.y, Vector3.ClampMagnitude(rb.velocity, airMaxHammerSpeed).z);
+
             if (hammerCharged && !isGrounded && hangTime > 1) // if the hammer is charged in the air for awhile pull us downward
             {
-                rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
+                rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0)); // drag us down as long as its charged
             }
 
             if (rb.velocity.y > 0) // if were are rising in the air from hammer bounce
             {
                 rb.AddForce(new Vector3(0, -bounceGravity, 0)); // add a force to pull us downward
+                //rb.AddForce(new Vector3(-bounceGravity, -bounceGravity, -bounceGravity)); // add a force to pull us downward
             }
             else if (rb.velocity.y > -1 && rb.velocity.y < 1) // if we are at the apex of our air height
             {
-                rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0));
+                rb.AddForce(new Vector3(0, -naturalAdditionalFallingSpeed, 0)); // apply a force for a moment to pull us down
             }
             else // if were falling
             {
@@ -1058,28 +1063,26 @@ public class PlayerController : MonoBehaviour
                 rb.AddForce(transform.up * bouncyUpForce, ForceMode.Impulse);
             }
 
-            if (isLaunched == false)
+            Vector3 force = launchDirection; // the direction we will be applying force to the player
+            if (isLaunched == false) // if we havent launched yet
             {
-                /*
-                if (!isSliding) // if were not sliding
-                {
-                    rb.velocity = rb.velocity / 8; // why 8 ?
-                }
-                */
-                Vector3 force = launchDirection;
+                // add magnitude to our force direction
                 force = new Vector3(force.x * initialBounceForce, force.y * initialBounceForceY, force.z * initialBounceForce);
-                rb.AddForce(force, ForceMode.Impulse);
 
+                // stop factoring in movement for first bounce by counteracting our WASD movement forces
+                rb.AddForce(new Vector3(-rb.velocity.x, -rb.velocity.y, -rb.velocity.z), ForceMode.Impulse); 
             }
-            else
+            else // if we have been launched by a previous bounce
             {
-                Vector3 force = launchDirection;
+                // add magnitude to our force direction
                 force = new Vector3(force.x * bounceForce, force.y * bounceForceY, force.z * bounceForce);
-                rb.AddForce(force, ForceMode.Impulse);
             }
 
-            isLaunched = true;
-            hammerBounced = true;
+
+            rb.AddForce(force, ForceMode.Impulse); // apply the force vector to the player *make them bounce*
+
+            isLaunched = true; // set is launched to true
+            hammerBounced = true; // let the engine know we bounced
 
             Instantiate(HammerSound, gameObject.transform.position, Quaternion.identity);
             StartCoroutine(FindObjectOfType<ScreenShaker>().Shake(0.25f, 0.01f, 0, 0, 0.25f));
