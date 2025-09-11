@@ -12,6 +12,7 @@ public class IntroTarget : MonoBehaviour
     {
         gameObject.GetComponentInChildren<MeshRenderer>().enabled = false;
 
+        // As soon as the level begins, the player starts the level by facing and being launched toward our level target
         player = GameObject.FindGameObjectWithTag("Player");
         player.transform.LookAt(gameObject.transform);
         player.GetComponent<Rigidbody>().AddForce(player.transform.forward * 25f, ForceMode.Impulse);

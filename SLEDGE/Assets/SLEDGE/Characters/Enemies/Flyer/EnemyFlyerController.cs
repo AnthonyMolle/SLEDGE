@@ -109,7 +109,7 @@ public class EnemyFlyerController : EnemyBaseController
                 {
                     enemyState = EnemyState.HOSTILE;
                 }
-                else if (IsTargetDirectlyReachable(spawnPosition))  // If we can't find player, try to go back to spawn (We can't path there because our pathing logic only works for the player)
+                else if (Vector3.Distance(transform.position, spawnPosition) > 2 && IsTargetDirectlyReachable(spawnPosition))  // If we can't find player, try to go back to spawn (We can't path there because our pathing logic only works for the player)
                 {
                     MoveTowardsLocation(spawnPosition);
                 }
