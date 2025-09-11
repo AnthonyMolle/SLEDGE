@@ -82,6 +82,7 @@ public class PlayerController : MonoBehaviour
     #region Air Movement
     [Header("Air Movement")]
     [SerializeField] float airAccelerationRate = 10f;
+    [SerializeField] float airBrakingAccelerationRate = 10f;
     [SerializeField] float airMaxSpeed = 100f;
     [SerializeField] float airMaxHammerSpeed = 100f;
 
@@ -323,7 +324,7 @@ public class PlayerController : MonoBehaviour
 
     void Update() // Function Called once per frame
     {
-        print(isLaunched);
+        //print(isLaunched);
         // Self Explanatory Functions
         HandleInput();
         HandleHammer();
@@ -932,15 +933,18 @@ public class PlayerController : MonoBehaviour
 
             if (movementInputVector.magnitude > 0.001)
             {
-                if ((rb.velocity + movementInputVector).magnitude > rb.velocity.magnitude - 0.5)
+                Vector3 horizontalVelocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
+                float dotProduct = Vector3.Dot(movementInputVector, horizontalVelocity.normalized);
+                if (dotProduct < 0)
                 {
-                    Vector3 rotation = Vector3.RotateTowards(rb.velocity, Quaternion.AngleAxis(Vector3.SignedAngle(flatVelocity, movementInputVector, transform.up), transform.up) * rb.velocity, launchedRotationSpeed/100, 0);
-                    rb.velocity = new Vector3(rotation.x, rb.velocity.y, rotation.z);
+                    //Debug.Log("Against");
+                    rb.AddForce(movementInputVector * airBrakingAccelerationRate);
                 }
                 else
                 {
-                    rb.AddForce(movementInputVector * airAccelerationRate);
-                    //rb.velocity = new Vector3 (Vector3.ClampMagnitude(flatVelocity, airMaxSpeed).x, rb.velocity.y, Vector3.ClampMagnitude(flatVelocity, airMaxSpeed).z);
+                    //Debug.Log("Toward");
+                    float adjustedForce = Mathf.Lerp(airAccelerationRate, 0, (horizontalVelocity.magnitude / airMaxSpeed));
+                    rb.AddForce(movementInputVector * adjustedForce);
                 }
             }
         }

@@ -1816,6 +1816,11 @@ PrefabInstance:
       propertyPath: bouncableLayers.m_Bits
       value: 131511
       objectReference: {fileID: 0}
+    - target: {fileID: 6314295682490010892, guid: 5dd5b681c132b964993064fc2d3cde0b,
+        type: 3}
+      propertyPath: airBrakingAccelerationRate
+      value: 15
+      objectReference: {fileID: 0}
     - target: {fileID: 6469425393073572772, guid: 5dd5b681c132b964993064fc2d3cde0b,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -2025,7 +2030,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6569979679882466707}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5077e02968564d34eba2af94a55cc986, type: 3}
   m_Name: 
