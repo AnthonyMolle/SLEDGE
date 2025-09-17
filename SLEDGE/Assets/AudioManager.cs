@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine.SceneManagement;
 using FMODUnity;
 
-public class AudioManager : MonoBehaviour
+public class AudioManager : Singleton<AudioManager>
 {
     [Header("-------------- Audio Source --------------")]
     [SerializeField] AudioSource musicSource;
@@ -21,7 +21,14 @@ public class AudioManager : MonoBehaviour
     public AudioClip walk5;
     public AudioClip land;
 
+    [Header("Player SFX")]
     public EventReference PlayerFootstepTile;
+
+    [Header("Gameplay SFX")]
+    public EventReference CheckpointRespawn;
+    public EventReference PowerupPickUp;
+    public EventReference SwitchActivate;
+
     /*
     private void Start()
     {

@@ -43,6 +43,7 @@ public class Checkpoint : MonoBehaviour
         savedStyle = ScoreManager.Instance.GetStyleKills();
         
         activated = true;
+        // audioManager.Instance.PlayOneShotSFX2D(audioManager.Instance.);
 
         // Grab the current status of all enemies in the level from the level manager (dead or alive)
         if (EnemyManager.Instance != null)

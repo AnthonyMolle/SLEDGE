@@ -268,6 +268,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6928388517203845999}
   - component: {fileID: 6649132521988855358}
+  - component: {fileID: 982891445776177076}
   m_Layer: 0
   m_Name: Audio Manager
   m_TagString: Audio
@@ -323,3 +324,35 @@ MonoBehaviour:
       Data3: 1242293679
       Data4: -303058265
     Path: event:/SFX/Player/Footsteps/Footsteps_Tile
+  ActivateSwitch:
+    Guid:
+      Data1: -365647813
+      Data2: 1208278908
+      Data3: 1938284673
+      Data4: 1507941073
+    Path: event:/Gameplay/Switch_Activate
+  PickUpPowerup:
+    Guid:
+      Data1: 99449952
+      Data2: 1253204893
+      Data3: 2134752670
+      Data4: -1263644127
+    Path: event:/Gameplay/Powerup_Pickup
+--- !u!114 &982891445776177076
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5322300855568584954}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9468c5f457ace64f8d4df6d642b107f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LoadEvent: 1
+  UnloadEvent: 8
+  Banks:
+  - Common SFX
+  CollisionTag: 
+  PreloadSamples: 0
