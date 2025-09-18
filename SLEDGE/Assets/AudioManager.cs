@@ -5,24 +5,11 @@ using FMODUnity;
 
 public class AudioManager : Singleton<AudioManager>
 {
-    [Header("-------------- Audio Source --------------")]
-    [SerializeField] AudioSource musicSource;
-    [SerializeField] AudioSource SFXSource;
-
-    [Header("-------------- Audio Clip --------------")]
-    public AudioClip background;
-    public AudioClip mainMenu;
-    public AudioClip hit;
-    public AudioClip whiff;
-    public AudioClip walk;
-    public AudioClip walk2;
-    public AudioClip walk3;
-    public AudioClip walk4;
-    public AudioClip walk5;
-    public AudioClip land;
-
     [Header("Player SFX")]
     public EventReference PlayerFootstepTile;
+    public EventReference PlayerHammerHit;
+    public EventReference PlayerHammerWhiff;
+    public EventReference PlayerLandOnGround;
 
     [Header("Gameplay SFX")]
     public EventReference CheckpointRespawn;
@@ -71,12 +58,6 @@ public class AudioManager : Singleton<AudioManager>
         //         prevScene = "";
         //     }
         // }
-    }
-
-
-    public void PlaySFX(AudioClip clip)
-    {
-        SFXSource.PlayOneShot(clip);
     }
 
     public void PlayOneShotSFX2D(EventReference sfxEvent)

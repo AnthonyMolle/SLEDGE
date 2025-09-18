@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 4859889032228372382}
   - component: {fileID: 1019745514386352058}
   - component: {fileID: 6348940824257044118}
+  - component: {fileID: 891296128533981497}
   m_Layer: 0
   m_Name: Checkpoint
   m_TagString: Untagged
@@ -70,8 +71,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1052bea2257d2514d95c6739c07d1dbd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemies: []
-  spawnPointIndex: 0
+  activated: 0
+  sfxEmitter: {fileID: 891296128533981497}
 --- !u!65 &1019745514386352058
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -114,6 +115,37 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.6, y: 3.6, z: 0.6}
   m_Center: {x: 0, y: 1.75, z: 2.65}
+--- !u!114 &891296128533981497
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1322949766112458477}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: 925131440
+      Data2: 1218272175
+      Data3: -468292982
+      Data4: -2136681725
+    Path: event:/Gameplay/Checkpoint_Emitter
+  Event: 
+  EventPlayTrigger: 0
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
 --- !u!1 &8482777413254865389
 GameObject:
   m_ObjectHideFlags: 0

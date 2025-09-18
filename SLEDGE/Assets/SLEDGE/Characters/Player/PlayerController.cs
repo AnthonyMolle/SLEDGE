@@ -524,7 +524,7 @@ public class PlayerController : MonoBehaviour
             //Debug.Log("hammer hitting ended");
             hammerHit = true;
             hittingHammer = false;
-            //audioManager.PlaySFX(audioManager.hit);
+            audioManager.PlayOneShotSFX2D(audioManager.PlayerHammerHit);
             //anim.Play("HammerHit"); 
             anim.Play("Slam");
             //slamHitbox.DeactivateCollider();
@@ -713,7 +713,7 @@ public class PlayerController : MonoBehaviour
 
             if (isGrounded == false && hangTime >= .25)
             {
-                audioManager.PlaySFX(audioManager.land);
+                audioManager.PlayOneShotSFX2D(audioManager.PlayerLandOnGround);
                 StartCoroutine(FindObjectOfType<ScreenShaker>().Shake(0.1f, 0.01f, 0, 0, 0.1f));
                 if (!hammerCharged) {
                     anim.Play("Land");
@@ -1109,7 +1109,8 @@ public class PlayerController : MonoBehaviour
         }
         else 
         {
-            //audioManager.PlaySFX(audioManager.whiff);
+            // TODO: This SFX isn't triggering correctly (sounds like multiple whiffs/hits, so I'm blocking this out for now)
+            // audioManager.PlayOneShotSFX2D(audioManager.PlayerHammerWhiff);
         }
     }
 

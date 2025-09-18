@@ -7,6 +7,7 @@ public class Checkpoint : MonoBehaviour
 {
 
     public bool activated = false;
+    public FMODUnity.StudioEventEmitter sfxEmitter;
     
     PlayerController playerController;
     // Saved level status (enemies killed, power-ups held)
@@ -19,7 +20,7 @@ public class Checkpoint : MonoBehaviour
 
     private void Start()
     {
-
+        sfxEmitter.Play();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -37,11 +38,11 @@ public class Checkpoint : MonoBehaviour
     {
         playerController.UpdateSpawn(this);
         playerController.ResetHealth();
-        
+
         savedPowerup = playerController.GetCurrentPowerup();
         savedKills = ScoreManager.Instance.GetEnemiesKilled();
         savedStyle = ScoreManager.Instance.GetStyleKills();
-        
+
         activated = true;
         // audioManager.Instance.PlayOneShotSFX2D(audioManager.Instance.);
 
@@ -57,6 +58,7 @@ public class Checkpoint : MonoBehaviour
 
         // Visual update to indicate the checkpoint has been used
         gameObject.transform.GetChild(1).transform.GetChild(1).GetComponent<MeshRenderer>().enabled = false;
+        sfxEmitter.Stop();
     }
 
     // Allow checkpoint to be used again and update visuals accordingly
