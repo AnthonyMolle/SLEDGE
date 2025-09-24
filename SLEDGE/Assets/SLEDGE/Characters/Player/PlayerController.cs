@@ -1049,6 +1049,14 @@ public class PlayerController : MonoBehaviour
             //Vector3 launchDirection = (-ray.direction).normalized;
             Vector3 launchDirection = (-(impactPoint.transform.position - transform.position)).normalized;
 
+            // Momentum Resetting - If the player is slamming in the opposite direction they're moving, we add some extra force so their velocity isn't just canceled out
+            Vector3 horizontalVelocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
+            float dotProduct = Vector3.Dot(launchDirection, horizontalVelocity.normalized);
+            if (dotProduct < 0)
+            {
+                rb.AddForce(-horizontalVelocity, ForceMode.VelocityChange);
+            }
+
             if (currentPowerup == Powerup.Airburst)
             {
                 ResetPowerup();
