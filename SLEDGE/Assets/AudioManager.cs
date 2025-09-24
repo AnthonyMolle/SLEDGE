@@ -38,7 +38,7 @@ public class AudioManager : Singleton<AudioManager>
     public static string sceneName;
     public static string prevScene = "";
 
-    public void Update()
+    private void Update()
     {
         // Scene currentScene = SceneManager.GetActiveScene();
         // string sceneName = currentScene.name;
