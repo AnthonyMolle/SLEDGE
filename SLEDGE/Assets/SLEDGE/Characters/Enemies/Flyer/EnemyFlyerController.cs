@@ -260,17 +260,20 @@ public class EnemyFlyerController : EnemyBaseController
     
     void RotateTowardsTarget(GameObject target)
     {
+        /*
         var targetRotation = Quaternion.LookRotation((target.transform.position) - transform.position);
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 5f * Time.deltaTime);
+        */
     }
 
     void DashForward()
     {
-        rb.velocity = transform.forward * dashSpeed;
+        //rb.velocity = transform.forward * dashSpeed;
     }
 
     void MoveTowardTarget(Vector3 target)   // Enemy moves toward target, either directly or by finding a path if there is an obstruction between them (pathing only works for tracking player)
     {
+        /*
         if (IsTargetDirectlyReachable(target))
         {
             // If we were pathing
@@ -288,6 +291,7 @@ public class EnemyFlyerController : EnemyBaseController
             if (UsingPath == false) SetUpPathing();
             followPathToTarget();
         }
+        */
     }
 
     void SetUpPathing()                     // Sets up a path from the enemy to the player to navigate
@@ -319,12 +323,14 @@ public class EnemyFlyerController : EnemyBaseController
 
     void MoveTowardsLocation(Vector3 location) // Moves and rotate the enemy toward a specific location
     {
+        /*
         Vector3 targetDirection = (location - transform.position).normalized;
 
         rb.velocity = targetDirection * movementSpeed;
 
         var targetRotation = Quaternion.LookRotation((location) - transform.position);
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 5f * Time.deltaTime);
+        */
     }
 
     private bool IsTargetDirectlyReachable(Vector3 target)  // Check if enemy can reach player without pathing, by checking if all four corners of the enemy can successfully raycast the player

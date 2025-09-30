@@ -96,10 +96,8 @@ public class EnemyBaseController : MonoBehaviour
         }
 
         // Enemy manager marks this enemy as dead
-        EnemyManager.Instance.EnemyDeath(gameObject);
-
-        gameObject.SetActive(false);
-
+        EnemyManager.Instance.EnemyDeath(gameObject.transform.root.gameObject);
+        gameObject.transform.root.gameObject.SetActive(false);
     }
 
     public virtual void ResetEnemy()
