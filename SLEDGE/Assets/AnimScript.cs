@@ -24,6 +24,17 @@ public class AnimScript : MonoBehaviour
     [Tooltip("Force required to break character joints. Higher values = stronger joints. May need to retype to set if it isn't setting")]
     public float breakForce = 1000f;
     private float lastBreakForce = 1000f;
+    [Tooltip("Mass scale for all rigidbodies in the ragdoll")]
+    public float massScale = 1f;
+    private float lastMassScale = 1f;
+    [Tooltip("Drag and angular drag for the rigidbodies in the ragdoll")]
+    public float drag = 0.5f;
+    public float angularDrag = 0.05f;
+    private float lastDrag = 0.5f;
+    private float lastAngularDrag = 0.05f;
+    [Tooltip("The projection distance -- aka how far each joint can stretch before snapping back")]
+    public float projectionDistance = 0.1f;
+    private float lastProjectionDistance = 0.1f;
     private Transform spawnTransform;
     
     // Store original transforms for reset
@@ -49,6 +60,8 @@ public class AnimScript : MonoBehaviour
     [Tooltip("Break force for the specific body part being hit (0 = use general break force)")]
     public float bodypartBreakForce;
     private float lastbodypartBreakForce;
+    [Tooltip("Automatically disconnect joint before applying force. Good for high forces; doesn't apply force to other body parts so might feel less natural")]
+    public bool disconnectAutomatically = false;
     
     [Tooltip("Amount of force to apply when hitting the body part")]
     public float hitForce = 10f;
@@ -86,6 +99,39 @@ public class AnimScript : MonoBehaviour
         {
             lastBreakForce = breakForce;
             SetBreakForce(breakForce);
+        }
+        if (lastDrag != drag)
+        {
+            lastDrag = drag;
+            foreach (Rigidbody rb in bodyparts)
+            {
+                rb.drag = drag;
+            }
+        }
+        if (lastAngularDrag != angularDrag)
+        {
+            lastAngularDrag = angularDrag;
+            foreach (Rigidbody rb in bodyparts)
+            {
+                rb.angularDrag = angularDrag;
+            }
+        }
+        if (lastProjectionDistance != projectionDistance)
+        {
+            lastProjectionDistance = projectionDistance;
+            foreach (Rigidbody rb in bodyparts)
+            {
+                CharacterJoint cj = rb.GetComponent<CharacterJoint>();
+                if (cj != null)
+                {
+                    cj.projectionDistance = projectionDistance;
+                }
+            }
+        }
+        if (lastMassScale != massScale)
+        {
+            lastMassScale = massScale;
+            SetMassScale(massScale);
         }
         if (lastbodypartBreakForce != bodypartBreakForce && bodypartToHit != null)
         {
@@ -142,7 +188,12 @@ public class AnimScript : MonoBehaviour
             go.SetActive(false);
         }
 
-        if (applyHitForce && bodypartToHit != null)
+        CharacterJoint cj = bodypartToHit.GetComponent<CharacterJoint>();
+        if (disconnectAutomatically && cj != null)
+        {
+            Destroy(cj);
+        }
+            if (applyHitForce && bodypartToHit != null)
         {
             if (randomHitDirection > 0f)
             {
@@ -165,6 +216,7 @@ public class AnimScript : MonoBehaviour
             hitForce = previousHitForce;
             hitDirection = previousHitDirection;
             bodypartToHit.AddForce(appliedForce, ForceMode.Impulse);
+            bodypartToHit.AddTorque(appliedForce, ForceMode.Impulse);
         }
     }
 
@@ -172,21 +224,43 @@ public class AnimScript : MonoBehaviour
     {
         foreach (Rigidbody rb in bodyparts)
         {
-            rb.gameObject.GetComponent<CharacterJoint>().breakForce = force;
-            rb.gameObject.GetComponent<CharacterJoint>().breakTorque = force;
+            CharacterJoint cj = rb.gameObject.GetComponent<CharacterJoint>();
+            if (cj != null)
+            {
+                cj.breakForce = force;
+                cj.breakTorque = force;
+            }
         }
         if (bodypartBreakForce != 0f)
         {
             force = bodypartBreakForce;
-            bodypartToHit.gameObject.GetComponent<CharacterJoint>().breakForce = force;
-            bodypartToHit.gameObject.GetComponent<CharacterJoint>().breakTorque = force;
+            CharacterJoint cj = bodypartToHit.gameObject.GetComponent<CharacterJoint>();
+            if (cj != null)
+            {
+                cj.breakForce = force;
+                cj.breakTorque = force;
+            }
+        }
+    }
+    
+    public void SetMassScale(float scale)
+    {
+        foreach (Rigidbody rb in bodyparts)
+        {
+            rb.mass = scale;
+            CharacterJoint cj = rb.GetComponent<CharacterJoint>();
+            if (cj != null)
+            {
+                cj.massScale = scale;
+                cj.connectedMassScale = scale;
+            }
         }
     }
 
     public void Revive()
     {
         Debug.Log("revived");
-        
+
         // Reset physics first
         for (int i = 0; i < bodyparts.Count; i++)
         {
@@ -194,7 +268,7 @@ public class AnimScript : MonoBehaviour
             rb.velocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
             rb.isKinematic = true;
-            
+
             // Restore original position and rotation
             if (i < originalTransforms.Count)
             {
@@ -206,7 +280,7 @@ public class AnimScript : MonoBehaviour
         {
             go.SetActive(true);
         }
-        
+
         anim.enabled = true;
     }
 }
