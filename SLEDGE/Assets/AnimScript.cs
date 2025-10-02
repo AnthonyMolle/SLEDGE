@@ -35,6 +35,10 @@ public class AnimScript : MonoBehaviour
     [Tooltip("The projection distance -- aka how far each joint can stretch before snapping back")]
     public float projectionDistance = 0.1f;
     private float lastProjectionDistance = 0.1f;
+
+    [Tooltip("The spring damper for the joints (higher values = stiffer joints)")]
+    public float springDamper = 0f;
+    public float springForce = 0f;
     private Transform spawnTransform;
     
     // Store original transforms for reset
@@ -95,45 +99,29 @@ public class AnimScript : MonoBehaviour
         {
             Revive();
         }
-        if (lastBreakForce != breakForce)
+        // break force
+        SetBreakForce(breakForce);
+        // projection distance
+        foreach (Rigidbody rb in bodyparts)
         {
-            lastBreakForce = breakForce;
-            SetBreakForce(breakForce);
-        }
-        if (lastDrag != drag)
-        {
-            lastDrag = drag;
-            foreach (Rigidbody rb in bodyparts)
+            rb.angularDrag = angularDrag;
+            rb.drag = drag;
+            CharacterJoint cj = rb.GetComponent<CharacterJoint>();
+            if (cj != null)
             {
-                rb.drag = drag;
+                cj.projectionDistance = projectionDistance;
+                // change spring damper for character joint
+                cj.swingLimitSpring = new SoftJointLimitSpring { spring = springForce, damper = springDamper };
+                cj.twistLimitSpring = new SoftJointLimitSpring { spring = springForce, damper = springDamper };
             }
         }
-        if (lastAngularDrag != angularDrag)
-        {
-            lastAngularDrag = angularDrag;
-            foreach (Rigidbody rb in bodyparts)
-            {
-                rb.angularDrag = angularDrag;
-            }
-        }
-        if (lastProjectionDistance != projectionDistance)
-        {
-            lastProjectionDistance = projectionDistance;
-            foreach (Rigidbody rb in bodyparts)
-            {
-                CharacterJoint cj = rb.GetComponent<CharacterJoint>();
-                if (cj != null)
-                {
-                    cj.projectionDistance = projectionDistance;
-                }
-            }
-        }
-        if (lastMassScale != massScale)
-        {
-            lastMassScale = massScale;
-            SetMassScale(massScale);
-        }
-        if (lastbodypartBreakForce != bodypartBreakForce && bodypartToHit != null)
+        // mass scale
+        SetMassScale(massScale);
+
+        // spring damper
+
+        // bodypart break force
+        if (bodypartToHit != null)
         {
             lastbodypartBreakForce = bodypartBreakForce;
             float force = bodypartBreakForce;
