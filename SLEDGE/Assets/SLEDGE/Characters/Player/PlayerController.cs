@@ -201,8 +201,6 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] float parriedProjectileSpeed = 1f;
     [SerializeField] float parriedProjectileLifetime = 10f;
-
-    AudioManager audioManager;
     [SerializeField] GameObject HammerSound;
 
     private void Awake()
@@ -277,9 +275,6 @@ public class PlayerController : MonoBehaviour
 
     void Start() // Runs at the start of the Scene
     {
-        // Set Player Audio Manager
-        audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
-
         // Lock the cursor to center screen and make it invisible
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -524,7 +519,7 @@ public class PlayerController : MonoBehaviour
             //Debug.Log("hammer hitting ended");
             hammerHit = true;
             hittingHammer = false;
-            audioManager.PlayOneShotSFX2D(audioManager.PlayerHammerHit);
+            AudioManager.Instance.PlayOneShotSFX2D(AudioManager.Instance.PlayerHammerHit);
             //anim.Play("HammerHit"); 
             anim.Play("Slam");
             //slamHitbox.DeactivateCollider();
@@ -713,7 +708,7 @@ public class PlayerController : MonoBehaviour
 
             if (isGrounded == false && hangTime >= .25)
             {
-                audioManager.PlayOneShotSFX2D(audioManager.PlayerLandOnGround);
+                AudioManager.Instance.PlayOneShotSFX2D(AudioManager.Instance.PlayerLandOnGround);
                 StartCoroutine(FindObjectOfType<ScreenShaker>().Shake(0.1f, 0.01f, 0, 0, 0.1f));
                 if (!hammerCharged) {
                     anim.Play("Land");

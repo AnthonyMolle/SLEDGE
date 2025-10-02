@@ -5,6 +5,9 @@ using FMODUnity;
 
 public class AudioManager : Singleton<AudioManager>
 {
+    [Header("Bank Loader")]
+    public StudioBankLoader bankLoader;
+
     [Header("Player SFX")]
     public EventReference PlayerFootstepTile;
     public EventReference PlayerHammerHit;
@@ -13,8 +16,15 @@ public class AudioManager : Singleton<AudioManager>
 
     [Header("Gameplay SFX")]
     public EventReference CheckpointRespawn;
+    public EventReference CheckpointActivate;
     public EventReference PowerupPickUp;
     public EventReference SwitchActivate;
+
+    protected override void Awake()
+    {
+        base.Awake();
+        bankLoader.Load();
+    }
 
     /*
     private void Start()

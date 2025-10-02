@@ -45,6 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5709555de0b9b28469f6a32482a280c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  bankLoader: {fileID: 982891445776177076}
   PlayerFootstepTile:
     Guid:
       Data1: -1310421745
@@ -79,7 +80,14 @@ MonoBehaviour:
       Data2: 1166732407
       Data3: -1746128510
       Data4: 62009030
-    Path: event:/Gameplay/Checkpoint_Respawn
+    Path: event:/Gameplay/Checkpoint/Checkpoint_Respawn
+  CheckpointActivate:
+    Guid:
+      Data1: -1931530901
+      Data2: 1260396043
+      Data3: -641798227
+      Data4: -1853667863
+    Path: event:/Gameplay/Checkpoint/Checkpoint_Activate
   PowerupPickUp:
     Guid:
       Data1: 99449952
@@ -106,8 +114,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9468c5f457ace64f8d4df6d642b107f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  LoadEvent: 1
-  UnloadEvent: 8
+  LoadEvent: 0
+  UnloadEvent: 0
   Banks:
   - Common SFX
   CollisionTag: 
