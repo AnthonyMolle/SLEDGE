@@ -726,8 +726,16 @@ public class PlayerController : MonoBehaviour
             if (isGrounded == false && hangTime >= .25)
             {
                 audioManager.PlaySFX(audioManager.land);
-                StartCoroutine(FindObjectOfType<ScreenShaker>().Shake(0.1f, 0.01f, 0, 0, 0.1f));
-                if (!hammerCharged) {
+                // Shake the screen when we land after being launched
+                /*
+                if (isLaunched)
+                {
+                    StartCoroutine(FindObjectOfType<ScreenShaker>().Shake(0.1f, 0.01f, 0, 0, 0.1f));
+                }
+                */
+
+                if (!hammerCharged)
+                {
                     anim.Play("Land");
                 }
             }
