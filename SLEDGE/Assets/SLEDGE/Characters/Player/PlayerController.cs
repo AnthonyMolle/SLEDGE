@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.Burst.CompilerServices;
 using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEditor;
@@ -13,6 +14,7 @@ using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.ProBuilder.Shapes;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using static UnityEditor.PlayerSettings;
 using Random=UnityEngine.Random;
 
 public class PlayerController : MonoBehaviour
@@ -86,6 +88,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float airMaxSpeed = 100f;
     [SerializeField] float airMaxHammerSpeed = 100f;
 
+    [SerializeField] float LaunchBrakingDelay = 0.5f;
+    float LaunchBrakingTimer = 0.0f;
+
     //[SerializeField] float maxLaunchedSpeed = 100f;
     [SerializeField] float maxFallingSpeed = 100f;
     [Tooltip("natural rate our player will fall after the apex of their falling height.")]
@@ -158,6 +163,11 @@ public class PlayerController : MonoBehaviour
     [Tooltip("How many additional bounces do we get when we hit air?")]
     [SerializeField] int maxAdditionalBounces = 0;
     int additionalBounces;
+
+    [Tooltip("Collection of raycast points used to determine impact location of swing")]
+    [SerializeField] GameObject[] hammerArcPoints;
+    [Tooltip("Root of hammer swing arc, used to move the entire arc")]
+    [SerializeField] GameObject hammerArcRoot;
 
     [SerializeField] GameObject impactPoint;
 
@@ -324,6 +334,31 @@ public class PlayerController : MonoBehaviour
 
     void Update() // Function Called once per frame
     {
+        if (LaunchBrakingTimer > 0.0f)
+        {
+            LaunchBrakingTimer -= Time.deltaTime;
+        }
+
+        RaycastHit hit;
+        if (Physics.Raycast(cameraObject.transform.position, cameraObject.transform.forward, out hit, hitLength + hitRadius))
+        {
+            hammerArcRoot.transform.position = hit.point;
+        }
+        else
+        {
+            hammerArcRoot.transform.position = cameraObject.transform.position + (cameraObject.transform.forward * hitLength);
+        }
+
+        /*for (int i = 0; i < hammerArcPoints.Length; i++)
+        {
+            if (i < hammerArcPoints.Length - 1)
+            {
+                Vector3 startLoc = hammerArcPoints[i].transform.position;
+                Vector3 endLoc = hammerArcPoints[i + 1].transform.position;
+                Debug.DrawLine(startLoc, endLoc, Color.green);
+            }
+        }*/
+
         //print(isLaunched);
         // Self Explanatory Functions
         HandleInput();
@@ -938,7 +973,10 @@ public class PlayerController : MonoBehaviour
                 if (dotProduct < 0)
                 {
                     //Debug.Log("Against");
-                    rb.AddForce(movementInputVector * airBrakingAccelerationRate);
+                    if (LaunchBrakingTimer <= 0.0f)
+                    {
+                        rb.AddForce(movementInputVector * airBrakingAccelerationRate);
+                    }
                 }
                 else
                 {
@@ -994,7 +1032,7 @@ public class PlayerController : MonoBehaviour
                 additionalBounces--;
             }
             foreach (RaycastHit hit in hits)
-            { 
+            {
                 if (hit.transform.gameObject.GetComponent<Renderer>() != null && hit.transform.gameObject.GetComponent<Renderer>().sharedMaterial.name == "ShockAbsorbMat")
                 {
                     return;
@@ -1046,8 +1084,35 @@ public class PlayerController : MonoBehaviour
 
             rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
 
+            //Vector3 launchDirection = (-(impactPoint.transform.position - transform.position)).normalized;
+            Vector3 launchDirection = (-ray.direction).normalized;
+
+
+            RaycastHit arcHit;
+            for (int i = 0; i < hammerArcPoints.Length; i++)
+            {
+                if (i < hammerArcPoints.Length - 1)
+                {
+                    Vector3 startLoc = hammerArcPoints[i].transform.position;
+                    Vector3 endLoc = hammerArcPoints[i + 1].transform.position;
+                    Vector3 direction = (endLoc - startLoc).normalized;
+                    float distance = Vector3.Distance(startLoc, endLoc);                 
+
+                    if (Physics.Raycast(startLoc, direction, out arcHit, distance))
+                    {
+                        Debug.Log("hit");
+                        //Debug.DrawLine(startLoc, endLoc, Color.red, 2.0f);
+                        launchDirection = -direction;
+                        break;
+                    }
+                    else
+                    {
+                        //Debug.DrawLine(startLoc, endLoc, Color.green);
+                    }
+                }
+            }
+
             //Vector3 launchDirection = (-ray.direction).normalized;
-            Vector3 launchDirection = (-(impactPoint.transform.position - transform.position)).normalized;
 
             // Momentum Resetting - If the player is slamming in the opposite direction they're moving, we add some extra force so their velocity isn't just canceled out
             Vector3 horizontalVelocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
@@ -1055,6 +1120,24 @@ public class PlayerController : MonoBehaviour
             if (dotProduct < 0)
             {
                 rb.AddForce(-horizontalVelocity, ForceMode.VelocityChange);
+            }
+
+            if (movementInputVector.magnitude > 0.001)
+            {
+                Vector3 baseLaunchDirection = launchDirection;
+                Vector3 modifiedDirection;
+                if (dotProduct < 0)
+                {
+                    modifiedDirection = (0.9f * baseLaunchDirection) + (0.1f * movementInputVector);
+                    //Debug.Log("Against");
+                }
+                else
+                {
+                    modifiedDirection = (0.7f * baseLaunchDirection) + (0.3f * movementInputVector);
+                    //Debug.Log("Toward");
+                }
+
+                launchDirection = new Vector3(modifiedDirection.x, baseLaunchDirection.y, modifiedDirection.z);
             }
 
             if (currentPowerup == Powerup.Airburst)
@@ -1095,6 +1178,8 @@ public class PlayerController : MonoBehaviour
 
             isLaunched = true; // set is launched to true
             hammerBounced = true; // let the engine know we bounced
+
+            LaunchBrakingTimer = LaunchBrakingDelay;
 
             Instantiate(HammerSound, gameObject.transform.position, Quaternion.identity);
             StartCoroutine(FindObjectOfType<ScreenShaker>().Shake(0.25f, 0.01f, 0, 0, 0.25f));
