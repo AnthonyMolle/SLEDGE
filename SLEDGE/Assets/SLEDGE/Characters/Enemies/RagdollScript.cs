@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class AnimScript : MonoBehaviour
+public class RagdollScript : MonoBehaviour
 {
     // public UnityEvent KillSwitch;
     
@@ -150,6 +150,20 @@ public class AnimScript : MonoBehaviour
         LastHitDirection = Vector3.zero;
         // Store original transforms for reset
         StoreOriginalTransforms();
+    }
+
+    public void KillSwitch(bool on)
+    {
+        if (on)
+        {
+            Kill();
+            killswitch = true;
+        }
+        else
+        {
+            Revive();
+            killswitch = false;
+        }
     }
     
     private void StoreOriginalTransforms()
