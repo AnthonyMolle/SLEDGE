@@ -3,12 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Rendering;
 using UnityEngine;
+using UnityEngine.Splines;
 using static UnityEditor.FilePathAttribute;
 
 public class EnemyFlyerController : EnemyBaseController
 {
 
-    [Header("Shooter Stats")]
+    [Header("Flyer Stats")]
     [HorizontalLine]
 
     [SerializeField] float dashCooldown = 3;        // How long the flyer will take before dashing again
@@ -18,6 +19,9 @@ public class EnemyFlyerController : EnemyBaseController
     [SerializeField] float aimDuration = 1.0f;      // Duration flyer charges attack
     [SerializeField] float attackDuration = 1.5f;   // Duration flyer dashes
     [SerializeField] float recoverDuration = 2.0f;  // Duration flyer recovers after dashing
+
+    // Radius AOE Attack Stuff
+    float shockRadius = 5.0f;
 
     [Header("VFX/SFX")]
     [HorizontalLine]
@@ -41,7 +45,9 @@ public class EnemyFlyerController : EnemyBaseController
     Vector3 offset = new Vector3(0, 7, 0);  // Offset of the player that the enemy moves toward
 
     Vector3 recoveryLocation;               // Where the flyer moves to when recovering from a dash
-    
+
+    SplineAnimate splineComponent;
+
     private enum CombatState
     {
         IDLE,
@@ -163,7 +169,7 @@ public class EnemyFlyerController : EnemyBaseController
                             audioSource.Play();
 
                             combatState = CombatState.ATTACKING;
-                            DashForward();
+                            AreaBlast();
                         }
 
                         break;
@@ -215,6 +221,28 @@ public class EnemyFlyerController : EnemyBaseController
             default:
 
                 break;
+        }
+    }
+
+    void AreaBlast()
+    {
+        RaycastHit[] hits = Physics.SphereCastAll(transform.position, shockRadius, Vector3.zero, 0.0f);
+
+        Debug.DrawLine(transform.position, transform.position + (Vector3.up * shockRadius), Color.yellow);
+        Debug.DrawLine(transform.position, transform.position + (Vector3.down * shockRadius), Color.yellow);
+        Debug.DrawLine(transform.position, transform.position + (Vector3.right * shockRadius), Color.yellow);
+        Debug.DrawLine(transform.position, transform.position + (Vector3.left * shockRadius), Color.yellow);
+
+        if (hits.Length > 0)
+        {
+            Debug.Log("hit");
+            foreach (RaycastHit hit in hits)
+            {
+                if (hit.collider.gameObject.GetComponent<PlayerController>() != null)
+                {
+                    Debug.Log("playerhit");
+                }
+            }
         }
     }
 
