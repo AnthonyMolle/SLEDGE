@@ -1,6 +1,7 @@
 using NaughtyAttributes;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.Splines;
@@ -257,10 +258,20 @@ public class EnemyFlyerController : EnemyBaseController
             if (other.gameObject.CompareTag("Player"))
             {
                 other.gameObject.GetComponent<PlayerController>().TakeDamage(1);
+
                 TakeDamage(1, transform.forward * -1, 10f);
             }
         }
     }
+
+    protected override void Die()
+    {
+        base.Die();
+
+        // Destroy the spline container parent that holds flyer splines
+        Destroy(gameObject.GetComponent<SplineAnimate>().Container.transform.parent.gameObject); 
+    }
+
     void TryStartingAttack() // Track player and if we are off cooldown, begin aiming our attack
     {
         rb.velocity = new Vector3(0, 0, 0);
