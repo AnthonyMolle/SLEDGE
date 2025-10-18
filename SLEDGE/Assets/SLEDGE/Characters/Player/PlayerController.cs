@@ -1030,8 +1030,7 @@ public class PlayerController : MonoBehaviour
         //Ray ray = gameCamera.ScreenPointToRay(impactPoint.transform.position);
         bool bouncy = false;
 
-        RaycastHit[] hits = Physics.SphereCastAll(ray, hitRadius, hitLength, bouncableLayers, QueryTriggerInteraction.Collide);
-
+        RaycastHit[] hits = Physics.SphereCastAll(ray, hitRadius, hitLength, bouncableLayers, QueryTriggerInteraction.Ignore);
         if (hits.Length > 0 || currentPowerup == Powerup.Airburst || additionalBounces > 0)
         {
             if (additionalBounces > 0 && !isGrounded)

@@ -21,8 +21,11 @@ public class EnemyFlyerController : EnemyBaseController
     [SerializeField] float attackDuration = 1.5f;   // Duration flyer dashes
     [SerializeField] float recoverDuration = 2.0f;  // Duration flyer recovers after dashing
 
-    // Radius AOE Attack Stuff
-    float shockRadius = 5.0f;
+    [SerializeField] GameObject shockHitbox; // Hitbox of AOE attack
+    Color shockHitboxColor; 
+    bool playerInRadius = false; // Whether the player is in the AOE radius
+    bool playerHit = false; // Whether the player has already been hit by the AOE attack this cycle
+    Vector3 maxShockScale;
 
     [Header("VFX/SFX")]
     [HorizontalLine]
@@ -64,11 +67,19 @@ public class EnemyFlyerController : EnemyBaseController
     protected override void Start()
     {
         base.Start();
-        
+
         cooldown = dashCooldown; // Since we don't want the enemy to spawn with its cooldowns up
         audioSource = GetComponent<AudioSource>();
 
         eyeLight.GetComponent<Light>().intensity = 0.0f;
+
+        maxShockScale = shockHitbox.transform.localScale;
+
+        shockHitboxColor = shockHitbox.GetComponent<MeshRenderer>().material.color;
+
+        shockHitboxColor.a = 0.0f;
+        shockHitbox.GetComponent<MeshRenderer>().material.color = shockHitboxColor;
+        shockHitbox.GetComponent<MeshRenderer>().enabled = false;
     }
 
     // Update is called once per frame
@@ -84,7 +95,10 @@ public class EnemyFlyerController : EnemyBaseController
                 
                 float brightness = Mathf.Lerp(0.1f, 2.0f, aimTimer / aimDuration);    
                 eyeLight.GetComponent<Light>().intensity = brightness; // Light telegraph based on how close to attacking the enemy is            
-                
+
+                Vector3 shockScale = Vector3.Lerp(Vector3.zero, maxShockScale, aimTimer / aimDuration);
+                shockHitbox.transform.localScale = shockScale;
+
                 break;
             
             case CombatState.ATTACKING:
@@ -116,14 +130,14 @@ public class EnemyFlyerController : EnemyBaseController
                 {
                     enemyState = EnemyState.HOSTILE;
                 }
-                else if (Vector3.Distance(transform.position, spawnPosition) > 2 && IsTargetDirectlyReachable(spawnPosition))  // If we can't find player, try to go back to spawn (We can't path there because our pathing logic only works for the player)
+                /*else if (Vector3.Distance(transform.position, spawnPosition) > 2 && IsTargetDirectlyReachable(spawnPosition))  // If we can't find player, try to go back to spawn (We can't path there because our pathing logic only works for the player)
                 {
                     MoveTowardsLocation(spawnPosition);
                 }
                 else                                                // If we can't get back to spawn, stay in place (Not ideal, should set up pathing back to spawn eventually)
                 {
                     rb.velocity = new Vector3(0, 0, 0);
-                }
+                }*/
 
                 break;
 
@@ -227,41 +241,46 @@ public class EnemyFlyerController : EnemyBaseController
 
     void AreaBlast()
     {
-        RaycastHit[] hits = Physics.SphereCastAll(transform.position, shockRadius, Vector3.zero, 0.0f);
+        // UPDATED SFX AND VFX FOR SHOCK ATTACK WOULD TRIGGER HERE
 
-        Debug.DrawLine(transform.position, transform.position + (Vector3.up * shockRadius), Color.yellow);
-        Debug.DrawLine(transform.position, transform.position + (Vector3.down * shockRadius), Color.yellow);
-        Debug.DrawLine(transform.position, transform.position + (Vector3.right * shockRadius), Color.yellow);
-        Debug.DrawLine(transform.position, transform.position + (Vector3.left * shockRadius), Color.yellow);
+        shockHitboxColor.a = 0.3f;
+        shockHitbox.GetComponent<MeshRenderer>().material.color = shockHitboxColor;
 
-        if (hits.Length > 0)
+        if (playerInRadius)
         {
-            Debug.Log("hit");
-            foreach (RaycastHit hit in hits)
-            {
-                if (hit.collider.gameObject.GetComponent<PlayerController>() != null)
-                {
-                    Debug.Log("playerhit");
-                }
-            }
+            shockPlayer();
         }
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (combatState == CombatState.ATTACKING)
+        if (other.gameObject.CompareTag("Player"))
         {
-            rb.AddForce(transform.forward * -10, ForceMode.Impulse);
-
-            BeginAttackRecovery();
-
-            if (other.gameObject.CompareTag("Player"))
-            {
-                other.gameObject.GetComponent<PlayerController>().TakeDamage(1);
-
-                TakeDamage(1, transform.forward * -1, 10f);
-            }
+            playerInRadius = true;
         }
+
+        if (playerInRadius == true && combatState == CombatState.ATTACKING && playerHit == false)
+        {
+            shockPlayer();
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.CompareTag("Player"))
+        {
+            playerInRadius = false;
+        }
+    }
+
+    void shockPlayer()
+    {
+        Debug.Log("playerhit");
+        player.GetComponent<PlayerController>().TakeDamage(1);
+        playerHit = true;
+
+        Vector3 direction = Vector3.Normalize(player.transform.position - gameObject.transform.position);
+        player.GetComponent<Rigidbody>().AddForce(direction * 20, ForceMode.Impulse);
     }
 
     protected override void Die()
@@ -283,6 +302,7 @@ public class EnemyFlyerController : EnemyBaseController
             audioSource.Play();
 
             aimTimer = 0;
+            shockHitbox.GetComponent<MeshRenderer>().enabled = true;
             combatState = CombatState.AIMING;
         }
     }
@@ -291,7 +311,14 @@ public class EnemyFlyerController : EnemyBaseController
         cooldown = 0;
         recoveryLocation = transform.position + new Vector3(0, 8, 0);
 
+        playerHit = false;
+
         eyeLight.GetComponent<Light>().intensity = 0.0f;
+        
+        shockHitboxColor.a = 0.0f;
+        shockHitbox.GetComponent<MeshRenderer>().material.color = shockHitboxColor;
+        shockHitbox.GetComponent<MeshRenderer>().enabled = false;
+
         combatState = CombatState.RECOVERING;
     }
 
