@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: -3228560789529373364}
   - component: {fileID: 5016654448432381162}
   - component: {fileID: 5619275513568287829}
+  - component: {fileID: 6027468573224873779}
   m_Layer: 8
   m_Name: Flying Enemy
   m_TagString: Enemy Flyer
@@ -231,6 +232,29 @@ MonoBehaviour:
   eyeLight: {fileID: 6462007928466903554}
   idleSound: {fileID: 8300000, guid: 17428045f3b33f9419a8e485252efe35, type: 3}
   telegraphSound: {fileID: 8300000, guid: 5d3ab2ecb1a0e5e4984aec45db948bc2, type: 3}
+--- !u!114 &6027468573224873779
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2178161172080928957}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29a074d529cf945029ef7cf40540c9df, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Target: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_LoopMode: 1
+  m_Method: 0
+  m_Duration: 10
+  m_MaxSpeed: 10
+  m_EasingMode: 0
+  m_AlignmentMode: 1
+  m_ObjectForwardAxis: 2
+  m_ObjectUpAxis: 1
+  m_StartOffset: 0
 --- !u!1 &2889222492729280490
 GameObject:
   m_ObjectHideFlags: 0
