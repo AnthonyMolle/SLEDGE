@@ -67,7 +67,7 @@ public class EnemyBaseController : MonoBehaviour
         return currentHealth;
     }
 
-    public void TakeDamage(int damage, Vector3 direction, float force)
+    public virtual void TakeDamage(int damage, Vector3 direction, float force)
     {
         if (enemyState == EnemyState.DEAD)
         {

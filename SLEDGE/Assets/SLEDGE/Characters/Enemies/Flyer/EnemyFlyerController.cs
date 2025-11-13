@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEditor.Rendering;
 using UnityEngine;
+using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.Splines;
 using static UnityEditor.FilePathAttribute;
 
@@ -50,7 +51,20 @@ public class EnemyFlyerController : EnemyBaseController
 
     Vector3 recoveryLocation;               // Where the flyer moves to when recovering from a dash
 
+    Vector3 pathPosition;
+
     SplineAnimate splineComponent;
+
+    // DEATH EXPLOSION STUFF
+    float deathTimer = 0.0f;
+    [SerializeField] float dyingDuration = 2.0f; // Duration between taking fatal damage and exploding
+    bool launched = false; // If the enemy was launched by the player
+    Vector3 launchDirection;
+
+    [SerializeField] LayerMask enemyLayers;
+
+    public Color defaultColor;
+    public Color deathColor;
 
     private enum CombatState
     {
@@ -58,7 +72,8 @@ public class EnemyFlyerController : EnemyBaseController
         HUNTING,
         AIMING,
         ATTACKING,
-        RECOVERING
+        RECOVERING,
+        DYING
     }
 
     CombatState combatState = CombatState.IDLE;
@@ -110,7 +125,15 @@ public class EnemyFlyerController : EnemyBaseController
                 
                 recoverTimer += Time.deltaTime;
                 break;
-            
+
+            case CombatState.DYING:
+                
+                deathTimer += Time.deltaTime;
+
+                eyeLight.GetComponent<Light>().intensity = Mathf.Lerp(0.1f, 2.0f, (deathTimer % 0.25f) / 0.25f);
+
+                break;
+
             default:
                 
                 cooldown += Time.deltaTime;
@@ -124,6 +147,7 @@ public class EnemyFlyerController : EnemyBaseController
         switch (enemyState)
         {
             case EnemyState.IDLE:
+                eyeLight.GetComponent<Light>().color = defaultColor;
 
                 combatState = CombatState.IDLE;
                 if (PlayerinLOS())
@@ -174,12 +198,12 @@ public class EnemyFlyerController : EnemyBaseController
 
                     case CombatState.AIMING:                        // AIMING: Enemy is preparing to attack
 
-                        RotateTowardsTarget(player);
+                        RotateTowardsTarget(player.transform.position);
 
                         if (aimTimer >= aimDuration)
-                        {                           
+                        {
                             attackTimer = 0;
-                            
+
                             audioSource.clip = idleSound;
                             audioSource.Play();
 
@@ -197,6 +221,10 @@ public class EnemyFlyerController : EnemyBaseController
 
                             BeginAttackRecovery();
                         }
+                        else
+                        {
+                            RotateTowardsTarget(player.transform.position);
+                        }
 
                         break;
                     case CombatState.RECOVERING:                    // RECOVERING: Enemy is recovering from their attack
@@ -207,9 +235,15 @@ public class EnemyFlyerController : EnemyBaseController
 
                             rb.velocity = new Vector3(0, 0, 0);
 
+                            gameObject.GetComponent<SplineAnimate>().Play();
+
                             combatState = CombatState.IDLE;
                         }
-                        else if (Vector3.Distance(transform.position, recoveryLocation) >= 1)
+                        else
+                        {
+                            RotateTowardsTarget(pathPosition);
+                        }
+                        /*else if (Vector3.Distance(transform.position, recoveryLocation) >= 1)
                         {
                             MoveTowardsLocation(recoveryLocation);
                         }
@@ -217,6 +251,24 @@ public class EnemyFlyerController : EnemyBaseController
                         {
                             rb.velocity = new Vector3(0, 0, 0);
                             RotateTowardsTarget(player);
+                        }*/
+
+                        break;
+                    case CombatState.DYING:
+
+                        if (launched)
+                        {
+                            // Move
+                            transform.position = transform.position + (launchDirection * 0.75f);
+                        }
+                        else if (deathTimer > dyingDuration)
+                        {
+                            // Blow up
+                            TriggerDeathExplosion(false);
+                        }
+                        else
+                        {
+                            RotateTowardsTarget(player.transform.position);
                         }
 
                         break;
@@ -224,7 +276,7 @@ public class EnemyFlyerController : EnemyBaseController
                 
                 if (!PlayerinLOS())
                 {
-                    enemyState = EnemyState.IDLE;
+                    //enemyState = EnemyState.IDLE;
                 }
 
                 break;
@@ -250,6 +302,14 @@ public class EnemyFlyerController : EnemyBaseController
         {
             shockPlayer();
         }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (launched)
+        {
+            TriggerDeathExplosion(true);
+        }    
     }
 
     private void OnTriggerEnter(Collider other)
@@ -283,18 +343,91 @@ public class EnemyFlyerController : EnemyBaseController
         player.GetComponent<Rigidbody>().AddForce(direction * 20, ForceMode.Impulse);
     }
 
+    public override void TakeDamage(int damage, Vector3 direction, float force)
+    {
+        //base.TakeDamage(damage, direction, force);
+        if (enemyState == EnemyState.DEAD || combatState == CombatState.DYING)
+        {
+            return;
+        }
+
+        currentHealth -= damage;
+        if (currentHealth <= 0)
+        {
+            // Enter dying state
+            StartDeathCountdown();
+        }
+    }
+
+    void StartDeathCountdown()
+    {
+        gameObject.GetComponent<SplineAnimate>().Pause();
+
+        shockHitbox.transform.localScale = maxShockScale;
+        shockHitboxColor.a = 0.0f;
+        shockHitbox.GetComponent<MeshRenderer>().material.color = shockHitboxColor;
+        shockHitbox.GetComponent<MeshRenderer>().enabled = true;
+
+        audioSource.clip = telegraphSound;
+        audioSource.Play();
+
+        eyeLight.GetComponent<Light>().color = deathColor;
+        eyeLight.GetComponent<Light>().intensity = 1.0f;
+
+        combatState = CombatState.DYING;
+    }
+
+    public bool InDyingState()
+    {
+        return combatState == CombatState.DYING;
+    }    
+
+    public void LaunchFlyer(Vector3 direction)
+    {
+        launched = true;
+        launchDirection = direction;
+    }
+
+    public void TriggerDeathExplosion(bool playerTriggered)
+    {
+        if (playerTriggered)
+        {
+            RaycastHit[] enemyHits = Physics.SphereCastAll(transform.position, 5.0f, transform.forward, 0.1f, enemyLayers);
+            if (enemyHits.Length > 0)
+            {
+                foreach (RaycastHit hit in enemyHits)
+                {
+                    if (hit.transform.GetComponent<EnemyBaseController>() != null)
+                    {
+                        hit.transform.GetComponent<EnemyBaseController>().TakeDamage(1, Vector3.zero, 0.0f);
+                    }
+                }
+            }
+        }
+        else if (playerInRadius)
+        {
+            shockPlayer();
+        }
+
+        enemyState = EnemyState.DEAD;
+        Die();
+    }
+
     protected override void Die()
     {
         base.Die();
 
         // Destroy the spline container parent that holds flyer splines
-        Destroy(gameObject.GetComponent<SplineAnimate>().Container.transform.parent.gameObject); 
+        if (gameObject.GetComponent<SplineAnimate>().Container != null)
+        {
+            Destroy(gameObject.GetComponent<SplineAnimate>().Container.transform.parent.gameObject);
+        }
     }
 
     void TryStartingAttack() // Track player and if we are off cooldown, begin aiming our attack
     {
-        rb.velocity = new Vector3(0, 0, 0);
-        RotateTowardsTarget(player);
+        //rb.velocity = new Vector3(0, 0, 0);
+        //RotateTowardsTarget(player);
 
         if (cooldown >= dashCooldown)
         {
@@ -303,6 +436,11 @@ public class EnemyFlyerController : EnemyBaseController
 
             aimTimer = 0;
             shockHitbox.GetComponent<MeshRenderer>().enabled = true;
+            
+            pathPosition = gameObject.transform.position + (gameObject.transform.forward * 5);
+
+            gameObject.GetComponent<SplineAnimate>().Pause();
+
             combatState = CombatState.AIMING;
         }
     }
@@ -319,17 +457,17 @@ public class EnemyFlyerController : EnemyBaseController
         shockHitbox.GetComponent<MeshRenderer>().material.color = shockHitboxColor;
         shockHitbox.GetComponent<MeshRenderer>().enabled = false;
 
+        //gameObject.GetComponent<SplineAnimate>().Play();
+
         combatState = CombatState.RECOVERING;
     }
 
     #region Movement/Pathing
     
-    void RotateTowardsTarget(GameObject target)
+    void RotateTowardsTarget(Vector3 target)
     {
-        /*
-        var targetRotation = Quaternion.LookRotation((target.transform.position) - transform.position);
+        var targetRotation = Quaternion.LookRotation((target) - transform.position);
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 5f * Time.deltaTime);
-        */
     }
 
     void DashForward()

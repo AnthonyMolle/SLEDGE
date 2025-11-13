@@ -68,7 +68,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2178161172080928957}
   serializedVersion: 4
-  m_Mass: 1
+  m_Mass: 1000
   m_Drag: 0
   m_AngularDrag: 0
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -227,11 +227,17 @@ MonoBehaviour:
   dashSpeed: 30
   aimDuration: 1
   attackDuration: 1.5
-  recoverDuration: 0
+  recoverDuration: 0.5
   shockHitbox: {fileID: 2889222492729280490}
   eyeLight: {fileID: 6462007928466903554}
   idleSound: {fileID: 8300000, guid: 17428045f3b33f9419a8e485252efe35, type: 3}
   telegraphSound: {fileID: 8300000, guid: 5d3ab2ecb1a0e5e4984aec45db948bc2, type: 3}
+  dyingDuration: 2
+  enemyLayers:
+    serializedVersion: 2
+    m_Bits: 256
+  defaultColor: {r: 1, g: 0.49411765, b: 0, a: 1}
+  deathColor: {r: 1, g: 0, b: 0, a: 0}
 --- !u!114 &6027468573224873779
 MonoBehaviour:
   m_ObjectHideFlags: 0
