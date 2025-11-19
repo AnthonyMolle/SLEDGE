@@ -16,9 +16,13 @@ public class EnemyShooterController : EnemyBaseController
     /* Handling projectile instances */
     GameObject projectile;
     List<GameObject> projectiles = new List<GameObject>();
-    
+
     /* Cooldown between shots */
     [SerializeField] float shootCooldown = 3.0f;
+    [SerializeField] float shootBigCooldown = 3.0f;
+    [SerializeField] bool shootBurst = true;
+    [SerializeField] int shootBurstCount = 3;
+    private int currentShootBurstCount;
     float cooldown;
 
     [SerializeField] float aimDuration = 2.0f;
@@ -56,6 +60,7 @@ public class EnemyShooterController : EnemyBaseController
     {
         base.Start();
         
+        currentShootBurstCount = shootBurstCount;
         cooldown = shootCooldown;
         audioSource = GetComponent<AudioSource>();
 
@@ -112,13 +117,38 @@ public class EnemyShooterController : EnemyBaseController
                         break;
 
                     case CombatState.COOLDOWN:
-
+                    
                         if (PlayerinLOS() && cooldown >= shootCooldown)
                         {
-                            cooldown = 0.0f;
-                            audioSource.time = 0.0f;
-                            audioSource.Play();
-                            combatState = CombatState.AIMING;
+                            if (shootBurst)
+                            {
+                                if (currentShootBurstCount <= 0)
+                                {
+                                    if(cooldown >= shootBigCooldown)
+                                    {
+                                        cooldown = 0.0f;
+                                        audioSource.time = 0.0f;
+                                        audioSource.Play();
+                                        currentShootBurstCount = shootBurstCount;
+                                        combatState = CombatState.AIMING;
+                                    }
+                                }
+                                else
+                                {
+                                    cooldown = 0.0f;
+                                    audioSource.time = 0.0f;
+                                    audioSource.Play();
+                                    currentShootBurstCount--;
+                                    combatState = CombatState.AIMING;  
+                                }
+                            }
+                            else
+                            {
+                                cooldown = 0.0f;
+                                audioSource.time = 0.0f;
+                                audioSource.Play();
+                                combatState = CombatState.AIMING;                               
+                            }
                         }
                         else if (!PlayerinLOS())
                         {

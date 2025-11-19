@@ -445,8 +445,11 @@ MonoBehaviour:
     type: 3}
   projectileClass: {fileID: 4543102887346889771, guid: ba9cb7ed3bc5e6046b77d646edda3e24,
     type: 3}
-  shootCooldown: 3
-  aimDuration: 2
+  shootCooldown: 0.1
+  shootBigCooldown: 3
+  shootBurst: 1
+  shootBurstCount: 2
+  aimDuration: 0.2
   projectileLifetime: 10
   projectileSpeed: 40
   lookAtTarget: {fileID: 3277620228275904649}
