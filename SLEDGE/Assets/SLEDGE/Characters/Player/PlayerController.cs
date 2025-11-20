@@ -169,7 +169,13 @@ public class PlayerController : MonoBehaviour
     [Tooltip("Root of hammer swing arc, used to move the entire arc")]
     [SerializeField] GameObject hammerArcRoot;
 
-    [SerializeField] GameObject impactPoint;
+    [SerializeField] GameObject impactPointPrefab;
+    [SerializeField] bool alwaysShowImpactPoint = false; // If set to false, will only show impact point when charging up a hammer slam
+    GameObject impactPoint;
+    bool impactPointHidden;
+    bool hideImpactPoint;
+    Color impactFadeColor;
+    float impactFadeTimer;
 
     [SerializeField] float chargeTime = 1f;
     [SerializeField] float hitTime = 1f;
@@ -330,6 +336,10 @@ public class PlayerController : MonoBehaviour
         characterCollider = GetComponent<CapsuleCollider>();
 
         RefreshAdditionalBounces();
+
+        // Impact point stuff
+        impactPoint = Instantiate(impactPointPrefab, transform.position, transform.rotation);
+        impactFadeColor = impactPoint.GetComponent<MeshRenderer>().material.color;
     }
 
     void Update() // Function Called once per frame
@@ -349,18 +359,11 @@ public class PlayerController : MonoBehaviour
             hammerArcRoot.transform.position = cameraObject.transform.position + (cameraObject.transform.forward * hitLength);
         }
 
-        /*for (int i = 0; i < hammerArcPoints.Length; i++)
-        {
-            if (i < hammerArcPoints.Length - 1)
-            {
-                Vector3 startLoc = hammerArcPoints[i].transform.position;
-                Vector3 endLoc = hammerArcPoints[i + 1].transform.position;
-                Debug.DrawLine(startLoc, endLoc, Color.green);
-            }
-        }*/
 
-        //print(isLaunched);
-        // Self Explanatory Functions
+        HandleImpactPoint();
+
+            //print(isLaunched);
+            // Self Explanatory Functions
         HandleInput();
         HandleHammer();
         HandleLookRotation();
@@ -434,6 +437,70 @@ public class PlayerController : MonoBehaviour
         if(other.gameObject.tag == "MovingPlatform")
         {
             transform.SetParent(null);
+        }
+    }
+
+    private void HandleImpactPoint()
+    {
+        hideImpactPoint = true;
+        if (impactPointHidden)
+        {
+            impactFadeTimer += Time.deltaTime;
+        }
+        else
+        {
+            impactFadeTimer -= Time.deltaTime;
+        }
+        impactFadeTimer = Mathf.Clamp(impactFadeTimer, 0.0f, 0.25f);
+
+        RaycastHit arcHit;
+        for (int i = 0; i < hammerArcPoints.Length; i++)
+        {
+            if (i < hammerArcPoints.Length - 1)
+            {
+                Vector3 startLoc = hammerArcPoints[i].transform.position;
+                Vector3 endLoc = hammerArcPoints[i + 1].transform.position;
+                Vector3 direction = (endLoc - startLoc).normalized;
+                float distance = Vector3.Distance(startLoc, endLoc);
+
+                if (Physics.Raycast(startLoc, direction, out arcHit, distance))
+                {
+                    hideImpactPoint = false;
+                    Vector3 impactPos = arcHit.point;
+
+                    if (!impactPointHidden)
+                    {
+                        impactPoint.transform.position = Vector3.Slerp(impactPoint.transform.position, impactPos, Time.deltaTime * 10f);
+                        Quaternion newRotation = Quaternion.FromToRotation(Vector3.up, arcHit.normal);
+                        impactPoint.transform.rotation = Quaternion.Slerp(impactPoint.transform.rotation, newRotation, Time.deltaTime * 20f);
+                    }
+                    else
+                    {
+                        impactPointHidden = false;
+                        impactPoint.transform.position = impactPos;
+                    }
+
+                    impactFadeColor.a = Mathf.Lerp(1, 0, impactFadeTimer / 0.25f);
+                    impactPoint.GetComponent<MeshRenderer>().material.color = impactFadeColor;
+
+                    break;
+                }
+            }
+        }
+
+        if (hideImpactPoint)
+        {
+            impactPointHidden = true;
+            impactFadeColor.a = Mathf.Lerp(1, 0, impactFadeTimer / 0.25f);
+            impactPoint.GetComponent<MeshRenderer>().material.color = impactFadeColor;
+        }
+
+        // Only show impact point when charging up the hammer for a swing
+        if (!alwaysShowImpactPoint && !chargingHammer && !hammerCharged)
+        {
+            impactPointHidden = true;
+            impactFadeColor.a = Mathf.Lerp(1, 0, impactFadeTimer / 0.25f);
+            impactPoint.GetComponent<MeshRenderer>().material.color = impactFadeColor;
         }
     }
 
