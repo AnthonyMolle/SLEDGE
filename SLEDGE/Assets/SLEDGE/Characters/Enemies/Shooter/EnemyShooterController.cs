@@ -111,7 +111,8 @@ public class EnemyShooterController : EnemyBaseController
                             audioSource.Stop();
                             gunLight.GetComponent<Light>().intensity = 0.0f;
 
-                            FireProjectile(player.transform.position);
+                            FireProjectile(AimAhead());
+                            //FireProjectile(player.transform.position);
                         }
 
                         break;
@@ -203,6 +204,60 @@ public class EnemyShooterController : EnemyBaseController
             
         }
     }
+
+    private Vector3 AimAhead()
+    {
+        float t = CollisionTime();
+        if(t > 0f)
+        {
+            Vector3 delta = t * playerRb.velocity;
+            //return player.transform.position + t * playerRb.velocity;
+
+            //try clamping up/down movement?
+            Vector3 deltaClamp = new Vector3(delta.x, delta.y * 0.5f, delta.z);
+            return player.transform.position + deltaClamp;
+            //TODO clamp more if time high, clamp less if time low. Consider boosting the horizontal delta. Use anim graphs for easy?
+        }
+        else
+        {
+            return Vector3.up;
+        }
+        //TODO: 
+    }
+
+    private float CollisionTime()
+    {
+        //Check that instantiation of bullet with gun position isn't going to fuck shit up with new formula
+        //using instructiosn from howlingmoonsoftware.com
+        Vector3 playerVel = playerRb.velocity; //may need to get rigidbody component from player first. In the instructions this is the relative v of the gun and the target, but I am assuming the dude isn't moving while shooting
+        float bulletVel = projectileSpeed; //technically unnecessary yeah
+        Vector3 delta = player.transform.position - gunPosition.transform.position; //relative position of gun and the target. Gun as in the bullet spawn point I believe. InverseTransformPoint is affected by scale. bad.
+
+        //quadratic equation time
+        float a = Vector3.Dot(playerVel, playerVel) - bulletVel * bulletVel;
+        float b = 2f * Vector3.Dot(playerVel, delta);
+        float c = Vector3.Dot(delta, delta);
+        float det = b * b - 4f * a * c;
+
+
+        if(det > 0f)
+        {
+            return 2f * c / (Mathf.Sqrt(det) - b);
+        }
+        else
+        {
+            return -1f;
+        }
+    }
+
+    /*private float CollisionTimeTwo()
+    {
+        Vector3 playerVelInitial = playerRb.velocity;
+        Vector3 playerVelFinal = playerVelInitial + playerRb;
+        float bulletVel = projectileSpeed;
+        Vector3 playerStart = player.transform.position - gunPosition.transform.position; //relative to gun position
+
+    }*/
 
     public override void ResetEnemy()
     {

@@ -28,6 +28,7 @@ public class EnemyBaseController : MonoBehaviour
     protected Rigidbody rb;
 
     protected GameObject player;
+    protected Rigidbody playerRb;
 
     RaycastHit hit;
 
@@ -44,6 +45,7 @@ public class EnemyBaseController : MonoBehaviour
     protected virtual void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player");
+        playerRb = player.GetComponent<Rigidbody>();
         rb = GetComponent<Rigidbody>();
 
         spawnPosition = transform.position;
