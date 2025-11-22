@@ -32,6 +32,12 @@ public class EnemyShooterController : EnemyBaseController
     [SerializeField] float projectileLifetime;
     [SerializeField] float projectileSpeed;
 
+    /* Animation Curve to dampen vertical distance anticipation in aiming */
+    [Header("Aiming")]
+    [HorizontalLine]
+    [SerializeField] AnimationCurve verticalAimMod; //X is time for bullet to hit player (normalized to graphMax), Y is % of vertical distance change we use from the original calculations
+    [SerializeField] float graphMax; //unit is seconds. Any time after this point will return a Y equal to y(1)
+
     [Header("Positional Constants")]
     [HorizontalLine]
 
@@ -214,24 +220,24 @@ public class EnemyShooterController : EnemyBaseController
             //return player.transform.position + t * playerRb.velocity;
 
             //try clamping up/down movement?
-            Vector3 deltaClamp = new Vector3(delta.x, delta.y * 0.5f, delta.z);
-            return player.transform.position + deltaClamp;
-            //TODO clamp more if time high, clamp less if time low. Consider boosting the horizontal delta. Use anim graphs for easy?
+            Vector3 deltaNew = new Vector3(delta.x, delta.y * VertAimMod(t), delta.z);
+            return player.transform.position + deltaNew;
+            //Consider boosting the horizontal delta when travel time is long
         }
         else
         {
             return Vector3.up;
         }
-        //TODO: 
+        //TODO: else should be changed to smth else
     }
 
-    private float CollisionTime()
+    private float CollisionTime() //returns travel time of bullet
     {
         //Check that instantiation of bullet with gun position isn't going to fuck shit up with new formula
-        //using instructiosn from howlingmoonsoftware.com
-        Vector3 playerVel = playerRb.velocity; //may need to get rigidbody component from player first. In the instructions this is the relative v of the gun and the target, but I am assuming the dude isn't moving while shooting
+        //using instructions from https://howlingmoonsoftware.com/leading-a-target/
+        Vector3 playerVel = playerRb.velocity; //In the instructions this is the relative v of the gun and the target, but I am assuming the dude isn't moving while shooting
         float bulletVel = projectileSpeed; //technically unnecessary yeah
-        Vector3 delta = player.transform.position - gunPosition.transform.position; //relative position of gun and the target. Gun as in the bullet spawn point I believe. InverseTransformPoint is affected by scale. bad.
+        Vector3 delta = player.transform.position - gunPosition.transform.position; //relative position of gun and the target
 
         //quadratic equation time
         float a = Vector3.Dot(playerVel, playerVel) - bulletVel * bulletVel;
@@ -248,6 +254,13 @@ public class EnemyShooterController : EnemyBaseController
         {
             return -1f;
         }
+    }
+
+    private float VertAimMod(float time)
+    {
+        float normTime = time / graphMax;
+        return verticalAimMod.Evaluate(normTime);
+
     }
 
     /*private float CollisionTimeTwo()
