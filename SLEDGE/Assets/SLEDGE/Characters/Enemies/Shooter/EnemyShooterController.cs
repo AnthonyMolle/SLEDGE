@@ -109,7 +109,7 @@ public class EnemyShooterController : EnemyBaseController
                 {
                     case CombatState.AIMING:
                         
-                        if (aimTimer >= aimDuration)
+                        if (aimTimer >= aimDuration && CollisionTime() > 0f) //Only attempts to shoot if they think they can hit the target
                         {
                             aimTimer = 0.0f;
                             combatState = CombatState.COOLDOWN;
@@ -226,17 +226,15 @@ public class EnemyShooterController : EnemyBaseController
         }
         else
         {
-            return Vector3.up;
+            return Vector3.up; //If this happens, something has gone wrong.
         }
-        //TODO: else should be changed to smth else
     }
 
-    private float CollisionTime() //returns travel time of bullet
+    private float CollisionTime() //Based on player's current velocity, returns the time of the first possible collision between bullet and player. Returns a negative number if there is no possible way for a bullet to catch up to the player.
     {
-        //Check that instantiation of bullet with gun position isn't going to fuck shit up with new formula
         //using instructions from https://howlingmoonsoftware.com/leading-a-target/
         Vector3 playerVel = playerRb.velocity; //In the instructions this is the relative v of the gun and the target, but I am assuming the dude isn't moving while shooting
-        float bulletVel = projectileSpeed; //technically unnecessary yeah
+        float bulletVel = projectileSpeed;
         Vector3 delta = player.transform.position - gunPosition.transform.position; //relative position of gun and the target
 
         //quadratic equation time
@@ -262,15 +260,6 @@ public class EnemyShooterController : EnemyBaseController
         return verticalAimMod.Evaluate(normTime);
 
     }
-
-    /*private float CollisionTimeTwo()
-    {
-        Vector3 playerVelInitial = playerRb.velocity;
-        Vector3 playerVelFinal = playerVelInitial + playerRb;
-        float bulletVel = projectileSpeed;
-        Vector3 playerStart = player.transform.position - gunPosition.transform.position; //relative to gun position
-
-    }*/
 
     public override void ResetEnemy()
     {
