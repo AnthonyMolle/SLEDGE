@@ -1030,8 +1030,9 @@ public class PlayerController : MonoBehaviour
         //Ray ray = gameCamera.ScreenPointToRay(impactPoint.transform.position);
         bool bouncy = false;
 
-        RaycastHit[] hits = Physics.SphereCastAll(ray, hitRadius, hitLength, bouncableLayers, QueryTriggerInteraction.Collide);
+        bool flyerBoost = false;
 
+        RaycastHit[] hits = Physics.SphereCastAll(ray, hitRadius, hitLength, bouncableLayers, QueryTriggerInteraction.Ignore);
         if (hits.Length > 0 || currentPowerup == Powerup.Airburst || additionalBounces > 0)
         {
             if (additionalBounces > 0 && !isGrounded)
@@ -1068,7 +1069,16 @@ public class PlayerController : MonoBehaviour
                 else if (hit.transform.gameObject.tag == "Enemy Flyer")
                 {
                     var e = hit.transform.gameObject.GetComponent<EnemyFlyerController>();
-                    e.TakeDamage(1, hitDirection, swingForce * 1.5f);
+
+                    if (e.InDyingState())
+                    {
+                        flyerBoost = true;
+                        e.TriggerDeathExplosion(true);
+                    }
+                    else
+                    {
+                        e.TakeDamage(1, hitDirection, swingForce * 1.5f);
+                    }
                 }
                 else if (hit.transform.gameObject.tag == "Enemy Shooter")
                 {
@@ -1165,8 +1175,13 @@ public class PlayerController : MonoBehaviour
                 rb.AddForce(launchDirection * bouncyForce/* + normal * 10*/, ForceMode.Impulse);
                 rb.AddForce(transform.up * bouncyUpForce, ForceMode.Impulse);
             }
+            else if (flyerBoost)
+            {
+                isLaunched = true;
+                rb.AddForce(launchDirection * 20, ForceMode.Impulse);
+            }
 
-            Vector3 force = launchDirection; // the direction we will be applying force to the player
+                Vector3 force = launchDirection; // the direction we will be applying force to the player
             if (isLaunched == false) // if we havent launched yet
             {
                 // add magnitude to our force direction
@@ -1236,12 +1251,17 @@ public class PlayerController : MonoBehaviour
         {
             foreach (RaycastHit hit in hits)
             {
-                //Debug.Log(hit.collider.gameObject);
                 if (hit.transform.gameObject.tag == "Enemy Flyer")
                 {
-                    Debug.Log("CALL ME ;)");
-                    hit.transform.gameObject.GetComponent<EnemyFlyerController>().TakeDamage(1, hitDirection, swingForce);
-                    Debug.Log(hitDirection);
+                    EnemyFlyerController flyer = hit.transform.gameObject.GetComponent<EnemyFlyerController>();
+                    if (flyer.InDyingState())
+                    {
+                        flyer.LaunchFlyer(cameraObject.transform.forward);
+                    }
+                    else
+                    {
+                        flyer.TakeDamage(1, hitDirection, swingForce);
+                    }
                 }
                 else if (hit.transform.gameObject.tag == "Enemy Shooter")
                 {
