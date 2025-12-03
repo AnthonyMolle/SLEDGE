@@ -63,7 +63,7 @@ public class PlayerController : MonoBehaviour
     Checkpoint currentCheckpoint;
     
     [SerializeField] int maxHealth = 3; // Maximum health the player can have
-    private int currentHealth = 3; // Current health the player is at
+    public int currentHealth = 3; // Current health the player is at
     bool alive = true; // Tracks if the player is alive
     #endregion
 
@@ -240,7 +240,7 @@ public class PlayerController : MonoBehaviour
     public TextMeshProUGUI displayDistance;
     public TextMeshProUGUI speedometer; // UI that displays how fast we are going
     public TextMeshProUGUI tempPowerupUI; // UI element that displays current equipped powerup
-    public TextMeshProUGUI healthDisplay;
+    public HealthCounter healthDisplay;
 
     [SerializeField] GameObject pause;
 
@@ -321,7 +321,7 @@ public class PlayerController : MonoBehaviour
         currentHealth = maxHealth; 
 
         // If the health display is on, display it.
-        if (healthDisplay != null){healthDisplay.text = "Health: " + currentHealth;}
+        if (healthDisplay != null){healthDisplay.SetHealth(currentHealth);}
 
         // Remove any equiped powerups
         ResetPowerup();
@@ -1379,7 +1379,7 @@ public class PlayerController : MonoBehaviour
         currentHealth = maxHealth;
         if (healthDisplay != null)
         {
-            healthDisplay.text = "Health: " + currentHealth;
+            healthDisplay.SetHealth(currentHealth);
         }
     }
 
@@ -1390,7 +1390,7 @@ public class PlayerController : MonoBehaviour
         currentHealth -= damage;
         if (healthDisplay != null)
         {
-            healthDisplay.text = "Health: " + currentHealth;
+            healthDisplay.SetHealth(currentHealth);
         }
         if (currentHealth <= 0)
         {
@@ -1436,7 +1436,7 @@ public class PlayerController : MonoBehaviour
         currentHealth = maxHealth;
         if (healthDisplay != null)
         {
-            healthDisplay.text = "Health: " + currentHealth;
+            healthDisplay.SetHealth(currentHealth);
         }
     }
 
