@@ -32,11 +32,13 @@ public class EnemyShooterController : EnemyBaseController
     [SerializeField] float projectileLifetime;
     [SerializeField] float projectileSpeed;
 
-    /* Animation Curve to dampen vertical distance anticipation in aiming */
+    /* Animation Curve for aim verticality */
+    //Aiming only takes the current velocity vector into account and assumes it won't change. Any jumping, hammering, falling, or other vertical movement will jack up the vertical calculations because those accelerations aren't accounted for
+    //The animation curve assumes that the velocity's Y vector at any given moment will somewhat even out over time. Y+ velocity is countered by gravity, Y- velocity is countered by assuming the player has a plan outside of freefalling forever
     [Header("Aiming")]
     [HorizontalLine]
     [SerializeField] AnimationCurve verticalAimMod; //X is time for bullet to hit player (normalized to graphMax), Y is % of vertical distance change we use from the original calculations
-    [SerializeField] float graphMax; //unit is seconds. Any time after this point will return a Y equal to y(1)
+    [SerializeField] float graphMax; //unit is seconds. Evaluating the graph at any time after this point will return a Y equal to y(1)
 
     [Header("Positional Constants")]
     [HorizontalLine]
