@@ -20,9 +20,8 @@ public class EnemyBaseController : MonoBehaviour
 
     [Header("Base Ragdoll")]
     [HorizontalLine]
-    
-    [SerializeField] GameObject deathRagdoll;
-    GameObject ragdollInstance;
+
+    [SerializeField] RagdollScript deathRagdoll;
 
     protected Vector3 spawnPosition;
     protected Rigidbody rb;
@@ -93,8 +92,7 @@ public class EnemyBaseController : MonoBehaviour
         // Creating a ragdoll
         if (deathRagdoll)
         {
-            ragdollInstance = Instantiate(deathRagdoll, transform.position, transform.rotation);
-            ragdollInstance.GetComponent<Rigidbody>().AddForce(rb.velocity, ForceMode.Impulse);
+            deathRagdoll.KillSwitch(true);
         }
 
         // Enemy manager marks this enemy as dead
@@ -106,8 +104,7 @@ public class EnemyBaseController : MonoBehaviour
     {
         if (deathRagdoll)
         {
-            Destroy(ragdollInstance);
-            ragdollInstance = null;
+            deathRagdoll.KillSwitch(false);
         }
         transform.position = spawnPosition;
         enemyState = EnemyState.IDLE;
