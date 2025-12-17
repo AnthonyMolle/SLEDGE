@@ -579,7 +579,7 @@ public class PlayerController : MonoBehaviour
             //audioManager.PlaySFX(audioManager.hit);
             //anim.Play("HammerHit"); 
             anim.Play("Slam");
-            crosshair.Slam();
+            crosshair.Slam(false);
             //slamHitbox.DeactivateCollider();
 
             recovering = true;
@@ -1075,7 +1075,7 @@ public class PlayerController : MonoBehaviour
                 else if (hit.transform.gameObject.tag == "Enemy Flyer")
                 {
                     var e = hit.transform.gameObject.GetComponent<EnemyFlyerController>();
-
+                    crosshair.Slam(true, 1);
                     if (e.InDyingState())
                     {
                         flyerBoost = true;
@@ -1088,6 +1088,7 @@ public class PlayerController : MonoBehaviour
                 }
                 else if (hit.transform.gameObject.tag == "Enemy Shooter")
                 {
+                    crosshair.Slam(true, 1);
                     var e = hit.transform.gameObject.GetComponent<EnemyShooterController>();
                     e.TakeDamage(1, hitDirection, swingForce * 1.5f);
                 }
