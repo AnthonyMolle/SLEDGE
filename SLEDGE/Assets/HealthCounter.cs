@@ -6,6 +6,7 @@ public class HealthCounter : MonoBehaviour
 {
     public int health = 3;
     public List<Heart> hearts = new List<Heart>();
+    public CrackCounter cc;
 
     public void SetHealth(int h)
     {
@@ -29,6 +30,25 @@ public class HealthCounter : MonoBehaviour
             // {
             //     hearts[i].Heal();
             // }
+        }
+        if (cc != null)
+        {
+            if (health >= 2)
+            {
+                cc.SetCrackLevel(0);
+                return;
+            }
+            if (health == 1)
+            {
+                cc.SetCrackLevel(1);
+                return;
+            }
+            if (health == 0)
+            {
+                cc.SetCrackLevel(3);
+                return;
+            }
+            // cc.SetCrackLevelReverse(health);
         }
     }
 }

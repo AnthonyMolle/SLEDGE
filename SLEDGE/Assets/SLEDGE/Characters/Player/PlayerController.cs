@@ -579,7 +579,7 @@ public class PlayerController : MonoBehaviour
             //audioManager.PlaySFX(audioManager.hit);
             //anim.Play("HammerHit"); 
             anim.Play("Slam");
-            crosshair.Slam(false);
+            crosshair.Slam(false, 0);
             //slamHitbox.DeactivateCollider();
 
             recovering = true;
