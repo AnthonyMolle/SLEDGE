@@ -241,6 +241,7 @@ public class PlayerController : MonoBehaviour
     public TextMeshProUGUI speedometer; // UI that displays how fast we are going
     public TextMeshProUGUI tempPowerupUI; // UI element that displays current equipped powerup
     public HealthCounter healthDisplay;
+    public Crosshair crosshair;
 
     [SerializeField] GameObject pause;
 
@@ -534,6 +535,7 @@ public class PlayerController : MonoBehaviour
             hammerTimer = chargeTime;
             //anim.Play("HammerCharge"); 
             anim.Play("Charge");
+            crosshair.Charge();
             hitDirection = transform.forward;
             hammerBounced = false;
         }
@@ -545,6 +547,7 @@ public class PlayerController : MonoBehaviour
             chargingHammer = false;
             hammerTimer = 0;
             hammerBounced = false;
+            crosshair.CancelCharge();
         }
 
         if (mouseReleased && hammerCharged)
@@ -576,6 +579,7 @@ public class PlayerController : MonoBehaviour
             //audioManager.PlaySFX(audioManager.hit);
             //anim.Play("HammerHit"); 
             anim.Play("Slam");
+            crosshair.Slam();
             //slamHitbox.DeactivateCollider();
 
             recovering = true;
