@@ -59,8 +59,10 @@ public class Heart : MonoBehaviour
 
     public void Heal() 
     {
+        pumping = false;
         damaged = false;
         anim.SetBool("Dead", false);
+        anim.SetBool("Pump", false);
     }
 
     [ContextMenu("Revive")]

@@ -1,14 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Powerup = PlayerController.Powerup;
 
 public class PowerupUI : MonoBehaviour
 {
-    public List<SpriteRenderer> powerupIcons = new List<SpriteRenderer>();
+    public List<Image> powerupIcons = new List<Image>();
     public Sprite airburstSprite;
     public Sprite explosionSprite;
     public Powerup pup;
+
+    void Start()
+    {
+        SetPowerup(Powerup.None);
+    }
 
     public void SetPowerup(Powerup p)
     {

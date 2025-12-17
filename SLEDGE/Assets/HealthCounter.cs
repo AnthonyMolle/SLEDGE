@@ -16,6 +16,7 @@ public class HealthCounter : MonoBehaviour
             // {
             //     hearts[i].Damage();
             // }
+            hearts[i].Heal();
             if (i == health)
             {
                 hearts[i].Pump();

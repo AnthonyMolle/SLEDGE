@@ -26,7 +26,7 @@ public class PlayerController : MonoBehaviour
     #region Character Component References
     [Header("Character Component References")]
     [SerializeField] Camera gameCamera;
-    Rigidbody rb; // parent rigidbody
+    public Rigidbody rb; // parent rigidbody
     CapsuleCollider characterCollider;
     [SerializeField] Animator anim; // parent animator
     #endregion
