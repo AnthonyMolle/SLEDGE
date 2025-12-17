@@ -248,12 +248,13 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] GameObject deathScreen;
 
+    [SerializeField] PowerupUI powerupUI;
+
     #endregion
 
     #region Power Ups
     public enum Powerup { None, Airburst, Explosive } // List of powerups in game (including none)
-
-    Powerup currentPowerup; // Hold the currently equipped powerup
+    public Powerup currentPowerup = Powerup.None; // Currently equipped powerup
 
     [Header("Power Ups")]
     [Tooltip("How much we add to bounce force when the explosive powerup is enabled.")]
@@ -313,6 +314,7 @@ public class PlayerController : MonoBehaviour
         settings = canvas.transform.Find("Pause Setting Screen").gameObject;
         pause = canvas.transform.Find("PauseMenu").gameObject;
         displayDistance = canvas.transform.Find("Distance").gameObject.GetComponent<TextMeshProUGUI>();
+        powerupUI = canvas.transform.Find("Powerups").gameObject.GetComponent<PowerupUI>();
 
         // Set the mouse sensitivity
         mouseSensitivity = PlayerPrefs.GetFloat("Sensitivity", 400); 
@@ -1451,6 +1453,7 @@ public class PlayerController : MonoBehaviour
     public void CollectPowerup(Powerup newPowerup) // Equips a new powerup to the player and updates UI to display equiped powerup
     {
         currentPowerup = newPowerup;
+        if (powerupUI != null) {powerupUI.SetPowerup(newPowerup);};
         if (currentPowerup == Powerup.Explosive)
         {
             tempPowerupUI.text = "Active Powerup: Explosive";
@@ -1469,6 +1472,7 @@ public class PlayerController : MonoBehaviour
     void ResetPowerup() // Removes any equipped powerups
     {
         currentPowerup = Powerup.None;
+        if (powerupUI != null) {powerupUI.SetPowerup(Powerup.None);};
         if (tempPowerupUI != null)
         {
             tempPowerupUI.text = "Active Powerup: None";
