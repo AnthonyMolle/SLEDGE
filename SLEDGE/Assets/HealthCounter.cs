@@ -33,7 +33,7 @@ public class HealthCounter : MonoBehaviour
         }
         if (cc != null)
         {
-            if (health >= 2)
+            if (health == 2)
             {
                 cc.SetCrackLevel(0);
                 return;
@@ -44,6 +44,11 @@ public class HealthCounter : MonoBehaviour
                 return;
             }
             if (health == 0)
+            {
+                cc.SetCrackLevel(2);
+                return;
+            }
+            if (health < 0)
             {
                 cc.SetCrackLevel(3);
                 return;

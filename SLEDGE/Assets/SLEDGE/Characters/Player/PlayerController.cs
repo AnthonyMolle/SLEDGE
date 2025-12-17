@@ -1418,6 +1418,7 @@ public class PlayerController : MonoBehaviour
     {
         // Kill the player, activate the death screen UI, and reset the timescale.
         alive = false;
+        healthDisplay.SetHealth(0);
         deathScreen.SetActive(true);
         Time.timeScale = 0;
     }

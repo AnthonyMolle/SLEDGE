@@ -11,6 +11,7 @@ public class Heart : MonoBehaviour
     void Start()
     {
         anim = GetComponent<Animator>();
+        anim.updateMode = AnimatorUpdateMode.UnscaledTime;
         if (pumping) {
             anim.SetBool("Pump", true);
         }
