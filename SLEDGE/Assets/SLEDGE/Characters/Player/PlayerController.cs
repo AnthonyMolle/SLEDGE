@@ -169,7 +169,13 @@ public class PlayerController : MonoBehaviour
     [Tooltip("Root of hammer swing arc, used to move the entire arc")]
     [SerializeField] GameObject hammerArcRoot;
 
-    [SerializeField] GameObject impactPoint;
+    [SerializeField] GameObject impactPointPrefab;
+    [SerializeField] bool alwaysShowImpactPoint = false; // If set to false, will only show impact point when charging up a hammer slam
+    GameObject impactPoint;
+    bool impactPointHidden;
+    bool hideImpactPoint;
+    Color impactFadeColor;
+    float impactFadeTimer;
 
     [SerializeField] float chargeTime = 1f;
     [SerializeField] float hitTime = 1f;
@@ -194,6 +200,7 @@ public class PlayerController : MonoBehaviour
     bool recovering = false;
 
     bool swipingHammer = false; // Tracks if the player used the secondary hammer action (swipe/parry)
+    bool readyingSwipe = false;
     bool swipeRecovering = false;
     bool swipeComboReady = false;
 
@@ -333,6 +340,12 @@ public class PlayerController : MonoBehaviour
         characterCollider = GetComponent<CapsuleCollider>();
 
         RefreshAdditionalBounces();
+
+        // Impact point stuff
+        impactPoint = Instantiate(impactPointPrefab, transform.position, transform.rotation);
+        impactFadeColor = impactPoint.GetComponent<MeshRenderer>().material.color;
+
+        anim.SetLayerWeight(anim.GetLayerIndex("Charge Layer"), 0);
     }
 
     void Update() // Function Called once per frame
@@ -352,18 +365,11 @@ public class PlayerController : MonoBehaviour
             hammerArcRoot.transform.position = cameraObject.transform.position + (cameraObject.transform.forward * hitLength);
         }
 
-        /*for (int i = 0; i < hammerArcPoints.Length; i++)
-        {
-            if (i < hammerArcPoints.Length - 1)
-            {
-                Vector3 startLoc = hammerArcPoints[i].transform.position;
-                Vector3 endLoc = hammerArcPoints[i + 1].transform.position;
-                Debug.DrawLine(startLoc, endLoc, Color.green);
-            }
-        }*/
 
-        //print(isLaunched);
-        // Self Explanatory Functions
+        HandleImpactPoint();
+
+            //print(isLaunched);
+            // Self Explanatory Functions
         HandleInput();
         HandleHammer();
         HandleLookRotation();
@@ -440,6 +446,70 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void HandleImpactPoint()
+    {
+        hideImpactPoint = true;
+        if (impactPointHidden)
+        {
+            impactFadeTimer += Time.deltaTime;
+        }
+        else
+        {
+            impactFadeTimer -= Time.deltaTime;
+        }
+        impactFadeTimer = Mathf.Clamp(impactFadeTimer, 0.0f, 0.25f);
+
+        RaycastHit arcHit;
+        for (int i = 0; i < hammerArcPoints.Length; i++)
+        {
+            if (i < hammerArcPoints.Length - 1)
+            {
+                Vector3 startLoc = hammerArcPoints[i].transform.position;
+                Vector3 endLoc = hammerArcPoints[i + 1].transform.position;
+                Vector3 direction = (endLoc - startLoc).normalized;
+                float distance = Vector3.Distance(startLoc, endLoc);
+
+                if (Physics.Raycast(startLoc, direction, out arcHit, distance))
+                {
+                    hideImpactPoint = false;
+                    Vector3 impactPos = arcHit.point;
+
+                    if (!impactPointHidden)
+                    {
+                        impactPoint.transform.position = Vector3.Slerp(impactPoint.transform.position, impactPos, Time.deltaTime * 10f);
+                        Quaternion newRotation = Quaternion.FromToRotation(Vector3.up, arcHit.normal);
+                        impactPoint.transform.rotation = Quaternion.Slerp(impactPoint.transform.rotation, newRotation, Time.deltaTime * 20f);
+                    }
+                    else
+                    {
+                        impactPointHidden = false;
+                        impactPoint.transform.position = impactPos;
+                    }
+
+                    impactFadeColor.a = Mathf.Lerp(1, 0, impactFadeTimer / 0.25f);
+                    impactPoint.GetComponent<MeshRenderer>().material.color = impactFadeColor;
+
+                    break;
+                }
+            }
+        }
+
+        if (hideImpactPoint)
+        {
+            impactPointHidden = true;
+            impactFadeColor.a = Mathf.Lerp(1, 0, impactFadeTimer / 0.25f);
+            impactPoint.GetComponent<MeshRenderer>().material.color = impactFadeColor;
+        }
+
+        // Only show impact point when charging up the hammer for a swing
+        if (!alwaysShowImpactPoint && !chargingHammer && !hammerCharged)
+        {
+            impactPointHidden = true;
+            impactFadeColor.a = Mathf.Lerp(1, 0, impactFadeTimer / 0.25f);
+            impactPoint.GetComponent<MeshRenderer>().material.color = impactFadeColor;
+        }
+    }
+
     private void HandleSpeedFX() // Handles speed effects while moving quickly
     {
         if (rb.velocity.magnitude > 10)
@@ -486,10 +556,15 @@ public class PlayerController : MonoBehaviour
     {
         if (secondaryPressed && !chargingHammer && !recovering && !hittingHammer && !hammerCharged && !swipingHammer && currentCombo == Combo.notSwiping)
         {
-            swipingHammer = true;
+            //swipingHammer = true;
             swipeComboReady = false;
             hammerTimer = swipeTime;
-            anim.Play("Swipe Right", -1, 0.25f);
+            //anim.Play("Swipe Right", -1, 0.25f);
+            //anim.SetFloat("X", 1.0f);
+            anim.SetFloat("Y", 0.0f);
+            readyingSwipe = true;
+            anim.SetTrigger("Interrupt");
+
             currentCombo = Combo.Swipe1;
             hitDirection = Vector3.Normalize(new Vector3(Random.Range(-15f, -30f), Random.Range(-5.0f, 5.0f), Random.Range(0f, 10f)) + transform.forward);
             swingForce = swipeForceBase;
@@ -497,20 +572,30 @@ public class PlayerController : MonoBehaviour
         // combo swipes
         if (secondaryPressed && !chargingHammer && !recovering && !hittingHammer && !hammerCharged && !swipingHammer && swipeComboReady && currentCombo == Combo.Swipe1) // for a lil combo, might want to include input when swiping
         {
-            swipingHammer = true;
+            //swipingHammer = true;
             swipeComboReady = false;
             hammerTimer = swipeTime;
-            anim.Play("Swipe Left", -1, 0.01f);
+            //anim.Play("Swipe Left", -1, 0.01f);
+            //anim.SetFloat("X", -1.0f);
+            anim.SetFloat("Y", 0.0f);
+            readyingSwipe = true;
+            anim.SetTrigger("Interrupt");
+
             currentCombo = Combo.Swipe2;
             hitDirection = Vector3.Normalize(new Vector3(Random.Range(15f, 30f), Random.Range(-5.0f, 5.0f), Random.Range(0f, 10f)) + transform.forward);
             swingForce = swipeForceBase;
         }
         if (secondaryPressed && !chargingHammer && !recovering && !hittingHammer && !hammerCharged && !swipingHammer && swipeComboReady && currentCombo == Combo.Swipe2)
         {
-            swipingHammer = true;
+            //swipingHammer = true;
             swipeComboReady = false;
             hammerTimer = swipeTime;
-            anim.Play("Swipe Right", -1, 0.25f);
+            //anim.Play("Swipe Right", -1, 0.25f);
+            //anim.SetFloat("X", 1.0f);
+            anim.SetFloat("Y", 0.0f);
+            readyingSwipe = true;
+            anim.SetTrigger("Interrupt");
+
             currentCombo = Combo.Swipe1;
             hitDirection = Vector3.Normalize(new Vector3(Random.Range(-15f, -30f), Random.Range(-5.0f, 5.0f), Random.Range(0f, 10f)) + transform.forward);
             swingForce = swipeForceBase;
@@ -533,16 +618,20 @@ public class PlayerController : MonoBehaviour
             //Debug.Log("hammer startin");
             chargingHammer = true;
             hammerTimer = chargeTime;
-            //anim.Play("HammerCharge"); 
-            anim.Play("Charge");
             crosshair.Charge();
+ 
+            anim.SetFloat("X", 0.5f);
+            anim.SetFloat("Y", 1);
+            anim.SetTrigger("Interrupt");
+
             hitDirection = transform.forward;
             hammerBounced = false;
         }
 
         if (chargingHammer && hammerTimer > 0.1 && mouseReleased)
         {
-            anim.Play("Idle");
+            anim.SetLayerWeight(anim.GetLayerIndex("Charge Layer"), 0);
+
             currentCombo = Combo.notSwiping;
             chargingHammer = false;
             hammerTimer = 0;
@@ -554,6 +643,21 @@ public class PlayerController : MonoBehaviour
         {
             hammerCharged = false;
             hittingHammer = true;
+
+            float horizontalInput = Input.GetAxisRaw("Horizontal");
+            if (horizontalInput < 0)
+            {
+                anim.SetFloat("X", -1);
+            }
+            else if (horizontalInput == 0)
+            {
+                anim.SetFloat("X", -0.4f);
+            }
+
+            anim.SetTrigger("Swing");
+            anim.ResetTrigger("Interrupt");
+            anim.SetLayerWeight(anim.GetLayerIndex("Charge Layer"), 1);
+
             //slamHitbox.ActivateCollider();
             hammerTimer = hitTime;
         }
@@ -561,14 +665,13 @@ public class PlayerController : MonoBehaviour
         if (hammerTimer > 0)
         {
             hammerTimer -= Time.deltaTime;
+            UpdateAnimations();
         }
         else if (chargingHammer)
         {
             //Debug.Log("charging hammer ended");
             hammerCharged = true;
             chargingHammer = false;
-            //anim.Play("HammerHold"); 
-            anim.Play("Charged");
             hammerBounced = false;
         }
         else if (hittingHammer)
@@ -577,9 +680,9 @@ public class PlayerController : MonoBehaviour
             hammerHit = true;
             hittingHammer = false;
             //audioManager.PlaySFX(audioManager.hit);
-            //anim.Play("HammerHit"); 
-            anim.Play("Slam");
+            
             crosshair.Slam(false, 0);
+            
             //slamHitbox.DeactivateCollider();
 
             recovering = true;
@@ -605,6 +708,8 @@ public class PlayerController : MonoBehaviour
 
             swipeRecovering = true;
             hammerTimer = swipeRecoveryTime;
+
+            anim.ResetTrigger("Swing");
         }
         else if (swipeRecovering)
         {
@@ -616,6 +721,108 @@ public class PlayerController : MonoBehaviour
         {
             swipeComboReady = false;
             currentCombo = Combo.notSwiping;
+        }
+
+        if (hammerCharged)
+        {
+            float prevAngle = anim.GetFloat("X");
+            float xAngle = Mathf.Lerp(prevAngle, 0.5f, Time.deltaTime * 5);
+            if (movementInputVector.magnitude > 0.001)
+            {
+                float horizontalInput = Input.GetAxisRaw("Horizontal");
+
+                if (horizontalInput > 0)
+                {
+                    // Right
+                    xAngle = Mathf.Lerp(prevAngle, 1, Time.deltaTime * 5);
+                }
+                else if (horizontalInput < 0)
+                {
+                    // Left
+                    xAngle = Mathf.Lerp(prevAngle, 0, Time.deltaTime * 5);
+                }
+
+            }
+            anim.SetFloat("X", xAngle);
+        }
+    }
+
+    private void UpdateAnimations()
+    {
+        if (chargingHammer)
+        {
+            if (chargeTime - hammerTimer > 0.05f)
+            {
+                float weight = Mathf.Lerp(0, 0.9f, ((chargeTime - hammerTimer) - 0.05f) / (chargeTime - 0.05f));
+                anim.SetLayerWeight(anim.GetLayerIndex("Charge Layer"), weight);
+
+                float prevAngle = anim.GetFloat("X");
+                float xAngle = Mathf.Lerp(prevAngle, 0.5f, Time.deltaTime * 5);
+                if (movementInputVector.magnitude > 0.001)
+                {
+                    float horizontalInput = Input.GetAxisRaw("Horizontal");
+
+                    if (horizontalInput > 0)
+                    {
+                        // Right
+                        xAngle = Mathf.Lerp(prevAngle, 1, Time.deltaTime * 5);
+                    }
+                    else if (horizontalInput < 0)
+                    {
+                        // Left
+                        xAngle = Mathf.Lerp(prevAngle, 0, Time.deltaTime * 5);
+                    }
+
+                }
+                anim.SetFloat("X", xAngle);
+            }
+        }
+        else if (recovering)
+        {
+            float weight = Mathf.Lerp(1, 0, (recoveryTime - hammerTimer) / recoveryTime);
+            anim.SetLayerWeight(anim.GetLayerIndex("Charge Layer"), weight);
+        }
+        else if (swipingHammer || readyingSwipe)
+        {
+            if (hammerTimer > 0.25)
+            {
+                float weight = Mathf.Lerp(0, 1, Mathf.Clamp(Mathf.Abs((hammerTimer - swipeTime)), 0, 0.1f) / 0.1f);
+                anim.SetLayerWeight(anim.GetLayerIndex("Charge Layer"), weight);
+
+                if (currentCombo == Combo.Swipe2)
+                {
+                    anim.SetFloat("X", 0 - weight);
+                }
+                else
+                {
+                    anim.SetFloat("X", weight);
+                }
+
+            }
+            else if (readyingSwipe)
+            {
+                if (currentCombo == Combo.Swipe2)
+                {
+                    anim.SetFloat("X", -1);
+                }
+                else
+                {
+                    anim.SetFloat("X", 1);
+                }
+                anim.SetTrigger("Swing");
+                anim.ResetTrigger("Interrupt");
+            }
+            
+            if (readyingSwipe && !swipingHammer && hammerTimer < 0.2)
+            {
+                readyingSwipe = false;
+                swipingHammer = true;
+            }
+        }
+        else if (swipeComboReady)
+        {
+            float weight = Mathf.Lerp(1, 0, (swipeRecoveryTime - hammerTimer) / swipeRecoveryTime);
+            anim.SetLayerWeight(anim.GetLayerIndex("Charge Layer"), weight);
         }
     }
 
@@ -775,15 +982,21 @@ public class PlayerController : MonoBehaviour
                 }
                 */
 
+                //anim.Play("Land");
+                anim.SetTrigger("Land");
+
                 if (!hammerCharged)
                 {
-                    anim.Play("Land");
+                    //anim.Play("Land");
                 }
             }
             isGrounded = true;
             isLaunched = false;
             rb.useGravity = false;
-            anim.SetBool("grounded", true);
+            //anim.SetBool("grounded", true);
+            anim.ResetTrigger("Jump");
+            anim.ResetTrigger("Airborne");
+
             movementPlane = hit.normal;
 
             StopCoroutine(DecreaseCoyoteTime()); // Stop the coroutine that lets us have jump leinency
@@ -797,7 +1010,10 @@ public class PlayerController : MonoBehaviour
             movementPlane = transform.up;
             isGrounded = false;
             rb.useGravity = true;
-            anim.SetBool("grounded", false);
+            //anim.SetBool("grounded", false);
+            anim.ResetTrigger("Land");
+            anim.SetTrigger("Airborne");
+
             isOnSlope = false;
 
             // Let the player jump until this coroutine is finished.
@@ -849,7 +1065,7 @@ public class PlayerController : MonoBehaviour
                 // Debug.Log(flatVelocity);
                 // Debug.Log("Velo: " + (flatVelocity + transform.forward));
                 // Debug.Log("Velo Magnitude: " + flatVelocity.magnitude);
-                anim.SetFloat("Speed", flatVelocity.magnitude);
+                anim.SetFloat("Speed", Mathf.Clamp(flatVelocity.magnitude / 10, 0, 1));
                 //Debug.Log(anim.GetFloat("Speed"));
 
                 if (!isSliding)
@@ -947,9 +1163,11 @@ public class PlayerController : MonoBehaviour
                     rb.AddForce(movementInputVector * airAccelerationRate);
                     rb.velocity = new Vector3(Vector3.ClampMagnitude(flatVelocity, airMaxSpeed).x, rb.velocity.y, Vector3.ClampMagnitude(flatVelocity, airMaxSpeed).z);
                 }
+                anim.SetFloat("Up", Mathf.Lerp(0, 1, Mathf.Clamp(Mathf.Abs(rb.velocity.y) / 20, 0, 1)));
+
             }
 
-            anim.SetBool("Moving", CheckMoving());
+            //anim.SetBool("Moving", CheckMoving());
 
             #endregion
 
@@ -999,6 +1217,7 @@ public class PlayerController : MonoBehaviour
                     rb.AddForce(movementInputVector * adjustedForce);
                 }
             }
+            anim.SetFloat("Up", Mathf.Lerp(0, 1, Mathf.Clamp(Mathf.Abs(rb.velocity.y) / 20, 0, 1)));
         }
     }
 
@@ -1017,8 +1236,11 @@ public class PlayerController : MonoBehaviour
         rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z); //remove our falling velocity so our jump doesnt have to fight gravity.
         rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse); // add a force upward
         hasJumped = true; // let the engine know we have jumped.
+
+        anim.SetTrigger("Jump");
+
         if (!hammerCharged) {
-            anim.Play("Jump");
+            //anim.Play("Jump");
         }
     }
 
@@ -1048,7 +1270,8 @@ public class PlayerController : MonoBehaviour
             }
             foreach (RaycastHit hit in hits)
             {
-                if (hit.transform.gameObject.GetComponent<Renderer>() != null && hit.transform.gameObject.GetComponent<Renderer>().sharedMaterial.name == "ShockAbsorbMat")
+                Renderer renderer = hit.transform.gameObject.GetComponent<Renderer>();
+                if (renderer != null && renderer.sharedMaterial != null && renderer.sharedMaterial.name == "ShockAbsorbMat")
                 {
                     return;
                 }

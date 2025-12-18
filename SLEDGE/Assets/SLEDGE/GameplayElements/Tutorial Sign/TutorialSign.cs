@@ -33,7 +33,6 @@ public class TutorialSign : MonoBehaviour
 
     void OnTriggerStay(Collider other)
     {
-        HandleInput();
         inTrigger = true;
     }
 
@@ -46,8 +45,11 @@ public class TutorialSign : MonoBehaviour
     void HandleInput()
     {
         //Debug.Log("handling input");
-        Debug.Log("e " + Input.GetKeyDown(KeyCode.E));
+        //Debug.Log("e " + Input.GetKeyDown(KeyCode.E));
         //Debug.Log(tutorialCanvas.activeSelf + "tutCanvasActiveness");
+
+        if(Input.GetKeyDown(KeyCode.E))
+            Debug.Log("e " + Input.GetKeyDown(KeyCode.E));
 
         if (inTrigger && Input.GetKeyDown(KeyCode.E) && !tutorialCanvas.activeSelf) //if press E next to sign and tutorial is not already active
         {

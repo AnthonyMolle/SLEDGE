@@ -6,6 +6,7 @@ using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.Splines;
+using UnityEngine.VFX;
 using static UnityEditor.FilePathAttribute;
 
 public class EnemyFlyerController : EnemyBaseController
@@ -60,6 +61,7 @@ public class EnemyFlyerController : EnemyBaseController
     [SerializeField] float dyingDuration = 2.0f; // Duration between taking fatal damage and exploding
     bool launched = false; // If the enemy was launched by the player
     Vector3 launchDirection;
+    public GameObject explosionEffect;
 
     [SerializeField] LayerMask enemyLayers;
 
@@ -390,6 +392,8 @@ public class EnemyFlyerController : EnemyBaseController
 
     public void TriggerDeathExplosion(bool playerTriggered)
     {
+        Instantiate(explosionEffect, transform.position, transform.rotation);
+
         if (playerTriggered)
         {
             RaycastHit[] enemyHits = Physics.SphereCastAll(transform.position, 5.0f, transform.forward, 0.1f, enemyLayers);
