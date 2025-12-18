@@ -2261,7 +2261,7 @@ PrefabInstance:
     - target: {fileID: 3348789719317407251, guid: 5dd5b681c132b964993064fc2d3cde0b,
         type: 3}
       propertyPath: m_CullingMask.m_Bits
-      value: 204087
+      value: 204055
       objectReference: {fileID: 0}
     - target: {fileID: 3380140073417402356, guid: 5dd5b681c132b964993064fc2d3cde0b,
         type: 3}
@@ -2291,7 +2291,7 @@ PrefabInstance:
     - target: {fileID: 6035020213324124925, guid: 5dd5b681c132b964993064fc2d3cde0b,
         type: 3}
       propertyPath: m_Cameras.Array.size
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 6035020213324124925, guid: 5dd5b681c132b964993064fc2d3cde0b,
         type: 3}
@@ -2325,6 +2325,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6314295682490010892, guid: 5dd5b681c132b964993064fc2d3cde0b,
         type: 3}
+      propertyPath: jumpForce
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 6314295682490010892, guid: 5dd5b681c132b964993064fc2d3cde0b,
+        type: 3}
       propertyPath: maxHealth
       value: 3
       objectReference: {fileID: 0}
@@ -2341,13 +2346,23 @@ PrefabInstance:
     - target: {fileID: 6314295682490010892, guid: 5dd5b681c132b964993064fc2d3cde0b,
         type: 3}
       propertyPath: bounceForce
-      value: 15
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 6314295682490010892, guid: 5dd5b681c132b964993064fc2d3cde0b,
         type: 3}
       propertyPath: impactPoint
       value: 
       objectReference: {fileID: 8354795910788421842}
+    - target: {fileID: 6314295682490010892, guid: 5dd5b681c132b964993064fc2d3cde0b,
+        type: 3}
+      propertyPath: bounceForceY
+      value: 27
+      objectReference: {fileID: 0}
+    - target: {fileID: 6314295682490010892, guid: 5dd5b681c132b964993064fc2d3cde0b,
+        type: 3}
+      propertyPath: bounceGravity
+      value: 30
+      objectReference: {fileID: 0}
     - target: {fileID: 6314295682490010892, guid: 5dd5b681c132b964993064fc2d3cde0b,
         type: 3}
       propertyPath: hammerArcRoot
@@ -2366,12 +2381,17 @@ PrefabInstance:
     - target: {fileID: 6314295682490010892, guid: 5dd5b681c132b964993064fc2d3cde0b,
         type: 3}
       propertyPath: maxFallingSpeed
-      value: 60
+      value: 70
       objectReference: {fileID: 0}
     - target: {fileID: 6314295682490010892, guid: 5dd5b681c132b964993064fc2d3cde0b,
         type: 3}
       propertyPath: hammerSlamSize.z
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6314295682490010892, guid: 5dd5b681c132b964993064fc2d3cde0b,
+        type: 3}
+      propertyPath: airMaxHammerSpeed
+      value: 31
       objectReference: {fileID: 0}
     - target: {fileID: 6314295682490010892, guid: 5dd5b681c132b964993064fc2d3cde0b,
         type: 3}
@@ -2390,8 +2410,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6314295682490010892, guid: 5dd5b681c132b964993064fc2d3cde0b,
         type: 3}
+      propertyPath: initialBounceForce
+      value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: 6314295682490010892, guid: 5dd5b681c132b964993064fc2d3cde0b,
+        type: 3}
       propertyPath: swipeLayers.m_Bits
       value: 150784
+      objectReference: {fileID: 0}
+    - target: {fileID: 6314295682490010892, guid: 5dd5b681c132b964993064fc2d3cde0b,
+        type: 3}
+      propertyPath: initialBounceForceY
+      value: 27
       objectReference: {fileID: 0}
     - target: {fileID: 6314295682490010892, guid: 5dd5b681c132b964993064fc2d3cde0b,
         type: 3}
@@ -2450,6 +2480,11 @@ PrefabInstance:
       objectReference: {fileID: 1472724145779752423}
     - target: {fileID: 6314295682490010892, guid: 5dd5b681c132b964993064fc2d3cde0b,
         type: 3}
+      propertyPath: naturalAdditionalFallingSpeed
+      value: 17
+      objectReference: {fileID: 0}
+    - target: {fileID: 6314295682490010892, guid: 5dd5b681c132b964993064fc2d3cde0b,
+        type: 3}
       propertyPath: hammerArc.Array.data[0].start.x
       value: 0
       objectReference: {fileID: 0}
@@ -2481,17 +2516,17 @@ PrefabInstance:
     - target: {fileID: 6469425393073572772, guid: 5dd5b681c132b964993064fc2d3cde0b,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -111.47
       objectReference: {fileID: 0}
     - target: {fileID: 6469425393073572772, guid: 5dd5b681c132b964993064fc2d3cde0b,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.5
+      value: 26.49
       objectReference: {fileID: 0}
     - target: {fileID: 6469425393073572772, guid: 5dd5b681c132b964993064fc2d3cde0b,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 106.85
       objectReference: {fileID: 0}
     - target: {fileID: 6469425393073572772, guid: 5dd5b681c132b964993064fc2d3cde0b,
         type: 3}
