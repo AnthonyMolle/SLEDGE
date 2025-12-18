@@ -26,7 +26,7 @@ public class PlayerController : MonoBehaviour
     #region Character Component References
     [Header("Character Component References")]
     [SerializeField] Camera gameCamera;
-    Rigidbody rb; // parent rigidbody
+    public Rigidbody rb; // parent rigidbody
     CapsuleCollider characterCollider;
     [SerializeField] Animator anim; // parent animator
     #endregion
@@ -63,7 +63,7 @@ public class PlayerController : MonoBehaviour
     Checkpoint currentCheckpoint;
     
     [SerializeField] int maxHealth = 3; // Maximum health the player can have
-    private int currentHealth = 3; // Current health the player is at
+    public int currentHealth = 3; // Current health the player is at
     bool alive = true; // Tracks if the player is alive
     #endregion
 
@@ -240,7 +240,8 @@ public class PlayerController : MonoBehaviour
     public TextMeshProUGUI displayDistance;
     public TextMeshProUGUI speedometer; // UI that displays how fast we are going
     public TextMeshProUGUI tempPowerupUI; // UI element that displays current equipped powerup
-    public TextMeshProUGUI healthDisplay;
+    public HealthCounter healthDisplay;
+    public Crosshair crosshair;
 
     [SerializeField] GameObject pause;
 
@@ -248,12 +249,13 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] GameObject deathScreen;
 
+    [SerializeField] PowerupUI powerupUI;
+
     #endregion
 
     #region Power Ups
     public enum Powerup { None, Airburst, Explosive } // List of powerups in game (including none)
-
-    Powerup currentPowerup; // Hold the currently equipped powerup
+    public Powerup currentPowerup = Powerup.None; // Currently equipped powerup
 
     [Header("Power Ups")]
     [Tooltip("How much we add to bounce force when the explosive powerup is enabled.")]
@@ -313,6 +315,7 @@ public class PlayerController : MonoBehaviour
         settings = canvas.transform.Find("Pause Setting Screen").gameObject;
         pause = canvas.transform.Find("PauseMenu").gameObject;
         displayDistance = canvas.transform.Find("Distance").gameObject.GetComponent<TextMeshProUGUI>();
+        powerupUI = canvas.transform.Find("Powerups").gameObject.GetComponent<PowerupUI>();
 
         // Set the mouse sensitivity
         mouseSensitivity = PlayerPrefs.GetFloat("Sensitivity", 400); 
@@ -321,7 +324,7 @@ public class PlayerController : MonoBehaviour
         currentHealth = maxHealth; 
 
         // If the health display is on, display it.
-        if (healthDisplay != null){healthDisplay.text = "Health: " + currentHealth;}
+        if (healthDisplay != null){healthDisplay.SetHealth(currentHealth);}
 
         // Remove any equiped powerups
         ResetPowerup();
@@ -532,6 +535,7 @@ public class PlayerController : MonoBehaviour
             hammerTimer = chargeTime;
             //anim.Play("HammerCharge"); 
             anim.Play("Charge");
+            crosshair.Charge();
             hitDirection = transform.forward;
             hammerBounced = false;
         }
@@ -543,6 +547,7 @@ public class PlayerController : MonoBehaviour
             chargingHammer = false;
             hammerTimer = 0;
             hammerBounced = false;
+            crosshair.CancelCharge();
         }
 
         if (mouseReleased && hammerCharged)
@@ -574,6 +579,7 @@ public class PlayerController : MonoBehaviour
             //audioManager.PlaySFX(audioManager.hit);
             //anim.Play("HammerHit"); 
             anim.Play("Slam");
+            crosshair.Slam(false, 0);
             //slamHitbox.DeactivateCollider();
 
             recovering = true;
@@ -1069,7 +1075,7 @@ public class PlayerController : MonoBehaviour
                 else if (hit.transform.gameObject.tag == "Enemy Flyer")
                 {
                     var e = hit.transform.gameObject.GetComponent<EnemyFlyerController>();
-
+                    crosshair.Slam(true, 1);
                     if (e.InDyingState())
                     {
                         flyerBoost = true;
@@ -1082,6 +1088,7 @@ public class PlayerController : MonoBehaviour
                 }
                 else if (hit.transform.gameObject.tag == "Enemy Shooter")
                 {
+                    crosshair.Slam(true, 1);
                     var e = hit.transform.gameObject.GetComponent<EnemyShooterController>();
                     e.TakeDamage(1, hitDirection, swingForce * 1.5f);
                 }
@@ -1379,7 +1386,7 @@ public class PlayerController : MonoBehaviour
         currentHealth = maxHealth;
         if (healthDisplay != null)
         {
-            healthDisplay.text = "Health: " + currentHealth;
+            healthDisplay.SetHealth(currentHealth);
         }
     }
 
@@ -1390,7 +1397,7 @@ public class PlayerController : MonoBehaviour
         currentHealth -= damage;
         if (healthDisplay != null)
         {
-            healthDisplay.text = "Health: " + currentHealth;
+            healthDisplay.SetHealth(currentHealth);
         }
         if (currentHealth <= 0)
         {
@@ -1411,6 +1418,7 @@ public class PlayerController : MonoBehaviour
     {
         // Kill the player, activate the death screen UI, and reset the timescale.
         alive = false;
+        healthDisplay.SetHealth(0);
         deathScreen.SetActive(true);
         Time.timeScale = 0;
     }
@@ -1436,7 +1444,7 @@ public class PlayerController : MonoBehaviour
         currentHealth = maxHealth;
         if (healthDisplay != null)
         {
-            healthDisplay.text = "Health: " + currentHealth;
+            healthDisplay.SetHealth(currentHealth);
         }
     }
 
@@ -1451,6 +1459,7 @@ public class PlayerController : MonoBehaviour
     public void CollectPowerup(Powerup newPowerup) // Equips a new powerup to the player and updates UI to display equiped powerup
     {
         currentPowerup = newPowerup;
+        if (powerupUI != null) {powerupUI.SetPowerup(newPowerup);};
         if (currentPowerup == Powerup.Explosive)
         {
             tempPowerupUI.text = "Active Powerup: Explosive";
@@ -1469,6 +1478,7 @@ public class PlayerController : MonoBehaviour
     void ResetPowerup() // Removes any equipped powerups
     {
         currentPowerup = Powerup.None;
+        if (powerupUI != null) {powerupUI.SetPowerup(Powerup.None);};
         if (tempPowerupUI != null)
         {
             tempPowerupUI.text = "Active Powerup: None";
