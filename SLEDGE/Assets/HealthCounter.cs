@@ -6,11 +6,28 @@ public class HealthCounter : MonoBehaviour
 {
     public int health = 3;
     public List<Heart> hearts = new List<Heart>();
+    public Animator heartLabelAnim;
+    public float heartLabelAnimSpeed = .12f;
     public CrackCounter cc;
+
+
+    void Start()
+    {
+        heartLabelAnim.speed = heartLabelAnimSpeed;    
+    }
 
     public void SetHealth(int h)
     {
+
         health = h-1;
+        if (health+1 > heartLabelAnim.GetInteger("hp"))
+        {
+            if (health+1 == 3)
+            {
+                heartLabelAnim.Play("HL_full-hp", -1, 0f);
+            }
+        }
+        heartLabelAnim.SetInteger("hp", health+1);
         for (int i = 0; i < hearts.Count; i++)
         {
             // if (i < health-1)
