@@ -356,7 +356,7 @@ public class PlayerController : MonoBehaviour
         }
 
         RaycastHit hit;
-        if (Physics.Raycast(cameraObject.transform.position, cameraObject.transform.forward, out hit, hitLength + hitRadius))
+        if (Physics.Raycast(cameraObject.transform.position, cameraObject.transform.forward, out hit, hitLength + hitRadius, bouncableLayers, QueryTriggerInteraction.Ignore))
         {
             hammerArcRoot.transform.position = hit.point;
         }
@@ -469,7 +469,7 @@ public class PlayerController : MonoBehaviour
                 Vector3 direction = (endLoc - startLoc).normalized;
                 float distance = Vector3.Distance(startLoc, endLoc);
 
-                if (Physics.Raycast(startLoc, direction, out arcHit, distance))
+                if (Physics.Raycast(startLoc, direction, out arcHit, distance, bouncableLayers, QueryTriggerInteraction.Ignore))
                 {
                     hideImpactPoint = false;
                     Vector3 impactPos = arcHit.point;
@@ -709,6 +709,8 @@ public class PlayerController : MonoBehaviour
             swipeRecovering = true;
             hammerTimer = swipeRecoveryTime;
 
+            crosshair.ResetCrosshair();
+            
             anim.ResetTrigger("Swing");
         }
         else if (swipeRecovering)
@@ -1346,9 +1348,8 @@ public class PlayerController : MonoBehaviour
                     Vector3 direction = (endLoc - startLoc).normalized;
                     float distance = Vector3.Distance(startLoc, endLoc);                 
 
-                    if (Physics.Raycast(startLoc, direction, out arcHit, distance))
+                    if (Physics.Raycast(startLoc, direction, out arcHit, distance, bouncableLayers, QueryTriggerInteraction.Ignore))
                     {
-                        Debug.Log("hit");
                         //Debug.DrawLine(startLoc, endLoc, Color.red, 2.0f);
                         launchDirection = -direction;
                         break;
@@ -1483,6 +1484,7 @@ public class PlayerController : MonoBehaviour
             {
                 if (hit.transform.gameObject.tag == "Enemy Flyer")
                 {
+                    crosshair.SwingHit(1);
                     EnemyFlyerController flyer = hit.transform.gameObject.GetComponent<EnemyFlyerController>();
                     if (flyer.InDyingState())
                     {
@@ -1495,6 +1497,7 @@ public class PlayerController : MonoBehaviour
                 }
                 else if (hit.transform.gameObject.tag == "Enemy Shooter")
                 {
+                    crosshair.SwingHit(1);
                     hit.transform.gameObject.GetComponent<EnemyShooterController>().TakeDamage(1, hitDirection, swingForce);
                 }
                 else if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Projectile"))

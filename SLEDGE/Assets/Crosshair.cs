@@ -45,5 +45,33 @@ public class Crosshair : MonoBehaviour
                 hitIndicator.color = new Color(0.3f, 0.3f, 0.3f);
             }
         }
+        else
+        {
+            anim.ResetTrigger("Hit");
+        }
+    }
+
+    public void SwingHit(int color = 0)
+    {
+        anim.SetTrigger("Hit");
+        if (color == 0)
+        {
+            hitIndicator.color = Color.white;
+        }
+        else if (color == 1)
+        {
+            hitIndicator.color = Color.red;
+        }
+        else if (color == 2)
+        {
+            hitIndicator.color = new Color(0.3f, 0.3f, 0.3f);
+        }
+    }
+
+    public void ResetCrosshair()
+    {
+        anim.ResetTrigger("Hit");
+        anim.SetBool("Slam", false);
+        anim.SetBool("Charge", false);
     }
 }
