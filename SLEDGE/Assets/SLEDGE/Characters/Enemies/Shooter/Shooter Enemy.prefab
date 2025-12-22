@@ -445,10 +445,38 @@ MonoBehaviour:
     type: 3}
   projectileClass: {fileID: 4543102887346889771, guid: ba9cb7ed3bc5e6046b77d646edda3e24,
     type: 3}
-  shootCooldown: 3
-  aimDuration: 2
+  shootCooldown: 0.1
+  shootBigCooldown: 3
+  shootBurst: 1
+  shootBurstCount: 2
+  aimDuration: 0.2
   projectileLifetime: 10
   projectileSpeed: 40
+  verticalAimMod:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: -0.1712472
+      outSlope: -0.1712472
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.100965135
+    - serializedVersion: 3
+      time: 1
+      value: 0.25
+      inSlope: -1.8763369
+      outSlope: -1.8763369
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.036451995
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  graphMax: 10
   lookAtTarget: {fileID: 3277620228275904649}
   gunPosition: {fileID: 1437001867462179815}
   gunLight: {fileID: 7167905426791758246}
