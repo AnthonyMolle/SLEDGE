@@ -1,12 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class TutorialSign : MonoBehaviour
 {
     //should pause time while reading but I'm not touching that code lmao
     //Was not able to turn off canvases from the Inspector? So....
 
+    public GameObject parent;
     public GameObject interactionCanvas;
     public GameObject tutorialCanvas;
     bool inTrigger = false; //literally any rigidbody could be in the trigger. Enemies prolly count
@@ -15,8 +17,11 @@ public class TutorialSign : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        interactionCanvas.SetActive(false);
-        tutorialCanvas.SetActive(false);
+        Canvas[] canvases = parent.GetComponentsInChildren<Canvas>();
+        foreach (Canvas canvas in canvases)
+        {
+            canvas.gameObject.SetActive(false);
+        }
     }
 
     // Update is called once per frame
