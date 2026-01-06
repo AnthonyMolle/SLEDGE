@@ -16,9 +16,13 @@ public class EnemyShooterController : EnemyBaseController
     /* Handling projectile instances */
     GameObject projectile;
     List<GameObject> projectiles = new List<GameObject>();
-    
+
     /* Cooldown between shots */
     [SerializeField] float shootCooldown = 3.0f;
+    [SerializeField] float shootBigCooldown = 3.0f;
+    [SerializeField] bool shootBurst = true;
+    [SerializeField] int shootBurstCount = 3;
+    private int currentShootBurstCount;
     float cooldown;
 
     [SerializeField] float aimDuration = 2.0f;
@@ -27,6 +31,14 @@ public class EnemyShooterController : EnemyBaseController
     /* Projectile stats */
     [SerializeField] float projectileLifetime;
     [SerializeField] float projectileSpeed;
+
+    /* Animation Curve for aim verticality */
+    //Aiming only takes the current velocity vector into account and assumes it won't change. Any jumping, hammering, falling, or other vertical movement will jack up the vertical calculations because those accelerations aren't accounted for
+    //The animation curve assumes that the velocity's Y vector at any given moment will somewhat even out over time. Y+ velocity is countered by gravity, Y- velocity is countered by assuming the player has a plan outside of freefalling forever
+    [Header("Aiming")]
+    [HorizontalLine]
+    [SerializeField] AnimationCurve verticalAimMod; //X is time for bullet to hit player (normalized to graphMax), Y is % of vertical distance change we use from the original calculations
+    [SerializeField] float graphMax; //unit is seconds. Evaluating the graph at any time after this point will return a Y equal to y(1)
 
     [Header("Positional Constants")]
     [HorizontalLine]
@@ -56,6 +68,7 @@ public class EnemyShooterController : EnemyBaseController
     {
         base.Start();
         
+        currentShootBurstCount = shootBurstCount;
         cooldown = shootCooldown;
         audioSource = GetComponent<AudioSource>();
 
@@ -98,7 +111,7 @@ public class EnemyShooterController : EnemyBaseController
                 {
                     case CombatState.AIMING:
                         
-                        if (aimTimer >= aimDuration)
+                        if (aimTimer >= aimDuration && CollisionTime() > 0f) //Only attempts to shoot if they think they can hit the target
                         {
                             aimTimer = 0.0f;
                             combatState = CombatState.COOLDOWN;
@@ -106,19 +119,45 @@ public class EnemyShooterController : EnemyBaseController
                             audioSource.Stop();
                             gunLight.GetComponent<Light>().intensity = 0.0f;
 
-                            FireProjectile(player.transform.position);
+                            FireProjectile(AimAhead());
+                            //FireProjectile(player.transform.position);
                         }
 
                         break;
 
                     case CombatState.COOLDOWN:
-
+                    
                         if (PlayerinLOS() && cooldown >= shootCooldown)
                         {
-                            cooldown = 0.0f;
-                            audioSource.time = 0.0f;
-                            audioSource.Play();
-                            combatState = CombatState.AIMING;
+                            if (shootBurst)
+                            {
+                                if (currentShootBurstCount <= 0)
+                                {
+                                    if(cooldown >= shootBigCooldown)
+                                    {
+                                        cooldown = 0.0f;
+                                        audioSource.time = 0.0f;
+                                        audioSource.Play();
+                                        currentShootBurstCount = shootBurstCount;
+                                        combatState = CombatState.AIMING;
+                                    }
+                                }
+                                else
+                                {
+                                    cooldown = 0.0f;
+                                    audioSource.time = 0.0f;
+                                    audioSource.Play();
+                                    currentShootBurstCount--;
+                                    combatState = CombatState.AIMING;  
+                                }
+                            }
+                            else
+                            {
+                                cooldown = 0.0f;
+                                audioSource.time = 0.0f;
+                                audioSource.Play();
+                                combatState = CombatState.AIMING;                               
+                            }
                         }
                         else if (!PlayerinLOS())
                         {
@@ -172,6 +211,56 @@ public class EnemyShooterController : EnemyBaseController
             audioSource.PlayOneShot(shootSound, volume);
             
         }
+    }
+
+    private Vector3 AimAhead()
+    {
+        float t = CollisionTime();
+        if(t > 0f)
+        {
+            Vector3 delta = t * playerRb.velocity;
+            //return player.transform.position + t * playerRb.velocity;
+
+            //try clamping up/down movement?
+            Vector3 deltaNew = new Vector3(delta.x, delta.y * VertAimMod(t), delta.z);
+            return player.transform.position + deltaNew;
+            //Consider boosting the horizontal delta when travel time is long
+        }
+        else
+        {
+            return Vector3.up; //If this happens, something has gone wrong.
+        }
+    }
+
+    private float CollisionTime() //Based on player's current velocity, returns the time of the first possible collision between bullet and player. Returns a negative number if there is no possible way for a bullet to catch up to the player.
+    {
+        //using instructions from https://howlingmoonsoftware.com/leading-a-target/
+        Vector3 playerVel = playerRb.velocity; //In the instructions this is the relative v of the gun and the target, but I am assuming the dude isn't moving while shooting
+        float bulletVel = projectileSpeed;
+        Vector3 delta = player.transform.position - gunPosition.transform.position; //relative position of gun and the target
+
+        //quadratic equation time
+        float a = Vector3.Dot(playerVel, playerVel) - bulletVel * bulletVel;
+        float b = 2f * Vector3.Dot(playerVel, delta);
+        float c = Vector3.Dot(delta, delta);
+        float det = b * b - 4f * a * c;
+
+
+        if(det > 0f)
+        {
+            return 2f * c / (Mathf.Sqrt(det) - b);
+        }
+        else
+        {
+            return -1f;
+        }
+    }
+
+    private float VertAimMod(float time)
+    {
+        float normTime = time / graphMax;
+        return verticalAimMod.Evaluate(normTime);
+
     }
 
     public override void ResetEnemy()

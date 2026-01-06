@@ -20,14 +20,14 @@ public class EnemyBaseController : MonoBehaviour
 
     [Header("Base Ragdoll")]
     [HorizontalLine]
-    
-    [SerializeField] GameObject deathRagdoll;
-    GameObject ragdollInstance;
+
+    [SerializeField] RagdollScript deathRagdoll;
 
     protected Vector3 spawnPosition;
     protected Rigidbody rb;
 
     protected GameObject player;
+    protected Rigidbody playerRb;
 
     RaycastHit hit;
 
@@ -44,6 +44,7 @@ public class EnemyBaseController : MonoBehaviour
     protected virtual void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player");
+        playerRb = player.GetComponent<Rigidbody>();
         rb = GetComponent<Rigidbody>();
 
         spawnPosition = transform.position;
@@ -67,7 +68,7 @@ public class EnemyBaseController : MonoBehaviour
         return currentHealth;
     }
 
-    public void TakeDamage(int damage, Vector3 direction, float force)
+    public virtual void TakeDamage(int damage, Vector3 direction, float force)
     {
         if (enemyState == EnemyState.DEAD)
         {
@@ -91,23 +92,19 @@ public class EnemyBaseController : MonoBehaviour
         // Creating a ragdoll
         if (deathRagdoll)
         {
-            ragdollInstance = Instantiate(deathRagdoll, transform.position, transform.rotation);
-            ragdollInstance.GetComponent<Rigidbody>().AddForce(rb.velocity, ForceMode.Impulse);
+            deathRagdoll.KillSwitch(true);
         }
 
         // Enemy manager marks this enemy as dead
         EnemyManager.Instance.EnemyDeath(gameObject);
-
         gameObject.SetActive(false);
-
     }
 
     public virtual void ResetEnemy()
     {
         if (deathRagdoll)
         {
-            Destroy(ragdollInstance);
-            ragdollInstance = null;
+            deathRagdoll.KillSwitch(false);
         }
         transform.position = spawnPosition;
         enemyState = EnemyState.IDLE;
