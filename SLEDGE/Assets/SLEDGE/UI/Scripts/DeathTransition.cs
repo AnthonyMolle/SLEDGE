@@ -13,6 +13,7 @@ public class DeathTransition : MonoBehaviour
     }
 
     // Update is called once per frame
+    /*
     void Update()
     {
         if (Input.anyKeyDown)
@@ -22,4 +23,5 @@ public class DeathTransition : MonoBehaviour
             gameObject.SetActive(false);
         }
     }
+    */
 }

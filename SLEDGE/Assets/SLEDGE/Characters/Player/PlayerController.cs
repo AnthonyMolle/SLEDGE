@@ -1646,6 +1646,8 @@ public class PlayerController : MonoBehaviour
         alive = false;
         healthDisplay.SetHealth(0);
         deathScreen.SetActive(true);
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
         Time.timeScale = 0;
     }
 
@@ -1653,6 +1655,8 @@ public class PlayerController : MonoBehaviour
     {
         // Make sure the player is alive. If they have no checkpoints, simply reload the scene.
         alive = true;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
         if (currentCheckpoint == null)
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
