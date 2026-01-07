@@ -7,6 +7,7 @@ public class Checkpoint : MonoBehaviour
 {
 
     public bool activated = false;
+    public GameObject[] lasers;
     
     PlayerController playerController;
     // Saved level status (enemies killed, power-ups held)
@@ -54,15 +55,23 @@ public class Checkpoint : MonoBehaviour
             }
         }
 
-        // Visual update to indicate the checkpoint has been used
-        gameObject.transform.GetChild(1).transform.GetChild(1).GetComponent<MeshRenderer>().enabled = false;
+        // Visual update to indicate the checkpoint has been usedCanvas[] canvases = parent.GetComponentsInChildren<Canvas>();
+        foreach (GameObject laser in lasers)
+        {
+            laser.gameObject.SetActive(false);
+        }
+        //gameObject.transform.GetChild(1).transform.GetChild(1).GetComponent<MeshRenderer>().enabled = false;
     }
 
     // Allow checkpoint to be used again and update visuals accordingly
     public void DeactivateCheckpoint()
     {
         activated = false;
-        gameObject.transform.GetChild(1).transform.GetChild(1).GetComponent<MeshRenderer>().enabled = true;
+        foreach (GameObject laser in lasers)
+        {
+            laser.gameObject.SetActive(true);
+        }
+        //gameObject.transform.GetChild(1).transform.GetChild(1).GetComponent<MeshRenderer>().enabled = true;
     }
 
     // Reset the level based on state saved when the checkpoint was activated
