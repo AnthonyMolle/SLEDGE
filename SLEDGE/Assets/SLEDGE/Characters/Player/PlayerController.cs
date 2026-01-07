@@ -1690,6 +1690,7 @@ public class PlayerController : MonoBehaviour
     {
         currentPowerup = newPowerup;
         if (powerupUI != null) {powerupUI.SetPowerup(newPowerup);};
+        /*
         if (currentPowerup == Powerup.Explosive)
         {
             tempPowerupUI.text = "Active Powerup: Explosive";
@@ -1698,6 +1699,7 @@ public class PlayerController : MonoBehaviour
         {
             tempPowerupUI.text = "Active Powerup: Airburst";
         }
+        */
     }
 
     void LoseExplosive()// Removes any equipped powerups COMMENT: Seems useless?
