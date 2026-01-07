@@ -8,69 +8,32 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: PhaseWall
-  m_Shader: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: daf46d29fe1dff140b2d56b28e8038a6,
+    type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords:
-  - _ALPHAPREMULTIPLY_ON
-  - _EMISSION
-  - _SURFACE_TYPE_TRANSPARENT
+  m_ValidKeywords: []
   m_InvalidKeywords: []
-  m_LightmapFlags: 2
+  m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 3000
-  stringTagMap:
-    RenderType: Transparent
-  disabledShaderPasses:
-  - DepthOnly
-  - SHADOWCASTER
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
-    - _BaseMap:
-        m_Texture: {fileID: 0}
+    - _HoloDotTex:
+        m_Texture: {fileID: 2800000, guid: 40d8967bfaf3887419469c4969fe9b71, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _BumpMap:
-        m_Texture: {fileID: 0}
+    - _HoloFluidTex:
+        m_Texture: {fileID: 2800000, guid: 80cb727842c339f408d491b86862bfc2, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _DetailAlbedoMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _DetailMask:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _DetailNormalMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _EmissionMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _MainTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _MetallicGlossMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _OcclusionMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _ParallaxMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _SpecGlossMap:
-        m_Texture: {fileID: 0}
+    - _ScanlinesTex:
+        m_Texture: {fileID: 2800000, guid: 9d0047979414f2f46babea3105ad373a, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
@@ -87,43 +50,41 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _AlphaClip: 0
-    - _AlphaToMask: 0
-    - _Blend: 0
-    - _BlendModePreserveSpecular: 1
-    - _BumpScale: 1
-    - _ClearCoatMask: 0
-    - _ClearCoatSmoothness: 0
-    - _Cull: 2
-    - _Cutoff: 0.5
-    - _DetailAlbedoMapScale: 1
-    - _DetailNormalMapScale: 1
-    - _DstBlend: 10
-    - _DstBlendAlpha: 10
-    - _EnvironmentReflections: 1
-    - _GlossMapScale: 0
-    - _Glossiness: 0
-    - _GlossyReflections: 0
-    - _Metallic: 0
-    - _OcclusionStrength: 1
-    - _Parallax: 0.005
+    - _EdgeGlowPower: 1
+    - _EdgeGlowThickness: 0.05
+    - _FadeToTex2_IF_HIT: 0
+    - _FluidViscosity_RemoveDetails: 0.54
+    - _HoloFluidAddOrSubDetails: 1.5
+    - _HoloFluidAnimationFPS: 10
+    - _HoloFluidAnimationSpeed: 0.005
+    - _HoloFluidAnimationStrength: 10
+    - _HoloFluidAnimation_ofSpirals: 10
+    - _HoloFluidTexAvgTranslucency: 1.5
+    - _HoloFluidTexPixelDetail: 4
+    - _HoloFluidTexTranslucency: 1.5
+    - _HoloFluidTexTranslucencyAfterHit: 0.5
+    - _HoloFluidTexVisibilityAfterHit: 0.5
+    - _HoloFluidViscosity: 1.5
+    - _HoloLiquidAnimationFPS: 10
+    - _HoloLiquidAnimationSpeed: 0.005
+    - _LerpX_MoreDetailedTranslucencyEdit: 0
+    - _LerpY_MoreDetailedTransluncencyEdit: 1
+    - _Lerp_X: 0
+    - _Lerp_Y: 1
+    - _PhaseWall_IS_HIT: 1
+    - _PixelSize: 100
+    - _PixelizeON: 1
+    - _QueueControl: 0
     - _QueueOffset: 0
-    - _ReceiveShadows: 1
-    - _Smoothness: 0
-    - _SmoothnessTextureChannel: 0
-    - _SpecularHighlights: 1
-    - _SrcBlend: 1
-    - _SrcBlendAlpha: 1
-    - _Surface: 1
-    - _WorkflowMode: 1
-    - _ZWrite: 0
+    - _TranslucencyBetweenHoloDot: 0.16
     m_Colors:
-    - _BaseColor: {r: 0.23529404, g: 0.6862744, b: 0.8901961, a: 0.6156863}
-    - _Color: {r: 0.23529401, g: 0.6862744, b: 0.8901961, a: 0.6156863}
-    - _EmissionColor: {r: 0.033469174, g: 0.37344563, b: 0.37344563, a: 1}
-    - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
+    - _EdgeGlowColor: {r: 0, g: 0.96966213, b: 1, a: 1}
+    - _HoloDotTiling: {r: 1, g: 1, b: 0, a: 0}
+    - _HoloFluidTexTiling: {r: 1, g: 1, b: 0, a: 0}
+    - _ScanlinesSpeed: {r: 0, g: 0.1, b: 0, a: 0}
+    - _ScanlinesTiling: {r: 2, g: 2, b: 0, a: 0}
   m_BuildTextureStacks: []
---- !u!114 &3779167918111027966
+--- !u!114 &2400043330591988749
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}
