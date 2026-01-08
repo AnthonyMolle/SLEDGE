@@ -3345,8 +3345,23 @@ PrefabInstance:
       objectReference: {fileID: 5628860620752215860}
     - target: {fileID: 6314295682490010892, guid: 5dd5b681c132b964993064fc2d3cde0b,
         type: 3}
+      propertyPath: airMaxSpeed
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 6314295682490010892, guid: 5dd5b681c132b964993064fc2d3cde0b,
+        type: 3}
       propertyPath: bounceForce
-      value: 15
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 6314295682490010892, guid: 5dd5b681c132b964993064fc2d3cde0b,
+        type: 3}
+      propertyPath: bounceForceY
+      value: 27
+      objectReference: {fileID: 0}
+    - target: {fileID: 6314295682490010892, guid: 5dd5b681c132b964993064fc2d3cde0b,
+        type: 3}
+      propertyPath: bounceGravity
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 6314295682490010892, guid: 5dd5b681c132b964993064fc2d3cde0b,
         type: 3}
@@ -3366,12 +3381,17 @@ PrefabInstance:
     - target: {fileID: 6314295682490010892, guid: 5dd5b681c132b964993064fc2d3cde0b,
         type: 3}
       propertyPath: maxFallingSpeed
-      value: 60
+      value: 70
       objectReference: {fileID: 0}
     - target: {fileID: 6314295682490010892, guid: 5dd5b681c132b964993064fc2d3cde0b,
         type: 3}
       propertyPath: hammerSlamSize.z
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6314295682490010892, guid: 5dd5b681c132b964993064fc2d3cde0b,
+        type: 3}
+      propertyPath: airMaxHammerSpeed
+      value: 31
       objectReference: {fileID: 0}
     - target: {fileID: 6314295682490010892, guid: 5dd5b681c132b964993064fc2d3cde0b,
         type: 3}
@@ -3398,6 +3418,11 @@ PrefabInstance:
         type: 3}
       propertyPath: enemyLayers.m_Bits
       value: 256
+      objectReference: {fileID: 0}
+    - target: {fileID: 6314295682490010892, guid: 5dd5b681c132b964993064fc2d3cde0b,
+        type: 3}
+      propertyPath: initialBounceForce
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: 6314295682490010892, guid: 5dd5b681c132b964993064fc2d3cde0b,
         type: 3}
@@ -3464,6 +3489,11 @@ PrefabInstance:
       propertyPath: hammerArcPoints.Array.data[5]
       value: 
       objectReference: {fileID: 1472724145779752423}
+    - target: {fileID: 6314295682490010892, guid: 5dd5b681c132b964993064fc2d3cde0b,
+        type: 3}
+      propertyPath: naturalAdditionalFallingSpeed
+      value: 17
+      objectReference: {fileID: 0}
     - target: {fileID: 6314295682490010892, guid: 5dd5b681c132b964993064fc2d3cde0b,
         type: 3}
       propertyPath: hammerArc.Array.data[0].start.x
