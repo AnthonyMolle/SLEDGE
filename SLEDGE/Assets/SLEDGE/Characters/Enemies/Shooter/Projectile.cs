@@ -11,6 +11,7 @@ public class Projectile : MonoBehaviour
     
     // Projectile target tracking
     bool isParried = false;
+    bool destroyed = false;
     GameObject target;
     [SerializeField] float trackingRotationSpeed = 5f;
     [SerializeField] float maximumRotation = 30f;
@@ -20,33 +21,40 @@ public class Projectile : MonoBehaviour
     [SerializeField] Collider parriedCollider;
     [SerializeField] Collider normalCollider;
 
+    [SerializeField] GameObject impactFX;
+    [SerializeField] GameObject bulletFX;
+    [SerializeField] GameObject bullet;
+
     // Update is called once per frame
     void Update()
     {
-        // Basic movement + lifespan tracking
-        transform.position += transform.forward * bulletSpeed * Time.deltaTime;
-        lifetime += Time.deltaTime;
-
-        // Parry tracking: Parried shots can target and rotate towards enemies to an extent, making parrying easier, so we have to calculate their rotation
-        if (isParried)
+        if (!destroyed)
         {
-            if (target != null && currentRotation < maximumRotation)
+            // Basic movement + lifespan tracking
+            transform.position += transform.forward * bulletSpeed * Time.deltaTime;
+            lifetime += Time.deltaTime;
+
+            // Parry tracking: Parried shots can target and rotate towards enemies to an extent, making parrying easier, so we have to calculate their rotation
+            if (isParried)
             {
-                Vector3 rotation = Vector3.RotateTowards(transform.forward, target.transform.position - transform.position, trackingRotationSpeed * Time.deltaTime, 0 * Time.deltaTime);
-                transform.rotation = Quaternion.LookRotation(rotation);
+                if (target != null && currentRotation < maximumRotation)
+                {
+                    Vector3 rotation = Vector3.RotateTowards(transform.forward, target.transform.position - transform.position, trackingRotationSpeed * Time.deltaTime, 0 * Time.deltaTime);
+                    transform.rotation = Quaternion.LookRotation(rotation);
 
-                currentRotation += trackingRotationSpeed * Time.deltaTime;
+                    currentRotation += trackingRotationSpeed * Time.deltaTime;
+                }
             }
-        }
-        else
-        {
-            currentRotation = 0f;
-        }
+            else
+            {
+                currentRotation = 0f;
+            }
 
-        // Once a projectile reaches its lifespan, we delete it
-        if (lifetime >= maxLifetime)
-        {
-            Destroy(gameObject);
+            // Once a projectile reaches its lifespan, we delete it
+            if (lifetime >= maxLifetime)
+            {
+                SelfDestruct();
+            }
         }
     }
 
@@ -79,7 +87,7 @@ public class Projectile : MonoBehaviour
             // Don't damage the player with parried projectiles (since they own the projectile at that point)
             if (!isParried)
             {
-                Destroy(gameObject);
+                SelfDestruct();
                 other.gameObject.GetComponent<PlayerController>().TakeDamage(1);
             }
             return;
@@ -89,13 +97,24 @@ public class Projectile : MonoBehaviour
             // Only damage enemies if this projectile was parried and the enemy isn't already dead
             if (isParried && other.gameObject.GetComponent<EnemyBaseController>().GetHealth() > 0)
             {
-                Destroy(gameObject);
+                SelfDestruct();
                 other.gameObject.GetComponent<EnemyBaseController>().TakeDamage(1, new Vector3(0, 0, -1), 10f);
                 GameObject.Find("ScoreManager").GetComponent<ScoreManager>().AddStyleKills(400); // Parry kills get style points!
             }
             return;
         }
-        Destroy(gameObject);
+        SelfDestruct();
+    }
+
+    private void SelfDestruct()
+    {
+        destroyed = true;
+        impactFX.SetActive(true);
+        bulletFX.SetActive(false);
+        bullet.SetActive(false);
+        parriedCollider.enabled = false;
+        normalCollider.enabled = false;
+        Destroy(gameObject, 1f);
     }
 
     public bool CheckParried()
