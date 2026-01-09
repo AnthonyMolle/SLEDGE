@@ -46,7 +46,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 701b4e0ec5a2778469f8caadd10aa9d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NextScene: Jonah
+  NextScene: MainMenu
   LevelCompleteScreen: {fileID: 0}
 --- !u!1 &6518367879516234367
 GameObject:
@@ -275,6 +275,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: EndPlatformv2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7634661729121617008, guid: 59198c05f800a1f46b36ae565747de30,
+        type: 3}
+      propertyPath: m_TagString
+      value: End Platform
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

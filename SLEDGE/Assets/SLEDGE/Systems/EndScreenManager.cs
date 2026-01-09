@@ -28,6 +28,7 @@ public class EndScreenManager : MonoBehaviour
     string stageTime, kills, styleKills, collectables_found;
     PlayerSaveData.Grade timeGrade, killGrade, styleGrade, finalGrade, collectableGrade;
     private RectTransform RectTransform;
+    private ScoreManager ScoreManager;
 
     private bool gradesDisplayed = false;
 
@@ -38,6 +39,7 @@ public class EndScreenManager : MonoBehaviour
         RectTransform = GetComponent<RectTransform>();
         waitingForAnim = false;
         RectTransform.sizeDelta = new Vector2(640.3f, 0);
+        ScoreManager = FindAnyObjectByType<ScoreManager>(FindObjectsInactive.Include);
     }
 
     public void StartDropIn()

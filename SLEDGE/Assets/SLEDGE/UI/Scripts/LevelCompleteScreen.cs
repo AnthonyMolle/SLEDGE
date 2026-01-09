@@ -6,7 +6,7 @@ public class LevelCompleteScreen : MonoBehaviour
 {
     public GameObject portal;
 
-    private EndScreenManager EndScreenManager;
+    public EndScreenManager EndScreenManager;
 
     private bool AllowInput = false;
 
@@ -14,28 +14,32 @@ public class LevelCompleteScreen : MonoBehaviour
     void Start()
     {
         GetComponent<CanvasGroup>().alpha = 0;
-        EndScreenManager = GetComponentInChildren<EndScreenManager>();
+        EndScreenManager = GetComponentInChildren<EndScreenManager>(true);
     }
 
     public void StartAnimation()
     {
-        EndScreenManager.StartDropIn();
+        //EndScreenManager.StartDropIn();
         AllowInput = true;
     }
 
     // Update is called once per frame
     void Update()
     {
+        //Debug.Log("allow input " + AllowInput);
         if (AllowInput && Input.anyKeyDown)
         {
-            if(EndScreenManager.FinishedAnimation() == false) {
+            //Debug.Log("input allowed and detected");
+            if (EndScreenManager.FinishedAnimation() == false) {
                 EndScreenManager.skipAnim();
+                //Debug.Log("skipping anim");
             }
             else
             {
                 if (GameObject.Find("EndPlatform") != null)
                 {
                     GameObject.Find("EndPlatform").GetComponent<EndPlatform>().GoToScene();
+                    //Debug.Log("trying to go to scene");
                 }
                 else // REMOVE ONCE ALL OLD PORTALS ARE PHASED OUT
                 {

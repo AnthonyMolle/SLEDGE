@@ -15,7 +15,8 @@ public class ScoreManager : MonoBehaviour
 
     private void Awake()
     {
-        if(Instance != this && Instance != null)
+        timer = FindAnyObjectByType<Speed_Run_Timer>();
+        if (Instance != this && Instance != null)
         {
             Destroy(gameObject);
         }
