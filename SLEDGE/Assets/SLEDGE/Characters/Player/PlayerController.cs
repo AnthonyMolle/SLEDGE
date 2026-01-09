@@ -267,6 +267,7 @@ public class PlayerController : MonoBehaviour
     [Header("Power Ups")]
     [Tooltip("How much we add to bounce force when the explosive powerup is enabled.")]
     public float explosiveForce;
+    public GameObject c4;
 
     #endregion
 
@@ -1689,6 +1690,7 @@ public class PlayerController : MonoBehaviour
     public void CollectPowerup(Powerup newPowerup) // Equips a new powerup to the player and updates UI to display equiped powerup
     {
         currentPowerup = newPowerup;
+        c4.SetActive(true);
         if (powerupUI != null) {powerupUI.SetPowerup(newPowerup);};
         /*
         if (currentPowerup == Powerup.Explosive)
@@ -1710,6 +1712,7 @@ public class PlayerController : MonoBehaviour
     void ResetPowerup() // Removes any equipped powerups
     {
         currentPowerup = Powerup.None;
+        c4.SetActive(false);
         if (powerupUI != null) {powerupUI.SetPowerup(Powerup.None);};
         if (tempPowerupUI != null)
         {
