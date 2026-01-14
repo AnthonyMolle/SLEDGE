@@ -15,6 +15,7 @@ public class LevelCompleteScreen : MonoBehaviour
     {
         GetComponent<CanvasGroup>().alpha = 0;
         EndScreenManager = GetComponentInChildren<EndScreenManager>(true);
+        gameObject.SetActive(false);
     }
 
     public void StartAnimation()
@@ -26,26 +27,23 @@ public class LevelCompleteScreen : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (EndScreenManager.FinishedAnimation() == false)
+        {
+            EndScreenManager.skipAnim();
+            //Debug.Log("skipping anim");
+        }
         //Debug.Log("allow input " + AllowInput);
         if (AllowInput && Input.anyKeyDown)
         {
             //Debug.Log("input allowed and detected");
-            if (EndScreenManager.FinishedAnimation() == false) {
-                EndScreenManager.skipAnim();
-                //Debug.Log("skipping anim");
-            }
-            else
+            if (GameObject.Find("EndPlatform") != null)
             {
-                if (GameObject.Find("EndPlatform") != null)
-                {
-                    GameObject.Find("EndPlatform").GetComponent<EndPlatform>().GoToScene();
-                    //Debug.Log("trying to go to scene");
-                }
-                else // REMOVE ONCE ALL OLD PORTALS ARE PHASED OUT
-                {
-                    portal.GetComponent<EndPortal>().GoToScene();
-                }
-                
+                GameObject.Find("EndPlatform").GetComponent<EndPlatform>().GoToScene();
+                //Debug.Log("trying to go to scene");
+            }
+            else // REMOVE ONCE ALL OLD PORTALS ARE PHASED OUT
+            {
+                portal.GetComponent<EndPortal>().GoToScene();
             }
         }
     }

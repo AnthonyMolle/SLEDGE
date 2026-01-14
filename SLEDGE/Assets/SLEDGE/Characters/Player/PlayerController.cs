@@ -256,6 +256,8 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] GameObject deathScreen;
 
+    [SerializeField] GameObject lvlComplete;
+
     [SerializeField] PowerupUI powerupUI;
 
     #endregion
@@ -323,6 +325,7 @@ public class PlayerController : MonoBehaviour
         settings = canvas.transform.Find("Pause Setting Screen").gameObject;
         pause = canvas.transform.Find("PauseMenu").gameObject;
         displayDistance = canvas.transform.Find("Distance").gameObject.GetComponent<TextMeshProUGUI>();
+        lvlComplete = FindAnyObjectByType<LevelCompleteScreen>(FindObjectsInactive.Include).gameObject;
         powerupUI = canvas.transform.Find("Powerups").gameObject.GetComponent<PowerupUI>();
 
         // Set the mouse sensitivity
@@ -896,7 +899,7 @@ public class PlayerController : MonoBehaviour
             secondaryPressed = false;
         }
 
-        if (Input.GetKeyDown(KeyCode.Escape) && pause.activeSelf == false && settings.activeSelf == false && alive)
+        if (Input.GetKeyDown(KeyCode.Escape) && pause.activeSelf == false && settings.activeSelf == false && alive && lvlComplete.activeSelf == false)
         {
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
