@@ -172,6 +172,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] GameObject impactPointPrefab;
     [SerializeField] bool alwaysShowImpactPoint = false; // If set to false, will only show impact point when charging up a hammer slam
     GameObject impactPoint;
+    MeshChildrenAlpha impactFade;
     bool impactPointHidden;
     bool hideImpactPoint;
     Color impactFadeColor;
@@ -348,6 +349,7 @@ public class PlayerController : MonoBehaviour
         // Impact point stuff
         impactPoint = Instantiate(impactPointPrefab, transform.position, transform.rotation);
         impactFadeColor = impactPoint.GetComponent<MeshRenderer>().material.color;
+        impactFade = impactPoint.GetComponent<MeshChildrenAlpha>();
 
         anim.SetLayerWeight(anim.GetLayerIndex("Charge Layer"), 0);
     }
@@ -489,9 +491,9 @@ public class PlayerController : MonoBehaviour
                         impactPointHidden = false;
                         impactPoint.transform.position = impactPos;
                     }
-
-                    impactFadeColor.a = Mathf.Lerp(1, 0, impactFadeTimer / 0.25f);
-                    impactPoint.GetComponent<MeshRenderer>().material.color = impactFadeColor;
+                    impactFade.SetAlpha(Mathf.Lerp(1, 0, impactFadeTimer / 0.25f));
+                    // impactFadeColor.a = Mathf.Lerp(1, 0, impactFadeTimer / 0.25f);
+                    // impactPoint.GetComponent<MeshRenderer>().material.color = impactFadeColor;
 
                     break;
                 }
@@ -501,16 +503,18 @@ public class PlayerController : MonoBehaviour
         if (hideImpactPoint)
         {
             impactPointHidden = true;
-            impactFadeColor.a = Mathf.Lerp(1, 0, impactFadeTimer / 0.25f);
-            impactPoint.GetComponent<MeshRenderer>().material.color = impactFadeColor;
+            impactFade.SetAlpha(Mathf.Lerp(1, 0, impactFadeTimer / 0.25f));
+            // impactFadeColor.a = Mathf.Lerp(1, 0, impactFadeTimer / 0.25f);
+            // impactPoint.GetComponent<MeshRenderer>().material.color = impactFadeColor;
         }
 
         // Only show impact point when charging up the hammer for a swing
         if (!alwaysShowImpactPoint && !chargingHammer && !hammerCharged)
         {
             impactPointHidden = true;
-            impactFadeColor.a = Mathf.Lerp(1, 0, impactFadeTimer / 0.25f);
-            impactPoint.GetComponent<MeshRenderer>().material.color = impactFadeColor;
+            impactFade.SetAlpha(Mathf.Lerp(1, 0, impactFadeTimer / 0.25f));
+            // impactFadeColor.a = Mathf.Lerp(1, 0, impactFadeTimer / 0.25f);
+            // impactPoint.GetComponent<MeshRenderer>().material.color = impactFadeColor;
         }
     }
 
