@@ -257,6 +257,8 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] GameObject deathScreen;
 
+    [SerializeField] GameObject lvlComplete;
+
     [SerializeField] PowerupUI powerupUI;
 
     #endregion
@@ -268,6 +270,7 @@ public class PlayerController : MonoBehaviour
     [Header("Power Ups")]
     [Tooltip("How much we add to bounce force when the explosive powerup is enabled.")]
     public float explosiveForce;
+    public GameObject c4;
 
     #endregion
 
@@ -323,6 +326,7 @@ public class PlayerController : MonoBehaviour
         settings = canvas.transform.Find("Pause Setting Screen").gameObject;
         pause = canvas.transform.Find("PauseMenu").gameObject;
         displayDistance = canvas.transform.Find("Distance").gameObject.GetComponent<TextMeshProUGUI>();
+        lvlComplete = FindAnyObjectByType<LevelCompleteScreen>(FindObjectsInactive.Include).gameObject;
         powerupUI = canvas.transform.Find("Powerups").gameObject.GetComponent<PowerupUI>();
 
         // Set the mouse sensitivity
@@ -899,7 +903,7 @@ public class PlayerController : MonoBehaviour
             secondaryPressed = false;
         }
 
-        if (Input.GetKeyDown(KeyCode.Escape) && pause.activeSelf == false && settings.activeSelf == false && alive)
+        if (Input.GetKeyDown(KeyCode.Escape) && pause.activeSelf == false && settings.activeSelf == false && alive && lvlComplete.activeSelf == false)
         {
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
@@ -1702,6 +1706,7 @@ public class PlayerController : MonoBehaviour
     public void CollectPowerup(Powerup newPowerup) // Equips a new powerup to the player and updates UI to display equiped powerup
     {
         currentPowerup = newPowerup;
+        c4.SetActive(true);
         if (powerupUI != null) {powerupUI.SetPowerup(newPowerup);};
         /*
         if (currentPowerup == Powerup.Explosive)
@@ -1723,6 +1728,7 @@ public class PlayerController : MonoBehaviour
     void ResetPowerup() // Removes any equipped powerups
     {
         currentPowerup = Powerup.None;
+        c4.SetActive(false);
         if (powerupUI != null) {powerupUI.SetPowerup(Powerup.None);};
         if (tempPowerupUI != null)
         {
