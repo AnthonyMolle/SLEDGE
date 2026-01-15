@@ -1319,6 +1319,7 @@ public class PlayerController : MonoBehaviour
                 {
                     crosshair.Slam(true, 1);
                     var e = hit.transform.gameObject.GetComponent<EnemyShooterController>();
+                    e.SetHurtType(2);
                     e.TakeDamage(1, hitDirection, swingForce * 1.5f);
                 }
                 else if (hit.transform.gameObject.tag == "Collectible" || hit.transform.gameObject.layer == 11) // 11 == gibs layer
@@ -1502,6 +1503,14 @@ public class PlayerController : MonoBehaviour
                 else if (hit.transform.gameObject.tag == "Enemy Shooter")
                 {
                     crosshair.SwingHit(1);
+                    if (currentCombo == Combo.Swipe2)
+                    {
+                        hit.transform.gameObject.GetComponent<EnemyShooterController>().SetHurtType(1);
+                    }
+                    else
+                    {
+                        hit.transform.gameObject.GetComponent<EnemyShooterController>().SetHurtType(0);
+                    }
                     hit.transform.gameObject.GetComponent<EnemyShooterController>().TakeDamage(1, hitDirection, swingForce);
                 }
                 else if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Projectile"))

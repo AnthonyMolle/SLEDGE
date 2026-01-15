@@ -222,8 +222,10 @@ MonoBehaviour:
   maxHealth: 1
   movementSpeed: 10
   detectionRadius: 30
-  deathRagdoll: {fileID: 955758079016734691, guid: 90ce17191d6c3c448b016193dc559e81,
-    type: 3}
+  deathRagdoll: {fileID: 0}
+  playerMask:
+    serializedVersion: 2
+    m_Bits: 4096
   dashCooldown: 3
   dashRadius: 10
   dashSpeed: 30

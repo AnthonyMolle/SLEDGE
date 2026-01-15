@@ -84,13 +84,14 @@ public class Projectile : MonoBehaviour
             }
             return;
         }
-        if (other.gameObject.CompareTag("Enemy Flyer") || other.gameObject.CompareTag("Enemy Shooter"))
+        if (other.gameObject.transform.root.CompareTag("Enemy Flyer") || other.gameObject.transform.root.CompareTag("Enemy Shooter"))
         {
+            GameObject enemy = other.gameObject.transform.root.gameObject;
             // Only damage enemies if this projectile was parried and the enemy isn't already dead
-            if (isParried && other.gameObject.GetComponent<EnemyBaseController>().GetHealth() > 0)
+            if (isParried && enemy.GetComponent<EnemyBaseController>().GetHealth() > 0)
             {
                 Destroy(gameObject);
-                other.gameObject.GetComponent<EnemyBaseController>().TakeDamage(1, new Vector3(0, 0, -1), 10f);
+                enemy.GetComponent<EnemyBaseController>().TakeDamage(1, new Vector3(0, 0, -1), 10f);
                 GameObject.Find("ScoreManager").GetComponent<ScoreManager>().AddStyleKills(400); // Parry kills get style points!
             }
             return;
