@@ -379,10 +379,9 @@ public class EnemyFlyerController : EnemyBaseController
 
         anim.SetBool("Dying", true);
 
-        shockHitbox.transform.localScale = maxShockScale;
         shockHitboxColor.a = 0.0f;
         shockHitbox.GetComponent<MeshRenderer>().material.color = shockHitboxColor;
-        shockHitbox.GetComponent<MeshRenderer>().enabled = true;
+        shockHitbox.GetComponent<MeshRenderer>().enabled = false;
 
         audioSource.clip = telegraphSound;
         audioSource.Play();
@@ -407,7 +406,11 @@ public class EnemyFlyerController : EnemyBaseController
 
     public void TriggerDeathExplosion(bool playerTriggered)
     {
-        //Instantiate(explosionEffect, transform.position, transform.rotation);
+        if (!explosionTriggered)
+        {
+            explosionTriggered = true;
+            Instantiate(explosionEffect, transform.position, transform.rotation);
+        }
 
         if (playerTriggered)
         {
@@ -447,6 +450,10 @@ public class EnemyFlyerController : EnemyBaseController
     {
         base.ResetEnemy();
         explosionTriggered = false;
+
+        shockHitboxColor.a = 0.0f;
+        shockHitbox.GetComponent<MeshRenderer>().material.color = shockHitboxColor;
+        shockHitbox.GetComponent<MeshRenderer>().enabled = false;
     }
 
     void TryStartingAttack() // Track player and if we are off cooldown, begin aiming our attack
