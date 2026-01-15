@@ -62,6 +62,7 @@ public class EnemyFlyerController : EnemyBaseController
     bool launched = false; // If the enemy was launched by the player
     Vector3 launchDirection;
     public GameObject explosionEffect;
+    bool explosionTriggered = false;
 
     [SerializeField] LayerMask enemyLayers;
 
@@ -263,6 +264,11 @@ public class EnemyFlyerController : EnemyBaseController
                             // Move
                             transform.position = transform.position + (launchDirection * 0.75f);
                         }
+                        else if (deathTimer > (dyingDuration * 0.9) && !explosionTriggered)
+                        {
+                            explosionTriggered = true;
+                            Instantiate(explosionEffect, transform.position, transform.rotation);
+                        }
                         else if (deathTimer > dyingDuration)
                         {
                             // Blow up
@@ -392,7 +398,7 @@ public class EnemyFlyerController : EnemyBaseController
 
     public void TriggerDeathExplosion(bool playerTriggered)
     {
-        Instantiate(explosionEffect, transform.position, transform.rotation);
+        //Instantiate(explosionEffect, transform.position, transform.rotation);
 
         if (playerTriggered)
         {
@@ -426,6 +432,12 @@ public class EnemyFlyerController : EnemyBaseController
         {
             Destroy(gameObject.GetComponent<SplineAnimate>().Container.transform.parent.gameObject);
         }
+    }
+
+    public override void ResetEnemy()
+    {
+        base.ResetEnemy();
+        explosionTriggered = false;
     }
 
     void TryStartingAttack() // Track player and if we are off cooldown, begin aiming our attack
