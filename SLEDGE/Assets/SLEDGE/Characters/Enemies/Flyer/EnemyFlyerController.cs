@@ -25,6 +25,8 @@ public class EnemyFlyerController : EnemyBaseController
 
     [SerializeField] GameObject shockHitbox; // Hitbox of AOE attack
     Color shockHitboxColor; 
+    [SerializeField] GameObject staticField; // vfx of static for AOE attack
+    [SerializeField] GameObject forceBlast; // vfx for forceblast of AOE attack
     bool playerInRadius = false; // Whether the player is in the AOE radius
     bool playerHit = false; // Whether the player has already been hit by the AOE attack this cycle
     Vector3 maxShockScale;
@@ -97,6 +99,8 @@ public class EnemyFlyerController : EnemyBaseController
 
         shockHitboxColor = shockHitbox.GetComponent<MeshRenderer>().material.color;
 
+        staticField.SetActive(false);
+        
         shockHitboxColor.a = 0.0f;
         shockHitbox.GetComponent<MeshRenderer>().material.color = shockHitboxColor;
         shockHitbox.GetComponent<MeshRenderer>().enabled = false;
@@ -306,8 +310,9 @@ public class EnemyFlyerController : EnemyBaseController
     void AreaBlast()
     {
         // UPDATED SFX AND VFX FOR SHOCK ATTACK WOULD TRIGGER HERE
-
-        shockHitboxColor.a = 0.3f;
+        staticField.SetActive(true);
+        forceBlast.SetActive(true);
+        shockHitboxColor.a = 1.0f;
         shockHitbox.GetComponent<MeshRenderer>().material.color = shockHitboxColor;
 
         if (playerInRadius)
@@ -378,7 +383,9 @@ public class EnemyFlyerController : EnemyBaseController
         gameObject.GetComponent<SplineAnimate>().Pause();
 
         anim.SetBool("Dying", true);
-
+        
+        staticField.SetActive(false);
+        
         shockHitboxColor.a = 0.0f;
         shockHitbox.GetComponent<MeshRenderer>().material.color = shockHitboxColor;
         shockHitbox.GetComponent<MeshRenderer>().enabled = false;
@@ -450,7 +457,9 @@ public class EnemyFlyerController : EnemyBaseController
     {
         base.ResetEnemy();
         explosionTriggered = false;
-
+        
+        staticField.SetActive(false);
+        
         shockHitboxColor.a = 0.0f;
         shockHitbox.GetComponent<MeshRenderer>().material.color = shockHitboxColor;
         shockHitbox.GetComponent<MeshRenderer>().enabled = false;
@@ -487,6 +496,8 @@ public class EnemyFlyerController : EnemyBaseController
         playerHit = false;
 
         eyeLight.GetComponent<Light>().intensity = 0.0f;
+        
+        staticField.SetActive(false);
         
         shockHitboxColor.a = 0.0f;
         shockHitbox.GetComponent<MeshRenderer>().material.color = shockHitboxColor;

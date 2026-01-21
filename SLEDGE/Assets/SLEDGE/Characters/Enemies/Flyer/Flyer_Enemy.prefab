@@ -101,6 +101,21 @@ PrefabInstance:
       propertyPath: m_Name
       value: Flying Enemy
       objectReference: {fileID: 0}
+    - target: {fileID: 2889222492729280490, guid: ea0f10344b4186e418c8b61208ee9804,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4644782905783184947, guid: ea0f10344b4186e418c8b61208ee9804,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5619275513568287829, guid: ea0f10344b4186e418c8b61208ee9804,
+        type: 3}
+      propertyPath: shockHitbox
+      value: 
+      objectReference: {fileID: 8450193602972100045}
     - target: {fileID: 5619275513568287829, guid: ea0f10344b4186e418c8b61208ee9804,
         type: 3}
       propertyPath: deathRagdoll
@@ -124,6 +139,12 @@ PrefabInstance:
 --- !u!4 &6379767526505047991 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 420231148312675728, guid: ea0f10344b4186e418c8b61208ee9804,
+    type: 3}
+  m_PrefabInstance: {fileID: 6727685989296022055}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &8450193602972100045 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2889222492729280490, guid: ea0f10344b4186e418c8b61208ee9804,
     type: 3}
   m_PrefabInstance: {fileID: 6727685989296022055}
   m_PrefabAsset: {fileID: 0}
