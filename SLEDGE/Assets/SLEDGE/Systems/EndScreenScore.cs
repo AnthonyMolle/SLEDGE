@@ -13,7 +13,7 @@ public class EndScreenScore : MonoBehaviour
 
     public void Awake()
     {
-        setVisible(false);
+        //setVisible(false);
         rating.text = "-";
     }
 
@@ -34,7 +34,7 @@ public class EndScreenScore : MonoBehaviour
     IEnumerator reveal(float seconds)
     {
         // Show stats
-        setVisible(true);
+        //setVisible(true);
 
         // Wait (Dramatic Pause)
         yield return new WaitForSecondsRealtime(seconds);

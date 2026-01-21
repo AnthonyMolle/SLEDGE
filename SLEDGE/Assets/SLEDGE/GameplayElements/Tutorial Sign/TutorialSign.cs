@@ -8,9 +8,11 @@ public class TutorialSign : MonoBehaviour
     //should pause time while reading but I'm not touching that code lmao
     //Was not able to turn off canvases from the Inspector? So....
 
-    public GameObject interactionCanvas;
-    public GameObject tutorialCanvas; //you can change the default in the prefabs
     public GameObject parent;
+    public GameObject worldCanvas;
+    public GameObject pressE; //text obj saying press E
+    public GameObject questionMark;
+    public GameObject tutorialCanvas;
     bool inTrigger = false; //literally any rigidbody could be in the trigger. Enemies prolly count
     bool ePressed;
 
@@ -18,12 +20,12 @@ public class TutorialSign : MonoBehaviour
     void Start()
     {
         Canvas[] canvases = parent.GetComponentsInChildren<Canvas>();
-        Debug.Log(canvases);
         foreach (Canvas canvas in canvases)
         {
             canvas.gameObject.SetActive(false);
-            Debug.Log("canvas deactivate");
         }
+        worldCanvas.SetActive(true);
+        pressE.SetActive(false);
     }
 
     // Update is called once per frame
@@ -34,7 +36,8 @@ public class TutorialSign : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        interactionCanvas.SetActive(true);
+        pressE.SetActive(true);
+        questionMark.SetActive(false);
         inTrigger = true;
     }
 
@@ -45,7 +48,8 @@ public class TutorialSign : MonoBehaviour
 
     void OnTriggerExit(Collider other)
     {
-        interactionCanvas.SetActive(false);
+        pressE.SetActive(false);
+        questionMark.SetActive(true);
         inTrigger = false;
     }
 

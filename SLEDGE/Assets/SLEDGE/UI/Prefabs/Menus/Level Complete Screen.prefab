@@ -181,10 +181,10 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8166255882172652754}
-  - {fileID: 990089512500161220}
   - {fileID: 3076610857952892806}
   - {fileID: 4323138999517308184}
   - {fileID: 1089356624758971973}
+  - {fileID: 990089512500161220}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -200,7 +200,7 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5061258214717282368}
   m_Enabled: 1
-  m_Alpha: 0
+  m_Alpha: 1
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
@@ -217,6 +217,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   portal: {fileID: 0}
+  EndScreenManager: {fileID: 0}
 --- !u!1 &5959530830501114976
 GameObject:
   m_ObjectHideFlags: 0

@@ -14,7 +14,7 @@ public class EndPlatform : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        LevelCompleteScreen = FindAnyObjectByType<LevelCompleteScreen>(FindObjectsInactive.Include).gameObject;
     }
 
     // Update is called once per frame
@@ -44,6 +44,7 @@ public class EndPlatform : MonoBehaviour
 
         if (LevelCompleteScreen != null && LevelCompleteScreen.GetComponent<LevelCompleteScreen>() != null)
         {
+            LevelCompleteScreen.SetActive(true);
             LevelCompleteScreen.GetComponent<CanvasGroup>().alpha = 1;
             LevelCompleteScreen.GetComponent<LevelCompleteScreen>().StartAnimation();
         }

@@ -29,7 +29,8 @@ public class EnemyBaseController : MonoBehaviour
     protected GameObject player;
     protected Rigidbody playerRb;
 
-    RaycastHit hit;
+    RaycastHit[] hits;
+    public LayerMask playerMask;
 
     public enum EnemyState
     {
@@ -53,11 +54,15 @@ public class EnemyBaseController : MonoBehaviour
 
     protected bool PlayerinLOS()
     {
-        if (Physics.Raycast(transform.position, player.transform.position - transform.position, out hit, detectionRadius))
+        hits = Physics.RaycastAll(transform.position, player.transform.position - transform.position, detectionRadius, playerMask, QueryTriggerInteraction.Ignore);
+        if (hits.Length > 0)
         {
-            if (hit.collider.gameObject.CompareTag("Player"))
+            foreach (RaycastHit hit in hits)
             {
-                return true;
+                if (hit.collider.gameObject.CompareTag("Player"))
+                {
+                    return true;
+                }
             }
         }
         return false;
@@ -75,7 +80,7 @@ public class EnemyBaseController : MonoBehaviour
             return;
         }
 
-        rb.AddForce(direction * force, ForceMode.Impulse);
+        //rb.AddForce(direction * force, ForceMode.Impulse);
         currentHealth -= damage;
         if (currentHealth <= 0)
         {
@@ -93,6 +98,8 @@ public class EnemyBaseController : MonoBehaviour
         if (deathRagdoll)
         {
             deathRagdoll.KillSwitch(true);
+            EnemyManager.Instance.EnemyDeath(gameObject);
+            return;
         }
 
         // Enemy manager marks this enemy as dead

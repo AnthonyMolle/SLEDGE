@@ -26,7 +26,7 @@ public class PlayerController : MonoBehaviour
     #region Character Component References
     [Header("Character Component References")]
     [SerializeField] Camera gameCamera;
-    Rigidbody rb; // parent rigidbody
+    public Rigidbody rb; // parent rigidbody
     CapsuleCollider characterCollider;
     [SerializeField] Animator anim; // parent animator
     #endregion
@@ -63,7 +63,7 @@ public class PlayerController : MonoBehaviour
     Checkpoint currentCheckpoint;
     
     [SerializeField] int maxHealth = 3; // Maximum health the player can have
-    private int currentHealth = 3; // Current health the player is at
+    public int currentHealth = 3; // Current health the player is at
     bool alive = true; // Tracks if the player is alive
     #endregion
 
@@ -172,6 +172,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] GameObject impactPointPrefab;
     [SerializeField] bool alwaysShowImpactPoint = false; // If set to false, will only show impact point when charging up a hammer slam
     GameObject impactPoint;
+    MeshChildrenAlpha impactFade;
     bool impactPointHidden;
     bool hideImpactPoint;
     Color impactFadeColor;
@@ -247,7 +248,8 @@ public class PlayerController : MonoBehaviour
     public TextMeshProUGUI displayDistance;
     public TextMeshProUGUI speedometer; // UI that displays how fast we are going
     public TextMeshProUGUI tempPowerupUI; // UI element that displays current equipped powerup
-    public TextMeshProUGUI healthDisplay;
+    public HealthCounter healthDisplay;
+    public Crosshair crosshair;
 
     [SerializeField] GameObject pause;
 
@@ -255,16 +257,20 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] GameObject deathScreen;
 
+    [SerializeField] GameObject lvlComplete;
+
+    [SerializeField] PowerupUI powerupUI;
+
     #endregion
 
     #region Power Ups
     public enum Powerup { None, Airburst, Explosive } // List of powerups in game (including none)
-
-    Powerup currentPowerup; // Hold the currently equipped powerup
+    public Powerup currentPowerup = Powerup.None; // Currently equipped powerup
 
     [Header("Power Ups")]
     [Tooltip("How much we add to bounce force when the explosive powerup is enabled.")]
     public float explosiveForce;
+    public GameObject c4;
 
     #endregion
 
@@ -320,6 +326,8 @@ public class PlayerController : MonoBehaviour
         settings = canvas.transform.Find("Pause Setting Screen").gameObject;
         pause = canvas.transform.Find("PauseMenu").gameObject;
         displayDistance = canvas.transform.Find("Distance").gameObject.GetComponent<TextMeshProUGUI>();
+        lvlComplete = FindAnyObjectByType<LevelCompleteScreen>(FindObjectsInactive.Include).gameObject;
+        powerupUI = canvas.transform.Find("Powerups").gameObject.GetComponent<PowerupUI>();
 
         // Set the mouse sensitivity
         mouseSensitivity = PlayerPrefs.GetFloat("Sensitivity", 400); 
@@ -328,7 +336,7 @@ public class PlayerController : MonoBehaviour
         currentHealth = maxHealth; 
 
         // If the health display is on, display it.
-        if (healthDisplay != null){healthDisplay.text = "Health: " + currentHealth;}
+        if (healthDisplay != null){healthDisplay.SetHealth(currentHealth);}
 
         // Remove any equiped powerups
         ResetPowerup();
@@ -341,6 +349,7 @@ public class PlayerController : MonoBehaviour
         // Impact point stuff
         impactPoint = Instantiate(impactPointPrefab, transform.position, transform.rotation);
         impactFadeColor = impactPoint.GetComponent<MeshRenderer>().material.color;
+        impactFade = impactPoint.GetComponent<MeshChildrenAlpha>();
 
         anim.SetLayerWeight(anim.GetLayerIndex("Charge Layer"), 0);
     }
@@ -353,7 +362,7 @@ public class PlayerController : MonoBehaviour
         }
 
         RaycastHit hit;
-        if (Physics.Raycast(cameraObject.transform.position, cameraObject.transform.forward, out hit, hitLength + hitRadius))
+        if (Physics.Raycast(cameraObject.transform.position, cameraObject.transform.forward, out hit, hitLength + hitRadius, bouncableLayers, QueryTriggerInteraction.Ignore))
         {
             hammerArcRoot.transform.position = hit.point;
         }
@@ -466,7 +475,7 @@ public class PlayerController : MonoBehaviour
                 Vector3 direction = (endLoc - startLoc).normalized;
                 float distance = Vector3.Distance(startLoc, endLoc);
 
-                if (Physics.Raycast(startLoc, direction, out arcHit, distance))
+                if (Physics.Raycast(startLoc, direction, out arcHit, distance, bouncableLayers, QueryTriggerInteraction.Ignore))
                 {
                     hideImpactPoint = false;
                     Vector3 impactPos = arcHit.point;
@@ -482,9 +491,9 @@ public class PlayerController : MonoBehaviour
                         impactPointHidden = false;
                         impactPoint.transform.position = impactPos;
                     }
-
-                    impactFadeColor.a = Mathf.Lerp(1, 0, impactFadeTimer / 0.25f);
-                    impactPoint.GetComponent<MeshRenderer>().material.color = impactFadeColor;
+                    impactFade.SetAlpha(Mathf.Lerp(1, 0, impactFadeTimer / 0.25f));
+                    // impactFadeColor.a = Mathf.Lerp(1, 0, impactFadeTimer / 0.25f);
+                    // impactPoint.GetComponent<MeshRenderer>().material.color = impactFadeColor;
 
                     break;
                 }
@@ -494,16 +503,18 @@ public class PlayerController : MonoBehaviour
         if (hideImpactPoint)
         {
             impactPointHidden = true;
-            impactFadeColor.a = Mathf.Lerp(1, 0, impactFadeTimer / 0.25f);
-            impactPoint.GetComponent<MeshRenderer>().material.color = impactFadeColor;
+            impactFade.SetAlpha(Mathf.Lerp(1, 0, impactFadeTimer / 0.25f));
+            // impactFadeColor.a = Mathf.Lerp(1, 0, impactFadeTimer / 0.25f);
+            // impactPoint.GetComponent<MeshRenderer>().material.color = impactFadeColor;
         }
 
         // Only show impact point when charging up the hammer for a swing
         if (!alwaysShowImpactPoint && !chargingHammer && !hammerCharged)
         {
             impactPointHidden = true;
-            impactFadeColor.a = Mathf.Lerp(1, 0, impactFadeTimer / 0.25f);
-            impactPoint.GetComponent<MeshRenderer>().material.color = impactFadeColor;
+            impactFade.SetAlpha(Mathf.Lerp(1, 0, impactFadeTimer / 0.25f));
+            // impactFadeColor.a = Mathf.Lerp(1, 0, impactFadeTimer / 0.25f);
+            // impactPoint.GetComponent<MeshRenderer>().material.color = impactFadeColor;
         }
     }
 
@@ -615,6 +626,7 @@ public class PlayerController : MonoBehaviour
             //Debug.Log("hammer startin");
             chargingHammer = true;
             hammerTimer = chargeTime;
+            crosshair.Charge();
  
             anim.SetFloat("X", 0.5f);
             anim.SetFloat("Y", 1);
@@ -632,6 +644,7 @@ public class PlayerController : MonoBehaviour
             chargingHammer = false;
             hammerTimer = 0;
             hammerBounced = false;
+            crosshair.CancelCharge();
         }
 
         if (mouseReleased && hammerCharged)
@@ -675,6 +688,9 @@ public class PlayerController : MonoBehaviour
             hammerHit = true;
             hittingHammer = false;
             //audioManager.PlaySFX(audioManager.hit);
+            
+            crosshair.Slam(false, 0);
+            
             //slamHitbox.DeactivateCollider();
 
             recovering = true;
@@ -701,6 +717,8 @@ public class PlayerController : MonoBehaviour
             swipeRecovering = true;
             hammerTimer = swipeRecoveryTime;
 
+            crosshair.ResetCrosshair();
+            
             anim.ResetTrigger("Swing");
         }
         else if (swipeRecovering)
@@ -885,7 +903,7 @@ public class PlayerController : MonoBehaviour
             secondaryPressed = false;
         }
 
-        if (Input.GetKeyDown(KeyCode.Escape) && pause.activeSelf == false && settings.activeSelf == false && alive)
+        if (Input.GetKeyDown(KeyCode.Escape) && pause.activeSelf == false && settings.activeSelf == false && alive && lvlComplete.activeSelf == false)
         {
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
@@ -1290,7 +1308,7 @@ public class PlayerController : MonoBehaviour
                 else if (hit.transform.gameObject.tag == "Enemy Flyer")
                 {
                     var e = hit.transform.gameObject.GetComponent<EnemyFlyerController>();
-
+                    crosshair.Slam(true, 1);
                     if (e.InDyingState())
                     {
                         flyerBoost = true;
@@ -1303,7 +1321,9 @@ public class PlayerController : MonoBehaviour
                 }
                 else if (hit.transform.gameObject.tag == "Enemy Shooter")
                 {
+                    crosshair.Slam(true, 1);
                     var e = hit.transform.gameObject.GetComponent<EnemyShooterController>();
+                    e.SetHurtType(2);
                     e.TakeDamage(1, hitDirection, swingForce * 1.5f);
                 }
                 else if (hit.transform.gameObject.tag == "Collectible" || hit.transform.gameObject.layer == 11) // 11 == gibs layer
@@ -1337,9 +1357,8 @@ public class PlayerController : MonoBehaviour
                     Vector3 direction = (endLoc - startLoc).normalized;
                     float distance = Vector3.Distance(startLoc, endLoc);                 
 
-                    if (Physics.Raycast(startLoc, direction, out arcHit, distance))
+                    if (Physics.Raycast(startLoc, direction, out arcHit, distance, bouncableLayers, QueryTriggerInteraction.Ignore))
                     {
-                        Debug.Log("hit");
                         //Debug.DrawLine(startLoc, endLoc, Color.red, 2.0f);
                         launchDirection = -direction;
                         break;
@@ -1474,6 +1493,7 @@ public class PlayerController : MonoBehaviour
             {
                 if (hit.transform.gameObject.tag == "Enemy Flyer")
                 {
+                    crosshair.SwingHit(1);
                     EnemyFlyerController flyer = hit.transform.gameObject.GetComponent<EnemyFlyerController>();
                     if (flyer.InDyingState())
                     {
@@ -1486,6 +1506,15 @@ public class PlayerController : MonoBehaviour
                 }
                 else if (hit.transform.gameObject.tag == "Enemy Shooter")
                 {
+                    crosshair.SwingHit(1);
+                    if (currentCombo == Combo.Swipe2)
+                    {
+                        hit.transform.gameObject.GetComponent<EnemyShooterController>().SetHurtType(1);
+                    }
+                    else
+                    {
+                        hit.transform.gameObject.GetComponent<EnemyShooterController>().SetHurtType(0);
+                    }
                     hit.transform.gameObject.GetComponent<EnemyShooterController>().TakeDamage(1, hitDirection, swingForce);
                 }
                 else if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Projectile"))
@@ -1600,7 +1629,7 @@ public class PlayerController : MonoBehaviour
         currentHealth = maxHealth;
         if (healthDisplay != null)
         {
-            healthDisplay.text = "Health: " + currentHealth;
+            healthDisplay.SetHealth(currentHealth);
         }
     }
 
@@ -1611,7 +1640,7 @@ public class PlayerController : MonoBehaviour
         currentHealth -= damage;
         if (healthDisplay != null)
         {
-            healthDisplay.text = "Health: " + currentHealth;
+            healthDisplay.SetHealth(currentHealth);
         }
         if (currentHealth <= 0)
         {
@@ -1632,7 +1661,10 @@ public class PlayerController : MonoBehaviour
     {
         // Kill the player, activate the death screen UI, and reset the timescale.
         alive = false;
+        healthDisplay.SetHealth(0);
         deathScreen.SetActive(true);
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
         Time.timeScale = 0;
     }
 
@@ -1640,6 +1672,8 @@ public class PlayerController : MonoBehaviour
     {
         // Make sure the player is alive. If they have no checkpoints, simply reload the scene.
         alive = true;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
         if (currentCheckpoint == null)
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
@@ -1657,7 +1691,7 @@ public class PlayerController : MonoBehaviour
         currentHealth = maxHealth;
         if (healthDisplay != null)
         {
-            healthDisplay.text = "Health: " + currentHealth;
+            healthDisplay.SetHealth(currentHealth);
         }
     }
 
@@ -1672,6 +1706,9 @@ public class PlayerController : MonoBehaviour
     public void CollectPowerup(Powerup newPowerup) // Equips a new powerup to the player and updates UI to display equiped powerup
     {
         currentPowerup = newPowerup;
+        c4.SetActive(true);
+        if (powerupUI != null) {powerupUI.SetPowerup(newPowerup);};
+        /*
         if (currentPowerup == Powerup.Explosive)
         {
             tempPowerupUI.text = "Active Powerup: Explosive";
@@ -1680,6 +1717,7 @@ public class PlayerController : MonoBehaviour
         {
             tempPowerupUI.text = "Active Powerup: Airburst";
         }
+        */
     }
 
     void LoseExplosive()// Removes any equipped powerups COMMENT: Seems useless?
@@ -1690,6 +1728,8 @@ public class PlayerController : MonoBehaviour
     void ResetPowerup() // Removes any equipped powerups
     {
         currentPowerup = Powerup.None;
+        c4.SetActive(false);
+        if (powerupUI != null) {powerupUI.SetPowerup(Powerup.None);};
         if (tempPowerupUI != null)
         {
             tempPowerupUI.text = "Active Powerup: None";

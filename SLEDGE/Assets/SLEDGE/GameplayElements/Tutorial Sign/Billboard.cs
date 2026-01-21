@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class Billboard : MonoBehaviour
 {
-    [SerializeField] Camera playerCam;
+    [SerializeField] PlayerController player;
 
     void Awake()
     {
-        playerCam = FindObjectOfType<Camera>();
+        player = FindAnyObjectByType<PlayerController>();
     }
 
     // Start is called before the first frame update
@@ -20,6 +20,6 @@ public class Billboard : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.LookAt(playerCam.transform);
+        transform.LookAt(player.transform);
     }
 }

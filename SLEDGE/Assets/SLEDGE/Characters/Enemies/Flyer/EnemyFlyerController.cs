@@ -56,12 +56,15 @@ public class EnemyFlyerController : EnemyBaseController
 
     SplineAnimate splineComponent;
 
+    Animator anim;
+
     // DEATH EXPLOSION STUFF
     float deathTimer = 0.0f;
     [SerializeField] float dyingDuration = 2.0f; // Duration between taking fatal damage and exploding
     bool launched = false; // If the enemy was launched by the player
     Vector3 launchDirection;
     public GameObject explosionEffect;
+    bool explosionTriggered = false;
 
     [SerializeField] LayerMask enemyLayers;
 
@@ -97,6 +100,8 @@ public class EnemyFlyerController : EnemyBaseController
         shockHitboxColor.a = 0.0f;
         shockHitbox.GetComponent<MeshRenderer>().material.color = shockHitboxColor;
         shockHitbox.GetComponent<MeshRenderer>().enabled = false;
+
+        anim = gameObject.GetComponentInChildren<Animator>();
     }
 
     // Update is called once per frame
@@ -263,6 +268,11 @@ public class EnemyFlyerController : EnemyBaseController
                             // Move
                             transform.position = transform.position + (launchDirection * 0.75f);
                         }
+                        else if (deathTimer > (dyingDuration * 0.9) && !explosionTriggered)
+                        {
+                            explosionTriggered = true;
+                            Instantiate(explosionEffect, transform.position, transform.rotation);
+                        }
                         else if (deathTimer > dyingDuration)
                         {
                             // Blow up
@@ -348,6 +358,8 @@ public class EnemyFlyerController : EnemyBaseController
     public override void TakeDamage(int damage, Vector3 direction, float force)
     {
         //base.TakeDamage(damage, direction, force);
+        anim.Play("Hit");
+
         if (enemyState == EnemyState.DEAD || combatState == CombatState.DYING)
         {
             return;
@@ -365,10 +377,11 @@ public class EnemyFlyerController : EnemyBaseController
     {
         gameObject.GetComponent<SplineAnimate>().Pause();
 
-        shockHitbox.transform.localScale = maxShockScale;
+        anim.SetBool("Dying", true);
+
         shockHitboxColor.a = 0.0f;
         shockHitbox.GetComponent<MeshRenderer>().material.color = shockHitboxColor;
-        shockHitbox.GetComponent<MeshRenderer>().enabled = true;
+        shockHitbox.GetComponent<MeshRenderer>().enabled = false;
 
         audioSource.clip = telegraphSound;
         audioSource.Play();
@@ -386,13 +399,18 @@ public class EnemyFlyerController : EnemyBaseController
 
     public void LaunchFlyer(Vector3 direction)
     {
+        anim.Play("Hit");
         launched = true;
         launchDirection = direction;
     }
 
     public void TriggerDeathExplosion(bool playerTriggered)
     {
-        Instantiate(explosionEffect, transform.position, transform.rotation);
+        if (!explosionTriggered)
+        {
+            explosionTriggered = true;
+            Instantiate(explosionEffect, transform.position, transform.rotation);
+        }
 
         if (playerTriggered)
         {
@@ -428,6 +446,16 @@ public class EnemyFlyerController : EnemyBaseController
         }
     }
 
+    public override void ResetEnemy()
+    {
+        base.ResetEnemy();
+        explosionTriggered = false;
+
+        shockHitboxColor.a = 0.0f;
+        shockHitbox.GetComponent<MeshRenderer>().material.color = shockHitboxColor;
+        shockHitbox.GetComponent<MeshRenderer>().enabled = false;
+    }
+
     void TryStartingAttack() // Track player and if we are off cooldown, begin aiming our attack
     {
         //rb.velocity = new Vector3(0, 0, 0);
@@ -445,6 +473,9 @@ public class EnemyFlyerController : EnemyBaseController
 
             gameObject.GetComponent<SplineAnimate>().Pause();
 
+            anim.SetBool("Target", true);
+            anim.SetFloat("Charge", 1);
+
             combatState = CombatState.AIMING;
         }
     }
@@ -460,6 +491,8 @@ public class EnemyFlyerController : EnemyBaseController
         shockHitboxColor.a = 0.0f;
         shockHitbox.GetComponent<MeshRenderer>().material.color = shockHitboxColor;
         shockHitbox.GetComponent<MeshRenderer>().enabled = false;
+
+        anim.SetBool("Target", false);
 
         //gameObject.GetComponent<SplineAnimate>().Play();
 
