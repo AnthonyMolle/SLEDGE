@@ -57,6 +57,10 @@ public class EnemyShooterController : EnemyBaseController
     [SerializeField] AudioClip shootSound;
     AudioSource audioSource;
 
+    [Header("VFX")]
+    [SerializeField] GameObject chargeUp;
+    [SerializeField] ParticleSystem shootFX;
+
     // ANIM/RAGDOLL STUFF
     Animator anim;
     float hitTimer = 0.5f;
@@ -151,6 +155,9 @@ public class EnemyShooterController : EnemyBaseController
                                         audioSource.time = 0.0f;
                                         audioSource.Play();
                                         currentShootBurstCount = shootBurstCount;
+                                        // shootFX.Simulate(0f, true, true);
+                                        // shootFX.Play();
+                                        chargeUp.SetActive(true);
                                         combatState = CombatState.AIMING;
                                         currentShootBurstCount--;
                                     }
@@ -164,6 +171,9 @@ public class EnemyShooterController : EnemyBaseController
                                     cooldown = 0.0f;
                                     audioSource.time = 0.0f;
                                     audioSource.Play();
+                                    // shootFX.Simulate(0f, true, true);
+                                    // shootFX.Play();
+                                    chargeUp.SetActive(true);
                                     combatState = CombatState.AIMING;
                                     burstFiring = true;
                                     currentShootBurstCount--;
@@ -173,6 +183,8 @@ public class EnemyShooterController : EnemyBaseController
                             {
                                 cooldown = 0.0f;
                                 audioSource.time = 0.0f;
+                                // shootFX.Simulate(0f, true, true);
+                                // shootFX.Play();
                                 audioSource.Play();
                                 combatState = CombatState.AIMING;                               
                             }
@@ -192,6 +204,7 @@ public class EnemyShooterController : EnemyBaseController
                 if (hitTimer < 0.0f && !deathTriggered)
                 {
                     deathTriggered = true;
+                    chargeUp.SetActive(false);
                     Die();
                 }
                 else
@@ -229,6 +242,11 @@ public class EnemyShooterController : EnemyBaseController
         
         // Track projectiles so we can destroy them on reset
         projectiles.Add(projectile);
+        chargeUp.SetActive(false);
+        shootFX.Simulate(0f, true, true);
+        shootFX.Play(true);
+
+
 
         anim.Play("Shoot");
 
