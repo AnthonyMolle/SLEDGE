@@ -7,7 +7,7 @@ public class Checkpoint : MonoBehaviour
 {
 
     public bool activated = false;
-    public FMODUnity.StudioEventEmitter sfxEmitter;
+    public GameObject[] lasers;
     
     PlayerController playerController;
     // Saved level status (enemies killed, power-ups held)
@@ -20,7 +20,7 @@ public class Checkpoint : MonoBehaviour
 
     private void Start()
     {
-        sfxEmitter.Play();
+
     }
 
     private void OnTriggerEnter(Collider other)
@@ -38,13 +38,12 @@ public class Checkpoint : MonoBehaviour
     {
         playerController.UpdateSpawn(this);
         playerController.ResetHealth();
-
+        
         savedPowerup = playerController.GetCurrentPowerup();
         savedKills = ScoreManager.Instance.GetEnemiesKilled();
         savedStyle = ScoreManager.Instance.GetStyleKills();
-
+        
         activated = true;
-        AudioManager.Instance.PlayOneShotSFX2D(AudioManager.Instance.CheckpointActivate);
 
         // Grab the current status of all enemies in the level from the level manager (dead or alive)
         if (EnemyManager.Instance != null)
@@ -56,16 +55,23 @@ public class Checkpoint : MonoBehaviour
             }
         }
 
-        // Visual update to indicate the checkpoint has been used
-        gameObject.transform.GetChild(1).transform.GetChild(1).GetComponent<MeshRenderer>().enabled = false;
-        sfxEmitter.Stop();
+        // Visual update to indicate the checkpoint has been usedCanvas[] canvases = parent.GetComponentsInChildren<Canvas>();
+        foreach (GameObject laser in lasers)
+        {
+            laser.gameObject.SetActive(false);
+        }
+        //gameObject.transform.GetChild(1).transform.GetChild(1).GetComponent<MeshRenderer>().enabled = false;
     }
 
     // Allow checkpoint to be used again and update visuals accordingly
     public void DeactivateCheckpoint()
     {
         activated = false;
-        gameObject.transform.GetChild(1).transform.GetChild(1).GetComponent<MeshRenderer>().enabled = true;
+        foreach (GameObject laser in lasers)
+        {
+            laser.gameObject.SetActive(true);
+        }
+        //gameObject.transform.GetChild(1).transform.GetChild(1).GetComponent<MeshRenderer>().enabled = true;
     }
 
     // Reset the level based on state saved when the checkpoint was activated

@@ -15,7 +15,8 @@ public class ScoreManager : MonoBehaviour
 
     private void Awake()
     {
-        if(Instance != this && Instance != null)
+        timer = FindAnyObjectByType<Speed_Run_Timer>();
+        if (Instance != this && Instance != null)
         {
             Destroy(gameObject);
         }
@@ -76,10 +77,12 @@ public class ScoreManager : MonoBehaviour
 
     void Start()
     {
+        /*
         if (DataCollection.Instance != null)
         {
             DataCollection.Instance.RecordLevelStartEvent();
         }
+        */
 
         MaxCollectibles = GameObject.FindGameObjectsWithTag("Collectible").Length;
         //Debug.Log("Collectibles: " + MaxCollectibles);

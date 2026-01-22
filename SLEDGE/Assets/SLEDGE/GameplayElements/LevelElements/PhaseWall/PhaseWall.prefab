@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6159672904864513382}
   - component: {fileID: 1807469591567531202}
   - component: {fileID: 7651492753276823344}
-  m_Layer: 0
+  m_Layer: 18
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -62,7 +62,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 1b6cb4fbaa60c1d479b9f8fd11cae1d4, type: 2}
+  - {fileID: 2100000, guid: a912e57d5adb0ab459f806920ceded15, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -97,9 +97,9 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 4294967295
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -114,7 +114,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7288160934671788248}
-  m_Layer: 0
+  m_Layer: 18
   m_Name: PhaseWall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
