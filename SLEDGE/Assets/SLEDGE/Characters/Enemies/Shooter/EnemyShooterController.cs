@@ -24,8 +24,10 @@ public class EnemyShooterController : EnemyBaseController
     [SerializeField] int shootBurstCount = 3;
     private int currentShootBurstCount;
     float cooldown;
+    bool burstFiring = false;
 
     [SerializeField] float aimDuration = 2.0f;
+    [SerializeField] float burstAimDuration = 2.0f;
     float aimTimer = 0.0f;
 
     /* Projectile stats */
@@ -55,6 +57,17 @@ public class EnemyShooterController : EnemyBaseController
     [SerializeField] AudioClip shootSound;
     AudioSource audioSource;
 
+    [Header("VFX")]
+    [SerializeField] GameObject chargeUp;
+    [SerializeField] ParticleSystem shootFX;
+
+    // ANIM/RAGDOLL STUFF
+    Animator anim;
+    float hitTimer = 0.5f;
+    bool deathTriggered = false;
+    CapsuleCollider hitbox;
+
+
     private enum CombatState
     {
         COOLDOWN,
@@ -68,9 +81,11 @@ public class EnemyShooterController : EnemyBaseController
     {
         base.Start();
         
-        currentShootBurstCount = shootBurstCount;
+        currentShootBurstCount = 0;
         cooldown = shootCooldown;
         audioSource = GetComponent<AudioSource>();
+        anim = GetComponent<Animator>();
+        hitbox = GetComponent<CapsuleCollider>();
 
         gunLight.GetComponent<Light>().intensity = 0.0f;
     }
@@ -78,7 +93,7 @@ public class EnemyShooterController : EnemyBaseController
     // Update is called once per frame
     void Update()
     {
-        if (combatState == CombatState.AIMING)
+        if (combatState == CombatState.AIMING && enemyState != EnemyState.DEAD)
         {
             aimTimer += Time.deltaTime;
 
@@ -111,7 +126,7 @@ public class EnemyShooterController : EnemyBaseController
                 {
                     case CombatState.AIMING:
                         
-                        if (aimTimer >= aimDuration && CollisionTime() > 0f) //Only attempts to shoot if they think they can hit the target
+                        if ( ((shootBurst && burstFiring && aimTimer >= burstAimDuration) || aimTimer >= aimDuration) && CollisionTime() > 0f) //Only attempts to shoot if they think they can hit the target
                         {
                             aimTimer = 0.0f;
                             combatState = CombatState.COOLDOWN;
@@ -119,6 +134,7 @@ public class EnemyShooterController : EnemyBaseController
                             audioSource.Stop();
                             gunLight.GetComponent<Light>().intensity = 0.0f;
 
+                            burstFiring = false;
                             FireProjectile(AimAhead());
                             //FireProjectile(player.transform.position);
                         }
@@ -139,7 +155,15 @@ public class EnemyShooterController : EnemyBaseController
                                         audioSource.time = 0.0f;
                                         audioSource.Play();
                                         currentShootBurstCount = shootBurstCount;
+                                        // shootFX.Simulate(0f, true, true);
+                                        // shootFX.Play();
+                                        chargeUp.SetActive(true);
                                         combatState = CombatState.AIMING;
+                                        currentShootBurstCount--;
+                                    }
+                                    else
+                                    {
+                                        burstFiring = false;
                                     }
                                 }
                                 else
@@ -147,14 +171,20 @@ public class EnemyShooterController : EnemyBaseController
                                     cooldown = 0.0f;
                                     audioSource.time = 0.0f;
                                     audioSource.Play();
+                                    // shootFX.Simulate(0f, true, true);
+                                    // shootFX.Play();
+                                    chargeUp.SetActive(true);
+                                    combatState = CombatState.AIMING;
+                                    burstFiring = true;
                                     currentShootBurstCount--;
-                                    combatState = CombatState.AIMING;  
                                 }
                             }
                             else
                             {
                                 cooldown = 0.0f;
                                 audioSource.time = 0.0f;
+                                // shootFX.Simulate(0f, true, true);
+                                // shootFX.Play();
                                 audioSource.Play();
                                 combatState = CombatState.AIMING;                               
                             }
@@ -170,7 +200,18 @@ public class EnemyShooterController : EnemyBaseController
                 break;
             
             case EnemyState.DEAD:
-                
+
+                if (hitTimer < 0.0f && !deathTriggered)
+                {
+                    deathTriggered = true;
+                    chargeUp.SetActive(false);
+                    Die();
+                }
+                else
+                {
+                    hitTimer -= Time.deltaTime;
+                }
+
                 break;
             
             default:
@@ -188,9 +229,9 @@ public class EnemyShooterController : EnemyBaseController
         Vector3 targetpos = new Vector3(trackingPoint.transform.position.x, 0, trackingPoint.transform.position.z);
         Vector3 pos = new Vector3(transform.position.x, 0, transform.position.z);
         float angle = Vector3.Angle(target.transform.position - transform.position, transform.forward);
-        if (angle > 70)
+        if (angle > 30)
         {
-            transform.rotation = Quaternion.LookRotation(targetpos - pos);
+            transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(targetpos - pos), Time.deltaTime * 5.0f);
         }
     }
 
@@ -201,6 +242,13 @@ public class EnemyShooterController : EnemyBaseController
         
         // Track projectiles so we can destroy them on reset
         projectiles.Add(projectile);
+        chargeUp.SetActive(false);
+        shootFX.Simulate(0f, true, true);
+        shootFX.Play(true);
+
+
+
+        anim.Play("Shoot");
 
         if (audioSource)
         {
@@ -263,8 +311,41 @@ public class EnemyShooterController : EnemyBaseController
 
     }
 
+    public void SetHurtType(int type)
+    {
+        anim.SetFloat("HurtType", type);
+    }
+
+    public override void TakeDamage(int damage, Vector3 direction, float force)
+    {
+        anim.SetTrigger("Hit");
+
+        if (enemyState == EnemyState.DEAD)
+        {
+            return;
+        }
+
+        currentHealth -= damage;
+        if (currentHealth <= 0)
+        {
+            audioSource.Stop();
+            gunLight.GetComponent<Light>().intensity = 0.0f;
+
+            deathTriggered = false;
+            hitTimer = 0.075f;
+            enemyState = EnemyState.DEAD;
+        }
+    }
+
+    protected override void Die()
+    {
+        hitbox.enabled = false;
+        base.Die();
+    }
+
     public override void ResetEnemy()
     {
+        hitbox.enabled = true;
         DestroyProjectiles();
         base.ResetEnemy();
     }
