@@ -23,6 +23,8 @@ public class ExplosivePowerup : MonoBehaviour
     {
         playerController.IncreaseInitialForce(-forceAddend);
         playerController.onHammerBounce.RemoveListener(RemovePowerup);
+        AudioManager.Instance.PlayOneShotSFX2D(AudioManager.Instance.PowerupExplosive);
+
         powerupManager.RemoveCurrentPowerup();
         Destroy(this);
     }

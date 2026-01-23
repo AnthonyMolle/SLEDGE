@@ -682,7 +682,7 @@ public class PlayerController : MonoBehaviour
             //Debug.Log("hammer hitting ended");
             hammerHit = true;
             hittingHammer = false;
-            AudioManager.Instance.PlayOneShotSFX2D(AudioManager.Instance.PlayerHammerHit);
+            // AudioManager.Instance.PlayOneShotSFX2D(AudioManager.Instance.PlayerHammerHit);
             //anim.Play("HammerHit"); 
             anim.Play("Slam");
             crosshair.Slam(false, 0);
@@ -1259,6 +1259,8 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
+        AudioManager.Instance.PlayOneShotSFX2D(AudioManager.Instance.PlayerHammerHit);
+        
         Ray ray = gameCamera.ScreenPointToRay(Input.mousePosition);
         //Ray ray = gameCamera.ScreenPointToRay(impactPoint.transform.position);
         bool bouncy = false;

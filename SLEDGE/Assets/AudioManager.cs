@@ -17,6 +17,8 @@ public class AudioManager : Singleton<AudioManager>
     [Header("Gameplay SFX")]
     public EventReference CheckpointRespawn;
     public EventReference CheckpointActivate;
+    public EventReference PhaseWallImpact;
+    public EventReference PowerupExplosive;
     public EventReference PowerupPickUp;
     public EventReference SwitchActivate;
 
