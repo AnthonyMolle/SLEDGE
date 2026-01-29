@@ -970,7 +970,7 @@ public class PlayerController : MonoBehaviour
         RaycastHit hit;
         Vector3 movementPlane;
         float slopeAngle = 0;
-        if (Physics.Raycast(gameObject.transform.position, Vector3.down, out hit, playerHeight/2 + groundCheckDist, groundLayers)) //if on the ground
+        if (Physics.Raycast(gameObject.transform.position, Vector3.down, out hit, playerHeight/2 + groundCheckDist, groundLayers, QueryTriggerInteraction.Ignore)) //if on the ground
         {
             slopeAngle = Vector3.Angle(hit.transform.up, hit.normal);
             //Debug.Log(slopeAngle);
