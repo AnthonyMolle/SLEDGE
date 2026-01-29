@@ -23,6 +23,10 @@ public class EnemyBaseController : MonoBehaviour
 
     [SerializeField] RagdollScript deathRagdoll;
 
+    [Tooltip("How long the ragdoll will remain before disappearing (set to -1 to stay forever)")]
+    public float decayTime = 5.0f;
+    float decayTimer = -1f;
+
     protected Vector3 spawnPosition;
     protected Rigidbody rb;
 
@@ -50,6 +54,20 @@ public class EnemyBaseController : MonoBehaviour
 
         spawnPosition = transform.position;
         currentHealth = maxHealth;
+    }
+
+    protected virtual void Update()
+    {
+        if (decayTimer > 0)
+        {
+            decayTimer -= Time.deltaTime;
+        }
+        else if (decayTimer != -1)
+        {
+            deathRagdoll.KillSwitch(false);
+            deathRagdoll.gameObject.SetActive(false);
+            decayTimer = -1;
+        }
     }
 
     protected bool PlayerinLOS()
@@ -97,6 +115,7 @@ public class EnemyBaseController : MonoBehaviour
         // Creating a ragdoll
         if (deathRagdoll)
         {
+            decayTimer = decayTime;
             deathRagdoll.KillSwitch(true);
             EnemyManager.Instance.EnemyDeath(gameObject);
             return;
@@ -111,7 +130,9 @@ public class EnemyBaseController : MonoBehaviour
     {
         if (deathRagdoll)
         {
+            deathRagdoll.gameObject.SetActive(true);
             deathRagdoll.KillSwitch(false);
+            decayTimer = -1;
         }
         transform.position = spawnPosition;
         enemyState = EnemyState.IDLE;

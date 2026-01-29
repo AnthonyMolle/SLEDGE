@@ -109,9 +109,9 @@ public class EnemyFlyerController : EnemyBaseController
     }
 
     // Update is called once per frame
-    void Update() // NOTE: This could get moved to FixedUpdate in the future so there isn't two update functions,
-                  // put this here cause I wasn't sure how deltatime interacted with fixedupdate but it seems to be fine to use there - Dom
+    protected override void Update()
     {
+        base.Update();
         // Update Timers
         switch (combatState)
         {

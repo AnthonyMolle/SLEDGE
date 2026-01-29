@@ -91,8 +91,9 @@ public class EnemyShooterController : EnemyBaseController
     }
 
     // Update is called once per frame
-    void Update()
+    protected override void Update()
     {
+        base.Update();
         if (combatState == CombatState.AIMING && enemyState != EnemyState.DEAD)
         {
             aimTimer += Time.deltaTime;
