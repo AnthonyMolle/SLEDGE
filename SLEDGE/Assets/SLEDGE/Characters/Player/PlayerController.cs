@@ -272,6 +272,8 @@ public class PlayerController : MonoBehaviour
     public float explosiveForce;
     public GameObject c4;
 
+    public GameObject explosionVFX;
+
     #endregion
 
     #region SpeedLines
@@ -1407,6 +1409,8 @@ public class PlayerController : MonoBehaviour
             {
                 isLaunched = true;
                 rb.AddForce(launchDirection * explosiveForce, ForceMode.Impulse);
+
+                Instantiate(explosionVFX, transform.position, transform.rotation);
             }
             else if (bouncy)
             {
