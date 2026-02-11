@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 6159672904864513382}
   - component: {fileID: 1807469591567531202}
   - component: {fileID: 7651492753276823344}
+  - component: {fileID: 6940618091762693301}
+  - component: {fileID: 3340787403500476741}
   m_Layer: 18
   m_Name: Body
   m_TagString: Untagged
@@ -105,6 +107,39 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!65 &6940618091762693301
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2851906257459925933}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &3340787403500476741
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2851906257459925933}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 58a66c2bd6b21a347b102df84c9b919b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5848319641470492980
 GameObject:
   m_ObjectHideFlags: 0

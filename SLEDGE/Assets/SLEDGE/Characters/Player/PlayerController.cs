@@ -1288,6 +1288,11 @@ public class PlayerController : MonoBehaviour
                     return;
                 }
 
+                if (hit.transform.gameObject.layer == LayerMask.NameToLayer("PhaseWall"))
+                {
+                    Debug.Log("Phase wall hit");
+                }
+
                 if (hit.transform.gameObject.tag == "Bouncy")
                 {
                     bouncy = true;
