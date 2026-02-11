@@ -123,7 +123,7 @@ public class EnemyFlyerController : EnemyBaseController
                 eyeLight.GetComponent<Light>().intensity = brightness; // Light telegraph based on how close to attacking the enemy is            
 
                 Vector3 shockScale = Vector3.Lerp(Vector3.zero, maxShockScale, aimTimer / aimDuration);
-                shockHitbox.transform.localScale = shockScale;
+                //shockHitbox.transform.localScale = shockScale;
 
                 break;
             
@@ -477,7 +477,10 @@ public class EnemyFlyerController : EnemyBaseController
 
             aimTimer = 0;
             shockHitbox.GetComponent<MeshRenderer>().enabled = true;
-            
+
+            shockHitboxColor.a = 1.0f;
+            shockHitbox.GetComponent<MeshRenderer>().material.color = shockHitboxColor;
+
             pathPosition = gameObject.transform.position + (gameObject.transform.forward * 5);
 
             gameObject.GetComponent<SplineAnimate>().Pause();
