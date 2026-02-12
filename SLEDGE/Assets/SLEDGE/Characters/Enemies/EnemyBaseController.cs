@@ -26,6 +26,8 @@ public class EnemyBaseController : MonoBehaviour
     [Tooltip("How long the ragdoll will remain before disappearing (set to -1 to stay forever)")]
     public float decayTime = 5.0f;
     float decayTimer = -1f;
+    bool fadeTriggered = false;
+    FadeOut fadeScript;
 
     protected Vector3 spawnPosition;
     protected Rigidbody rb;
@@ -54,6 +56,8 @@ public class EnemyBaseController : MonoBehaviour
 
         spawnPosition = transform.position;
         currentHealth = maxHealth;
+
+        fadeScript = GetComponent<FadeOut>();
     }
 
     protected virtual void Update()
@@ -61,6 +65,11 @@ public class EnemyBaseController : MonoBehaviour
         if (decayTimer > 0)
         {
             decayTimer -= Time.deltaTime;
+            if (decayTimer < 1 && !fadeTriggered)
+            {
+                fadeTriggered = true;
+                fadeScript.Fade();
+            }
         }
         else if (decayTimer != -1)
         {
@@ -133,6 +142,8 @@ public class EnemyBaseController : MonoBehaviour
             deathRagdoll.gameObject.SetActive(true);
             deathRagdoll.KillSwitch(false);
             decayTimer = -1;
+            fadeTriggered = false;
+            fadeScript.ResetMaterials();
         }
         transform.position = spawnPosition;
         enemyState = EnemyState.IDLE;

@@ -5291,6 +5291,7 @@ GameObject:
   - component: {fileID: 720487341724077021}
   - component: {fileID: 8949132239567539024}
   - component: {fileID: 6133455841288986097}
+  - component: {fileID: -3720193682763627843}
   m_Layer: 8
   m_Name: Shooter
   m_TagString: Enemy Shooter
@@ -5406,7 +5407,7 @@ MonoBehaviour:
   projectionDistance: 0.1
   springDamper: 100
   springForce: 1
-  bodypartToHit: {fileID: 3966941375152104771}
+  bodypartToHit: {fileID: 1642657661885665199}
   bodypartBreakForce: 2000
   disconnectAutomatically: 1
   hitForce: 10000
@@ -5529,6 +5530,7 @@ MonoBehaviour:
   movementSpeed: 5
   detectionRadius: 35
   deathRagdoll: {fileID: 529028598529668332}
+  decayTime: 5
   playerMask:
     serializedVersion: 2
     m_Bits: 4096
@@ -5703,6 +5705,78 @@ CapsuleCollider:
   m_Height: 24
   m_Direction: 1
   m_Center: {x: 0, y: 12, z: 0}
+--- !u!114 &-3720193682763627843
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2419209956091706730}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5149aecf71d9dd2489d6c5098bb469e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fadeoutData:
+  - swap: 1
+    hasAlpha: 1
+    baseMat: {fileID: -5005201372657023108, guid: 22eb8f8020451fd4e826b3305bd4ff49,
+      type: 3}
+    swapMat: {fileID: 2100000, guid: c82cf32725bbed24e91c0db9e5221048, type: 2}
+  - swap: 1
+    hasAlpha: 1
+    baseMat: {fileID: -7848952084472943420, guid: 22eb8f8020451fd4e826b3305bd4ff49,
+      type: 3}
+    swapMat: {fileID: 2100000, guid: 34d1e4c2f1f065d4c9ecc0aee74650b6, type: 2}
+  - swap: 1
+    hasAlpha: 1
+    baseMat: {fileID: -7848952084472943420, guid: a72d83bb192c6e141975f46d5e0cce40,
+      type: 3}
+    swapMat: {fileID: 2100000, guid: 2130f353bc7dbaa40a78b7427ab71c8f, type: 2}
+  - swap: 1
+    hasAlpha: 1
+    baseMat: {fileID: -7848952084472943420, guid: 6d1d322cdec215741b945fc6ac197f43,
+      type: 3}
+    swapMat: {fileID: 2100000, guid: 880c8c9537c71d746a3376c717d0b8f5, type: 2}
+  - swap: 1
+    hasAlpha: 1
+    baseMat: {fileID: -1580535799172915004, guid: a72d83bb192c6e141975f46d5e0cce40,
+      type: 3}
+    swapMat: {fileID: 2100000, guid: 09c15974a8b35bd48a6b55d1036bb2e6, type: 2}
+  - swap: 1
+    hasAlpha: 1
+    baseMat: {fileID: -1580535799172915004, guid: 6d1d322cdec215741b945fc6ac197f43,
+      type: 3}
+    swapMat: {fileID: 2100000, guid: 6e9bbfe98958c4e468b37b9a522a9ec2, type: 2}
+  rig: {fileID: 2419209956091706730}
+  startTime: 0
+  fadeDuration: 1
+  fadeCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: -1
+      outSlope: -1
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: -1
+      outSlope: -1
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  destroyOnDone: 0
+  fadingOut: 0
 --- !u!1 &2442569259772524027
 GameObject:
   m_ObjectHideFlags: 0
@@ -13862,8 +13936,8 @@ CharacterJoint:
   m_EnableProjection: 1
   m_ProjectionDistance: 0.1
   m_ProjectionAngle: 180
-  m_BreakForce: 10000
-  m_BreakTorque: 10000
+  m_BreakForce: 2000
+  m_BreakTorque: 2000
   m_EnableCollision: 0
   m_EnablePreprocessing: 0
   m_MassScale: 800
@@ -14840,8 +14914,8 @@ CharacterJoint:
   m_EnableProjection: 1
   m_ProjectionDistance: 0.1
   m_ProjectionAngle: 180
-  m_BreakForce: 2000
-  m_BreakTorque: 2000
+  m_BreakForce: 10000
+  m_BreakTorque: 10000
   m_EnableCollision: 0
   m_EnablePreprocessing: 0
   m_MassScale: 800

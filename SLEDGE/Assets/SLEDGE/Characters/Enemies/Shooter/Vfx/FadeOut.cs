@@ -1,7 +1,8 @@
 using System.Data;
 using UnityEngine;
+using System.Collections.Generic;
 
-
+[System.Serializable]
 public struct FadeoutData
 {
     public bool swap;
@@ -37,7 +38,21 @@ public class FadeOut : MonoBehaviour
             {
                 if (data.baseMat != null && data.swapMat != null && data.swap)
                 {
-                    SwapMaterial(rig, data.swapMat, data);
+                    SwapMaterial(rig, data.baseMat, data.swapMat, data);
+                }
+            }
+        }
+    }
+
+    public void ResetMaterials()
+    {
+        if (rig != null && fadeoutData != null && fadeoutData.Count > 0)
+        {
+            foreach (var data in fadeoutData)
+            {
+                if (data.baseMat != null && data.swapMat != null && data.swap)
+                {
+                    SwapMaterial(rig, data.swapMat, data.baseMat, data);
                 }
             }
         }
@@ -66,19 +81,19 @@ public class FadeOut : MonoBehaviour
         }
     }
 
-    void SwapMaterial(GameObject obj, Material newMat, FadeoutData data)
+    void SwapMaterial(GameObject obj, Material oldMat, Material newMat, FadeoutData data)
     {
-        Renderer renderer = obj.GetComponent<Renderer>();
+        Renderer renderer = obj.GetComponent<MeshRenderer>();
         if (renderer != null)
         {
-            if (renderer.material == data.baseMat)
+            if (renderer.sharedMaterial == oldMat)
             {
-                renderer.material = data.swapMat;
+                renderer.sharedMaterial = newMat;
             }
         }
         foreach (Transform child in obj.transform)
         {
-            SwapMaterial(child.gameObject, newMat, data);
+            SwapMaterial(child.gameObject, oldMat, newMat, data);
         }
     }
 }
