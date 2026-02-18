@@ -907,22 +907,11 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Escape) && pause.activeSelf == false && settings.activeSelf == false && alive && lvlComplete.activeSelf == false)
         {
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-
-            pause.SetActive(true);
-
-            Time.timeScale = 0;
+            UpdatePauseState(true);
         }
         else if (Input.GetKeyDown(KeyCode.Escape) && (pause.activeSelf == true || settings.activeSelf == true))
         {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-
-            pause.SetActive(false);
-            settings.SetActive(false);
-
-            Time.timeScale = 1;
+            UpdatePauseState(false);
         }
 
         if (Input.GetKeyDown(KeyCode.R))
@@ -1707,6 +1696,29 @@ public class PlayerController : MonoBehaviour
     public bool CheckMoving() // Check to see if the player is putting in any movement input
     {
         return movementInputVector.magnitude != 0;
+    }
+
+    public void UpdatePauseState(bool paused)
+    {
+        if (paused)
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+
+            pause.SetActive(true);
+
+            Time.timeScale = 0;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+
+            pause.SetActive(false);
+            settings.SetActive(false);
+
+            Time.timeScale = 1;
+        }    
     }
 
     #region Powerups

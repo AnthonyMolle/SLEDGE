@@ -105,6 +105,11 @@ public class UIManager : MonoBehaviour
         Application.Quit();
     }
 
+    public void ResumeGame()
+    {
+        pc.UpdatePauseState(false);
+    }
+
     public void UpdateMouseSensitivity()
     {
         PlayerPrefs.SetFloat("Sensitivity", mouseSense.value);
