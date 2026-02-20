@@ -25,6 +25,8 @@ public class EnemyFlyerController : EnemyBaseController
 
     [SerializeField] GameObject shockHitbox; // Hitbox of AOE attack
     Color shockHitboxColor; 
+    [SerializeField] GameObject staticField; // vfx of static for AOE attack
+    [SerializeField] GameObject forceBlast; // vfx for forceblast of AOE attack
     bool playerInRadius = false; // Whether the player is in the AOE radius
     bool playerHit = false; // Whether the player has already been hit by the AOE attack this cycle
     Vector3 maxShockScale;
@@ -55,6 +57,8 @@ public class EnemyFlyerController : EnemyBaseController
     Vector3 pathPosition;
 
     SplineAnimate splineComponent;
+
+    Animator anim;
 
     // DEATH EXPLOSION STUFF
     float deathTimer = 0.0f;
@@ -95,15 +99,19 @@ public class EnemyFlyerController : EnemyBaseController
 
         shockHitboxColor = shockHitbox.GetComponent<MeshRenderer>().material.color;
 
+        staticField.SetActive(false);
+        
         shockHitboxColor.a = 0.0f;
         shockHitbox.GetComponent<MeshRenderer>().material.color = shockHitboxColor;
         shockHitbox.GetComponent<MeshRenderer>().enabled = false;
+
+        anim = gameObject.GetComponentInChildren<Animator>();
     }
 
     // Update is called once per frame
-    void Update() // NOTE: This could get moved to FixedUpdate in the future so there isn't two update functions,
-                  // put this here cause I wasn't sure how deltatime interacted with fixedupdate but it seems to be fine to use there - Dom
+    protected override void Update()
     {
+        base.Update();
         // Update Timers
         switch (combatState)
         {
@@ -115,7 +123,7 @@ public class EnemyFlyerController : EnemyBaseController
                 eyeLight.GetComponent<Light>().intensity = brightness; // Light telegraph based on how close to attacking the enemy is            
 
                 Vector3 shockScale = Vector3.Lerp(Vector3.zero, maxShockScale, aimTimer / aimDuration);
-                shockHitbox.transform.localScale = shockScale;
+                //shockHitbox.transform.localScale = shockScale;
 
                 break;
             
@@ -302,8 +310,9 @@ public class EnemyFlyerController : EnemyBaseController
     void AreaBlast()
     {
         // UPDATED SFX AND VFX FOR SHOCK ATTACK WOULD TRIGGER HERE
-
-        shockHitboxColor.a = 0.3f;
+        staticField.SetActive(true);
+        forceBlast.SetActive(true);
+        shockHitboxColor.a = 1.0f;
         shockHitbox.GetComponent<MeshRenderer>().material.color = shockHitboxColor;
 
         if (playerInRadius)
@@ -354,6 +363,8 @@ public class EnemyFlyerController : EnemyBaseController
     public override void TakeDamage(int damage, Vector3 direction, float force)
     {
         //base.TakeDamage(damage, direction, force);
+        anim.Play("Hit");
+
         if (enemyState == EnemyState.DEAD || combatState == CombatState.DYING)
         {
             return;
@@ -371,10 +382,13 @@ public class EnemyFlyerController : EnemyBaseController
     {
         gameObject.GetComponent<SplineAnimate>().Pause();
 
-        shockHitbox.transform.localScale = maxShockScale;
+        anim.SetBool("Dying", true);
+        
+        staticField.SetActive(false);
+        
         shockHitboxColor.a = 0.0f;
         shockHitbox.GetComponent<MeshRenderer>().material.color = shockHitboxColor;
-        shockHitbox.GetComponent<MeshRenderer>().enabled = true;
+        shockHitbox.GetComponent<MeshRenderer>().enabled = false;
 
         audioSource.clip = telegraphSound;
         audioSource.Play();
@@ -392,13 +406,18 @@ public class EnemyFlyerController : EnemyBaseController
 
     public void LaunchFlyer(Vector3 direction)
     {
+        anim.Play("Hit");
         launched = true;
         launchDirection = direction;
     }
 
     public void TriggerDeathExplosion(bool playerTriggered)
     {
-        //Instantiate(explosionEffect, transform.position, transform.rotation);
+        if (!explosionTriggered)
+        {
+            explosionTriggered = true;
+            Instantiate(explosionEffect, transform.position, transform.rotation);
+        }
 
         if (playerTriggered)
         {
@@ -438,6 +457,12 @@ public class EnemyFlyerController : EnemyBaseController
     {
         base.ResetEnemy();
         explosionTriggered = false;
+        
+        staticField.SetActive(false);
+        
+        shockHitboxColor.a = 0.0f;
+        shockHitbox.GetComponent<MeshRenderer>().material.color = shockHitboxColor;
+        shockHitbox.GetComponent<MeshRenderer>().enabled = false;
     }
 
     void TryStartingAttack() // Track player and if we are off cooldown, begin aiming our attack
@@ -452,10 +477,16 @@ public class EnemyFlyerController : EnemyBaseController
 
             aimTimer = 0;
             shockHitbox.GetComponent<MeshRenderer>().enabled = true;
-            
+
+            shockHitboxColor.a = 1.0f;
+            shockHitbox.GetComponent<MeshRenderer>().material.color = shockHitboxColor;
+
             pathPosition = gameObject.transform.position + (gameObject.transform.forward * 5);
 
             gameObject.GetComponent<SplineAnimate>().Pause();
+
+            anim.SetBool("Target", true);
+            anim.SetFloat("Charge", 1);
 
             combatState = CombatState.AIMING;
         }
@@ -469,9 +500,13 @@ public class EnemyFlyerController : EnemyBaseController
 
         eyeLight.GetComponent<Light>().intensity = 0.0f;
         
+        staticField.SetActive(false);
+        
         shockHitboxColor.a = 0.0f;
         shockHitbox.GetComponent<MeshRenderer>().material.color = shockHitboxColor;
         shockHitbox.GetComponent<MeshRenderer>().enabled = false;
+
+        anim.SetBool("Target", false);
 
         //gameObject.GetComponent<SplineAnimate>().Play();
 

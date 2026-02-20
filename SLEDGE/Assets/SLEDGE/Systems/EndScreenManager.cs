@@ -28,6 +28,7 @@ public class EndScreenManager : MonoBehaviour
     string stageTime, kills, styleKills, collectables_found;
     PlayerSaveData.Grade timeGrade, killGrade, styleGrade, finalGrade, collectableGrade;
     private RectTransform RectTransform;
+    private ScoreManager ScoreManager;
 
     private bool gradesDisplayed = false;
 
@@ -38,6 +39,7 @@ public class EndScreenManager : MonoBehaviour
         RectTransform = GetComponent<RectTransform>();
         waitingForAnim = false;
         RectTransform.sizeDelta = new Vector2(640.3f, 0);
+        ScoreManager = FindAnyObjectByType<ScoreManager>(FindObjectsInactive.Include);
     }
 
     public void StartDropIn()
@@ -48,7 +50,7 @@ public class EndScreenManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (RectTransform.sizeDelta.y >= 1420 && triggerReveal == false)
+        if (RectTransform.sizeDelta.y >= 1420) //prev included && triggerReveal == false
         {
             triggerReveal = true;
 
@@ -64,10 +66,10 @@ public class EndScreenManager : MonoBehaviour
     private void setupData()
     {
         // Get Scores
-        stageTime = ScoreManager.Instance.GetPrintableTime();
+        stageTime = "time: " + ScoreManager.Instance.GetPrintableTime();
         kills = "kills: " + ScoreManager.Instance.GetEnemiesKilled().ToString() + "/" + ScoreManager.Instance.GetMaxEnemies().ToString();
-        styleKills = "style: " + ScoreManager.Instance.GetStyleKills().ToString();
-        collectables_found = "Collectables: " + ScoreManager.Instance.GetCollectible().ToString() + "/" + ScoreManager.Instance.GetMaxCollectibles().ToString();
+        //styleKills = "style: " + ScoreManager.Instance.GetStyleKills().ToString();
+        //collectables_found = "collectables: " + ScoreManager.Instance.GetCollectible().ToString() + "/" + ScoreManager.Instance.GetMaxCollectibles().ToString();
 
         // Calculate Grades
         #region Time Grade
@@ -181,10 +183,12 @@ public class EndScreenManager : MonoBehaviour
         #endregion
 
         // Level Completion Analytics
+        /*
         if (DataCollection.Instance != null)
         {
             DataCollection.Instance.RecordLevelCompleteEvent(SceneManager.GetActiveScene().name, ScoreManager.Instance.GetCurrentTime(), GradeToString(finalGrade));
         }
+        */
 
         // Save high scores
         PlayerSaveData.Instance.SaveLevelData(SceneManager.GetActiveScene().name, ScoreManager.Instance.GetCurrentTime(), finalGrade, ScoreManager.Instance.GetCollectible());
@@ -204,15 +208,15 @@ public class EndScreenManager : MonoBehaviour
             yield return new WaitForSecondsRealtime(secBetweenReveals * secMultiplier);
 
         // Reveal Style Kills
-        StyleKills.triggerReveal(secBetweenScoreAndGrade * secMultiplier * secMultiplier, styleKills, GradeToString(styleGrade));
+        //StyleKills.triggerReveal(secBetweenScoreAndGrade * secMultiplier * secMultiplier, styleKills, GradeToString(styleGrade));
 
-            yield return new WaitForSecondsRealtime(secBetweenReveals * secMultiplier * secMultiplier);
+            //yield return new WaitForSecondsRealtime(secBetweenReveals * secMultiplier * secMultiplier);
 
         // Show final grade
         dividerTwo.SetActive(true);
         finalGradeText.text = GradeToString(finalGrade);
 
-        Collectables.triggerReveal(0, collectables_found,"");
+        //Collectables.triggerReveal(0, collectables_found,"");
 
         gradesDisplayed = true;
     }
@@ -249,8 +253,8 @@ public class EndScreenManager : MonoBehaviour
         RectTransform.sizeDelta = new Vector2(640.3f, 1500);
         Time.triggerReveal(0, stageTime, GradeToString(timeGrade));
         Kills.triggerReveal(0, kills, GradeToString(killGrade));
-        StyleKills.triggerReveal(0, styleKills, GradeToString(styleGrade));
-        Collectables.triggerReveal(0, collectables_found, GradeToString(collectableGrade));
+        //StyleKills.triggerReveal(0, styleKills, GradeToString(styleGrade));
+        //Collectables.triggerReveal(0, collectables_found, GradeToString(collectableGrade));
 
         dividerTwo.SetActive(true);
         finalGradeText.text = GradeToString(finalGrade);

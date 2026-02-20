@@ -24,6 +24,7 @@ public class SaveDataLoader : MonoBehaviour
             PlayerSaveData.Instance.LoadLevelData(path);
         }
 
+        /*
         if (DataCollection.Instance == null)
         {
             Instantiate(dataCollection);
@@ -43,6 +44,7 @@ public class SaveDataLoader : MonoBehaviour
         {
             DataCollection.Instance.StartCollection();
         }
+        */
     }
 
     // Update is called once per frame

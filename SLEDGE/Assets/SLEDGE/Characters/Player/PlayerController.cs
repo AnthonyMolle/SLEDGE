@@ -172,6 +172,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] GameObject impactPointPrefab;
     [SerializeField] bool alwaysShowImpactPoint = false; // If set to false, will only show impact point when charging up a hammer slam
     GameObject impactPoint;
+    MeshChildrenAlpha impactFade;
     bool impactPointHidden;
     bool hideImpactPoint;
     Color impactFadeColor;
@@ -256,6 +257,8 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] GameObject deathScreen;
 
+    [SerializeField] GameObject lvlComplete;
+
     [SerializeField] PowerupUI powerupUI;
 
     #endregion
@@ -267,6 +270,9 @@ public class PlayerController : MonoBehaviour
     [Header("Power Ups")]
     [Tooltip("How much we add to bounce force when the explosive powerup is enabled.")]
     public float explosiveForce;
+    public GameObject c4;
+
+    public GameObject explosionVFX;
 
     #endregion
 
@@ -322,6 +328,7 @@ public class PlayerController : MonoBehaviour
         settings = canvas.transform.Find("Pause Setting Screen").gameObject;
         pause = canvas.transform.Find("PauseMenu").gameObject;
         displayDistance = canvas.transform.Find("Distance").gameObject.GetComponent<TextMeshProUGUI>();
+        lvlComplete = FindAnyObjectByType<LevelCompleteScreen>(FindObjectsInactive.Include).gameObject;
         powerupUI = canvas.transform.Find("Powerups").gameObject.GetComponent<PowerupUI>();
 
         // Set the mouse sensitivity
@@ -344,6 +351,7 @@ public class PlayerController : MonoBehaviour
         // Impact point stuff
         impactPoint = Instantiate(impactPointPrefab, transform.position, transform.rotation);
         impactFadeColor = impactPoint.GetComponent<MeshRenderer>().material.color;
+        impactFade = impactPoint.GetComponent<MeshChildrenAlpha>();
 
         anim.SetLayerWeight(anim.GetLayerIndex("Charge Layer"), 0);
     }
@@ -485,9 +493,9 @@ public class PlayerController : MonoBehaviour
                         impactPointHidden = false;
                         impactPoint.transform.position = impactPos;
                     }
-
-                    impactFadeColor.a = Mathf.Lerp(1, 0, impactFadeTimer / 0.25f);
-                    impactPoint.GetComponent<MeshRenderer>().material.color = impactFadeColor;
+                    impactFade.SetAlpha(Mathf.Lerp(1, 0, impactFadeTimer / 0.25f));
+                    // impactFadeColor.a = Mathf.Lerp(1, 0, impactFadeTimer / 0.25f);
+                    // impactPoint.GetComponent<MeshRenderer>().material.color = impactFadeColor;
 
                     break;
                 }
@@ -497,16 +505,18 @@ public class PlayerController : MonoBehaviour
         if (hideImpactPoint)
         {
             impactPointHidden = true;
-            impactFadeColor.a = Mathf.Lerp(1, 0, impactFadeTimer / 0.25f);
-            impactPoint.GetComponent<MeshRenderer>().material.color = impactFadeColor;
+            impactFade.SetAlpha(Mathf.Lerp(1, 0, impactFadeTimer / 0.25f));
+            // impactFadeColor.a = Mathf.Lerp(1, 0, impactFadeTimer / 0.25f);
+            // impactPoint.GetComponent<MeshRenderer>().material.color = impactFadeColor;
         }
 
         // Only show impact point when charging up the hammer for a swing
         if (!alwaysShowImpactPoint && !chargingHammer && !hammerCharged)
         {
             impactPointHidden = true;
-            impactFadeColor.a = Mathf.Lerp(1, 0, impactFadeTimer / 0.25f);
-            impactPoint.GetComponent<MeshRenderer>().material.color = impactFadeColor;
+            impactFade.SetAlpha(Mathf.Lerp(1, 0, impactFadeTimer / 0.25f));
+            // impactFadeColor.a = Mathf.Lerp(1, 0, impactFadeTimer / 0.25f);
+            // impactPoint.GetComponent<MeshRenderer>().material.color = impactFadeColor;
         }
     }
 
@@ -895,24 +905,13 @@ public class PlayerController : MonoBehaviour
             secondaryPressed = false;
         }
 
-        if (Input.GetKeyDown(KeyCode.Escape) && pause.activeSelf == false && settings.activeSelf == false && alive)
+        if (Input.GetKeyDown(KeyCode.Escape) && pause.activeSelf == false && settings.activeSelf == false && alive && lvlComplete.activeSelf == false)
         {
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-
-            pause.SetActive(true);
-
-            Time.timeScale = 0;
+            UpdatePauseState(true);
         }
         else if (Input.GetKeyDown(KeyCode.Escape) && (pause.activeSelf == true || settings.activeSelf == true))
         {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-
-            pause.SetActive(false);
-            settings.SetActive(false);
-
-            Time.timeScale = 1;
+            UpdatePauseState(false);
         }
 
         if (Input.GetKeyDown(KeyCode.R))
@@ -960,7 +959,7 @@ public class PlayerController : MonoBehaviour
         RaycastHit hit;
         Vector3 movementPlane;
         float slopeAngle = 0;
-        if (Physics.Raycast(gameObject.transform.position, Vector3.down, out hit, playerHeight/2 + groundCheckDist, groundLayers)) //if on the ground
+        if (Physics.Raycast(gameObject.transform.position, Vector3.down, out hit, playerHeight/2 + groundCheckDist, groundLayers, QueryTriggerInteraction.Ignore)) //if on the ground
         {
             slopeAngle = Vector3.Angle(hit.transform.up, hit.normal);
             //Debug.Log(slopeAngle);
@@ -1278,6 +1277,11 @@ public class PlayerController : MonoBehaviour
                     return;
                 }
 
+                if (hit.transform.gameObject.layer == LayerMask.NameToLayer("PhaseWall"))
+                {
+                    Debug.Log("Phase wall hit");
+                }
+
                 if (hit.transform.gameObject.tag == "Bouncy")
                 {
                     bouncy = true;
@@ -1315,6 +1319,7 @@ public class PlayerController : MonoBehaviour
                 {
                     crosshair.Slam(true, 1);
                     var e = hit.transform.gameObject.GetComponent<EnemyShooterController>();
+                    e.SetHurtType(2);
                     e.TakeDamage(1, hitDirection, swingForce * 1.5f);
                 }
                 else if (hit.transform.gameObject.tag == "Collectible" || hit.transform.gameObject.layer == 11) // 11 == gibs layer
@@ -1398,6 +1403,8 @@ public class PlayerController : MonoBehaviour
             {
                 isLaunched = true;
                 rb.AddForce(launchDirection * explosiveForce, ForceMode.Impulse);
+
+                Instantiate(explosionVFX, transform.position, transform.rotation);
             }
             else if (bouncy)
             {
@@ -1498,6 +1505,14 @@ public class PlayerController : MonoBehaviour
                 else if (hit.transform.gameObject.tag == "Enemy Shooter")
                 {
                     crosshair.SwingHit(1);
+                    if (currentCombo == Combo.Swipe2)
+                    {
+                        hit.transform.gameObject.GetComponent<EnemyShooterController>().SetHurtType(1);
+                    }
+                    else
+                    {
+                        hit.transform.gameObject.GetComponent<EnemyShooterController>().SetHurtType(0);
+                    }
                     hit.transform.gameObject.GetComponent<EnemyShooterController>().TakeDamage(1, hitDirection, swingForce);
                 }
                 else if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Projectile"))
@@ -1683,12 +1698,36 @@ public class PlayerController : MonoBehaviour
         return movementInputVector.magnitude != 0;
     }
 
+    public void UpdatePauseState(bool paused)
+    {
+        if (paused)
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+
+            pause.SetActive(true);
+
+            Time.timeScale = 0;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+
+            pause.SetActive(false);
+            settings.SetActive(false);
+
+            Time.timeScale = 1;
+        }    
+    }
+
     #region Powerups
     public Powerup GetCurrentPowerup() {  return currentPowerup; }
 
     public void CollectPowerup(Powerup newPowerup) // Equips a new powerup to the player and updates UI to display equiped powerup
     {
         currentPowerup = newPowerup;
+        c4.SetActive(true);
         if (powerupUI != null) {powerupUI.SetPowerup(newPowerup);};
         /*
         if (currentPowerup == Powerup.Explosive)
@@ -1710,6 +1749,7 @@ public class PlayerController : MonoBehaviour
     void ResetPowerup() // Removes any equipped powerups
     {
         currentPowerup = Powerup.None;
+        c4.SetActive(false);
         if (powerupUI != null) {powerupUI.SetPowerup(Powerup.None);};
         if (tempPowerupUI != null)
         {

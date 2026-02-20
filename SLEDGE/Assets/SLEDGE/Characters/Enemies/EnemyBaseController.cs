@@ -23,13 +23,20 @@ public class EnemyBaseController : MonoBehaviour
 
     [SerializeField] RagdollScript deathRagdoll;
 
+    [Tooltip("How long the ragdoll will remain before disappearing (set to -1 to stay forever)")]
+    public float decayTime = 5.0f;
+    float decayTimer = -1f;
+    bool fadeTriggered = false;
+    FadeOut fadeScript;
+
     protected Vector3 spawnPosition;
     protected Rigidbody rb;
 
     protected GameObject player;
     protected Rigidbody playerRb;
 
-    RaycastHit hit;
+    RaycastHit[] hits;
+    public LayerMask playerMask;
 
     public enum EnemyState
     {
@@ -49,15 +56,40 @@ public class EnemyBaseController : MonoBehaviour
 
         spawnPosition = transform.position;
         currentHealth = maxHealth;
+
+        fadeScript = GetComponent<FadeOut>();
+    }
+
+    protected virtual void Update()
+    {
+        if (decayTimer > 0)
+        {
+            decayTimer -= Time.deltaTime;
+            if (decayTimer < 1 && !fadeTriggered)
+            {
+                fadeTriggered = true;
+                fadeScript.Fade();
+            }
+        }
+        else if (decayTimer != -1)
+        {
+            deathRagdoll.KillSwitch(false);
+            deathRagdoll.gameObject.SetActive(false);
+            decayTimer = -1;
+        }
     }
 
     protected bool PlayerinLOS()
     {
-        if (Physics.Raycast(transform.position, player.transform.position - transform.position, out hit, detectionRadius))
+        hits = Physics.RaycastAll(transform.position, player.transform.position - transform.position, detectionRadius, playerMask, QueryTriggerInteraction.Ignore);
+        if (hits.Length > 0)
         {
-            if (hit.collider.gameObject.CompareTag("Player"))
+            foreach (RaycastHit hit in hits)
             {
-                return true;
+                if (hit.collider.gameObject.CompareTag("Player"))
+                {
+                    return true;
+                }
             }
         }
         return false;
@@ -75,7 +107,7 @@ public class EnemyBaseController : MonoBehaviour
             return;
         }
 
-        rb.AddForce(direction * force, ForceMode.Impulse);
+        //rb.AddForce(direction * force, ForceMode.Impulse);
         currentHealth -= damage;
         if (currentHealth <= 0)
         {
@@ -92,7 +124,10 @@ public class EnemyBaseController : MonoBehaviour
         // Creating a ragdoll
         if (deathRagdoll)
         {
+            decayTimer = decayTime;
             deathRagdoll.KillSwitch(true);
+            EnemyManager.Instance.EnemyDeath(gameObject);
+            return;
         }
 
         // Enemy manager marks this enemy as dead
@@ -104,7 +139,11 @@ public class EnemyBaseController : MonoBehaviour
     {
         if (deathRagdoll)
         {
+            deathRagdoll.gameObject.SetActive(true);
             deathRagdoll.KillSwitch(false);
+            decayTimer = -1;
+            fadeTriggered = false;
+            fadeScript.ResetMaterials();
         }
         transform.position = spawnPosition;
         enemyState = EnemyState.IDLE;

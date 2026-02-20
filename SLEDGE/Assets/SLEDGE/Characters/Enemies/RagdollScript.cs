@@ -267,8 +267,8 @@ public class RagdollScript : MonoBehaviour
         for (int i = 0; i < bodyparts.Count; i++)
         {
             Rigidbody rb = bodyparts[i];
-            rb.velocity = Vector3.zero;
-            rb.angularVelocity = Vector3.zero;
+            //rb.velocity = Vector3.zero;
+            //rb.angularVelocity = Vector3.zero;
             rb.isKinematic = true;
 
             // Restore original position and rotation
