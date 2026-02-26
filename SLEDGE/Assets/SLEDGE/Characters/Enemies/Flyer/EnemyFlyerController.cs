@@ -316,7 +316,7 @@ public class EnemyFlyerController : EnemyBaseController
         forceBlast.SetActive(true);
         shockHitboxColor.a = 1.0f;
         shockHitbox.GetComponent<MeshRenderer>().material.color = shockHitboxColor;
-        shockHitbox.transform.localScale = Vector3.zero;
+        //shockHitbox.transform.localScale = Vector3.zero;
         anim.SetFloat("Charge", 0);
         anim.Play("Bounce");
 
@@ -485,7 +485,7 @@ public class EnemyFlyerController : EnemyBaseController
             aimTimer = 0;
             shockHitbox.GetComponent<MeshRenderer>().enabled = true;
 
-            shockHitboxColor.a = 1.0f;
+            shockHitboxColor.a = 0.25f;
             shockHitbox.GetComponent<MeshRenderer>().material.color = shockHitboxColor;
 
             pathPosition = gameObject.transform.position + (gameObject.transform.forward * 5);
