@@ -271,6 +271,39 @@ MonoBehaviour:
   attackDuration: 1.5
   recoverDuration: 0.5
   shockHitbox: {fileID: 2889222492729280490}
+  shockHitboxScaleCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.108656645
+      value: 0.7197073
+      inSlope: 1.0815929
+      outSlope: 1.0815929
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0.003821061
+      outSlope: 0.003821061
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.49333328
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   staticField: {fileID: 1494763800701123252}
   forceBlast: {fileID: 2653793845650713595}
   eyeLight: {fileID: 6462007928466903554}
