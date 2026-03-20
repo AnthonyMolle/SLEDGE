@@ -317,8 +317,7 @@ public class EnemyFlyerController : EnemyBaseController
         shockHitboxColor.a = 1.0f;
         shockHitbox.GetComponent<MeshRenderer>().material.color = shockHitboxColor;
         //shockHitbox.transform.localScale = Vector3.zero;
-        anim.SetFloat("Charge", 0);
-        anim.Play("Bounce");
+        anim.SetFloat("Charge", 1);
 
         if (playerInRadius)
         {
@@ -513,6 +512,7 @@ public class EnemyFlyerController : EnemyBaseController
         shockHitbox.GetComponent<MeshRenderer>().material.color = shockHitboxColor;
         shockHitbox.GetComponent<MeshRenderer>().enabled = false;
 
+        anim.Play("Bounce");
         anim.SetBool("Target", false);
 
         //gameObject.GetComponent<SplineAnimate>().Play();
