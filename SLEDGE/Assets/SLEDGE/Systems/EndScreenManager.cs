@@ -108,15 +108,15 @@ public class EndScreenManager : MonoBehaviour
             {
                 killGrade = PlayerSaveData.Grade.S;
             }
-            else if (killPercent >= 0.9)
+            else if (killPercent >= 0.75)
             {
                 killGrade = PlayerSaveData.Grade.A;
             }
-            else if (killPercent >= 0.7)
+            else if (killPercent >= 0.5)
             {
                 killGrade = PlayerSaveData.Grade.B;
             }
-            else if (killPercent >= 0.5)
+            else if (killPercent >= 0.25)
             {
                 killGrade = PlayerSaveData.Grade.C;
             }

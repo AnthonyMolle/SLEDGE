@@ -46,7 +46,7 @@ public class ScoreManager : MonoBehaviour
     #endregion
 
     #region Combat
-    public int MaxEnemies = 0;
+    int MaxEnemies = 0;
     int EnemiesKilled;
     float MaxStyle;
     int StyleKills;
@@ -86,10 +86,9 @@ public class ScoreManager : MonoBehaviour
 
         MaxCollectibles = GameObject.FindGameObjectsWithTag("Collectible").Length;
         //Debug.Log("Collectibles: " + MaxCollectibles);
-        
-        // Uncomment and make var private once we rework enemy respawns
-        //MaxEnemies = GameObject.FindGameObjectsWithTag("Enemy Shooter").Length + GameObject.FindGameObjectsWithTag("Enemy Flyer").Length;
-        //Debug.Log("Enemies: " + MaxEnemies);
+
+        MaxEnemies = FindObjectsOfType(typeof(EnemyBaseController)).Length;
+        Debug.Log("Enemies: " + MaxEnemies);
         
         MaxStyle = Mathf.Ceil(MathF.Ceiling(MaxEnemies * 0.5f) * 500);
         //Debug.Log("Style: " + MaxStyle);

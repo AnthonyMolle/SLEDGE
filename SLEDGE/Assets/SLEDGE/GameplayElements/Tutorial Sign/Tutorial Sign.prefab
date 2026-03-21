@@ -1328,7 +1328,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 306f11bb3cb2909468cb5dd3b6b6b876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerCam: {fileID: 0}
+  player: {fileID: 0}
 --- !u!1 &7598819981466342919
 GameObject:
   m_ObjectHideFlags: 0
@@ -1942,10 +1942,35 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: -3725551459151170266, guid: 01bcce9fc27f18e4a9482fa5cffec831,
+        type: 3}
+      propertyPath: m_Layer
+      value: 20
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 01bcce9fc27f18e4a9482fa5cffec831,
         type: 3}
       propertyPath: m_Name
       value: HologramStand
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 01bcce9fc27f18e4a9482fa5cffec831,
+        type: 3}
+      propertyPath: m_Layer
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 4261616465323228557, guid: 01bcce9fc27f18e4a9482fa5cffec831,
+        type: 3}
+      propertyPath: m_Layer
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 6159555450522697483, guid: 01bcce9fc27f18e4a9482fa5cffec831,
+        type: 3}
+      propertyPath: m_Layer
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 8551201559777231118, guid: 01bcce9fc27f18e4a9482fa5cffec831,
+        type: 3}
+      propertyPath: m_Layer
+      value: 20
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
