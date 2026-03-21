@@ -1,13 +1,6 @@
 using NaughtyAttributes;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEditor.Rendering;
 using UnityEngine;
-using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.Splines;
-using UnityEngine.VFX;
-using static UnityEditor.FilePathAttribute;
 
 public class EnemyFlyerController : EnemyBaseController
 {
