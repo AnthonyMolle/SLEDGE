@@ -15,10 +15,10 @@ public class SceneViewSpawn : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        Debug.Log(SceneView.lastActiveSceneView.camera.transform.position);
+        //Debug.Log(SceneView.lastActiveSceneView.camera.transform.position);
         if (spawnMode == SpawnMode.SceneCamera)
         {
-            player.position = SceneView.lastActiveSceneView.camera.transform.position;
+            //player.position = SceneView.lastActiveSceneView.camera.transform.position;
         }
     }
 }

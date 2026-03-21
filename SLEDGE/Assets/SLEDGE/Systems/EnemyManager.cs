@@ -70,10 +70,6 @@ public class EnemyManager : MonoBehaviour
     private void RespawnEnemy(GameObject enemy)
     {
         enemy.SetActive(true);
-        if (enemy.GetComponent<EnemyStatsController>() != null)
-        {
-            enemy.GetComponent<EnemyStatsController>().ResetEnemy();
-        }
         if (enemy.GetComponent<EnemyBaseController>() != null)
         {
             enemy.GetComponent<EnemyBaseController>().ResetEnemy();
