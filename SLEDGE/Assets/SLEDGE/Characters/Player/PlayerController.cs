@@ -14,7 +14,6 @@ using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.ProBuilder.Shapes;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using static UnityEditor.PlayerSettings;
 using Random=UnityEngine.Random;
 
 public class PlayerController : MonoBehaviour
@@ -972,9 +971,14 @@ public class PlayerController : MonoBehaviour
                 isOnSlope = false;
             }
 
-            if (isGrounded == false && hangTime >= .25)
+            if (!isGrounded)
             {
-                audioManager.PlaySFX(audioManager.land);
+                if (hangTime >= .5)
+                {
+                    audioManager.PlaySFX(audioManager.land);
+                }
+                anim.SetTrigger("Land");
+
                 // Shake the screen when we land after being launched
                 /*
                 if (isLaunched)
@@ -984,7 +988,6 @@ public class PlayerController : MonoBehaviour
                 */
 
                 //anim.Play("Land");
-                anim.SetTrigger("Land");
 
                 if (!hammerCharged)
                 {

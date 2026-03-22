@@ -1,13 +1,6 @@
 using NaughtyAttributes;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEditor.Rendering;
 using UnityEngine;
-using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.Splines;
-using UnityEngine.VFX;
-using static UnityEditor.FilePathAttribute;
 
 public class EnemyFlyerController : EnemyBaseController
 {
@@ -24,6 +17,7 @@ public class EnemyFlyerController : EnemyBaseController
     [SerializeField] float recoverDuration = 2.0f;  // Duration flyer recovers after dashing
 
     [SerializeField] GameObject shockHitbox; // Hitbox of AOE attack
+    [SerializeField] AnimationCurve shockHitboxScaleCurve; // Curve controlling the scaling of the shock hitbox over time
     Color shockHitboxColor; 
     [SerializeField] GameObject staticField; // vfx of static for AOE attack
     [SerializeField] GameObject forceBlast; // vfx for forceblast of AOE attack
@@ -102,6 +96,7 @@ public class EnemyFlyerController : EnemyBaseController
         staticField.SetActive(false);
         
         shockHitboxColor.a = 0.0f;
+        shockHitbox.transform.localScale = Vector3.zero;
         shockHitbox.GetComponent<MeshRenderer>().material.color = shockHitboxColor;
         shockHitbox.GetComponent<MeshRenderer>().enabled = false;
 
@@ -122,8 +117,8 @@ public class EnemyFlyerController : EnemyBaseController
                 float brightness = Mathf.Lerp(0.1f, 2.0f, aimTimer / aimDuration);    
                 eyeLight.GetComponent<Light>().intensity = brightness; // Light telegraph based on how close to attacking the enemy is            
 
-                Vector3 shockScale = Vector3.Lerp(Vector3.zero, maxShockScale, aimTimer / aimDuration);
-                //shockHitbox.transform.localScale = shockScale;
+                Vector3 shockScale = Vector3.Lerp(Vector3.zero, maxShockScale, shockHitboxScaleCurve.Evaluate(aimTimer / aimDuration));
+                shockHitbox.transform.localScale = shockScale;
 
                 break;
             
@@ -314,6 +309,8 @@ public class EnemyFlyerController : EnemyBaseController
         forceBlast.SetActive(true);
         shockHitboxColor.a = 1.0f;
         shockHitbox.GetComponent<MeshRenderer>().material.color = shockHitboxColor;
+        //shockHitbox.transform.localScale = Vector3.zero;
+        anim.SetFloat("Charge", 1);
 
         if (playerInRadius)
         {
@@ -387,6 +384,7 @@ public class EnemyFlyerController : EnemyBaseController
         staticField.SetActive(false);
         
         shockHitboxColor.a = 0.0f;
+        shockHitbox.transform.localScale = Vector3.zero;
         shockHitbox.GetComponent<MeshRenderer>().material.color = shockHitboxColor;
         shockHitbox.GetComponent<MeshRenderer>().enabled = false;
 
@@ -463,6 +461,7 @@ public class EnemyFlyerController : EnemyBaseController
         shockHitboxColor.a = 0.0f;
         shockHitbox.GetComponent<MeshRenderer>().material.color = shockHitboxColor;
         shockHitbox.GetComponent<MeshRenderer>().enabled = false;
+        shockHitbox.transform.localScale = Vector3.zero;
     }
 
     void TryStartingAttack() // Track player and if we are off cooldown, begin aiming our attack
@@ -478,7 +477,7 @@ public class EnemyFlyerController : EnemyBaseController
             aimTimer = 0;
             shockHitbox.GetComponent<MeshRenderer>().enabled = true;
 
-            shockHitboxColor.a = 1.0f;
+            shockHitboxColor.a = 0.25f;
             shockHitbox.GetComponent<MeshRenderer>().material.color = shockHitboxColor;
 
             pathPosition = gameObject.transform.position + (gameObject.transform.forward * 5);
@@ -506,6 +505,7 @@ public class EnemyFlyerController : EnemyBaseController
         shockHitbox.GetComponent<MeshRenderer>().material.color = shockHitboxColor;
         shockHitbox.GetComponent<MeshRenderer>().enabled = false;
 
+        anim.Play("Bounce");
         anim.SetBool("Target", false);
 
         //gameObject.GetComponent<SplineAnimate>().Play();
