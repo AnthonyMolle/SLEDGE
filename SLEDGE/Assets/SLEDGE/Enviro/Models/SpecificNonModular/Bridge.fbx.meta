@@ -3,7 +3,22 @@ guid: 8b849daed8e9e9c41a903f397427fe7d
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Brick_Ground
+    second: {fileID: 2100000, guid: 6957440c01b120b448bb6540b47b19b3, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stone_Ground
+    second: {fileID: 2100000, guid: 067ef3500a3110d4d9d315cc1ddaeb8a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Tech_Prop
+    second: {fileID: 2100000, guid: fbd34574b7cc61d478b17d33f316a199, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

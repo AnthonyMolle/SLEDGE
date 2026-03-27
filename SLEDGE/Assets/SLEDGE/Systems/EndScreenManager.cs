@@ -159,20 +159,20 @@ public class EndScreenManager : MonoBehaviour
         #endregion
 
         #region Final Grade
-        int finalPoints = PlayerSaveData.Instance.GetPointsFromRank(timeGrade) + PlayerSaveData.Instance.GetPointsFromRank(killGrade) + PlayerSaveData.Instance.GetPointsFromRank(styleGrade);
-        if (finalPoints >= 15)
+        int finalPoints = PlayerSaveData.Instance.GetPointsFromRank(timeGrade) + PlayerSaveData.Instance.GetPointsFromRank(killGrade);
+        if (finalPoints >= 10)
         {
             finalGrade = PlayerSaveData.Grade.S;
         }
-        else if (finalPoints >= 11)
+        else if (finalPoints >= 8)
         {
             finalGrade = PlayerSaveData.Grade.A;
         }
-        else if (finalPoints >= 8)
+        else if (finalPoints >= 5)
         {
             finalGrade = PlayerSaveData.Grade.B;
         }
-        else if (finalPoints >= 5)
+        else if (finalPoints >= 3)
         {
             finalGrade = PlayerSaveData.Grade.C;
         }

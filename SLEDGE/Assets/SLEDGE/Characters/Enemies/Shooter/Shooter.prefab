@@ -5530,17 +5530,18 @@ MonoBehaviour:
   movementSpeed: 5
   detectionRadius: 35
   deathRagdoll: {fileID: 529028598529668332}
+  projectileTarget: {fileID: 7322351985021500235}
   decayTime: 5
   playerMask:
     serializedVersion: 2
     m_Bits: 4096
   projectileClass: {fileID: 4543102887346889771, guid: ba9cb7ed3bc5e6046b77d646edda3e24,
     type: 3}
-  shootCooldown: 0.1
+  shootCooldown: 0.75
   shootBigCooldown: 3
   shootBurst: 1
   shootBurstCount: 3
-  aimDuration: 2
+  aimDuration: 1.5
   burstAimDuration: 0.2
   projectileLifetime: 10
   projectileSpeed: 40

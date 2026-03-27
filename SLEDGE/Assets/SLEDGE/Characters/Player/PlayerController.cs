@@ -269,6 +269,7 @@ public class PlayerController : MonoBehaviour
     [Header("Power Ups")]
     [Tooltip("How much we add to bounce force when the explosive powerup is enabled.")]
     public float explosiveForce;
+    public float explosiveYForce;
     public GameObject c4;
 
     public GameObject explosionVFX;
@@ -824,7 +825,7 @@ public class PlayerController : MonoBehaviour
                 anim.ResetTrigger("Interrupt");
             }
             
-            if (readyingSwipe && !swipingHammer && hammerTimer < 0.2)
+            if (readyingSwipe && !swipingHammer && hammerTimer < 0.25)
             {
                 readyingSwipe = false;
                 swipingHammer = true;
@@ -1401,11 +1402,13 @@ public class PlayerController : MonoBehaviour
             {
                 ResetPowerup();
             }
-
+            bool explosiveLaunch = false;
             if (currentPowerup == Powerup.Explosive)
             {
                 isLaunched = true;
-                rb.AddForce(launchDirection * explosiveForce, ForceMode.Impulse);
+                explosiveLaunch = true;
+                //rb.AddForce(launchDirection * explosiveForce, ForceMode.Impulse);
+                //launchDirection = launchDirection * explosiveForce;
 
                 Instantiate(explosionVFX, transform.position, transform.rotation);
             }
@@ -1437,6 +1440,11 @@ public class PlayerController : MonoBehaviour
                 force = new Vector3(force.x * bounceForce, force.y * bounceForceY, force.z * bounceForce);
             }
 
+            if (explosiveLaunch)
+            {
+                //force = force * 2;
+                force = new Vector3(force.x * explosiveForce, force.y * explosiveYForce, force.z * explosiveForce);
+            }
 
             rb.AddForce(force, ForceMode.Impulse); // apply the force vector to the player *make them bounce*
 
@@ -1585,7 +1593,7 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        return targetCandidate;
+        return targetCandidate.GetComponent<EnemyBaseController>().projectileTarget;
     }
 
     void OnDrawGizmosSelected()// Draws selected Gizmos for testing (I think)
