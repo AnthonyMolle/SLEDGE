@@ -825,7 +825,7 @@ public class PlayerController : MonoBehaviour
                 anim.ResetTrigger("Interrupt");
             }
             
-            if (readyingSwipe && !swipingHammer && hammerTimer < 0.2)
+            if (readyingSwipe && !swipingHammer && hammerTimer < 0.25)
             {
                 readyingSwipe = false;
                 swipingHammer = true;
@@ -1593,7 +1593,7 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        return targetCandidate;
+        return targetCandidate.GetComponent<EnemyBaseController>().projectileTarget;
     }
 
     void OnDrawGizmosSelected()// Draws selected Gizmos for testing (I think)

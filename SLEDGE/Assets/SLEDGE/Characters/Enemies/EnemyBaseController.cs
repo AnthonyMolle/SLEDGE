@@ -22,6 +22,8 @@ public class EnemyBaseController : MonoBehaviour
 
     [SerializeField] RagdollScript deathRagdoll;
 
+    public GameObject projectileTarget;
+
     [Tooltip("How long the ragdoll will remain before disappearing (set to -1 to stay forever)")]
     public float decayTime = 5.0f;
     float decayTimer = -1f;

@@ -260,6 +260,7 @@ MonoBehaviour:
   movementSpeed: 10
   detectionRadius: 30
   deathRagdoll: {fileID: 0}
+  projectileTarget: {fileID: 2551979724760435819}
   decayTime: 5
   playerMask:
     serializedVersion: 2
@@ -995,6 +996,12 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!1 &2551979724760435819 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2361815793184138957, guid: e225a797086b55446a98034d4a3a2f43,
+    type: 3}
+  m_PrefabInstance: {fileID: 264778869993482918}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &703617480650249774
 PrefabInstance:
   m_ObjectHideFlags: 0

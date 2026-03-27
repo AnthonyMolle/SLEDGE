@@ -1,3 +1,4 @@
+using Autodesk.Fbx;
 using NaughtyAttributes;
 using UnityEngine;
 using UnityEngine.Splines;
@@ -57,6 +58,7 @@ public class EnemyFlyerController : EnemyBaseController
     // DEATH EXPLOSION STUFF
     float deathTimer = 0.0f;
     [SerializeField] float dyingDuration = 2.0f; // Duration between taking fatal damage and exploding
+    [SerializeField] float launchDuration = 3.0f; // Time until a launched flyer automatically explodes
     bool launched = false; // If the enemy was launched by the player
     Vector3 launchDirection;
     public GameObject explosionEffect;
@@ -266,6 +268,17 @@ public class EnemyFlyerController : EnemyBaseController
                         {
                             // Move
                             transform.position = transform.position + (launchDirection * 0.75f);
+
+                            // Flyer will automatically explode after being launched for a while, so ones that get launched into the sky are still killed
+                            if (deathTimer > (launchDuration * 0.9) && !explosionTriggered)
+                            {
+                                explosionTriggered = true;
+                                Instantiate(explosionEffect, transform.position, transform.rotation);
+                            }
+                            else if (deathTimer > launchDuration)
+                            {
+                                TriggerDeathExplosion(true);
+                            }    
                         }
                         else if (deathTimer > (dyingDuration * 0.9) && !explosionTriggered)
                         {
@@ -395,6 +408,7 @@ public class EnemyFlyerController : EnemyBaseController
         eyeLight.GetComponent<Light>().intensity = 1.0f;
 
         combatState = CombatState.DYING;
+        deathTimer = 0.0f;
     }
 
     public bool InDyingState()
@@ -447,7 +461,7 @@ public class EnemyFlyerController : EnemyBaseController
         // Destroy the spline container parent that holds flyer splines
         if (gameObject.GetComponent<SplineAnimate>().Container != null)
         {
-            Destroy(gameObject.GetComponent<SplineAnimate>().Container.transform.parent.gameObject);
+            //Destroy(gameObject.GetComponent<SplineAnimate>().Container.transform.parent.gameObject);
         }
     }
 
@@ -462,6 +476,13 @@ public class EnemyFlyerController : EnemyBaseController
         shockHitbox.GetComponent<MeshRenderer>().material.color = shockHitboxColor;
         shockHitbox.GetComponent<MeshRenderer>().enabled = false;
         shockHitbox.transform.localScale = Vector3.zero;
+
+        combatState = CombatState.IDLE;
+        gameObject.GetComponent<SplineAnimate>().Play();
+        anim.SetBool("Dying", false);
+        anim.SetBool("Target", false);
+
+        launched = false;
     }
 
     void TryStartingAttack() // Track player and if we are off cooldown, begin aiming our attack
