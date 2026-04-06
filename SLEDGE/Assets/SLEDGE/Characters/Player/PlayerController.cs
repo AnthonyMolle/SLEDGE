@@ -14,7 +14,6 @@ using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.ProBuilder.Shapes;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using static UnityEditor.PlayerSettings;
 using Random=UnityEngine.Random;
 
 public class PlayerController : MonoBehaviour
@@ -230,6 +229,8 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] float parriedProjectileSpeed = 1f;
     [SerializeField] float parriedProjectileLifetime = 10f;
+
+    AudioManager audioManager;
     [SerializeField] GameObject HammerSound;
 
     private void Awake()
@@ -268,7 +269,10 @@ public class PlayerController : MonoBehaviour
     [Header("Power Ups")]
     [Tooltip("How much we add to bounce force when the explosive powerup is enabled.")]
     public float explosiveForce;
+    public float explosiveYForce;
     public GameObject c4;
+
+    public GameObject explosionVFX;
 
     #endregion
 
@@ -309,6 +313,9 @@ public class PlayerController : MonoBehaviour
 
     void Start() // Runs at the start of the Scene
     {
+        // Set Player Audio Manager
+        audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
+
         // Lock the cursor to center screen and make it invisible
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -682,10 +689,10 @@ public class PlayerController : MonoBehaviour
             //Debug.Log("hammer hitting ended");
             hammerHit = true;
             hittingHammer = false;
-            // AudioManager.Instance.PlayOneShotSFX2D(AudioManager.Instance.PlayerHammerHit);
-            //anim.Play("HammerHit"); 
-            anim.Play("Slam");
+            //audioManager.PlaySFX(audioManager.hit);
+            
             crosshair.Slam(false, 0);
+            
             //slamHitbox.DeactivateCollider();
 
             recovering = true;
@@ -818,7 +825,7 @@ public class PlayerController : MonoBehaviour
                 anim.ResetTrigger("Interrupt");
             }
             
-            if (readyingSwipe && !swipingHammer && hammerTimer < 0.2)
+            if (readyingSwipe && !swipingHammer && hammerTimer < 0.25)
             {
                 readyingSwipe = false;
                 swipingHammer = true;
@@ -900,22 +907,11 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Escape) && pause.activeSelf == false && settings.activeSelf == false && alive && lvlComplete.activeSelf == false)
         {
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-
-            pause.SetActive(true);
-
-            Time.timeScale = 0;
+            UpdatePauseState(true);
         }
         else if (Input.GetKeyDown(KeyCode.Escape) && (pause.activeSelf == true || settings.activeSelf == true))
         {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-
-            pause.SetActive(false);
-            settings.SetActive(false);
-
-            Time.timeScale = 1;
+            UpdatePauseState(false);
         }
 
         if (Input.GetKeyDown(KeyCode.R))
@@ -963,7 +959,7 @@ public class PlayerController : MonoBehaviour
         RaycastHit hit;
         Vector3 movementPlane;
         float slopeAngle = 0;
-        if (Physics.Raycast(gameObject.transform.position, Vector3.down, out hit, playerHeight/2 + groundCheckDist, groundLayers)) //if on the ground
+        if (Physics.Raycast(gameObject.transform.position, Vector3.down, out hit, playerHeight/2 + groundCheckDist, groundLayers, QueryTriggerInteraction.Ignore)) //if on the ground
         {
             slopeAngle = Vector3.Angle(hit.transform.up, hit.normal);
             //Debug.Log(slopeAngle);
@@ -976,9 +972,14 @@ public class PlayerController : MonoBehaviour
                 isOnSlope = false;
             }
 
-            if (isGrounded == false && hangTime >= .25)
+            if (!isGrounded)
             {
-                AudioManager.Instance.PlayOneShotSFX2D(AudioManager.Instance.PlayerLandOnGround);
+                if (hangTime >= .5)
+                {
+                    audioManager.PlaySFX(audioManager.land);
+                }
+                anim.SetTrigger("Land");
+
                 // Shake the screen when we land after being launched
                 /*
                 if (isLaunched)
@@ -988,7 +989,6 @@ public class PlayerController : MonoBehaviour
                 */
 
                 //anim.Play("Land");
-                anim.SetTrigger("Land");
 
                 if (!hammerCharged)
                 {
@@ -1080,7 +1080,7 @@ public class PlayerController : MonoBehaviour
                         walkTime += 1;
                         if (walkTime%15 == 0)
                         {
-                            AudioManager.Instance.PlayOneShotSFX2D(AudioManager.Instance.PlayerFootstepTile);
+                            audioManager.PlayWalk();
                             walkTime = 0;
                         }
                         // add some anims for changing direction, or move arms in direction of movement? (kaelen idea)
@@ -1259,8 +1259,6 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-        AudioManager.Instance.PlayOneShotSFX2D(AudioManager.Instance.PlayerHammerHit);
-        
         Ray ray = gameCamera.ScreenPointToRay(Input.mousePosition);
         //Ray ray = gameCamera.ScreenPointToRay(impactPoint.transform.position);
         bool bouncy = false;
@@ -1281,6 +1279,11 @@ public class PlayerController : MonoBehaviour
                 if (renderer != null && renderer.sharedMaterial != null && renderer.sharedMaterial.name == "ShockAbsorbMat")
                 {
                     return;
+                }
+
+                if (hit.transform.gameObject.layer == LayerMask.NameToLayer("PhaseWall"))
+                {
+                    Debug.Log("Phase wall hit");
                 }
 
                 if (hit.transform.gameObject.tag == "Bouncy")
@@ -1399,11 +1402,15 @@ public class PlayerController : MonoBehaviour
             {
                 ResetPowerup();
             }
-
+            bool explosiveLaunch = false;
             if (currentPowerup == Powerup.Explosive)
             {
                 isLaunched = true;
-                rb.AddForce(launchDirection * explosiveForce, ForceMode.Impulse);
+                explosiveLaunch = true;
+                //rb.AddForce(launchDirection * explosiveForce, ForceMode.Impulse);
+                //launchDirection = launchDirection * explosiveForce;
+
+                Instantiate(explosionVFX, transform.position, transform.rotation);
             }
             else if (bouncy)
             {
@@ -1433,6 +1440,11 @@ public class PlayerController : MonoBehaviour
                 force = new Vector3(force.x * bounceForce, force.y * bounceForceY, force.z * bounceForce);
             }
 
+            if (explosiveLaunch)
+            {
+                //force = force * 2;
+                force = new Vector3(force.x * explosiveForce, force.y * explosiveYForce, force.z * explosiveForce);
+            }
 
             rb.AddForce(force, ForceMode.Impulse); // apply the force vector to the player *make them bounce*
 
@@ -1465,8 +1477,7 @@ public class PlayerController : MonoBehaviour
         }
         else 
         {
-            // TODO: This SFX isn't triggering correctly (sounds like multiple whiffs/hits, so I'm blocking this out for now)
-            // audioManager.PlayOneShotSFX2D(audioManager.PlayerHammerWhiff);
+            //audioManager.PlaySFX(audioManager.whiff);
         }
     }
 
@@ -1582,7 +1593,7 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        return targetCandidate;
+        return targetCandidate.GetComponent<EnemyBaseController>().projectileTarget;
     }
 
     void OnDrawGizmosSelected()// Draws selected Gizmos for testing (I think)
@@ -1696,6 +1707,29 @@ public class PlayerController : MonoBehaviour
     public bool CheckMoving() // Check to see if the player is putting in any movement input
     {
         return movementInputVector.magnitude != 0;
+    }
+
+    public void UpdatePauseState(bool paused)
+    {
+        if (paused)
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+
+            pause.SetActive(true);
+
+            Time.timeScale = 0;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+
+            pause.SetActive(false);
+            settings.SetActive(false);
+
+            Time.timeScale = 1;
+        }    
     }
 
     #region Powerups
