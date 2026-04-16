@@ -14,6 +14,7 @@ using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.ProBuilder.Shapes;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using static UnityEditor.PlayerSettings;
 using Random=UnityEngine.Random;
 
 public class PlayerController : MonoBehaviour
@@ -229,8 +230,6 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] float parriedProjectileSpeed = 1f;
     [SerializeField] float parriedProjectileLifetime = 10f;
-
-    AudioManager audioManager;
     [SerializeField] GameObject HammerSound;
 
     private void Awake()
@@ -313,9 +312,6 @@ public class PlayerController : MonoBehaviour
 
     void Start() // Runs at the start of the Scene
     {
-        // Set Player Audio Manager
-        audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
-
         // Lock the cursor to center screen and make it invisible
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -689,10 +685,9 @@ public class PlayerController : MonoBehaviour
             //Debug.Log("hammer hitting ended");
             hammerHit = true;
             hittingHammer = false;
-            //audioManager.PlaySFX(audioManager.hit);
-            
+            // AudioManager.Instance.PlayOneShotSFX2D(AudioManager.Instance.PlayerHammerHit);
+            //anim.Play("HammerHit"); 
             crosshair.Slam(false, 0);
-            
             //slamHitbox.DeactivateCollider();
 
             recovering = true;
@@ -976,7 +971,7 @@ public class PlayerController : MonoBehaviour
             {
                 if (hangTime >= .5)
                 {
-                    audioManager.PlaySFX(audioManager.land);
+                    AudioManager.Instance.PlayOneShotSFX2D(AudioManager.Instance.PlayerLandOnGround);
                 }
                 anim.SetTrigger("Land");
 
@@ -987,8 +982,6 @@ public class PlayerController : MonoBehaviour
                     StartCoroutine(FindObjectOfType<ScreenShaker>().Shake(0.1f, 0.01f, 0, 0, 0.1f));
                 }
                 */
-
-                //anim.Play("Land");
 
                 if (!hammerCharged)
                 {
@@ -1080,7 +1073,7 @@ public class PlayerController : MonoBehaviour
                         walkTime += 1;
                         if (walkTime%15 == 0)
                         {
-                            audioManager.PlayWalk();
+                            AudioManager.Instance.PlayOneShotSFX2D(AudioManager.Instance.PlayerFootstepTile);
                             walkTime = 0;
                         }
                         // add some anims for changing direction, or move arms in direction of movement? (kaelen idea)
@@ -1259,6 +1252,8 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
+        AudioManager.Instance.PlayOneShotSFX2D(AudioManager.Instance.PlayerHammerHit);
+        
         Ray ray = gameCamera.ScreenPointToRay(Input.mousePosition);
         //Ray ray = gameCamera.ScreenPointToRay(impactPoint.transform.position);
         bool bouncy = false;
@@ -1477,7 +1472,8 @@ public class PlayerController : MonoBehaviour
         }
         else 
         {
-            //audioManager.PlaySFX(audioManager.whiff);
+            // TODO: This SFX isn't triggering correctly (sounds like multiple whiffs/hits, so I'm blocking this out for now)
+            // audioManager.PlayOneShotSFX2D(audioManager.PlayerHammerWhiff);
         }
     }
 
