@@ -16,7 +16,7 @@ GameObject:
   m_TagString: Audio
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &6928388517203845999
 Transform:
@@ -46,6 +46,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bankLoader: {fileID: 982891445776177076}
+  MainMenuMusic:
+    Guid:
+      Data1: -269741429
+      Data2: 1269314147
+      Data3: 275702431
+      Data4: -264757764
+    Path: event:/Music/MainMenuMusic
+  LevelMusic:
+    Guid:
+      Data1: -1308095698
+      Data2: 1231330199
+      Data3: -420151140
+      Data4: 1679412403
+    Path: event:/Music/LevelMusic
   PlayerFootstepTile:
     Guid:
       Data1: -1310421745
@@ -95,6 +109,20 @@ MonoBehaviour:
       Data3: -230752370
       Data4: 1251025720
     Path: event:/Gameplay/Phase Wall/Phase_Impact
+  PhaseIdle:
+    Guid:
+      Data1: 195299122
+      Data2: 1289490609
+      Data3: 759727769
+      Data4: 1725656577
+    Path: event:/Gameplay/Phase Wall/Phase_Idle
+  PhasePass:
+    Guid:
+      Data1: -1660479612
+      Data2: 1249112081
+      Data3: 960573342
+      Data4: 1075379705
+    Path: event:/Gameplay/Phase Wall/Phase_Pass
   PowerupExplosive:
     Guid:
       Data1: 204778496
@@ -116,6 +144,20 @@ MonoBehaviour:
       Data3: 1938284673
       Data4: 1507941073
     Path: event:/Gameplay/Switch_Activate
+  DeathScreen:
+    Guid:
+      Data1: 103974480
+      Data2: 1139926021
+      Data3: -468180091
+      Data4: -867441915
+    Path: event:/SFX/UI/Death_Screen
+  LevelComplete:
+    Guid:
+      Data1: 334811365
+      Data2: 1090157365
+      Data3: 1805639076
+      Data4: 172883057
+    Path: event:/SFX/UI/Level_Complete
 --- !u!114 &982891445776177076
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -132,5 +174,6 @@ MonoBehaviour:
   UnloadEvent: 0
   Banks:
   - Common SFX
+  - Main Menu Music
   CollisionTag: 
   PreloadSamples: 0

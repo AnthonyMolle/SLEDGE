@@ -886,12 +886,14 @@ public class PlayerController : MonoBehaviour
         {
             mouseReleased = true;
             mousePressed = false;
+            AudioManager.Instance.PlayOneShotSFX2D(AudioManager.Instance.PlayerHammerWhiff);
         }
 
         if (Input.GetKeyDown(KeyCode.Mouse1))
         {
             secondaryPressed = true;
             secondaryReleased = false;
+            AudioManager.Instance.PlayOneShotSFX2D(AudioManager.Instance.PlayerHammerWhiff);
         }
         
         if (Input.GetKeyUp(KeyCode.Mouse1))
@@ -1251,8 +1253,6 @@ public class PlayerController : MonoBehaviour
         {
             return;
         }
-
-        AudioManager.Instance.PlayOneShotSFX2D(AudioManager.Instance.PlayerHammerHit);
         
         Ray ray = gameCamera.ScreenPointToRay(Input.mousePosition);
         //Ray ray = gameCamera.ScreenPointToRay(impactPoint.transform.position);
@@ -1290,6 +1290,7 @@ public class PlayerController : MonoBehaviour
                 {
                     rb.AddForce(hit.transform.up * 50f, ForceMode.Impulse);
                     GameObject.Find("EndPlatform").GetComponent<EndPlatform>().triggerPlatform();
+                    AudioManager.Instance.PlayOneShotSFX2D(AudioManager.Instance.LevelComplete);
                 }
 
                 /* This is for the kill surface. makes it so if you even try to bounce off of it, you die.
@@ -1402,6 +1403,7 @@ public class PlayerController : MonoBehaviour
             {
                 isLaunched = true;
                 explosiveLaunch = true;
+                AudioManager.Instance.PlayOneShotSFX2D(AudioManager.Instance.PowerupExplosive);
                 //rb.AddForce(launchDirection * explosiveForce, ForceMode.Impulse);
                 //launchDirection = launchDirection * explosiveForce;
 
@@ -1445,6 +1447,7 @@ public class PlayerController : MonoBehaviour
 
             isLaunched = true; // set is launched to true
             hammerBounced = true; // let the engine know we bounced
+            AudioManager.Instance.PlayOneShotSFX2D(AudioManager.Instance.PlayerHammerHit);
 
             LaunchBrakingTimer = LaunchBrakingDelay;
 
@@ -1671,6 +1674,7 @@ public class PlayerController : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
         Time.timeScale = 0;
+        AudioManager.Instance.PlayOneShotSFX2D(AudioManager.Instance.DeathScreen);
     }
 
     public void ResetPlayer() // this function resets the player fully
@@ -1683,6 +1687,9 @@ public class PlayerController : MonoBehaviour
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             return;
+        }else
+        {
+            AudioManager.Instance.PlayOneShotSFX2D(AudioManager.Instance.CheckpointRespawn);
         }
         // COMMENT: Code below should be in an else statement for clarity's sake methinks.
 

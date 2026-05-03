@@ -242,6 +242,7 @@ GameObject:
   - component: {fileID: 6407510286120009995}
   - component: {fileID: -1691578274371175759}
   - component: {fileID: 5156717023453996060}
+  - component: {fileID: 6290857319744251599}
   m_Layer: 10
   m_Name: Projectile
   m_TagString: Untagged
@@ -389,7 +390,7 @@ AudioSource:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4543102887346889771}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 5314621798222842325, guid: 48c8efc752dbc14489786bbd0e1adf65,
     type: 2}
@@ -529,6 +530,37 @@ CapsuleCollider:
   m_Height: 0.7
   m_Direction: 2
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &6290857319744251599
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4543102887346889771}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: 1815982960
+      Data2: 1244437502
+      Data3: 425904795
+      Data4: 944424535
+    Path: event:/Gameplay/Enemies/Shooter/Shooter_Shot
+  Event: 
+  EventPlayTrigger: 1
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
 --- !u!1001 &4433068756955217978
 PrefabInstance:
   m_ObjectHideFlags: 0

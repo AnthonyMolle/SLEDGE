@@ -451,6 +451,7 @@ public class EnemyFlyerController : EnemyBaseController
         }
 
         enemyState = EnemyState.DEAD;
+        AudioManager.Instance.PlayOneShotSFX3D(AudioManager.Instance.PowerupExplosive, transform.position);
         Die();
     }
 

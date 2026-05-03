@@ -26,6 +26,7 @@ public class PowerupBase : MonoBehaviour
         powerup.SetActive(false);
         timerRunning = true;
         timerFill.enabled = true;
+        AudioManager.Instance.PlayOneShotSFX2D(AudioManager.Instance.PowerupPickUp);
     }
 
     void Update()
