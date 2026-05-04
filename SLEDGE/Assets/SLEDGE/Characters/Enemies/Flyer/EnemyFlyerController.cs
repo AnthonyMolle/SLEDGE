@@ -318,6 +318,7 @@ public class EnemyFlyerController : EnemyBaseController
     void AreaBlast()
     {
         // UPDATED SFX AND VFX FOR SHOCK ATTACK WOULD TRIGGER HERE
+        AudioManager.Instance.PlayOneShotSFX3D(AudioManager.Instance.FlyerAttack, transform.position);
         staticField.SetActive(true);
         forceBlast.SetActive(true);
         shockHitboxColor.a = 1.0f;
@@ -493,6 +494,7 @@ public class EnemyFlyerController : EnemyBaseController
 
         if (cooldown >= dashCooldown)
         {
+            AudioManager.Instance.PlayOneShotSFX3D(AudioManager.Instance.FlyerCharge, transform.position);
             audioSource.clip = telegraphSound;
             audioSource.Play();
 

@@ -36,6 +36,9 @@ public class AudioManager : Singleton<AudioManager>
     public EventReference SwitchActivate;
     public EventReference DeathScreen;
     public EventReference LevelComplete;
+    public EventReference ShooterCharge;
+    public EventReference FlyerCharge;
+    public EventReference FlyerAttack;
 
     protected override void Awake()
     {
@@ -52,14 +55,14 @@ public class AudioManager : Singleton<AudioManager>
         if (sceneName == "MainMenu")
         {
             menuMusicInstance = CreateEventInstance(MainMenuMusic);
-            menuMusicInstance.start();
+            //menuMusicInstance.start();
             //musicSource.clip = mainMenu;
             //musicSource.Play();
         }
         else if(sceneName == "Level1" || sceneName == "Level2")
         {
             lvlMusicInstance = CreateEventInstance(LevelMusic);
-            lvlMusicInstance.start();
+            //lvlMusicInstance.start();
             //musicSource.clip = background;
             //musicSource.Play();
         }

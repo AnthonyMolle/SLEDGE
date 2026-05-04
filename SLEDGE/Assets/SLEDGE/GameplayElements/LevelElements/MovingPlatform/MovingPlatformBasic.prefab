@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3625052658083336471}
-  - component: {fileID: 1398445525348426494}
   m_Layer: 0
   m_Name: MovingPlatformBasic
   m_TagString: Untagged
@@ -34,37 +33,6 @@ Transform:
   - {fileID: 2264714550455783176}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1398445525348426494
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4174482998055649306}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  CollisionTag: 
-  EventReference:
-    Guid:
-      Data1: -831104489
-      Data2: 1123147907
-      Data3: 864883334
-      Data4: 1984350694
-    Path: event:/Gameplay/Moving_Platform
-  Event: 
-  EventPlayTrigger: 1
-  EventStopTrigger: 0
-  AllowFadeout: 1
-  TriggerOnce: 0
-  Preload: 0
-  NonRigidbodyVelocity: 0
-  Params: []
-  OverrideAttenuation: 0
-  OverrideMinDistance: 1
-  OverrideMaxDistance: 20
 --- !u!1 &7311451052739818074
 GameObject:
   m_ObjectHideFlags: 0
@@ -80,6 +48,7 @@ GameObject:
   - component: {fileID: 1842424429157265222}
   - component: {fileID: 1356919687507538194}
   - component: {fileID: 3404772528457364898}
+  - component: {fileID: 8272268439821507077}
   m_Layer: 0
   m_Name: platform
   m_TagString: MovingPlatform
@@ -442,6 +411,37 @@ MonoBehaviour:
   m_ObjectForwardAxis: 2
   m_ObjectUpAxis: 1
   m_StartOffset: 0
+--- !u!114 &8272268439821507077
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7311451052739818074}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: -831104489
+      Data2: 1123147907
+      Data3: 864883334
+      Data4: 1984350694
+    Path: event:/Gameplay/Moving_Platform
+  Event: 
+  EventPlayTrigger: 1
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
 --- !u!1 &8947540918592300537
 GameObject:
   m_ObjectHideFlags: 0

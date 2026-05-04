@@ -158,6 +158,27 @@ MonoBehaviour:
       Data3: 1805639076
       Data4: 172883057
     Path: event:/SFX/UI/Level_Complete
+  ShooterCharge:
+    Guid:
+      Data1: 1059846934
+      Data2: 1151811667
+      Data3: 1537591943
+      Data4: -365693842
+    Path: event:/Gameplay/Enemies/Shooter/Shooter_Charge
+  FlyerCharge:
+    Guid:
+      Data1: 1137095744
+      Data2: 1215135499
+      Data3: -2104523342
+      Data4: -670361696
+    Path: event:/Gameplay/Enemies/Flyer/Flyer_Attk_Charge
+  FlyerAttack:
+    Guid:
+      Data1: -1291871200
+      Data2: 1132679845
+      Data3: -479588709
+      Data4: 1609724394
+    Path: event:/Gameplay/Enemies/Flyer/Flyer_Electric_Charge_Attk
 --- !u!114 &982891445776177076
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -175,5 +196,6 @@ MonoBehaviour:
   Banks:
   - Common SFX
   - Main Menu Music
+  - Menu UI
   CollisionTag: 
   PreloadSamples: 0
