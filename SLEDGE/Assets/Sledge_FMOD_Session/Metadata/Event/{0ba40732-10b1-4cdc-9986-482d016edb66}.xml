@@ -5,7 +5,7 @@
 			<value>Phase_Idle</value>
 		</property>
 		<property name="outputFormat">
-			<value>1</value>
+			<value>2</value>
 		</property>
 		<relationship name="folder">
 			<destination>{647d073c-35da-4c49-a6fc-1121ce153fa7}</destination>
@@ -130,6 +130,7 @@
 	<object class="MixerBusEffectChain" id="{bb093703-da21-40cf-9071-436d3e12ec78}">
 		<relationship name="effects">
 			<destination>{56252cf9-c40d-4561-8734-ca04b6520f5b}</destination>
+			<destination>{5b6f8d59-969f-4e33-928f-0115e55f0338}</destination>
 		</relationship>
 	</object>
 	<object class="MixerBusPanner" id="{6245d601-6ea7-4441-ae41-7610a4e2e05a}" />
@@ -141,5 +142,6 @@
 	</object>
 	<object class="MixerBusPanner" id="{0bac96c4-8535-4244-84da-ac135422cfb0}" />
 	<object class="MixerBusFader" id="{56252cf9-c40d-4561-8734-ca04b6520f5b}" />
+	<object class="SpatialiserEffect" id="{5b6f8d59-969f-4e33-928f-0115e55f0338}" />
 	<object class="MixerBusFader" id="{d5d3c5a1-e4c3-4f21-9daf-500a73fc0720}" />
 </objects>

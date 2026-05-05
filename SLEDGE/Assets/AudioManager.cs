@@ -10,6 +10,18 @@ public class AudioManager : Singleton<AudioManager>
     private List<EventInstance> eventInstances;
     private List<StudioEventEmitter> eventEmitters;
 
+    [Header("Volume")]
+    [Range(0, 1)]
+    public float masterVolume = 1f;
+    [Range(0, 1)]
+    public float musicVolume = 1f;
+    [Range(0, 1)]
+    public float sfxVolume = 1f;
+
+    private Bus masterBus;
+    private Bus musicBus;
+    private Bus sfxBus;
+
     [Header("Bank Loader")]
     public StudioBankLoader bankLoader;
 
@@ -55,17 +67,21 @@ public class AudioManager : Singleton<AudioManager>
         if (sceneName == "MainMenu")
         {
             menuMusicInstance = CreateEventInstance(MainMenuMusic);
-            //menuMusicInstance.start();
+            menuMusicInstance.start();
             //musicSource.clip = mainMenu;
             //musicSource.Play();
         }
         else if(sceneName == "Level1" || sceneName == "Level2")
         {
             lvlMusicInstance = CreateEventInstance(LevelMusic);
-            //lvlMusicInstance.start();
+            lvlMusicInstance.start();
             //musicSource.clip = background;
             //musicSource.Play();
         }
+
+        masterBus = RuntimeManager.GetBus("bus:/");
+        musicBus = RuntimeManager.GetBus("bus:/MUSIC");
+        sfxBus = RuntimeManager.GetBus("bus:/SFX");
     }
 
     // Code for probably keeping the music playing between scenes?\
@@ -74,6 +90,9 @@ public class AudioManager : Singleton<AudioManager>
 
     private void Update()
     {
+        masterBus.setVolume(masterVolume);
+        musicBus.setVolume(musicVolume);
+        sfxBus.setVolume(sfxVolume);
         /*
         Scene currentScene = SceneManager.GetActiveScene();
         string sceneName = currentScene.name;

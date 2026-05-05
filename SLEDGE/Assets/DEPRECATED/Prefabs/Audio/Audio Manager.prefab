@@ -45,6 +45,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5709555de0b9b28469f6a32482a280c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  masterVolume: 1
+  musicVolume: 1
+  sfxVolume: 1
   bankLoader: {fileID: 982891445776177076}
   MainMenuMusic:
     Guid:
@@ -197,5 +200,6 @@ MonoBehaviour:
   - Common SFX
   - Main Menu Music
   - Menu UI
+  - Common SFX.strings
   CollisionTag: 
   PreloadSamples: 0
