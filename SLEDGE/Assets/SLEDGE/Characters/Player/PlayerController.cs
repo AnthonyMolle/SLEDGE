@@ -886,14 +886,20 @@ public class PlayerController : MonoBehaviour
         {
             mouseReleased = true;
             mousePressed = false;
-            AudioManager.Instance.PlayOneShotSFX2D(AudioManager.Instance.PlayerHammerWhiff);
+            if (Time.timeScale == 1)
+            {
+                AudioManager.Instance.PlayOneShotSFX2D(AudioManager.Instance.PlayerHammerWhiff);
+            }
         }
 
         if (Input.GetKeyDown(KeyCode.Mouse1))
         {
             secondaryPressed = true;
             secondaryReleased = false;
-            AudioManager.Instance.PlayOneShotSFX2D(AudioManager.Instance.PlayerHammerWhiff);
+            if (Time.timeScale == 1)
+            {
+                AudioManager.Instance.PlayOneShotSFX2D(AudioManager.Instance.PlayerHammerWhiff);
+            }
         }
         
         if (Input.GetKeyUp(KeyCode.Mouse1))
@@ -1289,8 +1295,8 @@ public class PlayerController : MonoBehaviour
                 if (hit.transform.gameObject.tag == "End Platform")
                 {
                     rb.AddForce(hit.transform.up * 50f, ForceMode.Impulse);
-                    GameObject.Find("EndPlatform").GetComponent<EndPlatform>().triggerPlatform();
                     AudioManager.Instance.PlayOneShotSFX2D(AudioManager.Instance.LevelComplete);
+                    GameObject.Find("EndPlatform").GetComponent<EndPlatform>().triggerPlatform();
                 }
 
                 /* This is for the kill surface. makes it so if you even try to bounce off of it, you die.
@@ -1668,13 +1674,14 @@ public class PlayerController : MonoBehaviour
     public void Die() // this function is called when the player dies
     {
         // Kill the player, activate the death screen UI, and reset the timescale.
+        AudioManager.Instance.PlayOneShotSFX2D(AudioManager.Instance.DeathScreen);
         alive = false;
         healthDisplay.SetHealth(0);
         deathScreen.SetActive(true);
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
         Time.timeScale = 0;
-        AudioManager.Instance.PlayOneShotSFX2D(AudioManager.Instance.DeathScreen);
+        //AudioManager.Instance.PlayOneShotSFX2D(AudioManager.Instance.DeathScreen);
     }
 
     public void ResetPlayer() // this function resets the player fully
