@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -120,6 +121,13 @@ public class UIManager : MonoBehaviour
             pc.mouseSensitivity = PlayerPrefs.GetFloat("Sensitivity");
         }
     }
+
+    public void UpdateDisplaySetting(int display)
+    {
+        Debug.Log(display);
+        Screen.fullScreenMode = (FullScreenMode) display;
+    }
+
 
     public void GoToScene(string scene)
     {
