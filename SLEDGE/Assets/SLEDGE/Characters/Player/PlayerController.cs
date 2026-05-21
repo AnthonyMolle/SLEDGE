@@ -493,7 +493,8 @@ public class PlayerController : MonoBehaviour
                         impactPointHidden = false;
                         impactPoint.transform.position = impactPos;
                     }
-                    impactFade.SetAlpha(Mathf.Lerp(1, 0, impactFadeTimer / 0.25f));
+                    //impactFade.SetAlpha(Mathf.Lerp(1, 0, impactFadeTimer / 0.25f));
+                    impactFade.SetAlpha(1);
                     // impactFadeColor.a = Mathf.Lerp(1, 0, impactFadeTimer / 0.25f);
                     // impactPoint.GetComponent<MeshRenderer>().material.color = impactFadeColor;
 
@@ -505,7 +506,8 @@ public class PlayerController : MonoBehaviour
         if (hideImpactPoint)
         {
             impactPointHidden = true;
-            impactFade.SetAlpha(Mathf.Lerp(1, 0, impactFadeTimer / 0.25f));
+            //impactFade.SetAlpha(Mathf.Lerp(1, 0, impactFadeTimer / 0.25f));
+            impactFade.SetAlpha(0);
             // impactFadeColor.a = Mathf.Lerp(1, 0, impactFadeTimer / 0.25f);
             // impactPoint.GetComponent<MeshRenderer>().material.color = impactFadeColor;
         }
@@ -513,8 +515,10 @@ public class PlayerController : MonoBehaviour
         // Only show impact point when charging up the hammer for a swing
         if (!alwaysShowImpactPoint && !chargingHammer && !hammerCharged)
         {
+            //Debug.Log("gha");
             impactPointHidden = true;
-            impactFade.SetAlpha(Mathf.Lerp(1, 0, impactFadeTimer / 0.25f));
+            //impactFade.SetAlpha(Mathf.Lerp(1, 0, impactFadeTimer / 0.25f));
+            impactFade.SetAlpha(0);
             // impactFadeColor.a = Mathf.Lerp(1, 0, impactFadeTimer / 0.25f);
             // impactPoint.GetComponent<MeshRenderer>().material.color = impactFadeColor;
         }
@@ -738,7 +742,7 @@ public class PlayerController : MonoBehaviour
         if (hammerCharged)
         {
             float prevAngle = anim.GetFloat("X");
-            float xAngle = Mathf.Lerp(prevAngle, 0.5f, Time.deltaTime * 5);
+            float xAngle = Mathf.Lerp(prevAngle, 0.75f, Time.deltaTime * 5);
             if (movementInputVector.magnitude > 0.001)
             {
                 float horizontalInput = Input.GetAxisRaw("Horizontal");
@@ -751,7 +755,7 @@ public class PlayerController : MonoBehaviour
                 else if (horizontalInput < 0)
                 {
                     // Left
-                    xAngle = Mathf.Lerp(prevAngle, 0, Time.deltaTime * 5);
+                    xAngle = Mathf.Lerp(prevAngle, 0.5f, Time.deltaTime * 5);
                 }
 
             }
@@ -769,7 +773,7 @@ public class PlayerController : MonoBehaviour
                 anim.SetLayerWeight(anim.GetLayerIndex("Charge Layer"), weight);
 
                 float prevAngle = anim.GetFloat("X");
-                float xAngle = Mathf.Lerp(prevAngle, 0.5f, Time.deltaTime * 5);
+                float xAngle = Mathf.Lerp(prevAngle, 0.75f, Time.deltaTime * 5);
                 if (movementInputVector.magnitude > 0.001)
                 {
                     float horizontalInput = Input.GetAxisRaw("Horizontal");
@@ -782,7 +786,7 @@ public class PlayerController : MonoBehaviour
                     else if (horizontalInput < 0)
                     {
                         // Left
-                        xAngle = Mathf.Lerp(prevAngle, 0, Time.deltaTime * 5);
+                        xAngle = Mathf.Lerp(prevAngle, 0.5f, Time.deltaTime * 5);
                     }
 
                 }

@@ -27,7 +27,7 @@ public class UIManager : MonoBehaviour
             }
         }
 
-        StartCoroutine(Fade(a,0,1));
+        StartCoroutine(Fade(a, 0, 1));
         if (currentCanvas != null)
         {
             StartCoroutine(Fade(currentCanvas, 1, 0));
@@ -80,13 +80,14 @@ public class UIManager : MonoBehaviour
         }
 
         a.alpha = endAlpha;
-        if (endAlpha > 0.5) { a.interactable = true;}  
+        if (endAlpha > 0.5) { a.interactable = true; }
         if (endAlpha < 0.5) { a.gameObject.SetActive(false); }
     }
 
     //PAST THIS POINT YOU WILL FIND NOTHING BUT ANTHONYS STUPID BAD CODE THIS DUDES SUCH AN IDIOT - anthony
 
     [SerializeField] Slider mouseSense;
+    [SerializeField] TMP_Dropdown displaySetting;
     PlayerController pc;
 
     void Start()
@@ -99,6 +100,10 @@ public class UIManager : MonoBehaviour
         {
             pc.mouseSensitivity = PlayerPrefs.GetFloat("Sensitivity", 400);
         }
+
+        displaySetting.value = PlayerPrefs.GetInt("DisplayMode", 1);
+        UpdateDisplaySetting(displaySetting.value);
+
     }
 
     public void Exit()
@@ -126,6 +131,10 @@ public class UIManager : MonoBehaviour
     {
         Debug.Log(display);
         Screen.fullScreenMode = (FullScreenMode) display;
+        Screen.fullScreen = (display != 2);
+
+        PlayerPrefs.SetInt("DisplayMode", display);
+        PlayerPrefs.Save();
     }
 
 
