@@ -230,6 +230,8 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] float parriedProjectileSpeed = 1f;
     [SerializeField] float parriedProjectileLifetime = 10f;
+
+    AudioManager audioManager;
     [SerializeField] GameObject HammerSound;
 
     private void Awake()
@@ -312,6 +314,9 @@ public class PlayerController : MonoBehaviour
 
     void Start() // Runs at the start of the Scene
     {
+        // Set Player Audio Manager
+        audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
+
         // Lock the cursor to center screen and make it invisible
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -489,7 +494,8 @@ public class PlayerController : MonoBehaviour
                         impactPointHidden = false;
                         impactPoint.transform.position = impactPos;
                     }
-                    impactFade.SetAlpha(Mathf.Lerp(1, 0, impactFadeTimer / 0.25f));
+                    //impactFade.SetAlpha(Mathf.Lerp(1, 0, impactFadeTimer / 0.25f));
+                    impactFade.SetAlpha(1);
                     // impactFadeColor.a = Mathf.Lerp(1, 0, impactFadeTimer / 0.25f);
                     // impactPoint.GetComponent<MeshRenderer>().material.color = impactFadeColor;
 
@@ -501,7 +507,8 @@ public class PlayerController : MonoBehaviour
         if (hideImpactPoint)
         {
             impactPointHidden = true;
-            impactFade.SetAlpha(Mathf.Lerp(1, 0, impactFadeTimer / 0.25f));
+            //impactFade.SetAlpha(Mathf.Lerp(1, 0, impactFadeTimer / 0.25f));
+            impactFade.SetAlpha(0);
             // impactFadeColor.a = Mathf.Lerp(1, 0, impactFadeTimer / 0.25f);
             // impactPoint.GetComponent<MeshRenderer>().material.color = impactFadeColor;
         }
@@ -509,8 +516,10 @@ public class PlayerController : MonoBehaviour
         // Only show impact point when charging up the hammer for a swing
         if (!alwaysShowImpactPoint && !chargingHammer && !hammerCharged)
         {
+            //Debug.Log("gha");
             impactPointHidden = true;
-            impactFade.SetAlpha(Mathf.Lerp(1, 0, impactFadeTimer / 0.25f));
+            //impactFade.SetAlpha(Mathf.Lerp(1, 0, impactFadeTimer / 0.25f));
+            impactFade.SetAlpha(0);
             // impactFadeColor.a = Mathf.Lerp(1, 0, impactFadeTimer / 0.25f);
             // impactPoint.GetComponent<MeshRenderer>().material.color = impactFadeColor;
         }
@@ -685,9 +694,9 @@ public class PlayerController : MonoBehaviour
             //Debug.Log("hammer hitting ended");
             hammerHit = true;
             hittingHammer = false;
-            // AudioManager.Instance.PlayOneShotSFX2D(AudioManager.Instance.PlayerHammerHit);
-            //anim.Play("HammerHit"); 
+
             crosshair.Slam(false, 0);
+            
             //slamHitbox.DeactivateCollider();
 
             recovering = true;
@@ -733,7 +742,7 @@ public class PlayerController : MonoBehaviour
         if (hammerCharged)
         {
             float prevAngle = anim.GetFloat("X");
-            float xAngle = Mathf.Lerp(prevAngle, 0.5f, Time.deltaTime * 5);
+            float xAngle = Mathf.Lerp(prevAngle, 0.75f, Time.deltaTime * 5);
             if (movementInputVector.magnitude > 0.001)
             {
                 float horizontalInput = Input.GetAxisRaw("Horizontal");
@@ -746,7 +755,7 @@ public class PlayerController : MonoBehaviour
                 else if (horizontalInput < 0)
                 {
                     // Left
-                    xAngle = Mathf.Lerp(prevAngle, 0, Time.deltaTime * 5);
+                    xAngle = Mathf.Lerp(prevAngle, 0.5f, Time.deltaTime * 5);
                 }
 
             }
@@ -764,7 +773,7 @@ public class PlayerController : MonoBehaviour
                 anim.SetLayerWeight(anim.GetLayerIndex("Charge Layer"), weight);
 
                 float prevAngle = anim.GetFloat("X");
-                float xAngle = Mathf.Lerp(prevAngle, 0.5f, Time.deltaTime * 5);
+                float xAngle = Mathf.Lerp(prevAngle, 0.75f, Time.deltaTime * 5);
                 if (movementInputVector.magnitude > 0.001)
                 {
                     float horizontalInput = Input.GetAxisRaw("Horizontal");
@@ -777,7 +786,7 @@ public class PlayerController : MonoBehaviour
                     else if (horizontalInput < 0)
                     {
                         // Left
-                        xAngle = Mathf.Lerp(prevAngle, 0, Time.deltaTime * 5);
+                        xAngle = Mathf.Lerp(prevAngle, 0.5f, Time.deltaTime * 5);
                     }
 
                 }
@@ -1081,7 +1090,7 @@ public class PlayerController : MonoBehaviour
                         walkTime += 1;
                         if (walkTime%15 == 0)
                         {
-                            AudioManager.Instance.PlayOneShotSFX2D(AudioManager.Instance.PlayerFootstepTile);
+                            audioManager.PlayWalk();
                             walkTime = 0;
                         }
                         // add some anims for changing direction, or move arms in direction of movement? (kaelen idea)
@@ -1259,7 +1268,7 @@ public class PlayerController : MonoBehaviour
         {
             return;
         }
-        
+
         Ray ray = gameCamera.ScreenPointToRay(Input.mousePosition);
         //Ray ray = gameCamera.ScreenPointToRay(impactPoint.transform.position);
         bool bouncy = false;
@@ -1481,8 +1490,7 @@ public class PlayerController : MonoBehaviour
         }
         else 
         {
-            // TODO: This SFX isn't triggering correctly (sounds like multiple whiffs/hits, so I'm blocking this out for now)
-            // audioManager.PlayOneShotSFX2D(audioManager.PlayerHammerWhiff);
+            //audioManager.PlaySFX(audioManager.whiff);
         }
     }
 

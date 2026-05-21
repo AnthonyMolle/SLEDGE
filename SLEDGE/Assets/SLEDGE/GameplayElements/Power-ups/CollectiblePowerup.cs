@@ -23,8 +23,6 @@ public class CollectiblePowerup : MonoBehaviour
         {
             playerController.CollectPowerup(newPowerup);
             onPickup.Invoke();
-
-            AudioManager.Instance.PlayOneShotSFX2D(AudioManager.Instance.PowerupPickUp);
         }
     }
 }
