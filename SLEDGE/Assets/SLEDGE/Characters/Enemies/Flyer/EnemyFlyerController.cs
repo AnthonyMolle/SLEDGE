@@ -1,4 +1,3 @@
-using Autodesk.Fbx;
 using NaughtyAttributes;
 using UnityEngine;
 using UnityEngine.Splines;
