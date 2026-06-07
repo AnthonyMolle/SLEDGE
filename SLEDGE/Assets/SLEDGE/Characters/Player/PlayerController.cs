@@ -14,6 +14,7 @@ using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.ProBuilder.Shapes;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using static UnityEditor.PlayerSettings;
 using Random=UnityEngine.Random;
 
 public class PlayerController : MonoBehaviour
@@ -230,7 +231,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float parriedProjectileSpeed = 1f;
     [SerializeField] float parriedProjectileLifetime = 10f;
 
-    AudioManager audioManager;
     [SerializeField] GameObject HammerSound;
 
     private void Awake()
@@ -313,8 +313,6 @@ public class PlayerController : MonoBehaviour
 
     void Start() // Runs at the start of the Scene
     {
-        // Set Player Audio Manager
-        audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
 
         // Lock the cursor to center screen and make it invisible
         Cursor.lockState = CursorLockMode.Locked;
@@ -693,8 +691,9 @@ public class PlayerController : MonoBehaviour
             //Debug.Log("hammer hitting ended");
             hammerHit = true;
             hittingHammer = false;
-            //audioManager.PlaySFX(audioManager.hit);
-            
+            // AudioManager.Instance.PlayOneShotSFX2D(AudioManager.Instance.PlayerHammerHit);
+            //anim.Play("HammerHit"); 
+
             crosshair.Slam(false, 0);
             
             //slamHitbox.DeactivateCollider();
@@ -895,12 +894,20 @@ public class PlayerController : MonoBehaviour
         {
             mouseReleased = true;
             mousePressed = false;
+            if (Time.timeScale == 1)
+            {
+                AudioManager.Instance.PlayOneShotSFX2D(AudioManager.Instance.PlayerHammerWhiff);
+            }
         }
 
         if (Input.GetKeyDown(KeyCode.Mouse1))
         {
             secondaryPressed = true;
             secondaryReleased = false;
+            if (Time.timeScale == 1)
+            {
+                AudioManager.Instance.PlayOneShotSFX2D(AudioManager.Instance.PlayerHammerWhiff);
+            }
         }
         
         if (Input.GetKeyUp(KeyCode.Mouse1))
@@ -980,7 +987,7 @@ public class PlayerController : MonoBehaviour
             {
                 if (hangTime >= .5)
                 {
-                    audioManager.PlaySFX(audioManager.land);
+                    AudioManager.Instance.PlayOneShotSFX2D(AudioManager.Instance.PlayerLandOnGround);
                 }
                 anim.SetTrigger("Land");
 
@@ -1084,7 +1091,7 @@ public class PlayerController : MonoBehaviour
                         walkTime += 1;
                         if (walkTime%15 == 0)
                         {
-                            audioManager.PlayWalk();
+                            AudioManager.Instance.PlayOneShotSFX2D(AudioManager.Instance.PlayerFootstepTile);
                             walkTime = 0;
                         }
                         // add some anims for changing direction, or move arms in direction of movement? (kaelen idea)
@@ -1298,6 +1305,7 @@ public class PlayerController : MonoBehaviour
                 if (hit.transform.gameObject.tag == "End Platform")
                 {
                     rb.AddForce(hit.transform.up * 50f, ForceMode.Impulse);
+                    AudioManager.Instance.PlayOneShotSFX2D(AudioManager.Instance.LevelComplete);
                     GameObject.Find("EndPlatform").GetComponent<EndPlatform>().triggerPlatform();
                 }
 
@@ -1411,6 +1419,7 @@ public class PlayerController : MonoBehaviour
             {
                 isLaunched = true;
                 explosiveLaunch = true;
+                AudioManager.Instance.PlayOneShotSFX2D(AudioManager.Instance.PowerupExplosive);
                 //rb.AddForce(launchDirection * explosiveForce, ForceMode.Impulse);
                 //launchDirection = launchDirection * explosiveForce;
 
@@ -1454,6 +1463,7 @@ public class PlayerController : MonoBehaviour
 
             isLaunched = true; // set is launched to true
             hammerBounced = true; // let the engine know we bounced
+            AudioManager.Instance.PlayOneShotSFX2D(AudioManager.Instance.PlayerHammerHit);
 
             LaunchBrakingTimer = LaunchBrakingDelay;
 
@@ -1481,7 +1491,8 @@ public class PlayerController : MonoBehaviour
         }
         else 
         {
-            //audioManager.PlaySFX(audioManager.whiff);
+            // TODO: This SFX isn't triggering correctly (sounds like multiple whiffs/hits, so I'm blocking this out for now)
+            // audioManager.PlayOneShotSFX2D(audioManager.PlayerHammerWhiff);
         }
     }
 
@@ -1673,6 +1684,7 @@ public class PlayerController : MonoBehaviour
     public void Die() // this function is called when the player dies
     {
         // Kill the player, activate the death screen UI, and reset the timescale.
+        AudioManager.Instance.PlayOneShotSFX2D(AudioManager.Instance.DeathScreen);
         alive = false;
         healthDisplay.SetHealth(0);
         deathScreen.SetActive(true);
@@ -1691,6 +1703,9 @@ public class PlayerController : MonoBehaviour
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             return;
+        } else
+        {
+            AudioManager.Instance.PlayOneShotSFX2D(AudioManager.Instance.CheckpointRespawn);
         }
         // COMMENT: Code below should be in an else statement for clarity's sake methinks.
 
