@@ -30,6 +30,7 @@ public class Checkpoint : MonoBehaviour
         {
             playerController = other.gameObject.GetComponent<PlayerController>();
             ActivateCheckpoint();
+            AudioManager.Instance.PlayOneShotSFX3D(AudioManager.Instance.CheckpointActivate, transform.position);
         }
     }
 

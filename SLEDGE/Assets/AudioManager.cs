@@ -1,104 +1,178 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.SceneManagement;
+using FMODUnity;
+using FMOD.Studio;
 
-public class AudioManager : MonoBehaviour
+public class AudioManager : Singleton<AudioManager>
 {
-    [Header("-------------- Audio Source --------------")]
-    [SerializeField] AudioSource musicSource;
-    [SerializeField] AudioSource SFXSource;
+    private List<EventInstance> eventInstances;
+    private List<StudioEventEmitter> eventEmitters;
 
-    [Header("-------------- Audio Clip --------------")]
-    public AudioClip background;
-    public AudioClip mainMenu;
-    public AudioClip hit;
-    public AudioClip whiff;
-    public AudioClip walk;
-    public AudioClip walk2;
-    public AudioClip walk3;
-    public AudioClip walk4;
-    public AudioClip walk5;
-    public AudioClip land;
+    [Header("Volume")]
+    [Range(0, 1)]
+    public float masterVolume = 1f;
+    [Range(0, 1)]
+    public float musicVolume = 1f;
+    [Range(0, 1)]
+    public float sfxVolume = 1f;
 
-    int previousChoice = 1;
-    /*
+    private Bus masterBus;
+    private Bus musicBus;
+    private Bus sfxBus;
+
+    [Header("Bank Loader")]
+    public StudioBankLoader bankLoader;
+
+    [Header("Music")]
+    public EventReference MainMenuMusic;
+    public EventReference LevelMusic;
+    private EventInstance menuMusicInstance;
+    private EventInstance lvlMusicInstance;
+
+    [Header("Player SFX")]
+    public EventReference PlayerFootstepTile;
+    public EventReference PlayerHammerHit;
+    public EventReference PlayerHammerWhiff;
+    public EventReference PlayerLandOnGround;
+
+    [Header("Gameplay SFX")]
+    public EventReference CheckpointRespawn;
+    public EventReference CheckpointActivate;
+    public EventReference PhaseWallImpact;
+    public EventReference PhaseIdle;
+    public EventReference PhasePass;
+    public EventReference PowerupExplosive;
+    public EventReference PowerupPickUp;
+    public EventReference SwitchActivate;
+    public EventReference DeathScreen;
+    public EventReference LevelComplete;
+    public EventReference ShooterCharge;
+    public EventReference FlyerCharge;
+    public EventReference FlyerAttack;
+
+    protected override void Awake()
+    {
+        base.Awake();
+        bankLoader.Load();
+        eventInstances = new List<EventInstance>();
+        eventEmitters = new List<StudioEventEmitter>();
+    }
+
     private void Start()
     {
         Scene currentScene = SceneManager.GetActiveScene();
         string sceneName = currentScene.name;
-        if(sceneName == "Jonah")
+        if (sceneName == "MainMenu")
         {
-            musicSource.clip = mainMenu;
-            musicSource.Play();
+            menuMusicInstance = CreateEventInstance(MainMenuMusic);
+            menuMusicInstance.start();
+            //musicSource.clip = mainMenu;
+            //musicSource.Play();
         }
-        else if(sceneName == "Anthony Enemy Implementation" || sceneName == "Easy Level ART" || sceneName == "Mid Level ART"|| sceneName == "Josh")
+        else if(sceneName == "Level1" || sceneName == "Level2")
         {
-            musicSource.clip = background;
-            musicSource.Play();
+            lvlMusicInstance = CreateEventInstance(LevelMusic);
+            lvlMusicInstance.start();
+            //musicSource.clip = background;
+            //musicSource.Play();
         }
+
+        masterBus = RuntimeManager.GetBus("bus:/");
+        musicBus = RuntimeManager.GetBus("bus:/MUSIC");
+        sfxBus = RuntimeManager.GetBus("bus:/SFX");
     }
-    */
 
     // Code for probably keeping the music playing between scenes?\
     public static string sceneName;
     public static string prevScene = "";
 
-    public void Update()
+    private void Update()
     {
+        masterBus.setVolume(masterVolume);
+        musicBus.setVolume(musicVolume);
+        sfxBus.setVolume(sfxVolume);
+        /*
         Scene currentScene = SceneManager.GetActiveScene();
         string sceneName = currentScene.name;
-        if(sceneName == "Jonah" && prevScene != "Jonah")
+        if(sceneName == "MainMenu" && prevScene != "MainMenu")
         {
-            musicSource.clip = mainMenu;
-            musicSource.Play();
-            prevScene = "Jonah";
+            menuMusicInstance = CreateEventInstance(MainMenuMusic);
+            menuMusicInstance.start();
+            prevScene = "MainMenu";
+            Debug.Log("main menu scene");
+            //musicSource.clip = mainMenu;
+            //musicSource.Play();
         }
-        else if(sceneName == "Anthony Enemy Implementation" || sceneName == "Easy Level ART" || sceneName == "Mid Level ART" || sceneName == "EvanLevel3")
+        */
+        // {
+        //     musicSource.clip = mainMenu;
+        //     musicSource.Play();
+        //     prevScene = "Jonah";
+        // }
+        // else if(sceneName == "Anthony Enemy Implementation" || sceneName == "Easy Level ART" || sceneName == "Mid Level ART" || sceneName == "EvanLevel3")
+        // {
+        //     if(musicSource.clip != background)
+        //     {
+        //         musicSource.Stop();
+        //         musicSource.clip = background;
+        //         musicSource.Play();
+        //         prevScene = "";
+        //     }
+        // }
+    }
+
+    public void PlayOneShotSFX2D(EventReference sfxEvent)
+    {
+        RuntimeManager.PlayOneShot(sfxEvent, transform.position);
+    }
+
+    public void PlayOneShotSFX3D(EventReference sfxEvent, Vector3 position)
+    {
+        RuntimeManager.PlayOneShot(sfxEvent, position);
+    }
+
+    public EventInstance CreateEventInstance(EventReference eventReference)
+    {
+        EventInstance eventInstance = RuntimeManager.CreateInstance(eventReference);
+        eventInstances.Add(eventInstance);
+        return eventInstance;
+    }
+
+    public StudioEventEmitter InitializeEventEmitter(EventReference eventRef, GameObject emitterGameObj)
+    {
+        StudioEventEmitter emitter = emitterGameObj.GetComponent<StudioEventEmitter>();
+        emitter.EventReference = eventRef;
+        eventEmitters.Add(emitter);
+        return emitter;
+    }
+
+    private void Cleanup()
+    {
+        //stop and release any created instances
+        foreach (EventInstance eventInstance in eventInstances)
         {
-            if(musicSource.clip != background)
-            {
-                musicSource.Stop();
-                musicSource.clip = background;
-                musicSource.Play();
-                prevScene = "";
-            }
+            eventInstance.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
+            eventInstance.release();
+        }
+
+        //emitters die when change scene
+        foreach (StudioEventEmitter emitter in eventEmitters)
+        {
+            emitter.Stop();
         }
     }
 
-
-    public void PlaySFX(AudioClip clip)
+    private void OnDestroy()
     {
-        SFXSource.PlayOneShot(clip);
+        Cleanup();
     }
 
-    public void PlayWalk()
+    public bool IsPlaying(FMOD.Studio.EventInstance instance)
     {
-            
-        int walkChoice = UnityEngine.Random.Range(1,6); 
-        if(walkChoice == 1 && previousChoice != 1)
-        {
-            SFXSource.PlayOneShot(walk);
-        }
-        else if(walkChoice == 2 && previousChoice != 2)
-        {
-            SFXSource.PlayOneShot(walk2);
-        }
-        else if(walkChoice == 3 && previousChoice != 3)
-        {
-            SFXSource.PlayOneShot(walk3);
-        }
-        else if(walkChoice == 4 && previousChoice != 4)
-        {
-            SFXSource.PlayOneShot(walk4);
-        }
-        else if(walkChoice == 5 && previousChoice != 5)
-        {
-            SFXSource.PlayOneShot(walk5);
-        }
-        else
-        {
-            PlayWalk();
-        }                      
-        previousChoice = walkChoice;
+        FMOD.Studio.PLAYBACK_STATE state;
+        instance.getPlaybackState(out state);
+        return state != FMOD.Studio.PLAYBACK_STATE.STOPPED;
     }
 }

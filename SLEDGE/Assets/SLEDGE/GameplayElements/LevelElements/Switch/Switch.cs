@@ -20,6 +20,7 @@ public class Switch : MonoBehaviour
     public void SwapStateActive() //swaps the state of the switch itself, the objects it controls, and the other switches it shares state with
     {
         sc.Swap(this);
+        AudioManager.Instance?.PlayOneShotSFX3D(AudioManager.Instance.SwitchActivate, transform.position);
     }
 
     public void SwapStatePassive() //swaps the state of only the switch itself, used for updating connected switches to the correct state

@@ -161,6 +161,7 @@ public class EnemyShooterController : EnemyBaseController
                                         chargeUp.SetActive(true);
                                         combatState = CombatState.AIMING;
                                         currentShootBurstCount--;
+                                        AudioManager.Instance.PlayOneShotSFX3D(AudioManager.Instance.ShooterCharge, transform.position);
                                     }
                                     else
                                     {
