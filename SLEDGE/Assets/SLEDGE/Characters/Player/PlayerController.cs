@@ -14,7 +14,6 @@ using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.ProBuilder.Shapes;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using static UnityEditor.PlayerSettings;
 using Random=UnityEngine.Random;
 
 public class PlayerController : MonoBehaviour
@@ -1606,6 +1605,11 @@ public class PlayerController : MonoBehaviour
                 targetCandidate = enemy.gameObject;
                 targetCandidateAngle = angle;
             }
+        }
+        
+        if (targetCandidate == null)
+        {
+            return null; 
         }
 
         return targetCandidate.GetComponent<EnemyBaseController>().projectileTarget;

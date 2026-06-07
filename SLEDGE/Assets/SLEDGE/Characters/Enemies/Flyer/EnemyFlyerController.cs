@@ -397,9 +397,9 @@ public class EnemyFlyerController : EnemyBaseController
         staticField.SetActive(false);
         
         shockHitboxColor.a = 0.0f;
-        shockHitbox.transform.localScale = Vector3.zero;
+        shockHitbox.transform.localScale = maxShockScale;
         shockHitbox.GetComponent<MeshRenderer>().material.color = shockHitboxColor;
-        shockHitbox.GetComponent<MeshRenderer>().enabled = false;
+        shockHitbox.GetComponent<MeshRenderer>().enabled = true;
 
         audioSource.clip = telegraphSound;
         audioSource.Play();
